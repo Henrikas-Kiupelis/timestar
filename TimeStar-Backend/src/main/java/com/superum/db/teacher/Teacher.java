@@ -18,6 +18,7 @@ public class Teacher {
 
 	// PUBLIC API
 
+	@JsonProperty("id")
 	public int getId() {
 		return id;
 	}
@@ -28,12 +29,17 @@ public class Teacher {
 		return id > 0;
 	}
 	
+	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
+	
+	@JsonProperty("surname")
 	public String getSurname() {
 		return surname;
 	}
+	
+	@JsonProperty("phone")
 	public String getPhone() {
 		return phone;
 	}

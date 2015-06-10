@@ -5,8 +5,4 @@ import org.springframework.stereotype.Repository;
 import com.superum.db.dao.SimpleDAO;
 
 @Repository
-public interface TeacherDAO extends SimpleDAO<Teacher, Integer> {
-
-	
-
-}
+public interface TeacherDAO extends SimpleDAO<Teacher, Integer> {}

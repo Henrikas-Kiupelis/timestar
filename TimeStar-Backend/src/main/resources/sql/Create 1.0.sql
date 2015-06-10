@@ -13,7 +13,7 @@ PRIMARY KEY(id));
 
 CREATE TABLE languages ( 
 teacher_id INT NOT NULL, 
-language_id INT NOT NULL, 
+code VARCHAR(3) NOT NULL, 
 FOREIGN KEY(teacher_id) REFERENCES teacher(id));
 
 CREATE TABLE customer ( 
