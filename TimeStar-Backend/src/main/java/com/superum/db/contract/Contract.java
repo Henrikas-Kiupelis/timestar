@@ -83,7 +83,7 @@ public class Contract {
 		result = (result << 5) - result + teacherId;
 		result = (result << 5) - result + customerId;
 		result = (result << 5) - result + paymentDay;
-		result = (result << 5) - result + (paymentValue == null ? 0 : paymentValue.hashCode());;
+		result = (result << 5) - result + (paymentValue == null ? 0 : paymentValue.hashCode());
 		return result;
 	}
 
