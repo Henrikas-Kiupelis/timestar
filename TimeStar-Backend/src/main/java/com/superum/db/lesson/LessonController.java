@@ -49,7 +49,7 @@ public class LessonController {
 	}
 	
 	// BINDERS
-	
+
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 	    binder.registerCustomEditor(TableBinder.class, TableBinder.propertyEditorSupport());
@@ -65,5 +65,5 @@ public class LessonController {
 	// PRIVATE
 	
 	private final LessonService lessonService;
-
+	
 }
