@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class TeacherController {
 
 	@RequestMapping(value = "/teacher/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
-	public Teacher addNewTeacher(@RequestBody @Valid Teacher teacher) {
-		return teacherService.addNewTeacher(teacher);
+	public Teacher addTeacher(@RequestBody @Valid Teacher teacher) {
+		return teacherService.addTeacher(teacher);
 	}
 	
 	@RequestMapping(value = "/teacher/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)

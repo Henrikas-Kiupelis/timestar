@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class TeacherServiceImpl implements TeacherService {
 
 	@Override
-	public Teacher addNewTeacher(Teacher teacher) {
+	public Teacher addTeacher(Teacher teacher) {
 		return teacherDAO.create(teacher);
 	}
 	

@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerController {
 
 	@RequestMapping(value = "/customer/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
-	public Customer addNewCustomer(@RequestBody @Valid Customer teacher) {
-		return customerService.addNewCustomer(teacher);
+	public Customer addCustomer(@RequestBody @Valid Customer teacher) {
+		return customerService.addCustomer(teacher);
 	}
 	
 	@RequestMapping(value = "/customer/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)

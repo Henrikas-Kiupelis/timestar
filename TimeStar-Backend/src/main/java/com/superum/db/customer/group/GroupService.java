@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface GroupService {
 
-	Group addNewGroup(Group group);
+	Group addGroup(Group group);
 	
 	Group findGroup(int id);
 	

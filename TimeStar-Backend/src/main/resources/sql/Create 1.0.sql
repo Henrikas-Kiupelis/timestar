@@ -33,7 +33,7 @@ CREATE TABLE student (
 id INT NOT NULL AUTO_INCREMENT, 
 customer_id INT NOT NULL, 
 group_id INT NOT NULL, 
-name VARCHAR(30) NOT NULL, 
+name VARCHAR(60) NOT NULL, 
 PRIMARY KEY(id), 
 FOREIGN KEY(customer_id) REFERENCES customer(id), 
 FOREIGN KEY(group_id) REFERENCES student_group(id));

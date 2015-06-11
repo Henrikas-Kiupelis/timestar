@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TeacherService {
 
-	public Teacher addNewTeacher(Teacher teacher);
+	public Teacher addTeacher(Teacher teacher);
 	
 	public Teacher findTeacher(int id);
 	

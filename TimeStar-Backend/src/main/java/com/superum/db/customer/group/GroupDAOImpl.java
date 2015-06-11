@@ -72,7 +72,7 @@ public class GroupDAOImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Group> readAllFor(int customerId) {
+	public List<Group> readAllForCustomer(int customerId) {
 		return sql.selectFrom(STUDENT_GROUP)
 				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId))
 				.fetch().stream()

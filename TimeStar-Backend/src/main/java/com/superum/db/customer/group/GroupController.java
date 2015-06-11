@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupController {
 
 	@RequestMapping(value = "/group/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
-	public Group addNewGroup(@RequestBody @Valid Group group) {
-		return groupService.addNewGroup(group);
+	public Group addGroup(@RequestBody @Valid Group group) {
+		return groupService.addGroup(group);
 	}
 	
 	@RequestMapping(value = "/group/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
@@ -37,7 +37,7 @@ public class GroupController {
 		return groupService.deleteGroup(id);
 	}
 	
-	@RequestMapping(value = "/group/customer/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/group/customer/{customerId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public List<Group> findGroupsForCustomer(int customerId) {
 		return groupService.findGroupsForCustomer(customerId);
 	}

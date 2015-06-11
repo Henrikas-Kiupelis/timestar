@@ -9,6 +9,6 @@ import com.superum.db.dao.SimpleDAO;
 @Repository
 public interface GroupDAO extends SimpleDAO<Group, Integer> {
 
-	List<Group> readAllFor(int customerId);
+	List<Group> readAllForCustomer(int customerId);
 	
 }

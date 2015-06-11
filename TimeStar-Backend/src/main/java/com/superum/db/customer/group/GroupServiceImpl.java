@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class GroupServiceImpl implements GroupService {
 
 	@Override
-	public Group addNewGroup(Group group) {
+	public Group addGroup(Group group) {
 		return groupDAO.create(group);
 	}
 
@@ -30,7 +30,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public List<Group> findGroupsForCustomer(int customerId) {
-		return groupDAO.readAllFor(customerId);
+		return groupDAO.readAllForCustomer(customerId);
 	}
 
 	// CONSTRUCTORS

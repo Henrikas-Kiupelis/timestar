@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class CustomerServiceImpl implements CustomerService {
 
 	@Override
-	public Customer addNewCustomer(Customer customer) {
+	public Customer addCustomer(Customer customer) {
 		return customerDAO.create(customer);
 	}
 	
