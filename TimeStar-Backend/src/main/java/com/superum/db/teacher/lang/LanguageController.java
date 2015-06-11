@@ -20,7 +20,7 @@ public class LanguageController {
 		return languageService.addLanguagesToTeacher(languages);
 	}
 	
-	@RequestMapping(value = "/teacher/lang/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/lang/{teacherId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Languages getLanguagesForTeacher(@PathVariable int teacherId) {
 		return languageService.getLanguagesForTeacher(teacherId);
 	}

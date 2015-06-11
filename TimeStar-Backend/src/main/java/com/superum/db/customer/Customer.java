@@ -41,7 +41,7 @@ public class Customer {
 	@Override
 	public String toString() {
 		return StringUtils.toString(
-				"Teacher ID: " + id,
+				"Customer ID: " + id,
 				"Name: " + name,
 				"Phone: " + phone);
 	}

@@ -24,7 +24,7 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot' 
 apply plugin: 'application'
 
-mainClassName = "com.superum.DBAccessApplication"
+mainClassName = "com.superum.TimeStarBackEndApplication"
 jar {
     baseName = 'timeStarBackEnd'
     version = '0.0.1'

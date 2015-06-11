@@ -28,17 +28,17 @@ public class GroupController {
 	}
 	
 	@RequestMapping(value = "/group/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
-	public Group updateGroup(Group group) {
+	public Group updateGroup(@RequestBody @Valid Group group) {
 		return groupService.updateGroup(group);
 	}
 	
 	@RequestMapping(value = "/group/delete/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
-	public Group deleteGroup(int id) {
+	public Group deleteGroup(@PathVariable int id) {
 		return groupService.deleteGroup(id);
 	}
 	
 	@RequestMapping(value = "/group/customer/{customerId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
-	public List<Group> findGroupsForCustomer(int customerId) {
+	public List<Group> findGroupsForCustomer(@PathVariable int customerId) {
 		return groupService.findGroupsForCustomer(customerId);
 	}
 	

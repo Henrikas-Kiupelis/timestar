@@ -38,7 +38,7 @@ public class CustomerController {
 	}
 	
 	@RequestMapping(value = "/customer/teacher/{teacherId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
-	public List<Customer> findCustomersForTeacher(int teacherId) {
+	public List<Customer> findCustomersForTeacher(@PathVariable int teacherId) {
 		return customerService.findCustomersForTeacher(teacherId);
 	}
 	

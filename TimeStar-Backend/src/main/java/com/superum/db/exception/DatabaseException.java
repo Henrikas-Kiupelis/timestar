@@ -4,9 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * An exception to be thrown when we are certain that a {@code User} doesn't exist<p>
- * 
- * i.e. when a {@code userId} value doesn't refer to any existing records
+ * Placeholder exception for all database problems at the current time
  * 
  * @author Goodlike
  */

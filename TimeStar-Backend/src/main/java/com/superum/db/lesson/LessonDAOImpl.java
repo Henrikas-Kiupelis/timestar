@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -94,8 +95,15 @@ public class LessonDAOImpl implements LessonDAO {
 
 	@Override
 	public List<Lesson> readAllFrom(TableBinder table, int id, Date start, Date end) {
+		Condition condition = table.field().eq(id);
+		if (start != null)
+			condition = condition.and(LESSON.DATE_OF_LESSON.ge(start));
+		
+		if (end != null)
+			condition = condition.and(LESSON.DATE_OF_LESSON.le(end));
+		
 		return sql.selectFrom(LESSON)
-				.where(table.field().eq(id))
+				.where(condition)
 				.fetch().stream()
 				.map(Lesson::valueOf)
 				.collect(Collectors.toList());

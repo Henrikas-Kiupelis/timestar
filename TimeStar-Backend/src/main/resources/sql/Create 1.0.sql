@@ -14,7 +14,8 @@ PRIMARY KEY(id));
 CREATE TABLE languages ( 
 teacher_id INT NOT NULL, 
 code VARCHAR(3) NOT NULL, 
-FOREIGN KEY(teacher_id) REFERENCES teacher(id));
+FOREIGN KEY(teacher_id) REFERENCES teacher(id), 
+UNIQUE KEY (teacher_id, code));
 
 CREATE TABLE customer ( 
 id INT NOT NULL AUTO_INCREMENT, 
@@ -46,7 +47,8 @@ payment_day TINYINT NOT NULL,
 payment_value DECIMAL(19, 4) NOT NULL, 
 PRIMARY KEY(id), 
 FOREIGN KEY(teacher_id) REFERENCES teacher(id), 
-FOREIGN KEY(customer_id) REFERENCES customer(id));
+FOREIGN KEY(customer_id) REFERENCES customer(id), 
+UNIQUE KEY (teacher_id, customer_id));
 
 CREATE TABLE lesson ( 
 id BIGINT NOT NULL AUTO_INCREMENT, 
