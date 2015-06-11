@@ -2,6 +2,8 @@ package com.superum.db.customer;
 
 import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,11 @@ public class CustomerController {
 	@RequestMapping(value = "/customer/delete/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Customer deleteCustomer(@PathVariable int id) {
 		return customerService.deleteCustomer(id);
+	}
+	
+	@RequestMapping(value = "/customer/teacher/{teacherId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public List<Customer> findCustomersForTeacher(int teacherId) {
+		return customerService.findCustomersForTeacher(teacherId);
 	}
 	
 	// CONSTRUCTORS

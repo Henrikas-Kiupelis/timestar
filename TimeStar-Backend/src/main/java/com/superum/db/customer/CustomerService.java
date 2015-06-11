@@ -1,16 +1,20 @@
 package com.superum.db.customer;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public interface CustomerService {
 
-	public Customer addCustomer(Customer customer);
+	Customer addCustomer(Customer customer);
 	
-	public Customer findCustomer(int id);
+	Customer findCustomer(int id);
 	
-	public Customer updateCustomer(Customer customer);
+	Customer updateCustomer(Customer customer);
 	
-	public Customer deleteCustomer(int id);
+	Customer deleteCustomer(int id);
+	
+	List<Customer> findCustomersForTeacher(int teacherId);
 
 }

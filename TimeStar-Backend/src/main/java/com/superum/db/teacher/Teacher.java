@@ -22,9 +22,6 @@ public class Teacher {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
-		this.id = id;
-	}
 	public boolean hasId() {
 		return id > 0;
 	}
@@ -108,7 +105,7 @@ public class Teacher {
 	// PRIVATE
 	
 	@Min(value = 0, message = "Negative teacher ids not allowed")
-	private int id;
+	private final int id;
 	
 	@NotNull(message = "The teacher must have a name")
 	@Size(max = 30, message = "Name size must not exceed 30 characters")

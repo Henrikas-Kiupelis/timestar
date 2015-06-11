@@ -22,9 +22,6 @@ public class Group {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
-		this.id = id;
-	}
 	public boolean hasId() {
 		return id > 0;
 	}
@@ -97,7 +94,7 @@ public class Group {
 	// PRIVATE
 
 	@Min(value = 0, message = "Negative group ids not allowed")
-	private int id;
+	private final int id;
 	
 	@Min(value = 1, message = "The customer id must be set")
 	private final int customerId;

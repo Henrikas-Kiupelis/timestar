@@ -22,9 +22,6 @@ public class Student {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
-		this.id = id;
-	}
 	public boolean hasId() {
 		return id > 0;
 	}
@@ -85,9 +82,9 @@ public class Student {
 
 	@JsonCreator
 	public Student(@JsonProperty("id") int id, 
-					@JsonProperty("id") int customerId, 
-					@JsonProperty("id") int groupId, 
-					@JsonProperty("id") String name) {
+					@JsonProperty("customerId") int customerId, 
+					@JsonProperty("groupId") int groupId, 
+					@JsonProperty("name") String name) {
 		this.id = id;
 		this.customerId = customerId;
 		this.groupId = groupId;
@@ -108,7 +105,7 @@ public class Student {
 	// PRIVATE
 
 	@Min(value = 0, message = "Negative student ids not allowed")
-	private int id;
+	private final int id;
 	
 	@Min(value = 1, message = "The customer id must be set")
 	private final int customerId;
