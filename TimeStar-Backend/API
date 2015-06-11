@@ -1,1 +1,168 @@
-This is where all the API calls will be stored.
+PREFIX:
+
+http://{IP}:{PORT}/timestar/api
+
+------------------------------------------------------------------------------------
+Teacher:
+
+POST /teacher/add
+{"name":"Henrikas", "surname":"Kiupelis", "phone":"+37068657313"}
+Prideda naują mokytoją
+
+GET /teacher/{id}
+/teacher/1
+Rodo mokytojo info (išskyrus kalbas) per jo ID
+
+POST /teacher/update
+{"id":"1", "name":"Henrikas", "surname":"Kiūpelis", "phone":"+37068657313"}
+Pakeičia mokytojo info
+
+GET /teacher/delete/{id}
+/teacher/delete/1
+Ištrina mokytoją (jei jis turi pamokų ar pan. - nepavyks)
+
+------------------------------------------------------------------------------------
+Teacher language:
+
+POST /teacher/lang/add
+{"id":"1", "languages":["LT", "ENG"]}
+Prideda mokytojui kalbų
+
+GET /teacher/lang/{teacherId}
+/teacher/lang/1
+Rodo mokytojo kalbas
+
+POST /teacher/lang/delete
+{"id":"1", "languages":["LT"]}
+Ištrina mokytojo kalbas
+
+------------------------------------------------------------------------------------
+Customer:
+
+POST /customer/add
+{"name":"Superum", "phone":"Superum_phone!"}
+Prideda naują imonę
+
+GET /customer/{id}
+/customer/1
+Rodo įmonės info
+
+POST /customer/update
+{"id":"1", "name":"Superum", "phone":"+37060918738"}
+Pakeičia įmonės info
+
+GET /customer/delete/{id}
+/customer/delete/1
+Ištrina įmonę (jei turi pamokų ar pan. - nepavyks)
+
+GET /customer/teacher/{teacherId}
+/customer/teacher/1
+Rodo visas įmones tam tikram mokytojui (kur jis turi kontraktų)
+
+------------------------------------------------------------------------------------
+Group:
+
+POST /group/add
+{"customerId":"1", "name":"superum pirma"}
+Prideda naują grupę
+
+GET /group/{id}
+/group/1
+Rodo grupės info
+
+POST /group/update
+{"id":"1", "customerId":"1", "name":"superum1"}
+Pakeičia grupės info
+
+GET /group/delete/{id}
+/group/delete/1
+Ištrina grupę (jei turi pamokų/studentų - nepavyks)
+
+GET /group/customer/{customerId}
+/group/customer/1
+Rodo visas grupes priklausančias tam tikrai įmonei
+
+------------------------------------------------------------------------------------
+Student:
+
+POST /student/add
+{"customerId":"1", "groupId":"1", "name":"Some guy"}
+Prideda studentą
+
+GET /student/{id}
+/student/1
+Rodo studento info
+
+POST /student/update
+{"id":"1", "customerId":"1", "groupId":"1", "name":"Some Guy"}
+Pakeičia studento info
+
+GET /student/delete/{id}
+/student/delete/1
+Ištrina studentą
+
+GET /student/customer/{customerId}
+/student/customer/1
+Rodo visus studentus tam tikrai įmonei
+
+GET /student/group/{groupId}
+/student/group/1
+Rodo visus studentus tam tikrai grupei
+
+------------------------------------------------------------------------------------
+Contract:
+
+POST /contract/add
+{"teacherId":"1", "customerId":"1", "paymentDay":"15", "paymentValue":"23"}
+Prideda kontraktą
+
+GET /contract/{id}
+/contract/1
+Rodo kontrakto info
+
+POST /contract/update
+{"id":"1", "teacherId":"1", "customerId":"1", "paymentDay":"20", "paymentValue":"30"}
+Pakeičia kontrakto info
+
+GET /contract/delete/{id}
+/contract/delete/1
+Ištrina kontraktą
+
+GET /contract/teacher/{teacherId}/customer/{customerId}
+/contract/teacher/1/customer/1
+Rodo kontraktą tarp mokytojo ir įmonės, jei toks yra
+
+GET /contract/teacher/{teacherId}
+/contract/teacher/1
+Rodo visus kontraktus tam tikram mokytojui
+
+GET /contract/customer/{customerId}
+/contract/customer/1
+Rodo visus kontraktus tam tikrai įmonei
+
+------------------------------------------------------------------------------------
+Lesson:
+
+POST /lesson/add
+{"teacherId":"1", "customerId":"1", "groupId":"1", "date":"2015-06-11", "hour":"12", "minute":"00", "length":"15", "comment":"UGH!"}
+Prideda pamoką
+
+GET /lesson/{id}
+/lesson/1
+Rodo pamokos info
+
+POST /lesson/update
+{"id":"1", "teacherId":"1", "customerId":"1", "groupId":"1", "date":"2015-06-11", "hour":"15", "minute":"30", "length":"30", "comment":"Better."}
+Pakeičia pamokos info
+
+GET /lesson/delete/{id}
+/lesson/delete/1
+Ištrina pamoką
+
+GET /lesson/{table}/{id}
+optional: ?start={Date}&end={Date}
+/lesson/teacher/1
+/lesson/customer/1?start=2015-06-01
+/lesson/group/1?end=2015-06-30
+/lesson/teacher/1?start=2015-06-01&end=2015-06-30
+Rodo visas pamokas mokytojui, įmonei ar grupei, apribotam laikotarpiui (abu laikotarpiai - imtinai) jei jis nurodytas
