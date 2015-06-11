@@ -6,12 +6,15 @@ This file should contain a rough list of ideas/things to be done in the future:
 
 A) Things to definitely do in the future
 
+	Add deleted timestamp to all tables
+	Make tables use views for operations, based on whether they are deleted or not
+
 B) Ideas
 
 C) COMPLETE
 
 	2015-06-10
-	Implemented: Teacher; Languages; Customers;
+	Implemented: Teacher; Languages; Customer;
 
 	2015-06-08
 	Initial setup

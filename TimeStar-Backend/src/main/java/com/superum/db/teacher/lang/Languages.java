@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -66,7 +66,7 @@ public class Languages {
 
 	// PRIVATE
 
-	@NotNull(message = "The teacher id must be set")
+	@Min(value = 1, message = "The teacher id must be set")
 	private final int teacherId;
 	
 	private final List<String> languages;
