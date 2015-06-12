@@ -11,9 +11,11 @@ import javax.validation.constraints.Size;
 import org.jooq.Record;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Student {
 
 	// PUBLIC API

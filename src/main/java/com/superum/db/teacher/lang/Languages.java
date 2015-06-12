@@ -7,9 +7,11 @@ import java.util.Objects;
 import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Languages {
 
 	// PUBLIC API
