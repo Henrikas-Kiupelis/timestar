@@ -16,6 +16,9 @@ B) Ideas
 
 C) COMPLETE
 
+	2015-06-12
+	Fixed the database to allow LT characters;
+
 	2015-06-11
 	Implemented: Group; Student; Contract; Lesson;
 

@@ -19,27 +19,42 @@ public class TeacherController {
 
 	@RequestMapping(value = "/teacher/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	public Teacher addTeacher(@RequestBody @Valid Teacher teacher) {
-		log.info("----------------------------------------------------------------------------------------");
-		log.info("Received a teacher through post: {}", teacher);
+		log.info("Request to add a new teacher: {}", teacher);
+		
 		Teacher addedTeacher = teacherService.addTeacher(teacher);
-		log.info("After adding the teacher to DB: {}", addedTeacher);
-		log.info("----------------------------------------------------------------------------------------");
+		log.info("Teacher added: {}", addedTeacher);
+		
 		return addedTeacher;
 	}
 	
 	@RequestMapping(value = "/teacher/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Teacher findTeacher(@PathVariable int id) {
-		return teacherService.findTeacher(id);
+		log.info("Request to find a teacher with ID {}", id);
+		
+		Teacher teacher = teacherService.findTeacher(id);
+		log.info("Teacher found: {}", teacher);
+		
+		return teacher;
 	}
 	
 	@RequestMapping(value = "/teacher/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	public Teacher updateTeacher(@RequestBody @Valid Teacher teacher) {
-		return teacherService.updateTeacher(teacher);
+		log.info("Request to find update teacher: {}", teacher);
+		
+		Teacher outdatedTeacher = teacherService.updateTeacher(teacher);
+		log.info("Teacher before update: {}", outdatedTeacher);
+		
+		return outdatedTeacher;
 	}
 	
 	@RequestMapping(value = "/teacher/delete/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Teacher deleteTeacher(@PathVariable int id) {
-		return teacherService.deleteTeacher(id);
+		log.info("Request to delete a teacher with ID {}", id);
+		
+		Teacher teacher = teacherService.deleteTeacher(id);
+		log.info("Teacher deleted: {}", teacher);
+		
+		return teacher;
 	}
 	
 	// CONSTRUCTORS
