@@ -95,7 +95,7 @@ public class Teacher {
 					@JsonProperty("name") String name, 
 					@JsonProperty("surname") String surname, 
 					@JsonProperty("phone") String phone, 
-					@JsonProperty("phone") String comment) {
+					@JsonProperty("comment") String comment) {
 		this.id = id;
 		this.name = name;
 		this.surname = surname;

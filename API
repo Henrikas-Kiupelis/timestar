@@ -125,7 +125,7 @@ Rodo visus studentus tam tikrai pamokai
 Contract:
 
 POST /contract/add
-{"teacherId":"1", "customerId":"1", "paymentDay":"15", "paymentValue":"23"}
+{"groupId":"1", "paymentDay":"15", "startDate":"2015-06-17", "languageLevel":"Anglu: ", "paymentValue":"23"}
 Prideda kontraktą
 
 GET /contract/{id}
@@ -133,7 +133,7 @@ GET /contract/{id}
 Rodo kontrakto info
 
 POST /contract/update
-{"id":"1", "teacherId":"1", "customerId":"1", "paymentDay":"20", "paymentValue":"30"}
+{"id":"1", "groupId":"1", "paymentDay":"15", "startDate":"2015-05-17", "languageLevel":"Anglu: C2", "paymentValue":"23"}
 Pakeičia kontrakto info
 
 GET /contract/delete/{id}
