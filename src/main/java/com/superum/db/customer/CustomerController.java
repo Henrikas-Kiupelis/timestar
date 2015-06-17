@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerController {
 
 	@RequestMapping(value = "/customer/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
-	public Customer addCustomer(@RequestBody @Valid Customer teacher) {
-		return customerService.addCustomer(teacher);
+	public Customer addCustomer(@RequestBody @Valid Customer customer) {
+		return customerService.addCustomer(customer);
 	}
 	
 	@RequestMapping(value = "/customer/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
@@ -28,8 +28,8 @@ public class CustomerController {
 	}
 	
 	@RequestMapping(value = "/customer/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
-	public Customer updateCustomer(@RequestBody @Valid Customer teacher) {
-		return customerService.updateCustomer(teacher);
+	public Customer updateCustomer(@RequestBody @Valid Customer customer) {
+		return customerService.updateCustomer(customer);
 	}
 	
 	@RequestMapping(value = "/customer/delete/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)

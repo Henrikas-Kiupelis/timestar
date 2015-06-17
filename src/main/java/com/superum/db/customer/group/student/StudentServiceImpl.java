@@ -30,23 +30,30 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public List<Student> findStudentsForCustomer(int customerId) {
-		return studentDAO.readAllForCustomer(customerId);
+		return studentQueries.readAllForCustomer(customerId);
 	}
 
 	@Override
 	public List<Student> findStudentsForGroup(int groupId) {
 		return studentDAO.readAllForGroup(groupId);
 	}
+	
+	@Override
+	public List<Student> findStudentsForLesson(long lessonId) {
+		return studentQueries.readAllForLesson(lessonId);
+	}
 
 	// CONSTRUCTORS
 
 	@Autowired
-	public StudentServiceImpl(StudentDAO studentDAO) {
+	public StudentServiceImpl(StudentDAO studentDAO, StudentQueries studentQueries) {
 		this.studentDAO = studentDAO;
+		this.studentQueries = studentQueries;
 	}
 
 	// PRIVATE
 	
 	private final StudentDAO studentDAO;
+	private final StudentQueries studentQueries;
 
 }

@@ -18,12 +18,10 @@ public class StudentDAOImpl implements StudentDAO {
 
 	@Override
 	public Student create(Student student) {
-		int customerId = student.getCustomerId();
 		int groupId = student.getGroupId();
 		String name = student.getName();
 
 		return sql.insertInto(STUDENT)
-				.set(STUDENT.CUSTOMER_ID, customerId)
 				.set(STUDENT.GROUP_ID, groupId)
 				.set(STUDENT.NAME, name)
 				.returning()
@@ -46,14 +44,12 @@ public class StudentDAOImpl implements StudentDAO {
 	@Override
 	public Student update(Student student) {
 		int id = student.getId();
-		int customerId = student.getCustomerId();
 		int groupId = student.getGroupId();
 		String name = student.getName();
 		
 		Student old = read(id);
 		
 		sql.update(STUDENT)
-			.set(STUDENT.CUSTOMER_ID, customerId)
 			.set(STUDENT.GROUP_ID, groupId)
 			.set(STUDENT.NAME, name)
 			.where(STUDENT.ID.eq(id))
@@ -73,15 +69,6 @@ public class StudentDAOImpl implements StudentDAO {
 			throw new DatabaseException("Couldn't delete student with ID: " + id);
 		
 		return old;
-	}
-
-	@Override
-	public List<Student> readAllForCustomer(int customerId) {
-		return sql.selectFrom(STUDENT)
-				.where(STUDENT.CUSTOMER_ID.eq(customerId))
-				.fetch().stream()
-				.map(Student::valueOf)
-				.collect(Collectors.toList());
 	}
 
 	@Override

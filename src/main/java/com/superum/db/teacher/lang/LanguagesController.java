@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/timestar/api")
-public class LanguageController {
+public class LanguagesController {
 
 	@RequestMapping(value = "/teacher/lang/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	public Languages addLanguagesToTeacher(@RequestBody @Valid Languages languages) {
@@ -25,6 +25,16 @@ public class LanguageController {
 		return languageService.getLanguagesForTeacher(teacherId);
 	}
 	
+	@RequestMapping(value = "/teacher/lang/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	public Languages updateLanguagesForTeacher(@RequestBody @Valid Languages languages) {
+		return languageService.updateLanguagesForTeacher(languages);
+	}
+	
+	@RequestMapping(value = "/teacher/lang/delete/{teacherId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public Languages deleteLanguagesForTeacher(@PathVariable int teacherId) {
+		return languageService.deleteLanguagesForTeacher(teacherId);
+	}
+	
 	@RequestMapping(value = "/teacher/lang/delete", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	public Languages deleteLanguagesForTeacher(@RequestBody @Valid Languages languages) {
 		return languageService.deleteLanguagesForTeacher(languages);
@@ -33,12 +43,12 @@ public class LanguageController {
 	// CONSTRUCTORS
 
 	@Autowired
-	public LanguageController(LanguageService languageService) {
+	public LanguagesController(LanguagesService languageService) {
 		this.languageService = languageService;
 	}
 
 	// PRIVATE
 	
-	private final LanguageService languageService;
+	private final LanguagesService languageService;
 
 }

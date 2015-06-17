@@ -3,6 +3,7 @@ package com.superum.db.contract;
 import static com.superum.db.generated.timestar.Tables.CONTRACT;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,15 +20,17 @@ public class ContractDAOImpl implements ContractDAO {
 
 	@Override
 	public Contract create(Contract contract) {
-		int teacherId = contract.getTeacherId();
-		int customerId = contract.getCustomerId();
+		int groupId = contract.getGroupId();
 		byte paymentDay = contract.getPaymentDay();
+		Date startDate = contract.getStartDate();
+		String languageLevel = contract.getLanguageLevel();
 		BigDecimal paymentValue = contract.getPaymentValue();
 		
 		return sql.insertInto(CONTRACT)
-				.set(CONTRACT.TEACHER_ID, teacherId)
-				.set(CONTRACT.CUSTOMER_ID, customerId)
+				.set(CONTRACT.GROUP_ID, groupId)
 				.set(CONTRACT.PAYMENT_DAY, paymentDay)
+				.set(CONTRACT.START_DATE, startDate)
+				.set(CONTRACT.LANGUAGE_LEVEL, languageLevel)
 				.set(CONTRACT.PAYMENT_VALUE, paymentValue)
 				.returning()
 				.fetch().stream()
@@ -49,17 +52,19 @@ public class ContractDAOImpl implements ContractDAO {
 	@Override
 	public Contract update(Contract contract) {
 		int id = contract.getId();
-		int teacherId = contract.getTeacherId();
-		int customerId = contract.getCustomerId();
+		int groupId = contract.getGroupId();
 		byte paymentDay = contract.getPaymentDay();
+		Date startDate = contract.getStartDate();
+		String languageLevel = contract.getLanguageLevel();
 		BigDecimal paymentValue = contract.getPaymentValue();
 
 		Contract old = read(id);
 		
 		sql.update(CONTRACT)
-			.set(CONTRACT.TEACHER_ID, teacherId)
-			.set(CONTRACT.CUSTOMER_ID, customerId)
+			.set(CONTRACT.GROUP_ID, groupId)
 			.set(CONTRACT.PAYMENT_DAY, paymentDay)
+			.set(CONTRACT.START_DATE, startDate)
+			.set(CONTRACT.LANGUAGE_LEVEL, languageLevel)
 			.set(CONTRACT.PAYMENT_VALUE, paymentValue)
 			.where(CONTRACT.ID.eq(id))
 			.execute();
@@ -81,33 +86,15 @@ public class ContractDAOImpl implements ContractDAO {
 	}
 
 	@Override
-	public Contract readForTeacherAndCustomer(int teacherId, int customerId) {
+	public List<Contract> readAllForGroup(int groupId) {
 		return sql.selectFrom(CONTRACT)
-				.where(CONTRACT.TEACHER_ID.eq(teacherId)
-					.and(CONTRACT.CUSTOMER_ID.eq(customerId)))
-				.fetch().stream()
-				.findFirst()
-				.map(Contract::valueOf)
-				.orElseThrow(() -> new DatabaseException("Couldn't find contract for this teacher/customer ID pair: " + teacherId + "/" + customerId));
-	}
-
-	@Override
-	public List<Contract> readAllForTeacher(int teacherId) {
-		return sql.selectFrom(CONTRACT)
-				.where(CONTRACT.TEACHER_ID.eq(teacherId))
+				.where(CONTRACT.GROUP_ID.eq(groupId))
 				.fetch().stream()
 				.map(Contract::valueOf)
 				.collect(Collectors.toList());
 	}
 
-	@Override
-	public List<Contract> readAllForCustomer(int customerId) {
-		return sql.selectFrom(CONTRACT)
-				.where(CONTRACT.CUSTOMER_ID.eq(customerId))
-				.fetch().stream()
-				.map(Contract::valueOf)
-				.collect(Collectors.toList());
-	}
+	
 
 	// CONSTRUCTORS
 

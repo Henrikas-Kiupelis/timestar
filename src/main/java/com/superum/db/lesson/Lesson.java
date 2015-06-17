@@ -162,7 +162,7 @@ public class Lesson {
 		byte hour = hour(time);
 		byte minute = minute(time);
 		short length = lessonRecord.getValue(LESSON.LENGTH_IN_MINUTES);
-		String comment = lessonRecord.getValue(LESSON.COMMENT_BY_TEACHER);
+		String comment = lessonRecord.getValue(LESSON.COMMENT_ABOUT);
 		return new Lesson(id, teacherId, customerId, groupId, date, hour, minute, length, comment);
 	}
 
@@ -194,7 +194,7 @@ public class Lesson {
 	@Min(value = 1, message = "The length of lesson must be set")
 	private final short length;
 	
-	@NotNull
+	@NotNull(message = "The lesson must have a comment, even if empty")
 	@Size(max = 500, message = "The comment must not exceed 500 characters")
 	private final String comment;
 	

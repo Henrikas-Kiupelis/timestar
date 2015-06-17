@@ -47,6 +47,11 @@ public class StudentController {
 		return studentService.findStudentsForGroup(groupId);
 	}
 	
+	@RequestMapping(value = "/student/lesson/{lessonId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public List<Student> findStudentsForLesson(@PathVariable long lessonId) {
+		return studentService.findStudentsForLesson(lessonId);
+	}
+	
 	// CONSTRUCTORS
 	
 	@Autowired

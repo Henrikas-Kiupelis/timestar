@@ -28,11 +28,6 @@ public class Student {
 		return id > 0;
 	}
 	
-	@JsonProperty("customerId")
-	public int getCustomerId() {
-		return customerId;
-	}
-	
 	@JsonProperty("groupId")
 	public int getGroupId() {
 		return groupId;
@@ -49,7 +44,6 @@ public class Student {
 	public String toString() {
 		return StringUtils.toString(
 				"Student ID: " + id,
-				"Customer ID: " + customerId,
 				"Group ID: " + groupId,
 				"Name: " + name);
 	}
@@ -65,7 +59,6 @@ public class Student {
 		Student other = (Student) o;
 
 		return this.id == other.id
-				&& this.customerId == other.customerId
 				&& this.groupId == other.groupId
 				&& Objects.equals(this.name, other.name);
 	}
@@ -74,7 +67,6 @@ public class Student {
 	public int hashCode() {
 		int result = 17;
 		result = (result << 5) - result + id;
-		result = (result << 5) - result + customerId;
 		result = (result << 5) - result + groupId;
 		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
 		return result;
@@ -84,11 +76,9 @@ public class Student {
 
 	@JsonCreator
 	public Student(@JsonProperty("id") int id, 
-					@JsonProperty("customerId") int customerId, 
 					@JsonProperty("groupId") int groupId, 
 					@JsonProperty("name") String name) {
 		this.id = id;
-		this.customerId = customerId;
 		this.groupId = groupId;
 		this.name = name;
 	}
@@ -98,19 +88,15 @@ public class Student {
 			return null;
 		
 		int id = studentRecord.getValue(STUDENT.ID);
-		int customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
 		int groupId = studentRecord.getValue(STUDENT.GROUP_ID);
 		String name = studentRecord.getValue(STUDENT.NAME);
-		return new Student(id, customerId, groupId, name);
+		return new Student(id, groupId, name);
 	}
 
 	// PRIVATE
 
 	@Min(value = 0, message = "Negative student ids not allowed")
 	private final int id;
-	
-	@Min(value = 1, message = "The customer id must be set")
-	private final int customerId;
 	
 	@Min(value = 1, message = "The group id must be set")
 	private final int groupId;

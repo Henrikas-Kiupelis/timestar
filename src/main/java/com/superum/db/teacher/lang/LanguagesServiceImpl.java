@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LanguageServiceImpl implements LanguageService {
+public class LanguagesServiceImpl implements LanguagesService {
 
 	@Override
 	public Languages addLanguagesToTeacher(Languages languages) {
@@ -15,6 +15,16 @@ public class LanguageServiceImpl implements LanguageService {
 	public Languages getLanguagesForTeacher(int teacherId) {
 		return languageDAO.read(teacherId);
 	}
+	
+	@Override
+	public Languages updateLanguagesForTeacher(Languages languages) {
+		return languageDAO.update(languages);
+	}
+	
+	@Override
+	public Languages deleteLanguagesForTeacher(int teacherId) {
+		return languageDAO.delete(teacherId);
+	}
 
 	@Override
 	public Languages deleteLanguagesForTeacher(Languages languages) {
@@ -24,12 +34,12 @@ public class LanguageServiceImpl implements LanguageService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public LanguageServiceImpl(LanguageDAO languageDAO) {
+	public LanguagesServiceImpl(LanguagesDAO languageDAO) {
 		this.languageDAO = languageDAO;
 	}
 
 	// PRIVATE
 	
-	private final LanguageDAO languageDAO;
+	private final LanguagesDAO languageDAO;
 
 }

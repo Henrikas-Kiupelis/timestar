@@ -17,10 +17,12 @@ public class CustomerDAOImpl implements CustomerDAO {
 	public Customer create(Customer customer) {
 		String name = customer.getName();
 		String phone = customer.getPhone();
+		String comment = customer.getComment();
 
 		return sql.insertInto(CUSTOMER)
 				.set(CUSTOMER.NAME, name)
 				.set(CUSTOMER.PHONE, phone)
+				.set(CUSTOMER.COMMENT_ABOUT, comment)
 				.returning()
 				.fetch().stream()
 				.findFirst()
@@ -43,12 +45,14 @@ public class CustomerDAOImpl implements CustomerDAO {
 		int id = customer.getId();
 		String name = customer.getName();
 		String phone = customer.getPhone();
+		String comment = customer.getComment();
 		
 		Customer old = read(id);
 		
 		sql.update(CUSTOMER)
 			.set(CUSTOMER.NAME, name)
 			.set(CUSTOMER.PHONE, phone)
+			.set(CUSTOMER.COMMENT_ABOUT, comment)
 			.where(CUSTOMER.ID.eq(id))
 			.execute();
 		

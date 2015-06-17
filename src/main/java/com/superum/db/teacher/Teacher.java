@@ -43,6 +43,11 @@ public class Teacher {
 		return phone;
 	}
 	
+	@JsonProperty("comment")
+	public String getComment() {
+		return comment;
+	}
+	
 	// OBJECT OVERRIDES
 
 	@Override
@@ -51,7 +56,8 @@ public class Teacher {
 				"Teacher ID: " + id,
 				"Name: " + name,
 				"Surname: " + surname,
-				"Phone: " + phone);
+				"Phone: " + phone,
+				"Comment: " + comment);
 	}
 
 	@Override
@@ -67,7 +73,8 @@ public class Teacher {
 		return this.id == other.id
 				&& Objects.equals(this.name, other.name)
 				&& Objects.equals(this.surname, other.surname)
-				&& Objects.equals(this.phone, other.phone);
+				&& Objects.equals(this.phone, other.phone)
+				&& Objects.equals(this.comment, other.comment);
 	}
 
 	@Override
@@ -77,20 +84,23 @@ public class Teacher {
 		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
 		result = (result << 5) - result + (surname == null ? 0 : surname.hashCode());
 		result = (result << 5) - result + (phone == null ? 0 : phone.hashCode());
+		result = (result << 5) - result + (comment == null ? 0 : comment.hashCode());
 		return result;
 	}
 
 	// CONSTRUCTORS
 
 	@JsonCreator
-	public Teacher(@JsonProperty("id") int id,
+	public Teacher(@JsonProperty("id") int id, 
 					@JsonProperty("name") String name, 
 					@JsonProperty("surname") String surname, 
-					@JsonProperty("phone") String phone) {
+					@JsonProperty("phone") String phone, 
+					@JsonProperty("phone") String comment) {
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.phone = phone;
+		this.comment = comment;
 	}
 	
 	public static Teacher valueOf(Record teacherRecord) {
@@ -101,7 +111,8 @@ public class Teacher {
 		String name = teacherRecord.getValue(TEACHER.NAME);
 		String surname = teacherRecord.getValue(TEACHER.SURNAME);
 		String phone = teacherRecord.getValue(TEACHER.PHONE);
-		return new Teacher(id, name, surname, phone);
+		String comment = teacherRecord.getValue(TEACHER.COMMENT_ABOUT);
+		return new Teacher(id, name, surname, phone, comment);
 	}
 
 	// PRIVATE
@@ -120,5 +131,9 @@ public class Teacher {
 	@NotNull(message = "The teacher must have a phone")
 	@Size(max = 30, message = "Phone size must not exceed 30 characters")
 	private final String phone;
+	
+	@NotNull(message = "The teacher must have a comment, even if empty")
+	@Size(max = 500, message = "The comment must not exceed 500 characters")
+	private final String comment;
 
 }

@@ -29,29 +29,26 @@ public class ContractServiceImpl implements ContractService {
 	}
 
 	@Override
-	public Contract findContractForTeacherAndCustomer(int teacherId, int customerId) {
-		return contractDAO.readForTeacherAndCustomer(teacherId, customerId);
-	}
-
-	@Override
-	public List<Contract> findContractsForTeacher(int teacherId) {
-		return contractDAO.readAllForTeacher(teacherId);
+	public List<Contract> findContractsForGroup(int groupId) {
+		return contractDAO.readAllForGroup(groupId);
 	}
 
 	@Override
 	public List<Contract> findContractsForCustomer(int customerId) {
-		return contractDAO.readAllForCustomer(customerId);
+		return contractQueries.readAllForCustomer(customerId);
 	}
 
 	// CONSTRUCTORS
 
 	@Autowired
-	public ContractServiceImpl(ContractDAO contractDAO) {
+	public ContractServiceImpl(ContractDAO contractDAO, ContractQueries contractQueries) {
 		this.contractDAO = contractDAO;
+		this.contractQueries = contractQueries;
 	}
 
 	// PRIVATE
 	
 	private final ContractDAO contractDAO;
+	private final ContractQueries contractQueries;
 
 }

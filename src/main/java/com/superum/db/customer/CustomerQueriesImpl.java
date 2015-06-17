@@ -1,6 +1,8 @@
 package com.superum.db.customer;
 
-import static com.superum.db.generated.timestar.Tables.*;
+import static com.superum.db.generated.timestar.Tables.CUSTOMER;
+import static com.superum.db.generated.timestar.Tables.LESSON;
+import static com.superum.db.generated.timestar.Keys.LESSON_IBFK_2;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,8 +20,9 @@ public class CustomerQueriesImpl implements CustomerQueries {
 	public List<Customer> readAllForTeacher(int teacherId) {
 		return sql.select(CUSTOMER.fields())
 				.from(CUSTOMER)
-				.join(CONTRACT).onKey()
-				.where(CONTRACT.TEACHER_ID.eq(teacherId))
+				.join(LESSON).onKey(LESSON_IBFK_2)
+				.where(LESSON.TEACHER_ID.eq(teacherId))
+				.groupBy(CUSTOMER.ID)
 				.fetch().stream()
 				.map(Customer::valueOf)
 				.collect(Collectors.toList());

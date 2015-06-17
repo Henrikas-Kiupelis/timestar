@@ -35,7 +35,7 @@ public class LessonDAOImpl implements LessonDAO {
 				.set(LESSON.DATE_OF_LESSON, date)
 				.set(LESSON.TIME_OF_LESSON, time)
 				.set(LESSON.LENGTH_IN_MINUTES, length)
-				.set(LESSON.COMMENT_BY_TEACHER, comment)
+				.set(LESSON.COMMENT_ABOUT, comment)
 				.returning()
 				.fetch().stream()
 				.findFirst()
@@ -73,7 +73,7 @@ public class LessonDAOImpl implements LessonDAO {
 			.set(LESSON.DATE_OF_LESSON, date)
 			.set(LESSON.TIME_OF_LESSON, time)
 			.set(LESSON.LENGTH_IN_MINUTES, length)
-			.set(LESSON.COMMENT_BY_TEACHER, comment)
+			.set(LESSON.COMMENT_ABOUT, comment)
 			.where(LESSON.ID.eq(id))
 			.execute();
 		

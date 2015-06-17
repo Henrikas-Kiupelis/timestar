@@ -37,14 +37,9 @@ public class ContractController {
 		return contractService.deleteContract(id);
 	}
 	
-	@RequestMapping(value = "/contract/teacher/{teacherId}/customer/{customerId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
-	public Contract findContractForTeacherAndCustomer(@PathVariable int teacherId, @PathVariable int customerId) {
-		return contractService.findContractForTeacherAndCustomer(teacherId, customerId);
-	}
-	
-	@RequestMapping(value = "/contract/teacher/{teacherId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
-	public List<Contract> findContractsForTeacher(@PathVariable int teacherId) {
-		return contractService.findContractsForTeacher(teacherId);
+	@RequestMapping(value = "/contract/group/{groupId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public List<Contract> findContractsForGroup(@PathVariable int groupId) {
+		return contractService.findContractsForGroup(groupId);
 	}
 	
 	@RequestMapping(value = "/contract/customer/{customerId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)

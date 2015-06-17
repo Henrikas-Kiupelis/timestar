@@ -18,5 +18,7 @@ public interface StudentService {
 	public List<Student> findStudentsForCustomer(int customerId);
 	
 	public List<Student> findStudentsForGroup(int groupId);
+
+	public List<Student> findStudentsForLesson(long lessonId);
 	
 }

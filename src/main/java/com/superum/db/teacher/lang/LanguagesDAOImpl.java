@@ -17,11 +17,11 @@ import com.superum.db.generated.timestar.tables.records.LanguagesRecord;
 
 @Repository
 @Transactional
-public class LanguageDAOImpl implements LanguageDAO {
+public class LanguagesDAOImpl implements LanguagesDAO {
 
 	@Override
 	public Languages create(Languages languages) {
-		int teacherId = languages.getTeacherId();
+		Integer teacherId = languages.getTeacherId();
 		List<String> languageList = languages.getLanguages();
 		
 		InsertValuesStep2<LanguagesRecord, Integer, String> step = sql.insertInto(LANGUAGES, LANGUAGES.TEACHER_ID, LANGUAGES.CODE);
@@ -45,7 +45,11 @@ public class LanguageDAOImpl implements LanguageDAO {
 
 	@Override
 	public Languages update(Languages languages) {
-		throw new UnsupportedOperationException("No updating; delete the wrong ones, add new ones.");
+		int teacherId = languages.getTeacherId();
+		Languages old = delete(teacherId);
+		
+		create(languages);
+		return old;
 	}
 
 	@Override
@@ -55,7 +59,9 @@ public class LanguageDAOImpl implements LanguageDAO {
 
 	@Override
 	public Languages delete(Languages languages) {
-		int teacherId = languages.getTeacherId();
+		Integer teacherId = languages.getTeacherId();
+		Languages old = read(teacherId);
+		
 		List<String> languageList = languages.getLanguages();
 		
 		Condition condition = LANGUAGES.TEACHER_ID.eq(teacherId);
@@ -65,13 +71,14 @@ public class LanguageDAOImpl implements LanguageDAO {
 		sql.delete(LANGUAGES)
 			.where(condition)
 			.execute();
-		return languages;
+		
+		return old;
 	}
 	
 	// CONSTRUCTORS
 
 	@Autowired
-	public LanguageDAOImpl(DSLContext sql) {
+	public LanguagesDAOImpl(DSLContext sql) {
 		this.sql = sql;
 	}
 

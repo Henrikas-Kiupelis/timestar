@@ -15,9 +15,7 @@ public interface ContractService {
 	
 	Contract deleteContract(int id);
 	
-	Contract findContractForTeacherAndCustomer(int teacherId, int customerId);
-	
-	List<Contract> findContractsForTeacher(int teacherId);
+	List<Contract> findContractsForGroup(int groupId);
 	
 	List<Contract> findContractsForCustomer(int customerId);
 	

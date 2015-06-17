@@ -37,12 +37,14 @@ public class LessonServiceImpl implements LessonService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public LessonServiceImpl(LessonDAO lessonDAO) {
+	public LessonServiceImpl(LessonDAO lessonDAO, LessonQueries lessonQueries) {
 		this.lessonDAO = lessonDAO;
+		this.lessonQueries = lessonQueries;
 	}
 
 	// PRIVATE
 	
 	private final LessonDAO lessonDAO;
+	private final LessonQueries lessonQueries;
 
 }
