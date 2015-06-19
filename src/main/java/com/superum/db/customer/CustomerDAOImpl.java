@@ -2,6 +2,9 @@ package com.superum.db.customer;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -70,6 +73,14 @@ public class CustomerDAOImpl implements CustomerDAO {
 			throw new DatabaseException("Couldn't delete customer with ID: " + id);
 		
 		return old;
+	}
+	
+	@Override
+	public List<Customer> readAll() {
+		return sql.selectFrom(CUSTOMER)
+				.fetch().stream()
+				.map(Customer::valueOf)
+				.collect(Collectors.toList());
 	}
 
 	// CONSTRUCTORS

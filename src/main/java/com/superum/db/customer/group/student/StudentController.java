@@ -22,7 +22,7 @@ public class StudentController {
 		return studentService.addStudent(student);
 	}
 	
-	@RequestMapping(value = "/student/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/student/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Student findStudent(@PathVariable int id) {
 		return studentService.findStudent(id);
 	}
@@ -32,22 +32,22 @@ public class StudentController {
 		return studentService.updateStudent(student);
 	}
 	
-	@RequestMapping(value = "/student/delete/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/student/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Student deleteStudent(@PathVariable int id) {
 		return studentService.deleteStudent(id);
 	}
 	
-	@RequestMapping(value = "/student/customer/{customerId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/student/customer/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public List<Student> findStudentsForCustomer(@PathVariable int customerId) {
 		return studentService.findStudentsForCustomer(customerId);
 	}
 	
-	@RequestMapping(value = "/student/group/{groupId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/student/group/{groupId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public List<Student> findStudentsForGroup(@PathVariable int groupId) {
 		return studentService.findStudentsForGroup(groupId);
 	}
 	
-	@RequestMapping(value = "/student/lesson/{lessonId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/student/lesson/{lessonId:[d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public List<Student> findStudentsForLesson(@PathVariable long lessonId) {
 		return studentService.findStudentsForLesson(lessonId);
 	}

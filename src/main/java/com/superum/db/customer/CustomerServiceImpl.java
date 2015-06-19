@@ -32,6 +32,11 @@ public class CustomerServiceImpl implements CustomerService {
 	public List<Customer> findCustomersForTeacher(int teacherId) {
 		return customerQueries.readAllForTeacher(teacherId);
 	}
+	
+	@Override
+	public List<Customer> getAllCustomers() {
+		return customerDAO.readAll();
+	}
 
 	// CONSTRUCTORS
 	

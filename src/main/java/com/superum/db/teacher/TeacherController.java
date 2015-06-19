@@ -2,6 +2,8 @@ package com.superum.db.teacher;
 
 import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -27,7 +29,7 @@ public class TeacherController {
 		return addedTeacher;
 	}
 	
-	@RequestMapping(value = "/teacher/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Teacher findTeacher(@PathVariable int id) {
 		log.info("Request to find a teacher with ID {}", id);
 		
@@ -47,7 +49,7 @@ public class TeacherController {
 		return outdatedTeacher;
 	}
 	
-	@RequestMapping(value = "/teacher/delete/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Teacher deleteTeacher(@PathVariable int id) {
 		log.info("Request to delete a teacher with ID {}", id);
 		
@@ -55,6 +57,11 @@ public class TeacherController {
 		log.info("Teacher deleted: {}", teacher);
 		
 		return teacher;
+	}
+	
+	@RequestMapping(value = "/teacher/all", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public List<Teacher> getAllTeachers() {
+		return teacherService.getAllTeachers();
 	}
 	
 	// CONSTRUCTORS

@@ -22,7 +22,7 @@ public class GroupController {
 		return groupService.addGroup(group);
 	}
 	
-	@RequestMapping(value = "/group/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/group/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Group findGroup(@PathVariable int id) {
 		return groupService.findGroup(id);
 	}
@@ -32,12 +32,12 @@ public class GroupController {
 		return groupService.updateGroup(group);
 	}
 	
-	@RequestMapping(value = "/group/delete/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/group/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Group deleteGroup(@PathVariable int id) {
 		return groupService.deleteGroup(id);
 	}
 	
-	@RequestMapping(value = "/group/customer/{customerId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/group/customer/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public List<Group> findGroupsForCustomer(@PathVariable int customerId) {
 		return groupService.findGroupsForCustomer(customerId);
 	}

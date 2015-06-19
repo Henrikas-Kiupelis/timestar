@@ -26,8 +26,8 @@ apply plugin: 'application'
 
 mainClassName = "com.superum.TimeStarBackEndApplication"
 jar {
-    baseName = 'timeStarBackEnd'
-    version = '0.1'
+    baseName = 'timestar'
+    version = '0.1.1'
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

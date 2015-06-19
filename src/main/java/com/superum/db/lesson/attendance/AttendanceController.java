@@ -20,7 +20,7 @@ public class AttendanceController {
 		return attendanceService.addAttendanceToLesson(attendance);
 	}
 	
-	@RequestMapping(value = "/lesson/attendance/{lessonId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/lesson/attendance/{lessonId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Attendance getAttendanceForLesson(@PathVariable long lessonId) {
 		return attendanceService.getAttendanceForLesson(lessonId);
 	}
@@ -30,7 +30,7 @@ public class AttendanceController {
 		return attendanceService.updateAttendanceForLesson(attendance);
 	}
 	
-	@RequestMapping(value = "/lesson/attendance/delete/{lessonId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/lesson/attendance/delete/{lessonId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Attendance deleteAttendanceForLesson(@PathVariable long lessonId) {
 		return attendanceService.deleteAttendanceForLesson(lessonId);
 	}

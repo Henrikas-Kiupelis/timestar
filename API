@@ -21,6 +21,10 @@ GET /teacher/delete/{id}
 /teacher/delete/1
 Ištrina mokytoją (jei jis turi pamokų ar pan. - nepavyks)
 
+GET /teacher/all
+/teacher/all
+Rodo visus mokytojus
+
 ------------------------------------------------------------------------------------
 Teacher language:
 
@@ -66,6 +70,10 @@ Ištrina įmonę (jei turi pamokų ar pan. - nepavyks)
 GET /customer/teacher/{teacherId}
 /customer/teacher/1
 Rodo visas įmones tam tikram mokytojui (kur jis turi kontraktų)
+
+GET /customer/all
+/customer/all
+Rodo visas įmones
 
 ------------------------------------------------------------------------------------
 Group:

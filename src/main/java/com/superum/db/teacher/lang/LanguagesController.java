@@ -20,7 +20,7 @@ public class LanguagesController {
 		return languageService.addLanguagesToTeacher(languages);
 	}
 	
-	@RequestMapping(value = "/teacher/lang/{teacherId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/lang/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Languages getLanguagesForTeacher(@PathVariable int teacherId) {
 		return languageService.getLanguagesForTeacher(teacherId);
 	}
@@ -30,7 +30,7 @@ public class LanguagesController {
 		return languageService.updateLanguagesForTeacher(languages);
 	}
 	
-	@RequestMapping(value = "/teacher/lang/delete/{teacherId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/lang/delete/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Languages deleteLanguagesForTeacher(@PathVariable int teacherId) {
 		return languageService.deleteLanguagesForTeacher(teacherId);
 	}

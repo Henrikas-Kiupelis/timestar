@@ -1,8 +1,14 @@
 package com.superum.db.customer;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.superum.db.dao.SimpleDAO;
 
 @Repository
-public interface CustomerDAO extends SimpleDAO<Customer, Integer> {}
+public interface CustomerDAO extends SimpleDAO<Customer, Integer> {
+
+	List<Customer> readAll();
+	
+}

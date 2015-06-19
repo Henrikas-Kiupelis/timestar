@@ -22,7 +22,7 @@ public class CustomerController {
 		return customerService.addCustomer(customer);
 	}
 	
-	@RequestMapping(value = "/customer/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Customer findCustomer(@PathVariable int id) {
 		return customerService.findCustomer(id);
 	}
@@ -32,14 +32,19 @@ public class CustomerController {
 		return customerService.updateCustomer(customer);
 	}
 	
-	@RequestMapping(value = "/customer/delete/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Customer deleteCustomer(@PathVariable int id) {
 		return customerService.deleteCustomer(id);
 	}
 	
-	@RequestMapping(value = "/customer/teacher/{teacherId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public List<Customer> findCustomersForTeacher(@PathVariable int teacherId) {
 		return customerService.findCustomersForTeacher(teacherId);
+	}
+	
+	@RequestMapping(value = "/customer/all", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public List<Customer> getAllCustomers() {
+		return customerService.getAllCustomers();
 	}
 	
 	// CONSTRUCTORS

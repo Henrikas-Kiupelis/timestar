@@ -17,4 +17,6 @@ public interface CustomerService {
 	
 	List<Customer> findCustomersForTeacher(int teacherId);
 
+	List<Customer> getAllCustomers();
+
 }

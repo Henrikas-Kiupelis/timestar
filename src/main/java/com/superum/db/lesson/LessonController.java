@@ -26,7 +26,7 @@ public class LessonController {
 		return lessonService.addLesson(lesson);
 	}
 	
-	@RequestMapping(value = "/lesson/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/lesson/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Lesson findLesson(@PathVariable long id) {
 		return lessonService.findLesson(id);
 	}
@@ -36,12 +36,12 @@ public class LessonController {
 		return lessonService.updateLesson(lesson);
 	}
 	
-	@RequestMapping(value = "/lesson/delete/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/lesson/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Lesson deleteLesson(@PathVariable long id) {
 		return lessonService.deleteLesson(id);
 	}
 	
-	@RequestMapping(value = "/lesson/{table}/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/lesson/{table:(teacher|customer|group)}/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public List<Lesson> findLessonsFor(@PathVariable TableBinder table, @PathVariable int id,
 										@RequestParam(value="start", required=false) Date start,
 										@RequestParam(value="end", required=false) Date end) {

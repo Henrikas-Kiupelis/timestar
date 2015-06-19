@@ -22,7 +22,7 @@ public class ContractController {
 		return contractService.addContract(contract);
 	}
 	
-	@RequestMapping(value = "/contract/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/contract/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Contract findContract(@PathVariable int id) {
 		return contractService.findContract(id);
 	}
@@ -32,17 +32,17 @@ public class ContractController {
 		return contractService.updateContract(contract);
 	}
 	
-	@RequestMapping(value = "/contract/delete/{id}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/contract/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public Contract deleteContract(@PathVariable int id) {
 		return contractService.deleteContract(id);
 	}
 	
-	@RequestMapping(value = "/contract/group/{groupId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/contract/group/{groupId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public List<Contract> findContractsForGroup(@PathVariable int groupId) {
 		return contractService.findContractsForGroup(groupId);
 	}
 	
-	@RequestMapping(value = "/contract/customer/{customerId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/contract/customer/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	public List<Contract> findContractsForCustomer(@PathVariable int customerId) {
 		return contractService.findContractsForCustomer(customerId);
 	}

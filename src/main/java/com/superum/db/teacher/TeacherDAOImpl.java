@@ -2,6 +2,9 @@ package com.superum.db.teacher;
 
 import static com.superum.db.generated.timestar.Tables.TEACHER;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -76,6 +79,14 @@ public class TeacherDAOImpl implements TeacherDAO {
 		return old;
 	}
 
+	@Override
+	public List<Teacher> readAll() {
+		return sql.selectFrom(TEACHER)
+				.fetch().stream()
+				.map(Teacher::valueOf)
+				.collect(Collectors.toList());
+	}
+	
 	// CONSTRUCTORS
 	
 	@Autowired

@@ -1,16 +1,20 @@
 package com.superum.db.teacher;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public interface TeacherService {
 
-	public Teacher addTeacher(Teacher teacher);
+	Teacher addTeacher(Teacher teacher);
 	
-	public Teacher findTeacher(int id);
+	Teacher findTeacher(int id);
 	
-	public Teacher updateTeacher(Teacher teacher);
+	Teacher updateTeacher(Teacher teacher);
 	
-	public Teacher deleteTeacher(int id);
+	Teacher deleteTeacher(int id);
+
+	List<Teacher> getAllTeachers();
 
 }
