@@ -5,7 +5,6 @@ import static com.superum.db.generated.timestar.Tables.STUDENT_GROUP;
 import static com.superum.db.generated.timestar.Keys.CONTRACT_IBFK_1;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,8 @@ public class ContractQueriesImpl implements ContractQueries {
 				.join(STUDENT_GROUP).onKey(CONTRACT_IBFK_1)
 				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId))
 				.groupBy(CONTRACT.ID)
-				.fetch().stream()
-				.map(Contract::valueOf)
-				.collect(Collectors.toList());
+				.fetch()
+				.map(Contract::valueOf);
 	}
 	
 	// CONSTRUCTORS

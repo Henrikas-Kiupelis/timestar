@@ -36,14 +36,12 @@ public class GroupServiceImpl implements GroupService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public GroupServiceImpl(GroupDAO groupDAO, GroupQueries groupQueries) {
+	public GroupServiceImpl(GroupDAO groupDAO) {
 		this.groupDAO = groupDAO;
-		this.groupQueries = groupQueries;
 	}
 
 	// PRIVATE
 	
 	private final GroupDAO groupDAO;
-	private final GroupQueries groupQueries;
 	
 }

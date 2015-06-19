@@ -5,7 +5,6 @@ import static com.superum.db.generated.timestar.Tables.CONTRACT;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,9 +88,8 @@ public class ContractDAOImpl implements ContractDAO {
 	public List<Contract> readAllForGroup(int groupId) {
 		return sql.selectFrom(CONTRACT)
 				.where(CONTRACT.GROUP_ID.eq(groupId))
-				.fetch().stream()
-				.map(Contract::valueOf)
-				.collect(Collectors.toList());
+				.fetch()
+				.map(Contract::valueOf);
 	}
 
 	

@@ -4,7 +4,6 @@ import static com.superum.db.generated.timestar.Tables.LANGUAGES;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -37,9 +36,8 @@ public class LanguagesDAOImpl implements LanguagesDAO {
 		List<String> languages =  sql.select(LANGUAGES.CODE)
 				.from(LANGUAGES)
 				.where(LANGUAGES.TEACHER_ID.eq(teacherId))
-				.fetch().stream()
-				.map(record -> record.getValue(LANGUAGES.CODE))
-				.collect(Collectors.toList());
+				.fetch()
+				.map(record -> record.getValue(LANGUAGES.CODE));
 		return new Languages(teacherId, languages);
 	}
 

@@ -3,7 +3,6 @@ package com.superum.db.customer;
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,9 +77,8 @@ public class CustomerDAOImpl implements CustomerDAO {
 	@Override
 	public List<Customer> readAll() {
 		return sql.selectFrom(CUSTOMER)
-				.fetch().stream()
-				.map(Customer::valueOf)
-				.collect(Collectors.toList());
+				.fetch()
+				.map(Customer::valueOf);
 	}
 
 	// CONSTRUCTORS

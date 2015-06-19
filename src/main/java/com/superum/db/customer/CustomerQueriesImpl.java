@@ -5,7 +5,6 @@ import static com.superum.db.generated.timestar.Tables.LESSON;
 import static com.superum.db.generated.timestar.Keys.LESSON_IBFK_2;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,8 @@ public class CustomerQueriesImpl implements CustomerQueries {
 				.join(LESSON).onKey(LESSON_IBFK_2)
 				.where(LESSON.TEACHER_ID.eq(teacherId))
 				.groupBy(CUSTOMER.ID)
-				.fetch().stream()
-				.map(Customer::valueOf)
-				.collect(Collectors.toList());
+				.fetch()
+				.map(Customer::valueOf);
 	}
 
 	// CONSTRUCTORS

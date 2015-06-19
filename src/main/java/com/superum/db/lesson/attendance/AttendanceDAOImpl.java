@@ -4,7 +4,6 @@ import static com.superum.db.generated.timestar.Tables.ATTENDANCE;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -37,9 +36,8 @@ public class AttendanceDAOImpl implements AttendanceDAO {
 		List<Integer> studentIds =  sql.select(ATTENDANCE.STUDENT_ID)
 				.from(ATTENDANCE)
 				.where(ATTENDANCE.LESSON_ID.eq(lessonId))
-				.fetch().stream()
-				.map(record -> record.getValue(ATTENDANCE.STUDENT_ID))
-				.collect(Collectors.toList());
+				.fetch()
+				.map(record -> record.getValue(ATTENDANCE.STUDENT_ID));
 		return new Attendance(lessonId, studentIds);
 	}
 

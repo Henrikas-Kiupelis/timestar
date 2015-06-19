@@ -7,7 +7,6 @@ import static com.superum.db.generated.timestar.Keys.STUDENT_IBFK_1;
 import static com.superum.db.generated.timestar.Keys.ATTENDANCE_IBFK_2;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,8 @@ public class StudentQueriesImpl implements StudentQueries {
 				.join(STUDENT_GROUP).onKey(STUDENT_IBFK_1)
 				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId))
 				.groupBy(STUDENT.ID)
-				.fetch().stream()
-				.map(Student::valueOf)
-				.collect(Collectors.toList());
+				.fetch()
+				.map(Student::valueOf);
 	}
 	
 	@Override
@@ -37,9 +35,8 @@ public class StudentQueriesImpl implements StudentQueries {
 				.join(ATTENDANCE).onKey(ATTENDANCE_IBFK_2)
 				.where(ATTENDANCE.LESSON_ID.eq(lessonId))
 				.groupBy(STUDENT.ID)
-				.fetch().stream()
-				.map(Student::valueOf)
-				.collect(Collectors.toList());
+				.fetch()
+				.map(Student::valueOf);
 	}
 	
 	// CONSTRUCTORS
