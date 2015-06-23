@@ -3,7 +3,6 @@ package com.superum.db.customer.group;
 import static com.superum.db.generated.timestar.Tables.STUDENT_GROUP;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,9 +74,26 @@ public class GroupDAOImpl implements GroupDAO {
 	public List<Group> readAllForCustomer(int customerId) {
 		return sql.selectFrom(STUDENT_GROUP)
 				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId))
-				.fetch().stream()
-				.map(Group::valueOf)
-				.collect(Collectors.toList());
+				.fetch()
+				.map(Group::valueOf);
+	}
+	
+	@Override
+	public List<Group> readAllForTeacher(int teacherId) {
+		return sql.selectFrom(STUDENT_GROUP)
+				.where(STUDENT_GROUP.TEACHER_ID.eq(teacherId))
+				.fetch()
+				.map(Group::valueOf);
+	}
+	
+	@Override
+	public List<Group> readAllForCustomerAndTeacher(int customerId, int teacherId) {
+		return sql.select(STUDENT_GROUP.fields())
+				.from(STUDENT_GROUP)
+				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId)
+						.and(STUDENT_GROUP.TEACHER_ID.eq(teacherId)))
+				.fetch()
+				.map(Group::valueOf);
 	}
 
 	// CONSTRUCTORS

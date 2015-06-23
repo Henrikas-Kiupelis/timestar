@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.superum.db.exception.DatabaseException;
+import com.superum.utils.ConditionUtils;
 
 @Repository
 @Transactional
@@ -96,11 +97,9 @@ public class LessonDAOImpl implements LessonDAO {
 	@Override
 	public List<Lesson> readAllFrom(TableBinder table, int id, Date start, Date end) {
 		Condition condition = table.field().eq(id);
-		if (start != null)
-			condition = condition.and(LESSON.DATE_OF_LESSON.ge(start));
-		
-		if (end != null)
-			condition = condition.and(LESSON.DATE_OF_LESSON.le(end));
+		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
+		if (dateCondition != null)
+			condition = condition.and(dateCondition);
 		
 		return sql.selectFrom(LESSON)
 				.where(condition)

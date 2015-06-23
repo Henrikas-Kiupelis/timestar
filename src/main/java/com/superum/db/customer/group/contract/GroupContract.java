@@ -1,12 +1,11 @@
-package com.superum.db.contract;
+package com.superum.db.customer.group.contract;
 
-import static com.superum.db.generated.timestar.Tables.CONTRACT;
+import static com.superum.db.generated.timestar.Tables.GROUP_CONTRACT;
 
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Objects;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -19,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Contract {
+public class GroupContract {
 
 	// PUBLIC API
 
@@ -34,11 +33,6 @@ public class Contract {
 	@JsonProperty("groupId")
 	public int getGroupId() {
 		return groupId;
-	}
-	
-	@JsonProperty("paymentDay")
-	public byte getPaymentDay() {
-		return paymentDay;
 	}
 	
 	@JsonProperty("startDate")
@@ -63,7 +57,6 @@ public class Contract {
 		return StringUtils.toString(
 				"Contract ID: " + id,
 				"Group ID: " + groupId,
-				"Payment day: " + paymentDay,
 				"Contract started: " + startDate,
 				"Level: " + languageLevel,
 				"Payment value: " + paymentValue);
@@ -74,14 +67,13 @@ public class Contract {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof Contract))
+		if (!(o instanceof GroupContract))
 			return false;
 
-		Contract other = (Contract) o;
+		GroupContract other = (GroupContract) o;
 
 		return this.id == other.id
 				&& this.groupId == other.groupId
-				&& this.paymentDay == other.paymentDay
 				&& Objects.equals(this.startDate, other.startDate)
 				&& Objects.equals(this.languageLevel, other.languageLevel)
 				&& Objects.equals(this.paymentValue, other.paymentValue);
@@ -92,7 +84,6 @@ public class Contract {
 		int result = 17;
 		result = (result << 5) - result + id;
 		result = (result << 5) - result + groupId;
-		result = (result << 5) - result + paymentDay;
 		result = (result << 5) - result + (startDate == null ? 0 : startDate.hashCode());
 		result = (result << 5) - result + (languageLevel == null ? 0 : languageLevel.hashCode());
 		result = (result << 5) - result + (paymentValue == null ? 0 : paymentValue.hashCode());
@@ -102,31 +93,28 @@ public class Contract {
 	// CONSTRUCTORS
 
 	@JsonCreator
-	public Contract(@JsonProperty("id") int id, 
+	public GroupContract(@JsonProperty("id") int id, 
 					@JsonProperty("groupId") int groupId, 
-					@JsonProperty("paymentDay") byte paymentDay, 
 					@JsonProperty("startDate") Date startDate,
 					@JsonProperty("languageLevel") String languageLevel,
 					@JsonProperty("paymentValue") BigDecimal paymentValue) {
 		this.id = id;
 		this.groupId = groupId;
-		this.paymentDay = paymentDay;
 		this.startDate = startDate;
 		this.languageLevel = languageLevel;
 		this.paymentValue = paymentValue;
 	}
 	
-	public static Contract valueOf(Record contractRecord) {
+	public static GroupContract valueOf(Record contractRecord) {
 		if (contractRecord == null)
 			return null;
 		
-		int id = contractRecord.getValue(CONTRACT.ID);
-		int groupId = contractRecord.getValue(CONTRACT.GROUP_ID);
-		byte paymentDay = contractRecord.getValue(CONTRACT.PAYMENT_DAY);
-		Date startDate = contractRecord.getValue(CONTRACT.START_DATE);
-		String languageLevel = contractRecord.getValue(CONTRACT.LANGUAGE_LEVEL);
-		BigDecimal paymentValue = contractRecord.getValue(CONTRACT.PAYMENT_VALUE);
-		return new Contract(id, groupId, paymentDay, startDate, languageLevel, paymentValue);
+		int id = contractRecord.getValue(GROUP_CONTRACT.ID);
+		int groupId = contractRecord.getValue(GROUP_CONTRACT.GROUP_ID);
+		Date startDate = contractRecord.getValue(GROUP_CONTRACT.START_DATE);
+		String languageLevel = contractRecord.getValue(GROUP_CONTRACT.LANGUAGE_LEVEL);
+		BigDecimal paymentValue = contractRecord.getValue(GROUP_CONTRACT.PAYMENT_VALUE);
+		return new GroupContract(id, groupId, startDate, languageLevel, paymentValue);
 	}
 
 	// PRIVATE
@@ -136,10 +124,6 @@ public class Contract {
 	
 	@Min(value = 1, message = "The group id must be set")
 	private final int groupId;
-	
-	@Min(value = 1, message = "The payment day must be at least the first day of the month")
-	@Max(value = 31, message = "The payment day must be at most the last day of the month")
-	private final byte paymentDay;
 	
 	@NotNull(message = "There must be a start date")
 	private final Date startDate;

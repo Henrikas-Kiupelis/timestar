@@ -42,6 +42,16 @@ public class GroupController {
 		return groupService.findGroupsForCustomer(customerId);
 	}
 	
+	@RequestMapping(value = "/group/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public List<Group> findGroupsForTeacher(@PathVariable int teacherId) {
+		return groupService.findGroupsForTeacher(teacherId);
+	}
+	
+	@RequestMapping(value = "/group/customer/{customerId:[\\d]+}/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId) {
+		return groupService.findGroupsForCustomerAndTeacher(customerId, teacherId);
+	}
+	
 	// CONSTRUCTORS
 	
 	@Autowired

@@ -11,4 +11,8 @@ public interface GroupDAO extends SimpleDAO<Group, Integer> {
 
 	List<Group> readAllForCustomer(int customerId);
 	
+	List<Group> readAllForTeacher(int teacherId);
+	
+	List<Group> readAllForCustomerAndTeacher(int customerId, int teacherId);
+	
 }

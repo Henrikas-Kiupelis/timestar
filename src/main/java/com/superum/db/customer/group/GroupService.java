@@ -17,4 +17,8 @@ public interface GroupService {
 	
 	List<Group> findGroupsForCustomer(int customerId);
 	
+	List<Group> findGroupsForTeacher(int teacherId);
+	
+	List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId);
+	
 }

@@ -43,6 +43,11 @@ public class Teacher {
 		return phone;
 	}
 	
+	@JsonProperty("city")
+	public String getCity() {
+		return city;
+	}
+	
 	@JsonProperty("comment")
 	public String getComment() {
 		return comment;
@@ -57,6 +62,7 @@ public class Teacher {
 				"Name: " + name,
 				"Surname: " + surname,
 				"Phone: " + phone,
+				"City: " + city,
 				"Comment: " + comment);
 	}
 
@@ -74,6 +80,7 @@ public class Teacher {
 				&& Objects.equals(this.name, other.name)
 				&& Objects.equals(this.surname, other.surname)
 				&& Objects.equals(this.phone, other.phone)
+				&& Objects.equals(this.city, other.city)
 				&& Objects.equals(this.comment, other.comment);
 	}
 
@@ -84,6 +91,7 @@ public class Teacher {
 		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
 		result = (result << 5) - result + (surname == null ? 0 : surname.hashCode());
 		result = (result << 5) - result + (phone == null ? 0 : phone.hashCode());
+		result = (result << 5) - result + (city == null ? 0 : city.hashCode());
 		result = (result << 5) - result + (comment == null ? 0 : comment.hashCode());
 		return result;
 	}
@@ -95,11 +103,13 @@ public class Teacher {
 					@JsonProperty("name") String name, 
 					@JsonProperty("surname") String surname, 
 					@JsonProperty("phone") String phone, 
+					@JsonProperty("city") String city,
 					@JsonProperty("comment") String comment) {
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.phone = phone;
+		this.city = city;
 		this.comment = comment;
 	}
 	
@@ -111,8 +121,9 @@ public class Teacher {
 		String name = teacherRecord.getValue(TEACHER.NAME);
 		String surname = teacherRecord.getValue(TEACHER.SURNAME);
 		String phone = teacherRecord.getValue(TEACHER.PHONE);
+		String city = teacherRecord.getValue(TEACHER.CITY);
 		String comment = teacherRecord.getValue(TEACHER.COMMENT_ABOUT);
-		return new Teacher(id, name, surname, phone, comment);
+		return new Teacher(id, name, surname, phone, city, comment);
 	}
 
 	// PRIVATE
@@ -131,6 +142,10 @@ public class Teacher {
 	@NotNull(message = "The teacher must have a phone")
 	@Size(max = 30, message = "Phone size must not exceed 30 characters")
 	private final String phone;
+	
+	@NotNull(message = "The teacher must have a city")
+	@Size(max = 30, message = "City size must not exceed 30 characters")
+	private final String city;
 	
 	@NotNull(message = "The teacher must have a comment, even if empty")
 	@Size(max = 500, message = "The comment must not exceed 500 characters")

@@ -20,12 +20,14 @@ public class TeacherDAOImpl implements TeacherDAO {
 		String name = teacher.getName();
 		String surname = teacher.getSurname();
 		String phone = teacher.getPhone();
+		String city = teacher.getCity();
 		String comment = teacher.getComment();
 
 		return sql.insertInto(TEACHER)
 				.set(TEACHER.NAME, name)
 				.set(TEACHER.SURNAME, surname)
 				.set(TEACHER.PHONE, phone)
+				.set(TEACHER.CITY, city)
 				.set(TEACHER.COMMENT_ABOUT, comment)
 				.returning()
 				.fetch().stream()
@@ -50,6 +52,7 @@ public class TeacherDAOImpl implements TeacherDAO {
 		String name = teacher.getName();
 		String surname = teacher.getSurname();
 		String phone = teacher.getPhone();
+		String city = teacher.getCity();
 		String comment = teacher.getComment();
 		
 		Teacher old = read(id);
@@ -58,6 +61,7 @@ public class TeacherDAOImpl implements TeacherDAO {
 			.set(TEACHER.NAME, name)
 			.set(TEACHER.SURNAME, surname)
 			.set(TEACHER.PHONE, phone)
+			.set(TEACHER.CITY, city)
 			.set(TEACHER.COMMENT_ABOUT, comment)
 			.where(TEACHER.ID.eq(id))
 			.execute();

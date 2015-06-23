@@ -32,6 +32,16 @@ public class GroupServiceImpl implements GroupService {
 	public List<Group> findGroupsForCustomer(int customerId) {
 		return groupDAO.readAllForCustomer(customerId);
 	}
+	
+	@Override
+	public List<Group> findGroupsForTeacher(int teacherId) {
+		return groupDAO.readAllForTeacher(teacherId);
+	}
+	
+	@Override
+	public List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId) {
+		return groupDAO.readAllForCustomerAndTeacher(customerId, teacherId);
+	}
 
 	// CONSTRUCTORS
 
