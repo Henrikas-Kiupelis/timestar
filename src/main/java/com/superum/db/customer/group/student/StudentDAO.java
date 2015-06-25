@@ -11,4 +11,6 @@ public interface StudentDAO extends SimpleDAO<Student, Integer> {
 	
 	List<Student> readAllForGroup(int groupId);
 	
+	List<Student> readAllForCustomer(int customerId);
+	
 }

@@ -10,6 +10,8 @@ import com.superum.db.dao.SimpleDAO;
 @Repository
 public interface LessonDAO extends SimpleDAO<Lesson, Long> {
 
-	List<Lesson> readAllFrom(TableBinder table, int id, Date start, Date end);
+	List<Lesson> readAllForTeacher(int teacherId, Date start, Date end);
+	
+	List<Lesson> readAllForGroup(int groupId, Date start, Date end);
 	
 }

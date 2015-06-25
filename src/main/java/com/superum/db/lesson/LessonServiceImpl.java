@@ -30,19 +30,31 @@ public class LessonServiceImpl implements LessonService {
 	}
 
 	@Override
-	public List<Lesson> findLessonsFor(TableBinder table, int id, Date start, Date end) {
-		return lessonDAO.readAllFrom(table, id, start, end);
+	public List<Lesson> findLessonsForTeacher(int teacherId, Date start, Date end) {
+		return lessonDAO.readAllForTeacher(teacherId, start, end);
+	}
+	
+	@Override
+	public List<Lesson> findLessonsForGroup(int groupId, Date start, Date end) {
+		return lessonDAO.readAllForGroup(groupId, start, end);
+	}
+	
+	@Override
+	public List<Lesson> findLessonsForCustomer(int customerId, Date start, Date end) {
+		return lessonQueries.readAllForCustomer(customerId, start, end);
 	}
 
 	// CONSTRUCTORS
 
 	@Autowired
-	public LessonServiceImpl(LessonDAO lessonDAO) {
+	public LessonServiceImpl(LessonDAO lessonDAO, LessonQueries lessonQueries) {
 		this.lessonDAO = lessonDAO;
+		this.lessonQueries = lessonQueries;
 	}
 
 	// PRIVATE
 	
 	private final LessonDAO lessonDAO;
+	private final LessonQueries lessonQueries;
 
 }

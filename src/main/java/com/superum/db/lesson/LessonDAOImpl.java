@@ -21,7 +21,6 @@ public class LessonDAOImpl implements LessonDAO {
 	@Override
 	public Lesson create(Lesson lesson) {
 		int teacherId = lesson.getTeacherId();
-		int customerId = lesson.getCustomerId();
 		int groupId = lesson.getGroupId();
 		Date date = lesson.getDate();
 		short time = lesson.getTime();
@@ -30,7 +29,6 @@ public class LessonDAOImpl implements LessonDAO {
 		
 		return sql.insertInto(LESSON)
 				.set(LESSON.TEACHER_ID, teacherId)
-				.set(LESSON.CUSTOMER_ID, customerId)
 				.set(LESSON.GROUP_ID, groupId)
 				.set(LESSON.DATE_OF_LESSON, date)
 				.set(LESSON.TIME_OF_LESSON, time)
@@ -57,7 +55,6 @@ public class LessonDAOImpl implements LessonDAO {
 	public Lesson update(Lesson lesson) {
 		long id = lesson.getId();
 		int teacherId = lesson.getTeacherId();
-		int customerId = lesson.getCustomerId();
 		int groupId = lesson.getGroupId();
 		Date date = lesson.getDate();
 		short time = lesson.getTime();
@@ -68,7 +65,6 @@ public class LessonDAOImpl implements LessonDAO {
 		
 		sql.update(LESSON)
 			.set(LESSON.TEACHER_ID, teacherId)
-			.set(LESSON.CUSTOMER_ID, customerId)
 			.set(LESSON.GROUP_ID, groupId)
 			.set(LESSON.DATE_OF_LESSON, date)
 			.set(LESSON.TIME_OF_LESSON, time)
@@ -94,8 +90,22 @@ public class LessonDAOImpl implements LessonDAO {
 	}
 
 	@Override
-	public List<Lesson> readAllFrom(TableBinder table, int id, Date start, Date end) {
-		Condition condition = table.field().eq(id);
+	public List<Lesson> readAllForTeacher(int teacherId, Date start, Date end) {
+		Condition condition = LESSON.TEACHER_ID.eq(teacherId);
+		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
+		if (dateCondition != null)
+			condition = condition.and(dateCondition);
+		
+		return sql.selectFrom(LESSON)
+				.where(condition)
+				.orderBy(LESSON.ID)
+				.fetch()
+				.map(Lesson::valueOf);
+	}
+	
+	@Override
+	public List<Lesson> readAllForGroup(int groupId, Date start, Date end) {
+		Condition condition = LESSON.GROUP_ID.eq(groupId);
 		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
 		if (dateCondition != null)
 			condition = condition.and(dateCondition);

@@ -29,7 +29,7 @@ public class TeacherContractDAOImpl implements TeacherContractDAO {
 	@Override
 	public TeacherContract read(Integer id) {
 		return sql.selectFrom(TEACHER_CONTRACT)
-				.where(TEACHER_CONTRACT.ID.eq(id))
+				.where(TEACHER_CONTRACT.TEACHER_ID.eq(id))
 				.fetch().stream()
 				.findFirst()
 				.map(TeacherContract::valueOf)
@@ -45,7 +45,7 @@ public class TeacherContractDAOImpl implements TeacherContractDAO {
 		
 		sql.update(TEACHER_CONTRACT)
 			.set(TEACHER_CONTRACT.PAYMENT_DAY, paymentDay)
-			.where(TEACHER_CONTRACT.ID.eq(id))
+			.where(TEACHER_CONTRACT.TEACHER_ID.eq(id))
 			.execute();
 		
 		return old;
@@ -56,7 +56,7 @@ public class TeacherContractDAOImpl implements TeacherContractDAO {
 		TeacherContract old = read(id);
 		
 		int result = sql.delete(TEACHER_CONTRACT)
-				.where(TEACHER_CONTRACT.ID.eq(id))
+				.where(TEACHER_CONTRACT.TEACHER_ID.eq(id))
 				.execute();
 		if (result == 0)
 			throw new DatabaseException("Couldn't delete contract with ID: " + id);

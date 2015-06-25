@@ -17,11 +17,11 @@ public class GroupDAOImpl implements GroupDAO {
 
 	@Override
 	public Group create(Group group) {
-		int customerId = group.getCustomerId();
+		Integer teacherId = group.getTeacherId();
 		String name = group.getName();
 		
 		return sql.insertInto(STUDENT_GROUP)
-				.set(STUDENT_GROUP.CUSTOMER_ID, customerId)
+				.set(STUDENT_GROUP.TEACHER_ID, teacherId)
 				.set(STUDENT_GROUP.NAME, name)
 				.returning()
 				.fetch().stream()
@@ -43,13 +43,13 @@ public class GroupDAOImpl implements GroupDAO {
 	@Override
 	public Group update(Group group) {
 		int id = group.getId();
-		int customerId = group.getCustomerId();
+		Integer teacherId = group.getTeacherId();
 		String name = group.getName();
 		
 		Group old = read(id);
 		
 		sql.update(STUDENT_GROUP)
-			.set(STUDENT_GROUP.CUSTOMER_ID, customerId)
+			.set(STUDENT_GROUP.TEACHER_ID, teacherId)
 			.set(STUDENT_GROUP.NAME, name)
 			.where(STUDENT_GROUP.ID.eq(id))
 			.execute();
@@ -69,31 +69,11 @@ public class GroupDAOImpl implements GroupDAO {
 		
 		return old;
 	}
-
-	@Override
-	public List<Group> readAllForCustomer(int customerId) {
-		return sql.selectFrom(STUDENT_GROUP)
-				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId))
-				.orderBy(STUDENT_GROUP.ID)
-				.fetch()
-				.map(Group::valueOf);
-	}
 	
 	@Override
 	public List<Group> readAllForTeacher(int teacherId) {
 		return sql.selectFrom(STUDENT_GROUP)
 				.where(STUDENT_GROUP.TEACHER_ID.eq(teacherId))
-				.orderBy(STUDENT_GROUP.ID)
-				.fetch()
-				.map(Group::valueOf);
-	}
-	
-	@Override
-	public List<Group> readAllForCustomerAndTeacher(int customerId, int teacherId) {
-		return sql.select(STUDENT_GROUP.fields())
-				.from(STUDENT_GROUP)
-				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId)
-						.and(STUDENT_GROUP.TEACHER_ID.eq(teacherId)))
 				.orderBy(STUDENT_GROUP.ID)
 				.fetch()
 				.map(Group::valueOf);

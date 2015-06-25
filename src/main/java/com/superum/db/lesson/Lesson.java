@@ -36,11 +36,6 @@ public class Lesson {
 		return teacherId;
 	}
 	
-	@JsonProperty("customerId")
-	public int getCustomerId() {
-		return customerId;
-	}
-	
 	@JsonProperty("groupId")
 	public int getGroupId() {
 		return groupId;
@@ -83,7 +78,6 @@ public class Lesson {
 		return StringUtils.toString(
 				"Lesson ID: " + id,
 				"Teacher ID: " + teacherId,
-				"Customer ID: " + customerId,
 				"Group ID: " + groupId,
 				"Date: " + date,
 				"Time: " + hour + ":" + minute,
@@ -103,7 +97,6 @@ public class Lesson {
 
 		return this.id == other.id
 				&& this.teacherId == other.teacherId
-				&& this.customerId == other.customerId
 				&& this.groupId == other.groupId
 				&& this.hour == other.hour
 				&& this.minute == other.minute
@@ -117,7 +110,6 @@ public class Lesson {
 		int result = 17;
 		result = (result << 5) - result + (int)id;
 		result = (result << 5) - result + teacherId;
-		result = (result << 5) - result + customerId;
 		result = (result << 5) - result + groupId;
 		result = (result << 5) - result + hour;
 		result = (result << 5) - result + minute;
@@ -131,7 +123,6 @@ public class Lesson {
 
 	public Lesson(@JsonProperty("id") long id, 
 				@JsonProperty("teacherId") int teacherId, 
-				@JsonProperty("customerId") int customerId, 
 				@JsonProperty("groupId") int groupId, 
 				@JsonProperty("date") Date date, 
 				@JsonProperty("hour") byte hour, 
@@ -140,7 +131,6 @@ public class Lesson {
 				@JsonProperty("comment") String comment) {
 		this.id = id;
 		this.teacherId = teacherId;
-		this.customerId = customerId;
 		this.groupId = groupId;
 		this.date = date;
 		this.hour = hour;
@@ -155,7 +145,6 @@ public class Lesson {
 		
 		long id = lessonRecord.getValue(LESSON.ID);
 		int teacherId = lessonRecord.getValue(LESSON.TEACHER_ID);
-		int customerId = lessonRecord.getValue(LESSON.CUSTOMER_ID);
 		int groupId = lessonRecord.getValue(LESSON.GROUP_ID);
 		Date date = lessonRecord.getValue(LESSON.DATE_OF_LESSON);
 		short time = lessonRecord.getValue(LESSON.TIME_OF_LESSON);
@@ -163,7 +152,7 @@ public class Lesson {
 		byte minute = minute(time);
 		short length = lessonRecord.getValue(LESSON.LENGTH_IN_MINUTES);
 		String comment = lessonRecord.getValue(LESSON.COMMENT_ABOUT);
-		return new Lesson(id, teacherId, customerId, groupId, date, hour, minute, length, comment);
+		return new Lesson(id, teacherId, groupId, date, hour, minute, length, comment);
 	}
 
 	// PRIVATE
@@ -173,9 +162,6 @@ public class Lesson {
 	
 	@Min(value = 1, message = "The teacher id must be set")
 	private final int teacherId;
-	
-	@Min(value = 1, message = "The customer id must be set")
-	private final int customerId;
 	
 	@Min(value = 1, message = "The group id must be set")
 	private final int groupId;

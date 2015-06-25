@@ -28,9 +28,9 @@ public class Group {
 		return id > 0;
 	}
 	
-	@JsonProperty("customerId")
-	public int getCustomerId() {
-		return customerId;
+	@JsonProperty("teacherId")
+	public Integer getTeacherId() {
+		return teacherId;
 	}
 	
 	@JsonProperty("name")
@@ -44,7 +44,7 @@ public class Group {
 	public String toString() {
 		return StringUtils.toString(
 				"Group ID: " + id,
-				"Customer ID: " + customerId,
+				"Teacher ID: " + teacherId,
 				"Name: " + name);
 	}
 
@@ -59,7 +59,7 @@ public class Group {
 		Group other = (Group) o;
 
 		return this.id == other.id
-				&& this.customerId == other.customerId
+				&& Objects.equals(this.teacherId, other.teacherId)
 				&& Objects.equals(this.name, other.name);
 	}
 
@@ -67,7 +67,7 @@ public class Group {
 	public int hashCode() {
 		int result = 17;
 		result = (result << 5) - result + id;
-		result = (result << 5) - result + customerId;
+		result = (result << 5) - result + (teacherId == null ? 0 : teacherId);
 		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
 		return result;
 	}
@@ -76,10 +76,10 @@ public class Group {
 
 	@JsonCreator
 	public Group(@JsonProperty("id") int id,
-				@JsonProperty("customerId") int customerId,
+				@JsonProperty("teacherId") Integer teacherId,
 				@JsonProperty("name") String name) {
 		this.id = id;
-		this.customerId = customerId;
+		this.teacherId = teacherId;
 		this.name = name;
 	}
 	
@@ -88,9 +88,9 @@ public class Group {
 			return null;
 		
 		int id = groupRecord.getValue(STUDENT_GROUP.ID);
-		int customerId = groupRecord.getValue(STUDENT_GROUP.CUSTOMER_ID);
+		Integer teacherId = groupRecord.getValue(STUDENT_GROUP.TEACHER_ID);
 		String name = groupRecord.getValue(STUDENT_GROUP.NAME);
-		return new Group(id, customerId, name);
+		return new Group(id, teacherId, name);
 	}
 
 	// PRIVATE
@@ -98,8 +98,7 @@ public class Group {
 	@Min(value = 0, message = "Negative group ids not allowed")
 	private final int id;
 	
-	@Min(value = 1, message = "The customer id must be set")
-	private final int customerId;
+	private final Integer teacherId;
 	
 	@NotNull(message = "The group must have a name")
 	@Size(max = 30, message = "Name size must not exceed 30 characters")

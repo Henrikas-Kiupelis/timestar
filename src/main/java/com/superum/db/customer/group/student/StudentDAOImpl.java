@@ -18,10 +18,12 @@ public class StudentDAOImpl implements StudentDAO {
 	@Override
 	public Student create(Student student) {
 		int groupId = student.getGroupId();
+		int customerId = student.getCustomerId();
 		String name = student.getName();
 
 		return sql.insertInto(STUDENT)
 				.set(STUDENT.GROUP_ID, groupId)
+				.set(STUDENT.CUSTOMER_ID, customerId)
 				.set(STUDENT.NAME, name)
 				.returning()
 				.fetch().stream()
@@ -44,12 +46,14 @@ public class StudentDAOImpl implements StudentDAO {
 	public Student update(Student student) {
 		int id = student.getId();
 		int groupId = student.getGroupId();
+		int customerId = student.getCustomerId();
 		String name = student.getName();
 		
 		Student old = read(id);
 		
 		sql.update(STUDENT)
 			.set(STUDENT.GROUP_ID, groupId)
+			.set(STUDENT.CUSTOMER_ID, customerId)
 			.set(STUDENT.NAME, name)
 			.where(STUDENT.ID.eq(id))
 			.execute();
@@ -74,6 +78,15 @@ public class StudentDAOImpl implements StudentDAO {
 	public List<Student> readAllForGroup(int groupId) {
 		return sql.selectFrom(STUDENT)
 				.where(STUDENT.GROUP_ID.eq(groupId))
+				.orderBy(STUDENT.ID)
+				.fetch()
+				.map(Student::valueOf);
+	}
+	
+	@Override
+	public List<Student> readAllForCustomer(int customerId) {
+		return sql.selectFrom(STUDENT)
+				.where(STUDENT.CUSTOMER_ID.eq(customerId))
 				.orderBy(STUDENT.ID)
 				.fetch()
 				.map(Student::valueOf);

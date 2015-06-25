@@ -16,6 +16,10 @@ public interface LessonService {
 	
 	Lesson deleteLesson(long id);
 	
-	List<Lesson> findLessonsFor(TableBinder table, int id, Date start, Date end);
+	List<Lesson> findLessonsForTeacher(int teacherId, Date start, Date end);
+	
+	List<Lesson> findLessonsForGroup(int groupId, Date start, Date end);
+	
+	List<Lesson> findLessonsForCustomer(int customerId, Date start, Date end);
 	
 }

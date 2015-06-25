@@ -30,7 +30,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public List<Group> findGroupsForCustomer(int customerId) {
-		return groupDAO.readAllForCustomer(customerId);
+		return groupQueries.readAllForCustomer(customerId);
 	}
 	
 	@Override
@@ -40,18 +40,20 @@ public class GroupServiceImpl implements GroupService {
 	
 	@Override
 	public List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId) {
-		return groupDAO.readAllForCustomerAndTeacher(customerId, teacherId);
+		return groupQueries.readAllForCustomerAndTeacher(customerId, teacherId);
 	}
 
 	// CONSTRUCTORS
 
 	@Autowired
-	public GroupServiceImpl(GroupDAO groupDAO) {
+	public GroupServiceImpl(GroupDAO groupDAO, GroupQueries groupQueries) {
 		this.groupDAO = groupDAO;
+		this.groupQueries = groupQueries;
 	}
 
 	// PRIVATE
 	
 	private final GroupDAO groupDAO;
+	private final GroupQueries groupQueries;
 	
 }

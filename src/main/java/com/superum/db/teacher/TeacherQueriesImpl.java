@@ -10,7 +10,7 @@ import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.Result;
+import org.jooq.SelectHavingStep;
 import org.jooq.SelectJoinStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,11 +29,11 @@ public class TeacherQueriesImpl implements TeacherQueries {
 				.join(LESSON).onKey(LESSON_IBFK_1);
 		
 		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
-		Result<Record> result = dateCondition == null
-				? join.groupBy(TEACHER.ID).fetch()
-				: join.where(dateCondition).groupBy(TEACHER.ID).fetch();
+		SelectHavingStep<Record> result = dateCondition == null
+				? join.groupBy(TEACHER.ID)
+				: join.where(dateCondition).groupBy(TEACHER.ID);
 		
-		return result.map(Teacher::valueOf);
+		return result.orderBy(TEACHER.ID).fetch().map(Teacher::valueOf);
 	}
 
 	// CONSTRUCTORS

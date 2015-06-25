@@ -8,8 +8,6 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,18 +39,25 @@ public class LessonController {
 		return lessonService.deleteLesson(id);
 	}
 	
-	@RequestMapping(value = "/lesson/{table:(teacher|customer|group)}/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
-	public List<Lesson> findLessonsFor(@PathVariable TableBinder table, @PathVariable int id,
-										@RequestParam(value="start", required=false) Date start,
-										@RequestParam(value="end", required=false) Date end) {
-		return lessonService.findLessonsFor(table, id, start, end);
+	@RequestMapping(value = "/lesson/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public List<Lesson> findLessonsForTeacher(@PathVariable int teacherId,
+											  @RequestParam(value="start", required=false) Date start,
+											  @RequestParam(value="end", required=false) Date end) {
+		return lessonService.findLessonsForTeacher(teacherId, start, end);
 	}
 	
-	// BINDERS
-
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-	    binder.registerCustomEditor(TableBinder.class, TableBinder.propertyEditorSupport());
+	@RequestMapping(value = "/lesson/customer/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public List<Lesson> findLessonsForCustomer(@PathVariable int customerId,
+											   @RequestParam(value="start", required=false) Date start,
+											   @RequestParam(value="end", required=false) Date end) {
+		return lessonService.findLessonsForCustomer(customerId, start, end);
+	}
+	
+	@RequestMapping(value = "/lesson/group/{groupId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	public List<Lesson> findLessonsForGroup(@PathVariable int groupId,
+											@RequestParam(value="start", required=false) Date start,
+											@RequestParam(value="end", required=false) Date end) {
+		return lessonService.findLessonsForGroup(groupId, start, end);
 	}
 	
 	// CONSTRUCTORS

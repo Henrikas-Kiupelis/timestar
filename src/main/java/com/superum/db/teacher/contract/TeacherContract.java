@@ -74,7 +74,7 @@ public class TeacherContract {
 		if (contractRecord == null)
 			return null;
 		
-		int id = contractRecord.getValue(TEACHER_CONTRACT.ID);
+		int id = contractRecord.getValue(TEACHER_CONTRACT.TEACHER_ID);
 		byte paymentDay = contractRecord.getValue(TEACHER_CONTRACT.PAYMENT_DAY);
 		return new TeacherContract(id, paymentDay);
 	}

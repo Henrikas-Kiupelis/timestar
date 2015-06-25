@@ -30,7 +30,7 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public List<Student> findStudentsForCustomer(int customerId) {
-		return studentQueries.readAllForCustomer(customerId);
+		return studentDAO.readAllForCustomer(customerId);
 	}
 
 	@Override

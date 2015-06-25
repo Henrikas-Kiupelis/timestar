@@ -1,10 +1,11 @@
 package com.superum.db.customer;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
+import static com.superum.db.generated.timestar.Tables.STUDENT;
 import static com.superum.db.generated.timestar.Tables.STUDENT_GROUP;
 import static com.superum.db.generated.timestar.Tables.LESSON;
-import static com.superum.db.generated.timestar.Keys.STUDENT_GROUP_IBFK_1;
-import static com.superum.db.generated.timestar.Keys.LESSON_IBFK_2;
+import static com.superum.db.generated.timestar.Keys.STUDENT_IBFK_2;
+import static com.superum.db.generated.timestar.Keys.STUDENT_IBFK_1;
 
 import java.sql.Date;
 import java.util.List;
@@ -28,7 +29,8 @@ public class CustomerQueriesImpl implements CustomerQueries {
 	public List<Customer> readAllForTeacher(int teacherId) {
 		return sql.select(CUSTOMER.fields())
 				.from(CUSTOMER)
-				.join(STUDENT_GROUP).onKey(STUDENT_GROUP_IBFK_1)
+				.join(STUDENT).onKey(STUDENT_IBFK_2)
+				.join(STUDENT_GROUP).onKey(STUDENT_IBFK_1)
 				.where(STUDENT_GROUP.TEACHER_ID.eq(teacherId))
 				.groupBy(CUSTOMER.ID)
 				.orderBy(CUSTOMER.ID)
@@ -40,7 +42,9 @@ public class CustomerQueriesImpl implements CustomerQueries {
 	public List<Customer> readAllForLessons(Date start, Date end) {
 		SelectJoinStep<Record> step1 = sql.select(CUSTOMER.fields())
 				.from(CUSTOMER)
-				.join(LESSON).onKey(LESSON_IBFK_2);
+				.join(STUDENT).onKey(STUDENT_IBFK_2)
+				.join(LESSON)
+				.on(STUDENT.GROUP_ID.eq(LESSON.GROUP_ID));
 		
 		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
 		SelectHavingStep<Record> step2 = dateCondition == null

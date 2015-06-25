@@ -33,6 +33,11 @@ public class Student {
 		return groupId;
 	}
 	
+	@JsonProperty("customerId")
+	public int getCustomerId() {
+		return customerId;
+	}
+	
 	@JsonProperty("name")
 	public String getName() {
 		return name;
@@ -45,6 +50,7 @@ public class Student {
 		return StringUtils.toString(
 				"Student ID: " + id,
 				"Group ID: " + groupId,
+				"Customer ID: " + customerId, 
 				"Name: " + name);
 	}
 
@@ -60,6 +66,7 @@ public class Student {
 
 		return this.id == other.id
 				&& this.groupId == other.groupId
+				&& this.customerId == other.customerId
 				&& Objects.equals(this.name, other.name);
 	}
 
@@ -68,6 +75,7 @@ public class Student {
 		int result = 17;
 		result = (result << 5) - result + id;
 		result = (result << 5) - result + groupId;
+		result = (result << 5) - result + customerId;
 		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
 		return result;
 	}
@@ -77,9 +85,11 @@ public class Student {
 	@JsonCreator
 	public Student(@JsonProperty("id") int id, 
 					@JsonProperty("groupId") int groupId, 
+					@JsonProperty("customerId") int customerId, 
 					@JsonProperty("name") String name) {
 		this.id = id;
 		this.groupId = groupId;
+		this.customerId = customerId;
 		this.name = name;
 	}
 	
@@ -89,8 +99,9 @@ public class Student {
 		
 		int id = studentRecord.getValue(STUDENT.ID);
 		int groupId = studentRecord.getValue(STUDENT.GROUP_ID);
+		int customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
 		String name = studentRecord.getValue(STUDENT.NAME);
-		return new Student(id, groupId, name);
+		return new Student(id, groupId, customerId, name);
 	}
 
 	// PRIVATE
@@ -100,6 +111,9 @@ public class Student {
 	
 	@Min(value = 1, message = "The group id must be set")
 	private final int groupId;
+	
+	@Min(value = 1, message = "The customer id must be set")
+	private final int customerId;
 	
 	@NotNull(message = "The student must have a name")
 	@Size(max = 60, message = "Name size must not exceed 60 characters")
