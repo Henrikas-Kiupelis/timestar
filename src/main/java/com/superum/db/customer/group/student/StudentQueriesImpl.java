@@ -24,6 +24,7 @@ public class StudentQueriesImpl implements StudentQueries {
 				.join(STUDENT_GROUP).onKey(STUDENT_IBFK_1)
 				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId))
 				.groupBy(STUDENT.ID)
+				.orderBy(STUDENT.ID)
 				.fetch()
 				.map(Student::valueOf);
 	}
@@ -35,6 +36,7 @@ public class StudentQueriesImpl implements StudentQueries {
 				.join(ATTENDANCE).onKey(ATTENDANCE_IBFK_2)
 				.where(ATTENDANCE.LESSON_ID.eq(lessonId))
 				.groupBy(STUDENT.ID)
+				.orderBy(STUDENT.ID)
 				.fetch()
 				.map(Student::valueOf);
 	}

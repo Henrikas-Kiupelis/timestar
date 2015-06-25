@@ -22,6 +22,7 @@ public class GroupContractQueriesImpl implements GroupContractQueries {
 				.join(STUDENT_GROUP).onKey(GROUP_CONTRACT_IBFK_1)
 				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId))
 				.groupBy(GROUP_CONTRACT.ID)
+				.orderBy(GROUP_CONTRACT.ID)
 				.fetch()
 				.map(GroupContract::valueOf);
 	}

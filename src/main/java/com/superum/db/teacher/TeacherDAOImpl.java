@@ -85,6 +85,17 @@ public class TeacherDAOImpl implements TeacherDAO {
 	@Override
 	public List<Teacher> readAll() {
 		return sql.selectFrom(TEACHER)
+				.orderBy(TEACHER.ID)
+				.fetch()
+				.map(Teacher::valueOf);
+	}
+	
+	@Override
+	public List<Teacher> readSome(int amount, int offset) {
+		return sql.selectFrom(TEACHER)
+				.orderBy(TEACHER.ID)
+				.limit(amount)
+				.offset(offset)
 				.fetch()
 				.map(Teacher::valueOf);
 	}

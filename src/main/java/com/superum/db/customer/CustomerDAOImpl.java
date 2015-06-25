@@ -81,6 +81,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 	@Override
 	public List<Customer> readAll() {
 		return sql.selectFrom(CUSTOMER)
+				.orderBy(CUSTOMER.ID)
 				.fetch()
 				.map(Customer::valueOf);
 	}

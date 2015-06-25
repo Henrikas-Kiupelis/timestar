@@ -79,5 +79,6 @@ public class TeacherLessonData {
 	private final List<Long> lessonIds;
 	private final int duration;
 	private final BigDecimal cost;
+	
 
 }

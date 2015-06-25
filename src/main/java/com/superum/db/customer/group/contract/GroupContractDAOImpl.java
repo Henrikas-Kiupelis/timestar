@@ -84,6 +84,7 @@ public class GroupContractDAOImpl implements GroupContractDAO {
 	public List<GroupContract> readAllForGroup(int groupId) {
 		return sql.selectFrom(GROUP_CONTRACT)
 				.where(GROUP_CONTRACT.GROUP_ID.eq(groupId))
+				.orderBy(GROUP_CONTRACT.ID)
 				.fetch()
 				.map(GroupContract::valueOf);
 	}

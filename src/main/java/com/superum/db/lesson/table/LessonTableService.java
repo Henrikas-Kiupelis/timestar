@@ -9,6 +9,6 @@ import com.superum.db.lesson.table.core.LessonTable;
 @Service
 public interface LessonTableService {
 
-	public LessonTable lessonData(Date start, Date end);
+	public LessonTable lessonData(int amount, int offset, Date start, Date end);
 	
 }

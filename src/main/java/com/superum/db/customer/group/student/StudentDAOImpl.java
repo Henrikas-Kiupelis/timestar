@@ -74,6 +74,7 @@ public class StudentDAOImpl implements StudentDAO {
 	public List<Student> readAllForGroup(int groupId) {
 		return sql.selectFrom(STUDENT)
 				.where(STUDENT.GROUP_ID.eq(groupId))
+				.orderBy(STUDENT.ID)
 				.fetch()
 				.map(Student::valueOf);
 	}

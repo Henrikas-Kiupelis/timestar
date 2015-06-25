@@ -4,7 +4,6 @@ import static com.superum.db.generated.timestar.Tables.LESSON;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -103,9 +102,9 @@ public class LessonDAOImpl implements LessonDAO {
 		
 		return sql.selectFrom(LESSON)
 				.where(condition)
-				.fetch().stream()
-				.map(Lesson::valueOf)
-				.collect(Collectors.toList());
+				.orderBy(LESSON.ID)
+				.fetch()
+				.map(Lesson::valueOf);
 	}
 
 	// CONSTRUCTORS

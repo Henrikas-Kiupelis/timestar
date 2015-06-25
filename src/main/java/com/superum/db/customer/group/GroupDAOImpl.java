@@ -74,6 +74,7 @@ public class GroupDAOImpl implements GroupDAO {
 	public List<Group> readAllForCustomer(int customerId) {
 		return sql.selectFrom(STUDENT_GROUP)
 				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId))
+				.orderBy(STUDENT_GROUP.ID)
 				.fetch()
 				.map(Group::valueOf);
 	}
@@ -82,6 +83,7 @@ public class GroupDAOImpl implements GroupDAO {
 	public List<Group> readAllForTeacher(int teacherId) {
 		return sql.selectFrom(STUDENT_GROUP)
 				.where(STUDENT_GROUP.TEACHER_ID.eq(teacherId))
+				.orderBy(STUDENT_GROUP.ID)
 				.fetch()
 				.map(Group::valueOf);
 	}
@@ -92,6 +94,7 @@ public class GroupDAOImpl implements GroupDAO {
 				.from(STUDENT_GROUP)
 				.where(STUDENT_GROUP.CUSTOMER_ID.eq(customerId)
 						.and(STUDENT_GROUP.TEACHER_ID.eq(teacherId)))
+				.orderBy(STUDENT_GROUP.ID)
 				.fetch()
 				.map(Group::valueOf);
 	}
