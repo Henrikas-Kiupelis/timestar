@@ -3,6 +3,8 @@ package com.superum.db.lesson.table.core;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -86,9 +88,16 @@ public class CustomerLessonData {
 
 	// PRIVATE
 	
+	@NotNull
 	private final Customer customer;
+	
+	@NotNull
 	private final List<TeacherLessonData> lessonData;
+	
+	@NotNull
 	private final TotalLessonData totalData;
+	
+	@NotNull
 	private final PaymentData paymentData;
 
 }

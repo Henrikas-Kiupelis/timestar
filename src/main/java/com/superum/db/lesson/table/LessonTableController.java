@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.superum.db.lesson.table.core.LessonTable;
 
@@ -18,6 +19,7 @@ import com.superum.db.lesson.table.core.LessonTable;
 public class LessonTableController {
 
 	@RequestMapping(value = "/lesson/table", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public LessonTable lessonDataStart(@RequestParam(value="per_page", required=false) Integer amount,
 									   @RequestParam(value="start", required=false) Date start,
 									   @RequestParam(value="end", required=false) Date end) {
@@ -28,6 +30,7 @@ public class LessonTableController {
 	}
 	
 	@RequestMapping(value = "/lesson/table/{pageId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public LessonTable lessonData(@PathVariable int pageId,
 								  @RequestParam(value="per_page", required=false) Integer amount,
 			   					  @RequestParam(value="start", required=false) Date start,

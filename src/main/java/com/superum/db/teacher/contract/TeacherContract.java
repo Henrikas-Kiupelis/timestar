@@ -35,7 +35,7 @@ public class TeacherContract {
 	@Override
 	public String toString() {
 		return StringUtils.toString(
-				"Contract ID: " + id,
+				"Teacher ID: " + id,
 				"Payment day: " + paymentDay);
 	}
 

@@ -1,7 +1,10 @@
 package com.superum.db.lesson.table.core;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.Objects;
+
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,9 +16,9 @@ public class PaymentData {
 
 	// PUBLIC API
 
-	@JsonProperty("paymentDay")
-	public byte getPaymentDay() {
-		return paymentDay;
+	@JsonProperty("paymentDate")
+	public Date getPaymentDate() {
+		return paymentDate;
 	}
 	
 	@JsonProperty("cost")
@@ -28,7 +31,7 @@ public class PaymentData {
 	@Override
 	public String toString() {
 		return StringUtils.toString(
-				"Payment day: " + paymentDay,
+				"Payment date: " + paymentDate,
 				"Cost: " + cost);
 	}
 
@@ -42,14 +45,14 @@ public class PaymentData {
 
 		PaymentData other = (PaymentData) o;
 
-		return this.paymentDay == other.paymentDay
+		return Objects.equals(this.paymentDate, other.paymentDate)
 				&& Objects.equals(this.cost, other.cost);
 	}
 
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result = (result << 5) - result + paymentDay;
+		result = (result << 5) - result + (paymentDate == null ? 0 : paymentDate.hashCode());
 		result = (result << 5) - result + (cost == null ? 0 : cost.hashCode());
 		return result;
 	}
@@ -57,15 +60,18 @@ public class PaymentData {
 	// CONSTRUCTORS
 
 	@JsonCreator
-	public PaymentData(@JsonProperty("paymentDay") byte paymentDay,
+	public PaymentData(@JsonProperty("paymentDate") Date paymentDate,
 					   @JsonProperty("cost") BigDecimal cost) {
-		this.paymentDay = paymentDay;
+		this.paymentDate = paymentDate;
 		this.cost = cost;
 	}
 
 	// PRIVATE
 	
-	private final byte paymentDay;
+	@NotNull
+	private final Date paymentDate;
+	
+	@NotNull
 	private final BigDecimal cost;
 
 }

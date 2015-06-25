@@ -3,6 +3,8 @@ package com.superum.db.lesson.table.core;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
@@ -75,6 +77,8 @@ public class TotalLessonData {
 	
 	private final int count;
 	private final int duration;
+	
+	@NotNull
 	private final BigDecimal cost;
 
 }

@@ -18,21 +18,24 @@ public class CustomerContractDAOImpl implements CustomerContractDAO {
 
 	@Override
 	public CustomerContract create(CustomerContract contract) {
+		int id = contract.getId();
 		byte paymentDay = contract.getPaymentDay();
 		Date startDate = contract.getStartDate();
 		String languageLevel = contract.getLanguageLevel();
 		BigDecimal paymentValue = contract.getPaymentValue();
 		
-		return sql.insertInto(CUSTOMER_CONTRACT)
+		int createResult = sql.insertInto(CUSTOMER_CONTRACT)
+				.set(CUSTOMER_CONTRACT.CUSTOMER_ID, id)
 				.set(CUSTOMER_CONTRACT.PAYMENT_DAY, paymentDay)
 				.set(CUSTOMER_CONTRACT.START_DATE, startDate)
 				.set(CUSTOMER_CONTRACT.LANGUAGE_LEVEL, languageLevel)
 				.set(CUSTOMER_CONTRACT.PAYMENT_VALUE, paymentValue)
-				.returning()
-				.fetch().stream()
-				.findFirst()
-				.map(CustomerContract::valueOf)
-				.orElseThrow(() -> new DatabaseException("Couldn't insert contract: " + contract));
+				.execute();
+		
+		if (createResult == 0)
+			throw new DatabaseException("Couldn't insert contract: " + contract);
+		
+		return new CustomerContract(id, paymentDay, startDate, languageLevel, paymentValue);
 	}
 
 	@Override

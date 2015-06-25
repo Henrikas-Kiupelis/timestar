@@ -14,12 +14,12 @@ public class TimeStarBackEndApplication {
 		SpringApplication.run(TimeStarBackEndApplication.class, args);
 	}
 	
-	@Bean
+	/*@Bean
     public Filter characterEncodingFilter() {
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setEncoding("UTF-8");
         characterEncodingFilter.setForceEncoding(true);
         return characterEncodingFilter;
-    }
+    }*/
 	
 }

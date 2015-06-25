@@ -15,15 +15,18 @@ public class TeacherContractDAOImpl implements TeacherContractDAO {
 
 	@Override
 	public TeacherContract create(TeacherContract contract) {
+		int id = contract.getId();
 		byte paymentDay = contract.getPaymentDay();
 		
-		return sql.insertInto(TEACHER_CONTRACT)
+		int createResult = sql.insertInto(TEACHER_CONTRACT)
+				.set(TEACHER_CONTRACT.TEACHER_ID, id)
 				.set(TEACHER_CONTRACT.PAYMENT_DAY, paymentDay)
-				.returning()
-				.fetch().stream()
-				.findFirst()
-				.map(TeacherContract::valueOf)
-				.orElseThrow(() -> new DatabaseException("Couldn't insert contract: " + contract));
+				.execute();
+		
+		if (createResult == 0)
+			throw new DatabaseException("Couldn't insert contract: " + contract);
+		
+		return new TeacherContract(id, paymentDay);
 	}
 
 	@Override
