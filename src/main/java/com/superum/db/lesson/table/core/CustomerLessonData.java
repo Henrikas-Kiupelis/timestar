@@ -21,9 +21,9 @@ public class CustomerLessonData {
 		return customer;
 	}
 	
-	@JsonProperty("lessonData")
-	public List<TeacherLessonData> getLessonData() {
-		return lessonData;
+	@JsonProperty("teacherLessonData")
+	public List<TeacherLessonData> getTeacherLessonData() {
+		return teacherLessonData;
 	}
 	
 	@JsonProperty("totalData")
@@ -42,7 +42,7 @@ public class CustomerLessonData {
 	public String toString() {
 		return StringUtils.toString(
 				"Customer: " + customer,
-				"Lesson data: " + lessonData,
+				"Lesson data: " + teacherLessonData,
 				"Total data: " + totalData,
 				"Payment data: " + paymentData);
 	}
@@ -58,7 +58,7 @@ public class CustomerLessonData {
 		CustomerLessonData other = (CustomerLessonData) o;
 
 		return Objects.equals(this.customer, other.customer)
-				&& Objects.equals(this.lessonData, other.lessonData)
+				&& Objects.equals(this.teacherLessonData, other.teacherLessonData)
 				&& Objects.equals(this.totalData, other.totalData)
 				&& Objects.equals(this.paymentData, other.paymentData);
 	}
@@ -67,7 +67,7 @@ public class CustomerLessonData {
 	public int hashCode() {
 		int result = 17;
 		result = (result << 5) - result + (customer == null ? 0 : customer.hashCode());
-		result = (result << 5) - result + (lessonData == null ? 0 : lessonData.hashCode());
+		result = (result << 5) - result + (teacherLessonData == null ? 0 : teacherLessonData.hashCode());
 		result = (result << 5) - result + (totalData == null ? 0 : totalData.hashCode());
 		result = (result << 5) - result + (paymentData == null ? 0 : paymentData.hashCode());
 		return result;
@@ -77,11 +77,11 @@ public class CustomerLessonData {
 
 	@JsonCreator
 	public CustomerLessonData(@JsonProperty("customer") Customer customer, 
-							  @JsonProperty("lessonData") List<TeacherLessonData> lessonData,
+							  @JsonProperty("teacherLessonData") List<TeacherLessonData> teacherLessonData,
 							  @JsonProperty("totalData") TotalLessonData totalData, 
 							  @JsonProperty("paymentData") PaymentData paymentData) {
 		this.customer = customer;
-		this.lessonData = lessonData;
+		this.teacherLessonData = teacherLessonData;
 		this.totalData = totalData;
 		this.paymentData = paymentData;
 	}
@@ -92,7 +92,7 @@ public class CustomerLessonData {
 	private final Customer customer;
 	
 	@NotNull
-	private final List<TeacherLessonData> lessonData;
+	private final List<TeacherLessonData> teacherLessonData;
 	
 	@NotNull
 	private final TotalLessonData totalData;

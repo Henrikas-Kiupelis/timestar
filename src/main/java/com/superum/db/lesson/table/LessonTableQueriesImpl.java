@@ -46,7 +46,6 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 				.groupBy(LESSON.ID)
 				.orderBy(LESSON.ID)
 				.fetch();
-		
 		if (result.size() == 0)
 			return new TeacherLessonData(Collections.emptyList(), 0, BigDecimal.ZERO);
 		

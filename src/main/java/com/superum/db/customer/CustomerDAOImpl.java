@@ -17,16 +17,11 @@ public class CustomerDAOImpl implements CustomerDAO {
 
 	@Override
 	public Customer create(Customer customer) {
-		String name = customer.getName();
-		String phone = customer.getPhone();
-		String website = customer.getWebsite();
-		String comment = customer.getComment();
-
 		return sql.insertInto(CUSTOMER)
-				.set(CUSTOMER.NAME, name)
-				.set(CUSTOMER.PHONE, phone)
-				.set(CUSTOMER.WEBSITE, website)
-				.set(CUSTOMER.COMMENT_ABOUT, comment)
+				.set(CUSTOMER.NAME, customer.getName())
+				.set(CUSTOMER.PHONE, customer.getPhone())
+				.set(CUSTOMER.WEBSITE, customer.getWebsite())
+				.set(CUSTOMER.COMMENT_ABOUT, customer.getComment())
 				.returning()
 				.fetch().stream()
 				.findFirst()
@@ -47,18 +42,14 @@ public class CustomerDAOImpl implements CustomerDAO {
 	@Override
 	public Customer update(Customer customer) {
 		int id = customer.getId();
-		String name = customer.getName();
-		String phone = customer.getPhone();
-		String website = customer.getWebsite();
-		String comment = customer.getComment();
 		
 		Customer old = read(id);
 		
 		sql.update(CUSTOMER)
-			.set(CUSTOMER.NAME, name)
-			.set(CUSTOMER.PHONE, phone)
-			.set(CUSTOMER.WEBSITE, website)
-			.set(CUSTOMER.COMMENT_ABOUT, comment)
+			.set(CUSTOMER.NAME, customer.getName())
+			.set(CUSTOMER.PHONE, customer.getPhone())
+			.set(CUSTOMER.WEBSITE, customer.getWebsite())
+			.set(CUSTOMER.COMMENT_ABOUT, customer.getComment())
 			.where(CUSTOMER.ID.eq(id))
 			.execute();
 		

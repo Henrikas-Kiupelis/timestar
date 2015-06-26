@@ -1,4 +1,4 @@
-package com.superum.db.customer.group.student;
+package com.superum.db.group.student;
 
 import java.util.List;
 

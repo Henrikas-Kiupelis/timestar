@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,26 +21,31 @@ import org.springframework.web.bind.annotation.RestController;
 public class LessonController {
 
 	@RequestMapping(value = "/lesson/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public Lesson addLesson(@RequestBody @Valid Lesson lesson) {
 		return lessonService.addLesson(lesson);
 	}
 	
 	@RequestMapping(value = "/lesson/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public Lesson findLesson(@PathVariable long id) {
 		return lessonService.findLesson(id);
 	}
 	
 	@RequestMapping(value = "/lesson/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public Lesson updateLesson(@RequestBody @Valid Lesson lesson) {
 		return lessonService.updateLesson(lesson);
 	}
 	
 	@RequestMapping(value = "/lesson/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public Lesson deleteLesson(@PathVariable long id) {
 		return lessonService.deleteLesson(id);
 	}
 	
 	@RequestMapping(value = "/lesson/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public List<Lesson> findLessonsForTeacher(@PathVariable int teacherId,
 											  @RequestParam(value="start", required=false) Date start,
 											  @RequestParam(value="end", required=false) Date end) {
@@ -47,6 +53,7 @@ public class LessonController {
 	}
 	
 	@RequestMapping(value = "/lesson/customer/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public List<Lesson> findLessonsForCustomer(@PathVariable int customerId,
 											   @RequestParam(value="start", required=false) Date start,
 											   @RequestParam(value="end", required=false) Date end) {
@@ -54,6 +61,7 @@ public class LessonController {
 	}
 	
 	@RequestMapping(value = "/lesson/group/{groupId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public List<Lesson> findLessonsForGroup(@PathVariable int groupId,
 											@RequestParam(value="start", required=false) Date start,
 											@RequestParam(value="end", required=false) Date end) {

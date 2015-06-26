@@ -20,20 +20,13 @@ public class LessonDAOImpl implements LessonDAO {
 
 	@Override
 	public Lesson create(Lesson lesson) {
-		int teacherId = lesson.getTeacherId();
-		int groupId = lesson.getGroupId();
-		Date date = lesson.getDate();
-		short time = lesson.getTime();
-		short length = lesson.getLength();
-		String comment = lesson.getComment();
-		
 		return sql.insertInto(LESSON)
-				.set(LESSON.TEACHER_ID, teacherId)
-				.set(LESSON.GROUP_ID, groupId)
-				.set(LESSON.DATE_OF_LESSON, date)
-				.set(LESSON.TIME_OF_LESSON, time)
-				.set(LESSON.LENGTH_IN_MINUTES, length)
-				.set(LESSON.COMMENT_ABOUT, comment)
+				.set(LESSON.TEACHER_ID, lesson.getTeacherId())
+				.set(LESSON.GROUP_ID, lesson.getGroupId())
+				.set(LESSON.DATE_OF_LESSON, lesson.getDate())
+				.set(LESSON.TIME_OF_LESSON, lesson.getTime())
+				.set(LESSON.LENGTH_IN_MINUTES, lesson.getLength())
+				.set(LESSON.COMMENT_ABOUT, lesson.getComment())
 				.returning()
 				.fetch().stream()
 				.findFirst()
@@ -54,22 +47,16 @@ public class LessonDAOImpl implements LessonDAO {
 	@Override
 	public Lesson update(Lesson lesson) {
 		long id = lesson.getId();
-		int teacherId = lesson.getTeacherId();
-		int groupId = lesson.getGroupId();
-		Date date = lesson.getDate();
-		short time = lesson.getTime();
-		short length = lesson.getLength();
-		String comment = lesson.getComment();
 		
 		Lesson old = read(id);
 		
 		sql.update(LESSON)
-			.set(LESSON.TEACHER_ID, teacherId)
-			.set(LESSON.GROUP_ID, groupId)
-			.set(LESSON.DATE_OF_LESSON, date)
-			.set(LESSON.TIME_OF_LESSON, time)
-			.set(LESSON.LENGTH_IN_MINUTES, length)
-			.set(LESSON.COMMENT_ABOUT, comment)
+			.set(LESSON.TEACHER_ID, lesson.getTeacherId())
+			.set(LESSON.GROUP_ID, lesson.getGroupId())
+			.set(LESSON.DATE_OF_LESSON, lesson.getDate())
+			.set(LESSON.TIME_OF_LESSON, lesson.getTime())
+			.set(LESSON.LENGTH_IN_MINUTES, lesson.getLength())
+			.set(LESSON.COMMENT_ABOUT, lesson.getComment())
 			.where(LESSON.ID.eq(id))
 			.execute();
 		

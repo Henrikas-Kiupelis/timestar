@@ -43,8 +43,7 @@ public class LanguagesDAOImpl implements LanguagesDAO {
 
 	@Override
 	public Languages update(Languages languages) {
-		int teacherId = languages.getTeacherId();
-		Languages old = delete(teacherId);
+		Languages old = delete(languages.getTeacherId());
 		
 		create(languages);
 		return old;
@@ -58,6 +57,7 @@ public class LanguagesDAOImpl implements LanguagesDAO {
 	@Override
 	public Languages delete(Languages languages) {
 		Integer teacherId = languages.getTeacherId();
+		
 		Languages old = read(teacherId);
 		
 		List<String> languageList = languages.getLanguages();

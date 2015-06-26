@@ -31,7 +31,6 @@ public class CustomerContractDAOImpl implements CustomerContractDAO {
 				.set(CUSTOMER_CONTRACT.LANGUAGE_LEVEL, languageLevel)
 				.set(CUSTOMER_CONTRACT.PAYMENT_VALUE, paymentValue)
 				.execute();
-		
 		if (createResult == 0)
 			throw new DatabaseException("Couldn't insert contract: " + contract);
 		
@@ -51,18 +50,14 @@ public class CustomerContractDAOImpl implements CustomerContractDAO {
 	@Override
 	public CustomerContract update(CustomerContract contract) {
 		int id = contract.getId();
-		byte paymentDay = contract.getPaymentDay();
-		Date startDate = contract.getStartDate();
-		String languageLevel = contract.getLanguageLevel();
-		BigDecimal paymentValue = contract.getPaymentValue();
 
 		CustomerContract old = read(id);
 		
 		sql.update(CUSTOMER_CONTRACT)
-			.set(CUSTOMER_CONTRACT.PAYMENT_DAY, paymentDay)
-			.set(CUSTOMER_CONTRACT.START_DATE, startDate)
-			.set(CUSTOMER_CONTRACT.LANGUAGE_LEVEL, languageLevel)
-			.set(CUSTOMER_CONTRACT.PAYMENT_VALUE, paymentValue)
+			.set(CUSTOMER_CONTRACT.PAYMENT_DAY, contract.getPaymentDay())
+			.set(CUSTOMER_CONTRACT.START_DATE, contract.getStartDate())
+			.set(CUSTOMER_CONTRACT.LANGUAGE_LEVEL, contract.getLanguageLevel())
+			.set(CUSTOMER_CONTRACT.PAYMENT_VALUE, contract.getPaymentValue())
 			.where(CUSTOMER_CONTRACT.CUSTOMER_ID.eq(id))
 			.execute();
 		

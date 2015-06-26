@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.superum.db.lesson.table.core.LessonTable;
+import com.superum.utils.DateUtils;
 
 @Controller
 @RequestMapping(value = "/timestar/api")
@@ -26,6 +27,12 @@ public class LessonTableController {
 		if (amount == null)
 			amount = DEFAULT_PAGE_AMOUNT;
 		
+		if (start == null)
+			start = DateUtils.sqlNow();
+		
+		if (end == null)
+			end = DateUtils.sqlNow();
+		
 		return lessonTableService.lessonData(amount, 0, start, end);
 	}
 	
@@ -37,6 +44,12 @@ public class LessonTableController {
 			   					  @RequestParam(value="end", required=false) Date end) {
 		if (amount == null)
 			amount = DEFAULT_PAGE_AMOUNT;
+		
+		if (start == null)
+			start = DateUtils.sqlNow();
+		
+		if (end == null)
+			end = DateUtils.sqlNow();
 		
 		return lessonTableService.lessonData(amount, pageId * amount, start, end);
 	}

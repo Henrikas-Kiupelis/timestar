@@ -1,4 +1,4 @@
-package com.superum.db.customer.group;
+package com.superum.db.group;
 
 import java.util.List;
 

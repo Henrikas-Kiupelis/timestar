@@ -5,6 +5,10 @@ import java.util.GregorianCalendar;
 
 public class DateUtils {
 
+	public static java.sql.Date sqlNow() {
+		return new java.sql.Date(new java.util.Date().getTime());
+	}
+	
 	public static Calendar initialDay(byte paymentDay) {
 		Calendar calendar = new GregorianCalendar();
 		int currentDay = calendar.get(Calendar.DAY_OF_MONTH);

@@ -19,10 +19,9 @@ public class TeacherContractDAOImpl implements TeacherContractDAO {
 		byte paymentDay = contract.getPaymentDay();
 		
 		int createResult = sql.insertInto(TEACHER_CONTRACT)
-				.set(TEACHER_CONTRACT.TEACHER_ID, id)
+				.set(TEACHER_CONTRACT.TEACHER_ID, contract.getId())
 				.set(TEACHER_CONTRACT.PAYMENT_DAY, paymentDay)
 				.execute();
-		
 		if (createResult == 0)
 			throw new DatabaseException("Couldn't insert contract: " + contract);
 		
@@ -42,12 +41,11 @@ public class TeacherContractDAOImpl implements TeacherContractDAO {
 	@Override
 	public TeacherContract update(TeacherContract contract) {
 		int id = contract.getId();
-		byte paymentDay = contract.getPaymentDay();
 
 		TeacherContract old = read(id);
 		
 		sql.update(TEACHER_CONTRACT)
-			.set(TEACHER_CONTRACT.PAYMENT_DAY, paymentDay)
+			.set(TEACHER_CONTRACT.PAYMENT_DAY, contract.getPaymentDay())
 			.where(TEACHER_CONTRACT.TEACHER_ID.eq(id))
 			.execute();
 		

@@ -1,4 +1,4 @@
-package com.superum.db.customer.group.student;
+package com.superum.db.group.student;
 
 import static com.superum.db.generated.timestar.Tables.STUDENT;
 
@@ -17,14 +17,10 @@ public class StudentDAOImpl implements StudentDAO {
 
 	@Override
 	public Student create(Student student) {
-		int groupId = student.getGroupId();
-		int customerId = student.getCustomerId();
-		String name = student.getName();
-
 		return sql.insertInto(STUDENT)
-				.set(STUDENT.GROUP_ID, groupId)
-				.set(STUDENT.CUSTOMER_ID, customerId)
-				.set(STUDENT.NAME, name)
+				.set(STUDENT.GROUP_ID, student.getGroupId())
+				.set(STUDENT.CUSTOMER_ID, student.getCustomerId())
+				.set(STUDENT.NAME, student.getName())
 				.returning()
 				.fetch().stream()
 				.findFirst()
@@ -45,16 +41,13 @@ public class StudentDAOImpl implements StudentDAO {
 	@Override
 	public Student update(Student student) {
 		int id = student.getId();
-		int groupId = student.getGroupId();
-		int customerId = student.getCustomerId();
-		String name = student.getName();
-		
+
 		Student old = read(id);
 		
 		sql.update(STUDENT)
-			.set(STUDENT.GROUP_ID, groupId)
-			.set(STUDENT.CUSTOMER_ID, customerId)
-			.set(STUDENT.NAME, name)
+			.set(STUDENT.GROUP_ID, student.getGroupId())
+			.set(STUDENT.CUSTOMER_ID, student.getCustomerId())
+			.set(STUDENT.NAME, student.getName())
 			.where(STUDENT.ID.eq(id))
 			.execute();
 		

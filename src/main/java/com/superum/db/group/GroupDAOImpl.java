@@ -1,4 +1,4 @@
-package com.superum.db.customer.group;
+package com.superum.db.group;
 
 import static com.superum.db.generated.timestar.Tables.STUDENT_GROUP;
 
@@ -17,12 +17,9 @@ public class GroupDAOImpl implements GroupDAO {
 
 	@Override
 	public Group create(Group group) {
-		Integer teacherId = group.getTeacherId();
-		String name = group.getName();
-		
 		return sql.insertInto(STUDENT_GROUP)
-				.set(STUDENT_GROUP.TEACHER_ID, teacherId)
-				.set(STUDENT_GROUP.NAME, name)
+				.set(STUDENT_GROUP.TEACHER_ID, group.getTeacherId())
+				.set(STUDENT_GROUP.NAME, group.getName())
 				.returning()
 				.fetch().stream()
 				.findFirst()
@@ -43,14 +40,12 @@ public class GroupDAOImpl implements GroupDAO {
 	@Override
 	public Group update(Group group) {
 		int id = group.getId();
-		Integer teacherId = group.getTeacherId();
-		String name = group.getName();
-		
+
 		Group old = read(id);
 		
 		sql.update(STUDENT_GROUP)
-			.set(STUDENT_GROUP.TEACHER_ID, teacherId)
-			.set(STUDENT_GROUP.NAME, name)
+			.set(STUDENT_GROUP.TEACHER_ID, group.getTeacherId())
+			.set(STUDENT_GROUP.NAME, group.getName())
 			.where(STUDENT_GROUP.ID.eq(id))
 			.execute();
 		

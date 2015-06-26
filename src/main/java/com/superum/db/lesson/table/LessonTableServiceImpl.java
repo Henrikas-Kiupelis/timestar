@@ -50,7 +50,7 @@ public class LessonTableServiceImpl implements LessonTableService {
 			int duration = 0;
 			BigDecimal cost = BigDecimal.ZERO;
 			for (CustomerLessonData customerData : lessonData) {
-				TeacherLessonData data = customerData.getLessonData().get(i);
+				TeacherLessonData data = customerData.getTeacherLessonData().get(i);
 				count += data.getLessonIds().size();
 				duration += data.getDuration();
 				cost = cost.add(data.getCost());

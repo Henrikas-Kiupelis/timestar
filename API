@@ -6,7 +6,7 @@ http://{IP}:{PORT}/timestar/api
 Teacher:
 
 POST /teacher/add
-{"name":"Henrikas", "surname":"Kiupelis", "phone":"+37068657313", "comment":""}
+{"name":"Henrikas", "surname":"Kiupelis", "phone":"+37068657313", "city":"Vilnius", "email":"email@email.com", "comment":""}
 Prideda naują mokytoją
 
 GET /teacher/{id}
@@ -14,7 +14,7 @@ GET /teacher/{id}
 Rodo mokytojo info (išskyrus kalbas) per jo ID
 
 POST /teacher/update
-{"id":"1", "name":"Henrikas", "surname":"Kiūpelis", "phone":"+37068657313", "comment":"Ot, durnelis!"}
+{"id":"1", "name":"Henrikas", "surname":"Kiūpelis", "phone":"+37068657313", "city":"Vilnius", "email":"email@email.com", "comment":"Ot, durnelis!"}
 Pakeičia mokytojo info
 
 GET /teacher/delete/{id}
@@ -49,10 +49,29 @@ POST /teacher/lang/delete
 Ištrina mokytojo kalbas (tik tas, kurios paduodamos)
 
 ------------------------------------------------------------------------------------
+Teacher contract:
+
+POST /teacher/contract/add
+{"id":"1", "paymentDay":"15"}
+Prideda mokytojui kontraktą
+
+GET /teacher/contract/{teacherId}
+/teacher/contract/1
+Rodo mokytojo kontraktą
+
+POST /teacher/contract/update
+{"id":"1", "paymentDay":"31"}
+Pakeičia mokytojo kontraktą
+
+GET /teacher/contract/delete/{teacherId}
+/teacher/contract/delete/1
+Ištrina mokytojo kontraktą
+
+------------------------------------------------------------------------------------
 Customer:
 
 POST /customer/add
-{"name":"Superum", "phone":"Superum_phone!", "comment":""}
+{"name":"Superum", "phone":"Superum_phone!", "website":"http://", "comment":""}
 Prideda naują imonę
 
 GET /customer/{id}
@@ -60,7 +79,7 @@ GET /customer/{id}
 Rodo įmonės info
 
 POST /customer/update
-{"id":"1", "name":"Superum", "phone":"+37060918738", "comment":"Faina firma."}
+{"id":"1", "name":"Superum", "phone":"+37060918738", "website":"http://superum.eu, "comment":"Faina firma."}
 Pakeičia įmonės info
 
 GET /customer/delete/{id}
@@ -69,17 +88,36 @@ Ištrina įmonę (jei turi pamokų ar pan. - nepavyks)
 
 GET /customer/teacher/{teacherId}
 /customer/teacher/1
-Rodo visas įmones tam tikram mokytojui (kur jis turi kontraktų)
+Rodo visas įmones tam tikram mokytojui (kur jis turi mokomų grupių)
 
 GET /customer/all
 /customer/all
 Rodo visas įmones
 
 ------------------------------------------------------------------------------------
+Customer contract:
+
+POST /customer/contract/add
+{"id":"1", "paymentDay":"15", "startDate":"2016-06-26", "languageLevel":"English: C2", "paymentValue":"23"}
+Prideda įmonei kontraktą
+
+GET /customer/contract/{customerId}
+/customer/contract/1
+Rodo įmonės kontraktą
+
+POST /customer/contract/update
+{"id":"1", "paymentDay":"31", "startDate":"2015-06-26", "languageLevel":"English: C1", "paymentValue":"20"}
+Pakeičia įmonės kontraktą
+
+GET /customer/contract/delete/{customerId}
+/customer/contract/delete/1
+Ištrina įmonės kontraktą
+
+------------------------------------------------------------------------------------
 Group:
 
 POST /group/add
-{"customerId":"1", "name":"superum pirma"}
+{"teacherId":"1", "name":"superum pirma"}
 Prideda naują grupę
 
 GET /group/{id}
@@ -87,7 +125,7 @@ GET /group/{id}
 Rodo grupės info
 
 POST /group/update
-{"id":"1", "customerId":"1", "name":"superum1"}
+{"id":"1", "teacherId":"1", "name":"superum1"}
 Pakeičia grupės info
 
 GET /group/delete/{id}
@@ -95,14 +133,20 @@ GET /group/delete/{id}
 Ištrina grupę (jei turi pamokų/studentų - nepavyks)
 
 GET /group/customer/{customerId}
+GET /group/teacher/{customerId}
 /group/customer/1
-Rodo visas grupes priklausančias tam tikrai įmonei
+/group/teacher/1
+Rodo visas grupes priklausančias tam tikrai įmonei ar kurias moko tam tikras mokytojas
+
+GET /group/customer/{customerId}/teacher/{customerId}
+/group/customer/1/teacher/1
+Rodo visas grupes priklausančias tam tikrai įmonei ir kurias moko tam tikras mokytojas
 
 ------------------------------------------------------------------------------------
 Student:
 
 POST /student/add
-{"groupId":"1", "name":"Some guy"}
+{"groupId":"1", "customerId":"1", "name":"Some guy"}
 Prideda studentą
 
 GET /student/{id}
@@ -110,7 +154,7 @@ GET /student/{id}
 Rodo studento info
 
 POST /student/update
-{"id":"1", "groupId":"1", "name":"Some Guy"}
+{"id":"1", "groupId":"1", "customerId":"1", "name":"Some Guy"}
 Pakeičia studento info
 
 GET /student/delete/{id}
@@ -118,49 +162,18 @@ GET /student/delete/{id}
 Ištrina studentą
 
 GET /student/customer/{customerId}
-/student/customer/1
-Rodo visus studentus tam tikrai įmonei
-
 GET /student/group/{groupId}
-/student/group/1
-Rodo visus studentus tam tikrai grupei
-
 GET /student/lesson/{lessonId}
+/student/customer/1
+/student/group/1
 /student/lesson/1
-Rodo visus studentus tam tikrai pamokai
-
-------------------------------------------------------------------------------------
-Contract:
-
-POST /contract/add
-{"groupId":"1", "paymentDay":"15", "startDate":"2015-06-17", "languageLevel":"Anglu: ", "paymentValue":"23"}
-Prideda kontraktą
-
-GET /contract/{id}
-/contract/1
-Rodo kontrakto info
-
-POST /contract/update
-{"id":"1", "groupId":"1", "paymentDay":"15", "startDate":"2015-05-17", "languageLevel":"Anglu: C2", "paymentValue":"23"}
-Pakeičia kontrakto info
-
-GET /contract/delete/{id}
-/contract/delete/1
-Ištrina kontraktą
-
-GET /contract/group/{groupId}
-/contract/teacher/1
-Rodo visus kontraktus tam tikrai grupei
-
-GET /contract/customer/{customerId}
-/contract/customer/1
-Rodo visus kontraktus tam tikrai įmonei
+Rodo visus studentus tam tikrai įmonei, grupei ar pamokai
 
 ------------------------------------------------------------------------------------
 Lesson:
 
 POST /lesson/add
-{"teacherId":"1", "customerId":"1", "groupId":"1", "date":"2015-06-11", "hour":"12", "minute":"00", "length":"15", "comment":"UGH!"}
+{"teacherId":"1", "groupId":"1", "date":"2015-06-11", "hour":"12", "minute":"00", "length":"15", "comment":"UGH!"}
 Prideda pamoką
 
 GET /lesson/{id}
@@ -168,14 +181,16 @@ GET /lesson/{id}
 Rodo pamokos info
 
 POST /lesson/update
-{"id":"1", "teacherId":"1", "customerId":"1", "groupId":"1", "date":"2015-06-11", "hour":"15", "minute":"30", "length":"30", "comment":"Better."}
+{"id":"1", "teacherId":"1", "groupId":"1", "date":"2015-06-11", "hour":"15", "minute":"30", "length":"30", "comment":"Better."}
 Pakeičia pamokos info
 
 GET /lesson/delete/{id}
 /lesson/delete/1
 Ištrina pamoką
 
-GET /lesson/{table}/{id}
+GET /lesson/teacher/{teacherId}
+GET /lesson/customer/{customerId}
+GET /lesson/group/{groupId}
 optional: ?start={Date}&end={Date}
 /lesson/teacher/1
 /lesson/customer/1?start=2015-06-01
@@ -205,3 +220,69 @@ Ištrina studentų buvimą pamokoje (visus)
 POST lesson/attendance/delete
 {"id":"1", "studentIds":["1"]}
 Ištrina studentų buvimą pamokoje (tik tuos, kurie paduodami)
+
+------------------------------------------------------------------------------------
+Lesson table:
+
+GET /lesson/table
+GET /lesson/table/{page}
+optional: ?per_page={int}&start={Date}&end={Date}
+/lesson/table
+/lesson/table/0?per_page=100
+/lesson/table/1?start=2015-06-26
+/lesson/table/100?start=2015-06-26&end=2015-07-26
+Duoda lentelės informacija tokiu JSON formatu:
+{
+	"teachers":[]
+	"languages":[]
+	"customerLessonData":[]
+	"totalData":[]
+	"paymentData":[]
+}
+teachers:
+{
+	"id":""
+	"name":""
+	"surname":""
+	"phone":""
+	"city":""
+	"email":""
+	"comment":""
+}
+languages:
+{
+	"id":""
+	"languages":[""]
+}
+customerLessonData:
+{
+	"customer":{}
+	"teacherLessonData":[]
+	"totalData":{}
+	"paymentData":{}
+}
+customer:
+{
+	"id":""
+	"name":""
+	"phone":""
+	"website":""
+	"comment":""
+}
+teacherLessonData:
+{
+	"lessonIds":[""]
+	"duration":""
+	"cost":""
+}
+totalData:
+{
+	"count":""
+	"duration":""
+	"cost":""
+}
+paymentData:
+{
+	"paymentDate":""
+	"cost":""
+}

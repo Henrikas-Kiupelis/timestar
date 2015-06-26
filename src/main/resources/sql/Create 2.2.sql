@@ -10,6 +10,7 @@ name VARCHAR(30) NOT NULL,
 surname VARCHAR(30) NOT NULL, 
 phone VARCHAR(30) NOT NULL, 
 city VARCHAR(30) NOT NULL, 
+email VARCHAR(60) NOT NULL, 
 comment_about VARCHAR(500) NOT NULL, 
 PRIMARY KEY(id));
 

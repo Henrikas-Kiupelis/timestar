@@ -17,18 +17,13 @@ public class TeacherDAOImpl implements TeacherDAO {
 
 	@Override
 	public Teacher create(Teacher teacher) {
-		String name = teacher.getName();
-		String surname = teacher.getSurname();
-		String phone = teacher.getPhone();
-		String city = teacher.getCity();
-		String comment = teacher.getComment();
-
 		return sql.insertInto(TEACHER)
-				.set(TEACHER.NAME, name)
-				.set(TEACHER.SURNAME, surname)
-				.set(TEACHER.PHONE, phone)
-				.set(TEACHER.CITY, city)
-				.set(TEACHER.COMMENT_ABOUT, comment)
+				.set(TEACHER.NAME, teacher.getName())
+				.set(TEACHER.SURNAME, teacher.getSurname())
+				.set(TEACHER.PHONE, teacher.getPhone())
+				.set(TEACHER.CITY, teacher.getCity())
+				.set(TEACHER.EMAIL, teacher.getEmail())
+				.set(TEACHER.COMMENT_ABOUT, teacher.getComment())
 				.returning()
 				.fetch().stream()
 				.findFirst()
@@ -49,20 +44,16 @@ public class TeacherDAOImpl implements TeacherDAO {
 	@Override
 	public Teacher update(Teacher teacher) {
 		int id = teacher.getId();
-		String name = teacher.getName();
-		String surname = teacher.getSurname();
-		String phone = teacher.getPhone();
-		String city = teacher.getCity();
-		String comment = teacher.getComment();
 		
 		Teacher old = read(id);
 		
 		sql.update(TEACHER)
-			.set(TEACHER.NAME, name)
-			.set(TEACHER.SURNAME, surname)
-			.set(TEACHER.PHONE, phone)
-			.set(TEACHER.CITY, city)
-			.set(TEACHER.COMMENT_ABOUT, comment)
+			.set(TEACHER.NAME, teacher.getName())
+			.set(TEACHER.SURNAME, teacher.getSurname())
+			.set(TEACHER.PHONE, teacher.getPhone())
+			.set(TEACHER.CITY, teacher.getCity())
+			.set(TEACHER.EMAIL, teacher.getEmail())
+			.set(TEACHER.COMMENT_ABOUT, teacher.getComment())
 			.where(TEACHER.ID.eq(id))
 			.execute();
 		

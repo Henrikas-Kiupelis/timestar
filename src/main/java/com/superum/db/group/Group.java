@@ -1,4 +1,4 @@
-package com.superum.db.customer.group;
+package com.superum.db.group;
 
 import static com.superum.db.generated.timestar.Tables.STUDENT_GROUP;
 

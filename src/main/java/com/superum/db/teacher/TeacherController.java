@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TeacherController {
 
 	@RequestMapping(value = "/teacher/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public Teacher addTeacher(@RequestBody @Valid Teacher teacher) {
 		log.info("Request to add a new teacher: {}", teacher);
 		
@@ -30,6 +32,7 @@ public class TeacherController {
 	}
 	
 	@RequestMapping(value = "/teacher/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public Teacher findTeacher(@PathVariable int id) {
 		log.info("Request to find a teacher with ID {}", id);
 		
@@ -40,6 +43,7 @@ public class TeacherController {
 	}
 	
 	@RequestMapping(value = "/teacher/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public Teacher updateTeacher(@RequestBody @Valid Teacher teacher) {
 		log.info("Request to find update teacher: {}", teacher);
 		
@@ -50,6 +54,7 @@ public class TeacherController {
 	}
 	
 	@RequestMapping(value = "/teacher/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public Teacher deleteTeacher(@PathVariable int id) {
 		log.info("Request to delete a teacher with ID {}", id);
 		
@@ -60,6 +65,7 @@ public class TeacherController {
 	}
 	
 	@RequestMapping(value = "/teacher/all", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
 	public List<Teacher> getAllTeachers() {
 		return teacherService.getAllTeachers();
 	}
