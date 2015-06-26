@@ -21,9 +21,9 @@ public class LessonTableController {
 
 	@RequestMapping(value = "/lesson/table", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public LessonTable lessonDataStart(@RequestParam(value="per_page", required=false) Integer amount,
-									   @RequestParam(value="start", required=false) Date start,
-									   @RequestParam(value="end", required=false) Date end) {
+	public LessonTable showLessonData(@RequestParam(value="per_page", required=false) Integer amount,
+									  @RequestParam(value="start", required=false) Date start,
+									  @RequestParam(value="end", required=false) Date end) {
 		if (amount == null)
 			amount = DEFAULT_PAGE_AMOUNT;
 		
@@ -38,10 +38,10 @@ public class LessonTableController {
 	
 	@RequestMapping(value = "/lesson/table/{pageId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public LessonTable lessonData(@PathVariable int pageId,
-								  @RequestParam(value="per_page", required=false) Integer amount,
-			   					  @RequestParam(value="start", required=false) Date start,
-			   					  @RequestParam(value="end", required=false) Date end) {
+	public LessonTable showLessonData(@PathVariable int pageId,
+									  @RequestParam(value="per_page", required=false) Integer amount,
+									  @RequestParam(value="start", required=false) Date start,
+									  @RequestParam(value="end", required=false) Date end) {
 		if (amount == null)
 			amount = DEFAULT_PAGE_AMOUNT;
 		

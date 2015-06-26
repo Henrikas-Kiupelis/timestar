@@ -84,7 +84,7 @@ public class Customer {
 		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
 		result = (result << 5) - result + (phone == null ? 0 : phone.hashCode());
 		result = (result << 5) - result + (website == null ? 0 : website.hashCode());
-		result = (result << 5) - result + (comment == null ? 0 : comment.hashCode());
+		result = (result << 5) - result + comment.hashCode();
 		return result;
 	}
 
@@ -100,7 +100,7 @@ public class Customer {
 		this.name = name;
 		this.phone = phone;
 		this.website = website;
-		this.comment = comment;
+		this.comment = comment != null ? comment : "";
 	}
 	
 	public static Customer valueOf(Record customerRecord) {

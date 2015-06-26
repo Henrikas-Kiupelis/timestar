@@ -1,6 +1,6 @@
 package com.superum.db.teacher.lang;
 
-import static com.superum.db.generated.timestar.Tables.LANGUAGES;
+import static com.superum.db.generated.timestar.Tables.TEACHER_LANGUAGE;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.superum.db.generated.timestar.tables.records.LanguagesRecord;
+import com.superum.db.generated.timestar.tables.records.TeacherLanguageRecord;
 
 @Repository
 @Transactional
@@ -23,7 +23,7 @@ public class LanguagesDAOImpl implements LanguagesDAO {
 		Integer teacherId = languages.getTeacherId();
 		List<String> languageList = languages.getLanguages();
 		
-		InsertValuesStep2<LanguagesRecord, Integer, String> step = sql.insertInto(LANGUAGES, LANGUAGES.TEACHER_ID, LANGUAGES.CODE);
+		InsertValuesStep2<TeacherLanguageRecord, Integer, String> step = sql.insertInto(TEACHER_LANGUAGE, TEACHER_LANGUAGE.TEACHER_ID, TEACHER_LANGUAGE.CODE);
 		for (String language : languageList)
 			step = step.values(teacherId, language);
 		
@@ -33,11 +33,11 @@ public class LanguagesDAOImpl implements LanguagesDAO {
 
 	@Override
 	public Languages read(Integer teacherId) {
-		List<String> languages =  sql.select(LANGUAGES.CODE)
-				.from(LANGUAGES)
-				.where(LANGUAGES.TEACHER_ID.eq(teacherId))
+		List<String> languages =  sql.select(TEACHER_LANGUAGE.CODE)
+				.from(TEACHER_LANGUAGE)
+				.where(TEACHER_LANGUAGE.TEACHER_ID.eq(teacherId))
 				.fetch()
-				.map(record -> record.getValue(LANGUAGES.CODE));
+				.map(record -> record.getValue(TEACHER_LANGUAGE.CODE));
 		return new Languages(teacherId, languages);
 	}
 
@@ -62,11 +62,11 @@ public class LanguagesDAOImpl implements LanguagesDAO {
 		
 		List<String> languageList = languages.getLanguages();
 		
-		Condition condition = LANGUAGES.TEACHER_ID.eq(teacherId);
+		Condition condition = TEACHER_LANGUAGE.TEACHER_ID.eq(teacherId);
 		for (String language : languageList)
-			condition = condition.and(LANGUAGES.CODE.eq(language));
+			condition = condition.and(TEACHER_LANGUAGE.CODE.eq(language));
 		
-		sql.delete(LANGUAGES)
+		sql.delete(TEACHER_LANGUAGE)
 			.where(condition)
 			.execute();
 		

@@ -1,6 +1,6 @@
 package com.superum.db.lesson.attendance;
 
-import static com.superum.db.generated.timestar.Tables.ATTENDANCE;
+import static com.superum.db.generated.timestar.Tables.LESSON_ATTENDANCE;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.superum.db.generated.timestar.tables.records.AttendanceRecord;
+import com.superum.db.generated.timestar.tables.records.LessonAttendanceRecord;
 
 @Repository
 @Transactional
@@ -23,7 +23,7 @@ public class AttendanceDAOImpl implements AttendanceDAO {
 		Long lessonId = attendance.getLessonId();
 		List<Integer> studentIds = attendance.getStudentIds();
 		
-		InsertValuesStep2<AttendanceRecord, Long, Integer> step = sql.insertInto(ATTENDANCE, ATTENDANCE.LESSON_ID, ATTENDANCE.STUDENT_ID);
+		InsertValuesStep2<LessonAttendanceRecord, Long, Integer> step = sql.insertInto(LESSON_ATTENDANCE, LESSON_ATTENDANCE.LESSON_ID, LESSON_ATTENDANCE.STUDENT_ID);
 		for (Integer studentId : studentIds)
 			step = step.values(lessonId, studentId);
 		
@@ -33,11 +33,11 @@ public class AttendanceDAOImpl implements AttendanceDAO {
 
 	@Override
 	public Attendance read(Long lessonId) {
-		List<Integer> studentIds =  sql.select(ATTENDANCE.STUDENT_ID)
-				.from(ATTENDANCE)
-				.where(ATTENDANCE.LESSON_ID.eq(lessonId))
+		List<Integer> studentIds =  sql.select(LESSON_ATTENDANCE.STUDENT_ID)
+				.from(LESSON_ATTENDANCE)
+				.where(LESSON_ATTENDANCE.LESSON_ID.eq(lessonId))
 				.fetch()
-				.map(record -> record.getValue(ATTENDANCE.STUDENT_ID));
+				.map(record -> record.getValue(LESSON_ATTENDANCE.STUDENT_ID));
 		return new Attendance(lessonId, studentIds);
 	}
 
@@ -62,11 +62,11 @@ public class AttendanceDAOImpl implements AttendanceDAO {
 		
 		List<Integer> studentIds = attendance.getStudentIds();
 		
-		Condition condition = ATTENDANCE.LESSON_ID.eq(lessonId);
+		Condition condition = LESSON_ATTENDANCE.LESSON_ID.eq(lessonId);
 		for (Integer studentId : studentIds)
-			condition = condition.and(ATTENDANCE.STUDENT_ID.eq(studentId));
+			condition = condition.and(LESSON_ATTENDANCE.STUDENT_ID.eq(studentId));
 		
-		sql.delete(ATTENDANCE)
+		sql.delete(LESSON_ATTENDANCE)
 			.where(condition)
 			.execute();
 		

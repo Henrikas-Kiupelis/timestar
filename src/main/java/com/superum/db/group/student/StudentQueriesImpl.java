@@ -1,8 +1,8 @@
 package com.superum.db.group.student;
 
 import static com.superum.db.generated.timestar.Tables.STUDENT;
-import static com.superum.db.generated.timestar.Tables.ATTENDANCE;
-import static com.superum.db.generated.timestar.Keys.ATTENDANCE_IBFK_2;
+import static com.superum.db.generated.timestar.Tables.LESSON_ATTENDANCE;
+import static com.superum.db.generated.timestar.Keys.LESSON_ATTENDANCE_IBFK_2;
 
 import java.util.List;
 
@@ -19,8 +19,8 @@ public class StudentQueriesImpl implements StudentQueries {
 	public List<Student> readAllForLesson(long lessonId) {
 		return sql.select(STUDENT.fields())
 				.from(STUDENT)
-				.join(ATTENDANCE).onKey(ATTENDANCE_IBFK_2)
-				.where(ATTENDANCE.LESSON_ID.eq(lessonId))
+				.join(LESSON_ATTENDANCE).onKey(LESSON_ATTENDANCE_IBFK_2)
+				.where(LESSON_ATTENDANCE.LESSON_ID.eq(lessonId))
 				.groupBy(STUDENT.ID)
 				.orderBy(STUDENT.ID)
 				.fetch()

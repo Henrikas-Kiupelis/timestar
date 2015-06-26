@@ -53,7 +53,7 @@ public class Languages {
 	public int hashCode() {
 		int result = 17;
 		result = (result << 5) - result + teacherId;
-		result = (result << 5) - result + (languages == null ? 0 : languages.hashCode());
+		result = (result << 5) - result + languages.hashCode();
 		return result;
 	}
 

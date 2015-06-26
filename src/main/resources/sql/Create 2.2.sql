@@ -14,7 +14,7 @@ email VARCHAR(60) NOT NULL,
 comment_about VARCHAR(500) NOT NULL, 
 PRIMARY KEY(id));
 
-CREATE TABLE languages ( 
+CREATE TABLE teacher_language ( 
 teacher_id INT NOT NULL, 
 code VARCHAR(3) NOT NULL, 
 FOREIGN KEY(teacher_id) REFERENCES teacher(id), 
@@ -71,7 +71,7 @@ PRIMARY KEY(id),
 FOREIGN KEY(teacher_id) REFERENCES teacher(id), 
 FOREIGN KEY(group_id) REFERENCES student_group(id));
 
-CREATE TABLE attendance ( 
+CREATE TABLE lesson_attendance ( 
 lesson_id BIGINT NOT NULL, 
 student_id INT NOT NULL, 
 FOREIGN KEY(lesson_id) REFERENCES lesson(id), 

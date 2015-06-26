@@ -101,7 +101,7 @@ public class Teacher {
 		result = (result << 5) - result + (phone == null ? 0 : phone.hashCode());
 		result = (result << 5) - result + (city == null ? 0 : city.hashCode());
 		result = (result << 5) - result + (email == null ? 0 : email.hashCode());
-		result = (result << 5) - result + (comment == null ? 0 : comment.hashCode());
+		result = (result << 5) - result + comment.hashCode();
 		return result;
 	}
 
@@ -121,7 +121,7 @@ public class Teacher {
 		this.phone = phone;
 		this.city = city;
 		this.email = email;
-		this.comment = comment;
+		this.comment = comment != null ? comment : "";
 	}
 	
 	public static Teacher valueOf(Record teacherRecord) {

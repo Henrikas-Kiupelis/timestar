@@ -115,7 +115,7 @@ public class Lesson {
 		result = (result << 5) - result + minute;
 		result = (result << 5) - result + length;
 		result = (result << 5) - result + (date == null ? 0 : date.hashCode());
-		result = (result << 5) - result + (comment == null ? 0 : comment.hashCode());
+		result = (result << 5) - result + comment.hashCode();
 		return result;
 	}
 
