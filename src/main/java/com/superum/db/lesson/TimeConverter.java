@@ -11,7 +11,7 @@ public class TimeConverter {
 	}
 	
 	public static short time(byte hour, byte minute) {
-		return (short) (hour << 6 + minute);
+		return (short) ((hour << 6) + minute);
 	}
 
 }
