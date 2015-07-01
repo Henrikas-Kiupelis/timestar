@@ -12,4 +12,6 @@ public interface TeacherDAO extends SimpleDAO<Teacher, Integer>, FullAccessDAO<T
 	
 	List<Teacher> readSome(int amount, int offset);
 	
+	int count();
+	
 }

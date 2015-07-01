@@ -91,6 +91,11 @@ public class TeacherDAOImpl implements TeacherDAO {
 				.map(Teacher::valueOf);
 	}
 	
+	@Override
+	public int count() {
+		return sql.fetchCount(TEACHER);
+	}
+	
 	// CONSTRUCTORS
 	
 	@Autowired

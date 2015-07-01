@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.CustomerDAO;
+import com.superum.db.customer.contract.CustomerContract;
+import com.superum.db.customer.contract.CustomerContractDAO;
+import com.superum.db.customer.contract.lang.CustomerContractLanguages;
+import com.superum.db.customer.contract.lang.CustomerContractLanguagesDAO;
 import com.superum.db.lesson.table.core.CustomerLessonData;
 import com.superum.db.lesson.table.core.LessonTable;
 import com.superum.db.lesson.table.core.PaymentData;
@@ -20,8 +24,8 @@ import com.superum.db.lesson.table.core.TeacherLessonData;
 import com.superum.db.lesson.table.core.TotalLessonData;
 import com.superum.db.teacher.Teacher;
 import com.superum.db.teacher.TeacherDAO;
-import com.superum.db.teacher.lang.Languages;
-import com.superum.db.teacher.lang.LanguagesDAO;
+import com.superum.db.teacher.lang.TeacherLanguages;
+import com.superum.db.teacher.lang.TeacherLanguagesDAO;
 
 @Service
 public class LessonTableServiceImpl implements LessonTableService {
@@ -30,10 +34,13 @@ public class LessonTableServiceImpl implements LessonTableService {
 	public LessonTable lessonData(int amount, int offset, Date start, Date end) {
 		LOG.debug("Retrieving lesson table.");
 		
+		int totalTeacherCount = teacherDAO.count();
+		LOG.debug("Total amount of teachers: {}", totalTeacherCount);
+		
 		List<Teacher> teachers = teacherDAO.readSome(amount, offset);
 		LOG.debug("List of teachers: {}", teachers);
 		
-		List<Languages> languages = teachers.stream()
+		List<TeacherLanguages> languages = teachers.stream()
 				.map(Teacher::getId)
 				.map(languagesDAO::read)
 				.collect(Collectors.toList());
@@ -65,7 +72,7 @@ public class LessonTableServiceImpl implements LessonTableService {
 				.collect(Collectors.toList());
 		LOG.debug("Teacher payment data: {}", paymentData);
 		
-		LessonTable lessonTable = new LessonTable(teachers, languages, lessonData, totalData, paymentData);
+		LessonTable lessonTable = new LessonTable(totalTeacherCount, teachers, languages, lessonData, totalData, paymentData);
 		LOG.debug("Full table: {}", lessonTable);
 		
 		return lessonTable;
@@ -74,23 +81,29 @@ public class LessonTableServiceImpl implements LessonTableService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public LessonTableServiceImpl(TeacherDAO teacherDAO, LanguagesDAO languagesDAO, CustomerDAO customerDAO,
-			LessonTableQueries lessonTableQueries) {
-		
+	public LessonTableServiceImpl(TeacherDAO teacherDAO, TeacherLanguagesDAO languagesDAO, CustomerDAO customerDAO,
+			CustomerContractDAO customerContractDAO, CustomerContractLanguagesDAO customerContractLanguagesDAO, LessonTableQueries lessonTableQueries) {
 		this.teacherDAO = teacherDAO;
 		this.languagesDAO = languagesDAO;
 		this.customerDAO = customerDAO;
+		this.customerContractDAO = customerContractDAO;
+		this.customerContractLanguagesDAO = customerContractLanguagesDAO;
 		this.lessonTableQueries = lessonTableQueries;
 	}
 
 	// PRIVATE
 
 	private final TeacherDAO teacherDAO;
-	private final LanguagesDAO languagesDAO;
+	private final TeacherLanguagesDAO languagesDAO;
 	private final CustomerDAO customerDAO;
+	private final CustomerContractDAO customerContractDAO;
+	private final CustomerContractLanguagesDAO customerContractLanguagesDAO;
 	private final LessonTableQueries lessonTableQueries;
 	
 	private CustomerLessonData customerData(Customer customer, List<Teacher> teachers, Date start, Date end) {
+		CustomerContract contract = customerContractDAO.read(customer.getId());
+		CustomerContractLanguages contractLanguages = customerContractLanguagesDAO.read(customer.getId());
+		
 		List<TeacherLessonData> lessonData = teachers.stream()
 				.map(teacher -> teacherData(teacher, customer, start, end))
 				.collect(Collectors.toList());
@@ -107,7 +120,7 @@ public class LessonTableServiceImpl implements LessonTableService {
 		
 		PaymentData paymentData = lessonTableQueries.countPriceForCustomer(customer.getId());
 		
-		return new CustomerLessonData(customer, lessonData, totalData, paymentData);
+		return new CustomerLessonData(customer, contract, contractLanguages, lessonData, totalData, paymentData);
 	}
 	
 	private TeacherLessonData teacherData(Teacher teacher, Customer customer, Date start, Date end) {

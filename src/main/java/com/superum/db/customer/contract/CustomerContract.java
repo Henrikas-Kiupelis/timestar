@@ -9,7 +9,6 @@ import java.util.Objects;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.jooq.Record;
 
@@ -41,11 +40,6 @@ public class CustomerContract {
 		return startDate;
 	}
 	
-	@JsonProperty("languageLevel")
-	public String getLanguageLevel() {
-		return languageLevel;
-	}
-	
 	@JsonProperty("paymentValue")
 	public BigDecimal getPaymentValue() {
 		return paymentValue;
@@ -59,7 +53,6 @@ public class CustomerContract {
 				"Customer ID: " + id,
 				"Payment day: " + paymentDay,
 				"Contract started: " + startDate,
-				"Level: " + languageLevel,
 				"Payment value: " + paymentValue);
 	}
 
@@ -76,7 +69,6 @@ public class CustomerContract {
 		return this.id == other.id
 				&& this.paymentDay == other.paymentDay
 				&& Objects.equals(this.startDate, other.startDate)
-				&& Objects.equals(this.languageLevel, other.languageLevel)
 				&& Objects.equals(this.paymentValue, other.paymentValue);
 	}
 
@@ -86,7 +78,6 @@ public class CustomerContract {
 		result = (result << 5) - result + id;
 		result = (result << 5) - result + paymentDay;
 		result = (result << 5) - result + (startDate == null ? 0 : startDate.hashCode());
-		result = (result << 5) - result + (languageLevel == null ? 0 : languageLevel.hashCode());
 		result = (result << 5) - result + (paymentValue == null ? 0 : paymentValue.hashCode());
 		return result;
 	}
@@ -97,12 +88,10 @@ public class CustomerContract {
 	public CustomerContract(@JsonProperty("id") int id, 
 					@JsonProperty("paymentDay") byte paymentDay, 
 					@JsonProperty("startDate") Date startDate,
-					@JsonProperty("languageLevel") String languageLevel,
 					@JsonProperty("paymentValue") BigDecimal paymentValue) {
 		this.id = id;
 		this.paymentDay = paymentDay;
 		this.startDate = startDate;
-		this.languageLevel = languageLevel;
 		this.paymentValue = paymentValue;
 	}
 	
@@ -113,9 +102,8 @@ public class CustomerContract {
 		int id = contractRecord.getValue(CUSTOMER_CONTRACT.CUSTOMER_ID);
 		byte paymentDay = contractRecord.getValue(CUSTOMER_CONTRACT.PAYMENT_DAY);
 		Date startDate = contractRecord.getValue(CUSTOMER_CONTRACT.START_DATE);
-		String languageLevel = contractRecord.getValue(CUSTOMER_CONTRACT.LANGUAGE_LEVEL);
 		BigDecimal paymentValue = contractRecord.getValue(CUSTOMER_CONTRACT.PAYMENT_VALUE);
-		return new CustomerContract(id, paymentDay, startDate, languageLevel, paymentValue);
+		return new CustomerContract(id, paymentDay, startDate, paymentValue);
 	}
 
 	// PRIVATE
@@ -129,10 +117,6 @@ public class CustomerContract {
 	
 	@NotNull(message = "There must be a start date")
 	private final Date startDate;
-	
-	@NotNull(message = "There must be a language level")
-	@Size(max = 20, message = "Language level should be defined it at most 20 characters")
-	private final String languageLevel;	
 	
 	@NotNull(message = "There must be a payment")
 	private final BigDecimal paymentValue;

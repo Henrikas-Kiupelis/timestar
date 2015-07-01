@@ -9,13 +9,18 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.teacher.Teacher;
-import com.superum.db.teacher.lang.Languages;
+import com.superum.db.teacher.lang.TeacherLanguages;
 import com.superum.utils.StringUtils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LessonTable {
 
 	// PUBLIC API
+	
+	@JsonProperty("totalTeacherCount")
+	public int getTotalTeacherCount() {
+		return totalTeacherCount;
+	}
 
 	@JsonProperty("teachers")
 	public List<Teacher> getTeachers() {
@@ -23,7 +28,7 @@ public class LessonTable {
 	}
 	
 	@JsonProperty("languages")
-	public List<Languages> getLanguages() {
+	public List<TeacherLanguages> getLanguages() {
 		return languages;
 	}
 	
@@ -47,6 +52,7 @@ public class LessonTable {
 	@Override
 	public String toString() {
 		return StringUtils.toString(
+				"Teachers total: " + totalTeacherCount,
 				"Teachers: " + teachers,
 				"Languages: " + languages,
 				"Lesson data: " + customerLessonData,
@@ -64,7 +70,8 @@ public class LessonTable {
 
 		LessonTable other = (LessonTable) o;
 
-		return Objects.equals(this.teachers, other.teachers)
+		return this.totalTeacherCount == other.totalTeacherCount
+				&& Objects.equals(this.teachers, other.teachers)
 				&& Objects.equals(this.languages, other.languages)
 				&& Objects.equals(this.customerLessonData, other.customerLessonData)
 				&& Objects.equals(this.totalData, other.totalData)
@@ -74,6 +81,7 @@ public class LessonTable {
 	@Override
 	public int hashCode() {
 		int result = 17;
+		result = (result << 5) - result + totalTeacherCount;
 		result = (result << 5) - result + (teachers == null ? 0 : teachers.hashCode());
 		result = (result << 5) - result + (languages == null ? 0 : languages.hashCode());
 		result = (result << 5) - result + (customerLessonData == null ? 0 : customerLessonData.hashCode());
@@ -85,11 +93,13 @@ public class LessonTable {
 	// CONSTRUCTORS
 
 	@JsonCreator
-	public LessonTable(@JsonProperty("teachers") List<Teacher> teachers,
-					   @JsonProperty("languages") List<Languages> languages,
+	public LessonTable(@JsonProperty("totalTeacherCount") int totalTeacherCount,
+					   @JsonProperty("teachers") List<Teacher> teachers,
+					   @JsonProperty("languages") List<TeacherLanguages> languages,
 					   @JsonProperty("customerLessonData") List<CustomerLessonData> customerLessonData,
 					   @JsonProperty("totalData") List<TotalLessonData> totalData,
 					   @JsonProperty("paymentData") List<PaymentData> paymentData) {
+		this.totalTeacherCount = totalTeacherCount;
 		this.teachers = teachers;
 		this.languages = languages;
 		this.customerLessonData = customerLessonData;
@@ -99,11 +109,13 @@ public class LessonTable {
 
 	// PRIVATE
 	
+	private final int totalTeacherCount;
+	
 	@NotNull
 	private final List<Teacher> teachers;
 	
 	@NotNull
-	private final List<Languages> languages;
+	private final List<TeacherLanguages> languages;
 	
 	@NotNull
 	private final List<CustomerLessonData> customerLessonData;

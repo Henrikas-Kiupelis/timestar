@@ -14,47 +14,47 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/timestar/api")
-public class LanguagesController {
+public class TeacherLanguagesController {
 
 	@RequestMapping(value = "/teacher/lang/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Languages addLanguagesToTeacher(@RequestBody @Valid Languages languages) {
+	public TeacherLanguages addLanguagesToTeacher(@RequestBody @Valid TeacherLanguages languages) {
 		return languageService.addLanguagesToTeacher(languages);
 	}
 	
 	@RequestMapping(value = "/teacher/lang/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Languages getLanguagesForTeacher(@PathVariable int teacherId) {
+	public TeacherLanguages getLanguagesForTeacher(@PathVariable int teacherId) {
 		return languageService.getLanguagesForTeacher(teacherId);
 	}
 	
 	@RequestMapping(value = "/teacher/lang/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Languages updateLanguagesForTeacher(@RequestBody @Valid Languages languages) {
+	public TeacherLanguages updateLanguagesForTeacher(@RequestBody @Valid TeacherLanguages languages) {
 		return languageService.updateLanguagesForTeacher(languages);
 	}
 	
 	@RequestMapping(value = "/teacher/lang/delete/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Languages deleteLanguagesForTeacher(@PathVariable int teacherId) {
+	public TeacherLanguages deleteLanguagesForTeacher(@PathVariable int teacherId) {
 		return languageService.deleteLanguagesForTeacher(teacherId);
 	}
 	
 	@RequestMapping(value = "/teacher/lang/delete", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Languages deleteLanguagesForTeacher(@RequestBody @Valid Languages languages) {
+	public TeacherLanguages deleteLanguagesForTeacher(@RequestBody @Valid TeacherLanguages languages) {
 		return languageService.deleteLanguagesForTeacher(languages);
 	}
 
 	// CONSTRUCTORS
 
 	@Autowired
-	public LanguagesController(LanguagesService languageService) {
+	public TeacherLanguagesController(TeacherLanguagesService languageService) {
 		this.languageService = languageService;
 	}
 
 	// PRIVATE
 	
-	private final LanguagesService languageService;
+	private final TeacherLanguagesService languageService;
 
 }

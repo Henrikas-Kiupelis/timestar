@@ -5,8 +5,8 @@ import org.springframework.stereotype.Repository;
 import com.superum.db.dao.SimpleDAO;
 
 @Repository
-public interface LanguagesDAO extends SimpleDAO<Languages, Integer> {
+public interface TeacherLanguagesDAO extends SimpleDAO<TeacherLanguages, Integer> {
 	
-	Languages delete(Languages languages);
+	TeacherLanguages delete(TeacherLanguages languages);
 	
 }

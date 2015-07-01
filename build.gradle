@@ -43,13 +43,15 @@ repositories {
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-jdbc"
-    compile "mysql:mysql-connector-java:5.1.34"
-    
     compile "org.springframework:spring-context"
+    
+    compile 'org.springframework.security:spring-security-web:4.0.1.RELEASE'
+	compile 'org.springframework.security:spring-security-config:4.0.1.RELEASE'
+    
     compile "org.jooq:jooq:3.6.1"
     compile "org.jooq:jooq-meta:3.6.1"
     compile "org.jooq:jooq-codegen:3.6.1"
-    
+    compile "mysql:mysql-connector-java:5.1.34"
     compile "c3p0:c3p0:0.9.1.2"
     
     testCompile "junit:junit"

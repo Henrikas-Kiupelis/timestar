@@ -16,10 +16,10 @@ import com.superum.db.generated.timestar.tables.records.TeacherLanguageRecord;
 
 @Repository
 @Transactional
-public class LanguagesDAOImpl implements LanguagesDAO {
+public class TeacherLanguagesDAOImpl implements TeacherLanguagesDAO {
 
 	@Override
-	public Languages create(Languages languages) {
+	public TeacherLanguages create(TeacherLanguages languages) {
 		Integer teacherId = languages.getTeacherId();
 		List<String> languageList = languages.getLanguages();
 		
@@ -32,33 +32,33 @@ public class LanguagesDAOImpl implements LanguagesDAO {
 	}
 
 	@Override
-	public Languages read(Integer teacherId) {
+	public TeacherLanguages read(Integer teacherId) {
 		List<String> languages =  sql.select(TEACHER_LANGUAGE.CODE)
 				.from(TEACHER_LANGUAGE)
 				.where(TEACHER_LANGUAGE.TEACHER_ID.eq(teacherId))
 				.fetch()
 				.map(record -> record.getValue(TEACHER_LANGUAGE.CODE));
-		return new Languages(teacherId, languages);
+		return new TeacherLanguages(teacherId, languages);
 	}
 
 	@Override
-	public Languages update(Languages languages) {
-		Languages old = delete(languages.getTeacherId());
+	public TeacherLanguages update(TeacherLanguages languages) {
+		TeacherLanguages old = delete(languages.getTeacherId());
 		
 		create(languages);
 		return old;
 	}
 
 	@Override
-	public Languages delete(Integer teacherId) {
-		return delete(new Languages(teacherId, Collections.emptyList()));
+	public TeacherLanguages delete(Integer teacherId) {
+		return delete(new TeacherLanguages(teacherId, Collections.emptyList()));
 	}
 
 	@Override
-	public Languages delete(Languages languages) {
+	public TeacherLanguages delete(TeacherLanguages languages) {
 		Integer teacherId = languages.getTeacherId();
 		
-		Languages old = read(teacherId);
+		TeacherLanguages old = read(teacherId);
 		
 		List<String> languageList = languages.getLanguages();
 		
@@ -76,7 +76,7 @@ public class LanguagesDAOImpl implements LanguagesDAO {
 	// CONSTRUCTORS
 
 	@Autowired
-	public LanguagesDAOImpl(DSLContext sql) {
+	public TeacherLanguagesDAOImpl(DSLContext sql) {
 		this.sql = sql;
 	}
 

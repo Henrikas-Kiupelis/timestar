@@ -1,4 +1,4 @@
-package com.superum.db.teacher.lang;
+package com.superum.db.customer.contract.lang;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,13 +12,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Languages {
+public class CustomerContractLanguages {
 
 	// PUBLIC API
 
 	@JsonProperty("id")
-	public int getTeacherId() {
-		return teacherId;
+	public int getCustomerId() {
+		return customerId;
 	}
 	
 	@JsonProperty("languages")
@@ -27,50 +27,47 @@ public class Languages {
 	}
 	
 	// OBJECT OVERRIDES
-
-	@Override
+		@Override
 	public String toString() {
 		return StringUtils.toString(
-				"Teacher ID: " + teacherId,
+				"Customer ID: " + customerId,
 				"Languages: " + languages);
 	}
-
+		
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-
-		if (!(o instanceof Languages))
+		
+		if (!(o instanceof CustomerContractLanguages))
 			return false;
-
-		Languages other = (Languages) o;
-
-		return this.teacherId == other.teacherId
+		
+		CustomerContractLanguages other = (CustomerContractLanguages) o;
+		
+		return this.customerId == other.customerId
 				&& Objects.equals(this.languages, other.languages);
 	}
-
+		
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result = (result << 5) - result + teacherId;
+		result = (result << 5) - result + customerId;
 		result = (result << 5) - result + languages.hashCode();
 		return result;
 	}
-
+		
 	// CONSTRUCTORS
-
 	@JsonCreator
-	public Languages(@JsonProperty("id") int teacherId, 
-					@JsonProperty("languages") List<String> languages) {
-		this.teacherId = teacherId;
+	public CustomerContractLanguages(@JsonProperty("id") int customerId,
+									 @JsonProperty("languages") List<String> languages) {
+		this.customerId = customerId;
 		this.languages = languages != null ? languages : Collections.emptyList();
 	}
-
+		
 	// PRIVATE
-
-	@Min(value = 1, message = "The teacher id must be set")
-	private final int teacherId;
+	
+	@Min(value = 1, message = "The customer id must be set")
+	private final int customerId;
 	
 	private final List<String> languages;
-	
 }
