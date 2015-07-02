@@ -9,6 +9,6 @@ public interface AccountService {
 	
 	Account updateAccount(Account account);
 	
-	int retrieveId(String username);
+	Account retrieveInfo(String username);
 
 }

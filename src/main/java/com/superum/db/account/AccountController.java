@@ -40,8 +40,8 @@ public class AccountController {
 	
 	@RequestMapping(value = "/account/info", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public int retrieveId(@RequestParam(value="username") String username) {
-		return accountService.retrieveId(username);
+	public Account retrieveInfo(@RequestParam(value="username") String username) {
+		return accountService.retrieveInfo(username);
 	}
 
 	// CONSTRUCTORS

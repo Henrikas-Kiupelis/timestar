@@ -22,8 +22,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public int retrieveId(String username) {
-		return accountDAO.read(username).getId();
+	public Account retrieveInfo(String username) {
+		return accountDAO.read(username);
 	}
 	
 	// CONSTRUCTORS
