@@ -36,7 +36,7 @@ public class StudentController {
 		return studentService.updateStudent(student);
 	}
 	
-	@RequestMapping(value = "/student/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/student/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public Student deleteStudent(@PathVariable int id) {
 		return studentService.deleteStudent(id);

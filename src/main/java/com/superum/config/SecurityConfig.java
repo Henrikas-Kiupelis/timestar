@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,8 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				.antMatchers("/timestar/api/lesson/table/**", "/timestar/api/account/**").hasRole(Role.ADMIN.name())
-				.anyRequest().hasRole(Role.TEACHER.name())
+				.antMatchers(PERMISION_ALL).permitAll()
+				.antMatchers(HttpMethod.GET, "/**").hasRole(Role.TEACHER.name())
+				.antMatchers(PERMISION_TEACHER).hasRole(Role.TEACHER.name())
+				.anyRequest().hasRole(Role.ADMIN.name())
 				.and()
 			.httpBasic()
 				.and()
@@ -47,4 +50,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final String USERS_QUERY = "select username,password,enabled from account where username = ?";
 	private static final String AUTHORITIES_QUERY = "select username,role from roles where username = ?";
 	
+	private static final String[] PERMISION_ALL = {
+		"/timestar/api/account/info"
+	};
+	private static final String[] PERMISION_TEACHER = {
+		"/timestar/api/account/update",
+		"/timestar/api/lesson/**"
+	};
+
 }

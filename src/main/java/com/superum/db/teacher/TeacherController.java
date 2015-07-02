@@ -53,7 +53,7 @@ public class TeacherController {
 		return outdatedTeacher;
 	}
 	
-	@RequestMapping(value = "/teacher/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public Teacher deleteTeacher(@PathVariable int id) {
 		log.info("Request to delete a teacher with ID {}", id);

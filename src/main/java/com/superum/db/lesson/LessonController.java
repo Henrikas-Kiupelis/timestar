@@ -38,7 +38,7 @@ public class LessonController {
 		return lessonService.updateLesson(lesson);
 	}
 	
-	@RequestMapping(value = "/lesson/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/lesson/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public Lesson deleteLesson(@PathVariable long id) {
 		return lessonService.deleteLesson(id);

@@ -36,7 +36,7 @@ public class GroupController {
 		return groupService.updateGroup(group);
 	}
 	
-	@RequestMapping(value = "/group/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/group/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public Group deleteGroup(@PathVariable int id) {
 		return groupService.deleteGroup(id);

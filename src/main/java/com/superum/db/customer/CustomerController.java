@@ -36,7 +36,7 @@ public class CustomerController {
 		return customerService.updateCustomer(customer);
 	}
 	
-	@RequestMapping(value = "/customer/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public Customer deleteCustomer(@PathVariable int id) {
 		return customerService.deleteCustomer(id);

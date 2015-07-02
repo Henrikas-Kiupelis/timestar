@@ -34,7 +34,7 @@ public class CustomerContractController {
 		return contractService.updateContract(contract);
 	}
 	
-	@RequestMapping(value = "/customer/contract/delete/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/contract/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public CustomerContract deleteContract(@PathVariable int id) {
 		return contractService.deleteContract(id);

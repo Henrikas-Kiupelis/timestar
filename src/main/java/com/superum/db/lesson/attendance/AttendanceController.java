@@ -34,7 +34,7 @@ public class AttendanceController {
 		return attendanceService.updateAttendanceForLesson(attendance);
 	}
 	
-	@RequestMapping(value = "/lesson/attendance/delete/{lessonId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/lesson/attendance/delete/{lessonId:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public Attendance deleteAttendanceForLesson(@PathVariable long lessonId) {
 		return attendanceService.deleteAttendanceForLesson(lessonId);

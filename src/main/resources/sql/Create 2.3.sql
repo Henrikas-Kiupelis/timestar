@@ -7,8 +7,9 @@ USE timestar;
 CREATE TABLE account (
 id INT NOT NULL, 
 enabled TINYINT NOT NULL DEFAULT 1, 
+account_type CHAR(10) NOT NULL, 
+password CHAR(60) NOT NULL, 
 username VARCHAR(60) NOT NULL UNIQUE, 
-password VARCHAR(60) NOT NULL, 
 PRIMARY KEY (username));
 
 CREATE TABLE roles (
@@ -16,8 +17,8 @@ username VARCHAR(60) NOT NULL,
 role VARCHAR(60) NOT NULL, 
 FOREIGN KEY(username) REFERENCES account(username));
 
-INSERT INTO account (username, password) 
-VALUES ("goodlike", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.");
+INSERT INTO account (username, password, account_type, id) 
+VALUES ("goodlike", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", "COTEM", 0);
 
 INSERT INTO roles (username, role) 
 VALUES ("goodlike", "ROLE_ADMIN");

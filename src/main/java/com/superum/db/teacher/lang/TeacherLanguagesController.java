@@ -34,7 +34,7 @@ public class TeacherLanguagesController {
 		return languageService.updateLanguagesForTeacher(languages);
 	}
 	
-	@RequestMapping(value = "/teacher/lang/delete/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/lang/delete/{teacherId:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public TeacherLanguages deleteLanguagesForTeacher(@PathVariable int teacherId) {
 		return languageService.deleteLanguagesForTeacher(teacherId);

@@ -13,4 +13,17 @@ public class StringUtils {
 				+ "}";
 	}
 	
+	public static String toString(char[] chars) {
+		StringBuilder builder = new StringBuilder();
+		for (char c : chars)
+			builder.append(c);
+		
+		return builder.toString();
+	}
+	
+	public static void erase(char[] chars) {
+		for (int i = 0; i < chars.length; i++)
+			chars[i] = '?';
+	}
+	
 }

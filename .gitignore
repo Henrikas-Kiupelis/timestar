@@ -21,6 +21,7 @@
 # Files containing passwords - use the .fill files to make a copy and fill the approriate fields
 
 /src/main/resources/persistence.properties
+/src/main/resources/email.properties
 
 # Generated files - use gradlew generate to make them
 
