@@ -38,6 +38,11 @@ public class Student {
 		return customerId;
 	}
 	
+	@JsonProperty("email")
+	public String getEmail() {
+		return email;
+	}
+	
 	@JsonProperty("name")
 	public String getName() {
 		return name;
@@ -51,6 +56,7 @@ public class Student {
 				"Student ID: " + id,
 				"Group ID: " + groupId,
 				"Customer ID: " + customerId, 
+				"Email: " + email,
 				"Name: " + name);
 	}
 
@@ -67,6 +73,7 @@ public class Student {
 		return this.id == other.id
 				&& this.groupId == other.groupId
 				&& this.customerId == other.customerId
+				&& Objects.equals(this.email, other.email)
 				&& Objects.equals(this.name, other.name);
 	}
 
@@ -76,6 +83,7 @@ public class Student {
 		result = (result << 5) - result + id;
 		result = (result << 5) - result + groupId;
 		result = (result << 5) - result + customerId;
+		result = (result << 5) - result + (email == null ? 0 : email.hashCode());
 		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
 		return result;
 	}
@@ -86,10 +94,12 @@ public class Student {
 	public Student(@JsonProperty("id") int id, 
 					@JsonProperty("groupId") int groupId, 
 					@JsonProperty("customerId") int customerId, 
+					@JsonProperty("email") String email, 
 					@JsonProperty("name") String name) {
 		this.id = id;
 		this.groupId = groupId;
 		this.customerId = customerId;
+		this.email = email;
 		this.name = name;
 	}
 	
@@ -100,8 +110,9 @@ public class Student {
 		int id = studentRecord.getValue(STUDENT.ID);
 		int groupId = studentRecord.getValue(STUDENT.GROUP_ID);
 		int customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
+		String email = studentRecord.getValue(STUDENT.EMAIL);
 		String name = studentRecord.getValue(STUDENT.NAME);
-		return new Student(id, groupId, customerId, name);
+		return new Student(id, groupId, customerId, email, name);
 	}
 
 	// PRIVATE
@@ -114,6 +125,10 @@ public class Student {
 	
 	@Min(value = 1, message = "The customer id must be set")
 	private final int customerId;
+	
+	@NotNull(message = "The student must have an email")
+	@Size(max = 60, message = "Email size must not exceed 60 characters")
+	private final String email;
 	
 	@NotNull(message = "The student must have a name")
 	@Size(max = 60, message = "Name size must not exceed 60 characters")

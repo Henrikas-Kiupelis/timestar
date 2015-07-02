@@ -20,6 +20,7 @@ public class StudentDAOImpl implements StudentDAO {
 		return sql.insertInto(STUDENT)
 				.set(STUDENT.GROUP_ID, student.getGroupId())
 				.set(STUDENT.CUSTOMER_ID, student.getCustomerId())
+				.set(STUDENT.EMAIL, student.getEmail())
 				.set(STUDENT.NAME, student.getName())
 				.returning()
 				.fetch().stream()
@@ -47,6 +48,7 @@ public class StudentDAOImpl implements StudentDAO {
 		sql.update(STUDENT)
 			.set(STUDENT.GROUP_ID, student.getGroupId())
 			.set(STUDENT.CUSTOMER_ID, student.getCustomerId())
+			.set(STUDENT.EMAIL, student.getEmail())
 			.set(STUDENT.NAME, student.getName())
 			.where(STUDENT.ID.eq(id))
 			.execute();

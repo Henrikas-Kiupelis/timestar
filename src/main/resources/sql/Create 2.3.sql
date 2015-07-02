@@ -81,6 +81,7 @@ CREATE TABLE student (
 id INT NOT NULL AUTO_INCREMENT, 
 group_id INT NOT NULL, 
 customer_id INT NOT NULL, 
+email VARCHAR(60) NOT NULL UNIQUE, 
 name VARCHAR(60) NOT NULL, 
 PRIMARY KEY(id), 
 FOREIGN KEY(group_id) REFERENCES student_group(id), 
@@ -104,3 +105,10 @@ student_id INT NOT NULL,
 FOREIGN KEY(lesson_id) REFERENCES lesson(id), 
 FOREIGN KEY(student_id) REFERENCES student(id), 
 UNIQUE KEY (lesson_id, student_id));
+
+CREATE TABLE lesson_code ( 
+lesson_id BIGINT NOT NULL, 
+student_id INT NOT NULL, 
+code INT NOT NULL, 
+FOREIGN KEY(lesson_id) REFERENCES lesson(id)
+FOREIGN KEY(student_id) REFERENCES student(id));
