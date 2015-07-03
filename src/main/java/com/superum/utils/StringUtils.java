@@ -13,7 +13,7 @@ public class StringUtils {
 				+ "}";
 	}
 	
-	public static String toString(char[] chars) {
+	public static String toStr(char[] chars) {
 		StringBuilder builder = new StringBuilder();
 		for (char c : chars)
 			builder.append(c);

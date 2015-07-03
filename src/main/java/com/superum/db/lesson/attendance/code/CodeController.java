@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/timestar/api")
 public class CodeController {
 
-	@RequestMapping(value = "/student/verify/{lessonId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/lesson/attendance/code/{lessonId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public int verifyStudentId(@PathVariable long lessonId, @RequestParam(value="code") int code) {
+	public int verifyStudentCode(@PathVariable long lessonId, @RequestParam(value="code") int code) {
 		if (code > 999999 || code < 100000)
 			throw new IllegalArgumentException("Code must be between 100000 and 999999");
 		

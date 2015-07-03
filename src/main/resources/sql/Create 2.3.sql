@@ -110,5 +110,5 @@ CREATE TABLE lesson_code (
 lesson_id BIGINT NOT NULL, 
 student_id INT NOT NULL, 
 code INT NOT NULL, 
-FOREIGN KEY(lesson_id) REFERENCES lesson(id)
+FOREIGN KEY(lesson_id) REFERENCES lesson(id), 
 FOREIGN KEY(student_id) REFERENCES student(id));

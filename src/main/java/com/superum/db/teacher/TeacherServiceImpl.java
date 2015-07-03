@@ -37,7 +37,7 @@ public class TeacherServiceImpl implements TeacherService {
 			throw new IllegalStateException("Failed to send mail! Creation aborted.", e);
 		}
 		
-		String securePassword = encoder.encode(StringUtils.toString(randomPassword));
+		String securePassword = encoder.encode(StringUtils.toStr(randomPassword));
 		StringUtils.erase(randomPassword);
 		accountDAO.create(new Account(newTeacher.getId(), newTeacher.getEmail(), AccountType.TEACHER.name(), securePassword.toCharArray()));
 		accountRolesDAO.create(new AccountRoles(newTeacher.getEmail(), AccountType.TEACHER.roleNames()));

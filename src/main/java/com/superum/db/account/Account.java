@@ -33,7 +33,7 @@ public class Account {
 	
 	@JsonIgnore
 	public String getPassword() {
-		return StringUtils.toString(password);
+		return StringUtils.toStr(password);
 	}
 	
 	public void erasePassword() {
