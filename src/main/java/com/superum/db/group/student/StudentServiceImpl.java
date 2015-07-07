@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.superum.db.lesson.attendance.LessonAttendanceService;
+import com.superum.db.lesson.attendance.code.LessonCodeService;
+
 @Service
 public class StudentServiceImpl implements StudentService {
 
@@ -25,6 +28,8 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public Student deleteStudent(int id) {
+		attendanceService.deleteAttendanceForStudent(id);
+		lessonCodeService.deleteCodesForStudent(id);		
 		return studentDAO.delete(id);
 	}
 
@@ -42,18 +47,44 @@ public class StudentServiceImpl implements StudentService {
 	public List<Student> findStudentsForLesson(long lessonId) {
 		return studentQueries.readAllForLesson(lessonId);
 	}
+	
+	@Override
+	public List<Student> deleteForCustomer(int customerId) {
+		List<Student> old = findStudentsForCustomer(customerId);
+		
+		old.stream()
+			.mapToInt(Student::getId)
+			.forEach(this::deleteStudent);
+		
+		return old;
+	}
+	
+	@Override
+	public List<Student> deleteForGroup(int groupId) {
+		List<Student> old = findStudentsForGroup(groupId);
+		
+		old.stream()
+			.mapToInt(Student::getId)
+			.forEach(this::deleteStudent);
+		
+		return old;
+	}
 
 	// CONSTRUCTORS
 
 	@Autowired
-	public StudentServiceImpl(StudentDAO studentDAO, StudentQueries studentQueries) {
+	public StudentServiceImpl(StudentDAO studentDAO, StudentQueries studentQueries, LessonAttendanceService attendanceService, LessonCodeService lessonCodeService) {
 		this.studentDAO = studentDAO;
 		this.studentQueries = studentQueries;
+		this.attendanceService = attendanceService;
+		this.lessonCodeService = lessonCodeService;
 	}
 
 	// PRIVATE
 	
 	private final StudentDAO studentDAO;
 	private final StudentQueries studentQueries;
+	private final LessonAttendanceService attendanceService;
+	private final LessonCodeService lessonCodeService;
 
 }

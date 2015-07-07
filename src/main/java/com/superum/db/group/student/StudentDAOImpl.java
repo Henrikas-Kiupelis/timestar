@@ -86,6 +86,17 @@ public class StudentDAOImpl implements StudentDAO {
 				.fetch()
 				.map(Student::valueOf);
 	}
+	
+	@Override
+	public List<Student> deleteAllForCustomer(int customerId) {
+		List<Student> old = readAllForCustomer(customerId);
+		
+		sql.delete(STUDENT)
+			.where(STUDENT.CUSTOMER_ID.eq(customerId))
+			.execute();
+		
+		return old;
+	}
 
 	// CONSTRUCTORS
 

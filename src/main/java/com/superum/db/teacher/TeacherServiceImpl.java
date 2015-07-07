@@ -14,6 +14,8 @@ import com.superum.db.account.AccountDAO;
 import com.superum.db.account.AccountType;
 import com.superum.db.account.roles.AccountRoles;
 import com.superum.db.account.roles.AccountRolesDAO;
+import com.superum.db.teacher.contract.TeacherContractService;
+import com.superum.db.teacher.lang.TeacherLanguagesService;
 import com.superum.utils.RandomUtils;
 import com.superum.utils.StringUtils;
 
@@ -57,13 +59,16 @@ public class TeacherServiceImpl implements TeacherService {
 	
 	@Override
 	public Teacher deleteTeacher(int id) {
+		teacherContractService.deleteContract(id);
+		teacherLanguagesService.deleteLanguagesForTeacher(id);
+		
 		Teacher deletedTeacher = teacherDAO.delete(id);
 		
 		String username = deletedTeacher.getEmail();
 		accountRolesDAO.delete(username);
 		accountDAO.delete(username);
 		
-		return teacherDAO.delete(id);
+		return deletedTeacher;
 	}
 	
 	@Override
@@ -74,12 +79,15 @@ public class TeacherServiceImpl implements TeacherService {
 	// CONSTRUCTORS
 	
 	@Autowired
-	public TeacherServiceImpl(TeacherDAO teacherDAO, PasswordEncoder encoder, Gmail mail, AccountDAO accountDAO, AccountRolesDAO accountRolesDAO) {
+	public TeacherServiceImpl(TeacherDAO teacherDAO, PasswordEncoder encoder, Gmail mail, AccountDAO accountDAO, AccountRolesDAO accountRolesDAO, 
+			TeacherContractService teacherContractService, TeacherLanguagesService teacherLanguagesService) {
 		this.teacherDAO = teacherDAO;
 		this.encoder = encoder;
 		this.mail = mail;
 		this.accountDAO = accountDAO;
 		this.accountRolesDAO = accountRolesDAO;
+		this.teacherContractService = teacherContractService;
+		this.teacherLanguagesService = teacherLanguagesService;
 	}
 	
 	// PRIVATE
@@ -88,7 +96,9 @@ public class TeacherServiceImpl implements TeacherService {
 	private final PasswordEncoder encoder;
 	private final Gmail mail;
 	private final AccountDAO accountDAO;
-	private final AccountRolesDAO accountRolesDAO;	
+	private final AccountRolesDAO accountRolesDAO;
+	private final TeacherContractService teacherContractService;
+	private final TeacherLanguagesService teacherLanguagesService;
 	
 	private static final int PASSWORD_LENGTH = 7;
 

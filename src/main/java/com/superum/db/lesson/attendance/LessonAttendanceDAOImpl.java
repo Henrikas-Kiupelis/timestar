@@ -16,10 +16,10 @@ import com.superum.db.generated.timestar.tables.records.LessonAttendanceRecord;
 
 @Repository
 @Transactional
-public class AttendanceDAOImpl implements AttendanceDAO {
+public class LessonAttendanceDAOImpl implements LessonAttendanceDAO {
 
 	@Override
-	public Attendance create(Attendance attendance) {
+	public LessonAttendance create(LessonAttendance attendance) {
 		Long lessonId = attendance.getLessonId();
 		List<Integer> studentIds = attendance.getStudentIds();
 		
@@ -32,33 +32,33 @@ public class AttendanceDAOImpl implements AttendanceDAO {
 	}
 
 	@Override
-	public Attendance read(Long lessonId) {
+	public LessonAttendance read(Long lessonId) {
 		List<Integer> studentIds =  sql.select(LESSON_ATTENDANCE.STUDENT_ID)
 				.from(LESSON_ATTENDANCE)
 				.where(LESSON_ATTENDANCE.LESSON_ID.eq(lessonId))
 				.fetch()
 				.map(record -> record.getValue(LESSON_ATTENDANCE.STUDENT_ID));
-		return new Attendance(lessonId, studentIds);
+		return new LessonAttendance(lessonId, studentIds);
 	}
 
 	@Override
-	public Attendance update(Attendance attendance) {
+	public LessonAttendance update(LessonAttendance attendance) {
 		long lessonId = attendance.getLessonId();
-		Attendance old = delete(lessonId);
+		LessonAttendance old = delete(lessonId);
 		
 		create(attendance);
 		return old;
 	}
 
 	@Override
-	public Attendance delete(Long lessonId) {
-		return delete(new Attendance(lessonId, Collections.emptyList()));
+	public LessonAttendance delete(Long lessonId) {
+		return delete(new LessonAttendance(lessonId, Collections.emptyList()));
 	}
 
 	@Override
-	public Attendance delete(Attendance attendance) {
+	public LessonAttendance delete(LessonAttendance attendance) {
 		Long lessonId = attendance.getLessonId();
-		Attendance old = read(lessonId);
+		LessonAttendance old = read(lessonId);
 		
 		List<Integer> studentIds = attendance.getStudentIds();
 		
@@ -72,11 +72,18 @@ public class AttendanceDAOImpl implements AttendanceDAO {
 		
 		return old;
 	}
+	
+	@Override
+	public int deleteForStudent(int studentId) {
+		return sql.delete(LESSON_ATTENDANCE)
+				.where(LESSON_ATTENDANCE.STUDENT_ID.eq(studentId))
+				.execute();
+	}
 
 	// CONSTRUCTORS
 
 	@Autowired
-	public AttendanceDAOImpl(DSLContext sql) {
+	public LessonAttendanceDAOImpl(DSLContext sql) {
 		this.sql = sql;
 	}
 

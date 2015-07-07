@@ -14,47 +14,47 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/timestar/api")
-public class AttendanceController {
+public class LessonAttendanceController {
 
 	@RequestMapping(value = "/lesson/attendance/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Attendance addAttendanceToLesson(@RequestBody @Valid Attendance attendance) {
+	public LessonAttendance addAttendanceToLesson(@RequestBody @Valid LessonAttendance attendance) {
 		return attendanceService.addAttendanceToLesson(attendance);
 	}
 	
 	@RequestMapping(value = "/lesson/attendance/{lessonId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Attendance getAttendanceForLesson(@PathVariable long lessonId) {
+	public LessonAttendance getAttendanceForLesson(@PathVariable long lessonId) {
 		return attendanceService.getAttendanceForLesson(lessonId);
 	}
 	
 	@RequestMapping(value = "/lesson/attendance/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Attendance updateAttendanceForLesson(@RequestBody @Valid Attendance attendance) {
+	public LessonAttendance updateAttendanceForLesson(@RequestBody @Valid LessonAttendance attendance) {
 		return attendanceService.updateAttendanceForLesson(attendance);
 	}
 	
 	@RequestMapping(value = "/lesson/attendance/delete/{lessonId:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Attendance deleteAttendanceForLesson(@PathVariable long lessonId) {
+	public LessonAttendance deleteAttendanceForLesson(@PathVariable long lessonId) {
 		return attendanceService.deleteAttendanceForLesson(lessonId);
 	}
 	
 	@RequestMapping(value = "/lesson/attendance/delete", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Attendance deleteAttendanceForLesson(@RequestBody @Valid Attendance attendance) {
+	public LessonAttendance deleteAttendanceForLesson(@RequestBody @Valid LessonAttendance attendance) {
 		return attendanceService.deleteAttendanceForLesson(attendance);
 	}
 
 	// CONSTRUCTORS
 
 	@Autowired
-	public AttendanceController(AttendanceService attendanceService) {
+	public LessonAttendanceController(LessonAttendanceService attendanceService) {
 		this.attendanceService = attendanceService;
 	}
 
 	// PRIVATE
 	
-	private final AttendanceService attendanceService;
+	private final LessonAttendanceService attendanceService;
 
 }

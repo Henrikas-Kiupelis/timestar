@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/timestar/api")
-public class CodeController {
+public class LessonCodeController {
 
 	@RequestMapping(value = "/lesson/attendance/code/{lessonId}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
@@ -26,12 +26,12 @@ public class CodeController {
 	// CONSTRUCTORS
 
 	@Autowired
-	public CodeController(CodeService codeService) {
+	public LessonCodeController(LessonCodeService codeService) {
 		this.codeService = codeService;
 	}
 
 	// PRIVATE
 	
-	private final CodeService codeService;
+	private final LessonCodeService codeService;
 
 }

@@ -5,6 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.superum.db.customer.contract.CustomerContractService;
+import com.superum.db.customer.contract.lang.CustomerContractLanguagesService;
+import com.superum.db.group.student.StudentService;
+
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
@@ -25,6 +29,10 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	@Override
 	public Customer deleteCustomer(int id) {
+		customerContractService.deleteContract(id);
+		customerContractLanguagesService.deleteLanguagesForCustomerContract(id);
+		studentService.deleteForCustomer(id);
+		
 		return customerDAO.delete(id);
 	}
 	
@@ -41,14 +49,21 @@ public class CustomerServiceImpl implements CustomerService {
 	// CONSTRUCTORS
 	
 	@Autowired
-	public CustomerServiceImpl(CustomerDAO customerDAO, CustomerQueries customerQueries) {
+	public CustomerServiceImpl(CustomerDAO customerDAO, CustomerQueries customerQueries,
+			CustomerContractService customerContractService, CustomerContractLanguagesService customerContractLanguagesService, StudentService studentService) {
 		this.customerDAO = customerDAO;
 		this.customerQueries = customerQueries;
+		this.customerContractService = customerContractService;
+		this.customerContractLanguagesService = customerContractLanguagesService;
+		this.studentService = studentService;
 	}
 	
 	// PRIVATE
 	
 	private final CustomerDAO customerDAO;
 	private final CustomerQueries customerQueries;
+	private final CustomerContractService customerContractService;
+	private final CustomerContractLanguagesService customerContractLanguagesService;
+	private final StudentService studentService;
 
 }

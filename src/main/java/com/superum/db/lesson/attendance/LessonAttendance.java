@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
 
-public class Attendance {
+public class LessonAttendance {
 
 	// PUBLIC API
 	
@@ -35,10 +35,10 @@ public class Attendance {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof Attendance))
+		if (!(o instanceof LessonAttendance))
 			return false;
 
-		Attendance other = (Attendance) o;
+		LessonAttendance other = (LessonAttendance) o;
 
 		return this.lessonId == other.lessonId
 				&& Objects.equals(this.studentIds, other.studentIds);
@@ -55,7 +55,7 @@ public class Attendance {
 	// CONSTRUCTORS
 
 	@JsonCreator
-	public Attendance(@JsonProperty("id") long lessonId,
+	public LessonAttendance(@JsonProperty("id") long lessonId,
 					  @JsonProperty("studentIds") List<Integer> studentIds) {
 		this.lessonId = lessonId;
 		this.studentIds = studentIds;

@@ -21,5 +21,9 @@ public interface LessonService {
 	List<Lesson> findLessonsForGroup(int groupId, Date start, Date end);
 	
 	List<Lesson> findLessonsForCustomer(int customerId, Date start, Date end);
+
+	List<Lesson> deleteForTeacher(int teacherId);
+	
+	List<Lesson> deleteForGroup(int groupId);
 	
 }

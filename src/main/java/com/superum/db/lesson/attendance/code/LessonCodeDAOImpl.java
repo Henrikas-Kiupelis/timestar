@@ -4,14 +4,8 @@ import static com.superum.db.generated.timestar.Tables.LESSON_CODE;
 
 import com.superum.db.exception.DatabaseException;
 import com.superum.db.generated.timestar.tables.records.LessonCodeRecord;
-import com.superum.db.lesson.attendance.Attendance;
-import com.superum.utils.RandomUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStep3;
@@ -21,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public class CodeDAOImpl implements CodeDAO {
+public class LessonCodeDAOImpl implements LessonCodeDAO {
 
 	@Override
 	public int find(long lessonId, int code) {
@@ -41,33 +35,37 @@ public class CodeDAOImpl implements CodeDAO {
 		
 		return studentId;
 	}
-
+	
 	@Override
-	public Map<Integer, Integer> add(Attendance attendance) {
-		long lessonId = attendance.getLessonId();
-		List<Integer> studentIds = attendance.getStudentIds();
-
-		//The following code ensures that all the codes are unique for this lesson
-		Set<Integer> codes = new HashSet<Integer>();
-		while (codes.size() < studentIds.size())
-			codes.add(RandomUtils.randomNumber(900000) + 100000);
-		
+	public List<LessonCode> add(List<LessonCode> lessonCodes) {
 		InsertValuesStep3<LessonCodeRecord,Long,Integer,Integer> step = sql.insertInto(LESSON_CODE, LESSON_CODE.LESSON_ID, LESSON_CODE.STUDENT_ID, LESSON_CODE.CODE);
 		
-		Map<Integer, Integer> codesForStudents = new HashMap<>();
-		int i = 0;
-		for (int code : codes) {
-			int studentId = studentIds.get(i++);
-			codesForStudents.put(studentId, code);
-			step = step.values(lessonId, studentId, code);
-		}
-		return codesForStudents;
+		for (LessonCode lessonCode : lessonCodes)
+			step = step.values(lessonCode.getLessonId(), lessonCode.getStudentId(), lessonCode.getCode());
+		
+		step.execute();
+		
+		return lessonCodes;
+	}
+	
+	@Override
+	public int deleteForStudent(int studentId) {
+		return sql.delete(LESSON_CODE)
+				.where(LESSON_CODE.STUDENT_ID.eq(studentId))
+				.execute();
+	}
+	
+	@Override
+	public int deleteForLesson(long lessonId) {
+		return sql.delete(LESSON_CODE)
+				.where(LESSON_CODE.LESSON_ID.eq(lessonId))
+				.execute();
 	}
 
 	// CONSTRUCTORS
 
 	@Autowired
-	public CodeDAOImpl(DSLContext sql) {
+	public LessonCodeDAOImpl(DSLContext sql) {
 		this.sql = sql;
 	}
 

@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.superum.db.group.student.StudentService;
+import com.superum.db.lesson.LessonService;
+
 @Service
 public class GroupServiceImpl implements GroupService {
 
@@ -25,6 +28,8 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public Group deleteGroup(int id) {
+		studentService.deleteForGroup(id);
+		lessonService.deleteForGroup(id);
 		return groupDAO.delete(id);
 	}
 
@@ -46,14 +51,18 @@ public class GroupServiceImpl implements GroupService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public GroupServiceImpl(GroupDAO groupDAO, GroupQueries groupQueries) {
+	public GroupServiceImpl(GroupDAO groupDAO, GroupQueries groupQueries, StudentService studentService, LessonService lessonService) {
 		this.groupDAO = groupDAO;
 		this.groupQueries = groupQueries;
+		this.studentService = studentService;
+		this.lessonService = lessonService;
 	}
 
 	// PRIVATE
 	
 	private final GroupDAO groupDAO;
 	private final GroupQueries groupQueries;
+	private final StudentService studentService;
+	private final LessonService lessonService;
 	
 }
