@@ -26,3 +26,8 @@
 # Generated files - use gradlew generate to make them
 
 /src/main/java/com/superum/db/generated/
+
+# Folders for file upload/download testing
+
+/pictures/
+/documents/
