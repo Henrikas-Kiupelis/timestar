@@ -15,4 +15,8 @@ public interface FileService {
 
 	String saveFile(String folder, String name, MultipartFile file) throws IOException;
 
+	String deletePicture(String pictureName);
+
+	String deleteDocument(String documentName);
+
 }

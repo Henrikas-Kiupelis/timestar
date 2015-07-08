@@ -42,6 +42,18 @@ public class FileController {
 	    return new FileSystemResource(fileService.getDocument(documentName)); 
 	}
 	
+	@RequestMapping(value = "/pictures/delete/{pictureName:.+}", method = RequestMethod.GET)
+	@ResponseBody
+	public String deletePicture(@PathVariable String pictureName) {
+	    return fileService.deletePicture(pictureName); 
+	}
+	
+	@RequestMapping(value = "/documents/delete/{documentName:.+}", method = RequestMethod.GET)
+	@ResponseBody
+	public String deleteDocument(@PathVariable String documentName) {
+	    return fileService.deleteDocument(documentName); 
+	}
+	
 	// CONSTRUCTORS
 	
 	@Autowired

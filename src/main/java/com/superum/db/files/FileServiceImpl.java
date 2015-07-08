@@ -21,32 +21,14 @@ public class FileServiceImpl implements FileService {
 	public File getPicture(String pictureName) {
 		LOG.debug("Trying to find file '{}' in folder '{}'", pictureName, PICTURE_FOLDER);
 		
-		Path path = Paths.get(PICTURE_FOLDER, pictureName);
-		LOG.debug("Path constructred: {}", path);
-		
-		File file = path.toFile();
-		LOG.debug("File constructred: {}", file);
-		
-		if (file.exists())
-			return file;
-		
-		throw new FileNotFoundException("Couldn't find file: " + pictureName);
+		return getFile(PICTURE_FOLDER, pictureName);
 	}
 
 	@Override
 	public File getDocument(String documentName) {
 		LOG.debug("Trying to find file '{}' in folder '{}'", documentName, DOCUMENT_FOLDER);
 		
-		Path path = Paths.get(DOCUMENT_FOLDER, documentName);
-		LOG.debug("Path constructred: {}", path);
-		
-		File file = path.toFile();
-		LOG.debug("File constructred: {}", file);
-		
-		if (file.exists())
-			return file;
-		
-		throw new FileNotFoundException("Couldn't find file: " + documentName);
+		return getFile(DOCUMENT_FOLDER, documentName);
 	}
 	
 	@Override
@@ -72,11 +54,7 @@ public class FileServiceImpl implements FileService {
 			updatedName = name + System.currentTimeMillis() + contentType;
 			LOG.debug("Trying to save file '{}' in folder '{}'", name, folder);
 			
-			Path path = Paths.get(folder, updatedName);
-			LOG.debug("Path constructred: {}", path);
-			
-			file = path.toFile();
-			LOG.debug("File constructred: {}", file);
+			file = makeFile(folder, updatedName);
 		} while (file.exists());
 		
 		BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
@@ -86,8 +64,52 @@ public class FileServiceImpl implements FileService {
         
 		return updatedName;
 	}
+	
+	@Override
+	public String deletePicture(String pictureName) {
+		LOG.debug("Trying to delete file '{}' in folder '{}'", pictureName, PICTURE_FOLDER);
+		
+		return deleteFile(PICTURE_FOLDER, pictureName);
+	}
+
+	@Override
+	public String deleteDocument(String documentName) {
+		LOG.debug("Trying to delete file '{}' in folder '{}'", documentName, DOCUMENT_FOLDER);
+		
+		return deleteFile(DOCUMENT_FOLDER, documentName);
+	}
 
 	// PRIVATE
+	
+	private File makeFile(String folder, String name) {
+		Path path = Paths.get(folder, name);
+		LOG.debug("Path constructred: {}", path);
+		
+		File file = path.toFile();
+		LOG.debug("File constructred: {}", file);
+		
+		return file;
+	}
+	
+	private File getFile(String folder, String name) {
+		File file = makeFile(folder, name);
+		
+		if (file.exists())
+			return file;
+		
+		throw new FileNotFoundException("Couldn't find file: " + name);
+	}
+	
+	private String deleteFile(String folder, String name) {
+		File file = makeFile(folder, name);
+		
+		if (file.exists()) {
+			file.delete();
+			return name;
+		}
+		
+		throw new FileNotFoundException("Couldn't find file: " + name);
+	}
 	
 	private static final String PICTURE_FOLDER = "pictures";
 	private static final String DOCUMENT_FOLDER = "documents";
