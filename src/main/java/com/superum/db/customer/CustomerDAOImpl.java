@@ -21,6 +21,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 				.set(CUSTOMER.NAME, customer.getName())
 				.set(CUSTOMER.PHONE, customer.getPhone())
 				.set(CUSTOMER.WEBSITE, customer.getWebsite())
+				.set(CUSTOMER.PICTURE_NAME, customer.getPictureName())
 				.set(CUSTOMER.COMMENT_ABOUT, customer.getComment())
 				.returning()
 				.fetch().stream()
@@ -49,6 +50,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 			.set(CUSTOMER.NAME, customer.getName())
 			.set(CUSTOMER.PHONE, customer.getPhone())
 			.set(CUSTOMER.WEBSITE, customer.getWebsite())
+			.set(CUSTOMER.PICTURE_NAME, customer.getPictureName())
 			.set(CUSTOMER.COMMENT_ABOUT, customer.getComment())
 			.where(CUSTOMER.ID.eq(id))
 			.execute();

@@ -23,6 +23,8 @@ public class TeacherDAOImpl implements TeacherDAO {
 				.set(TEACHER.PHONE, teacher.getPhone())
 				.set(TEACHER.CITY, teacher.getCity())
 				.set(TEACHER.EMAIL, teacher.getEmail())
+				.set(TEACHER.PICTURE_NAME, teacher.getPictureName())
+				.set(TEACHER.DOCUMENT_NAME, teacher.getDocumentName())
 				.set(TEACHER.COMMENT_ABOUT, teacher.getComment())
 				.returning()
 				.fetch().stream()
@@ -53,6 +55,8 @@ public class TeacherDAOImpl implements TeacherDAO {
 			.set(TEACHER.PHONE, teacher.getPhone())
 			.set(TEACHER.CITY, teacher.getCity())
 			.set(TEACHER.EMAIL, teacher.getEmail())
+			.set(TEACHER.PICTURE_NAME, teacher.getPictureName())
+			.set(TEACHER.DOCUMENT_NAME, teacher.getDocumentName())
 			.set(TEACHER.COMMENT_ABOUT, teacher.getComment())
 			.where(TEACHER.ID.eq(id))
 			.execute();

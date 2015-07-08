@@ -43,6 +43,11 @@ public class Customer {
 		return website;
 	}
 	
+	@JsonProperty("pictureName")
+	public String getPictureName() {
+		return pictureName;
+	}
+	
 	@JsonProperty("comment")
 	public String getComment() {
 		return comment;
@@ -57,6 +62,7 @@ public class Customer {
 				"Name: " + name,
 				"Phone: " + phone,
 				"Website: " + website,
+				"Picture: " + pictureName,
 				"Comment: " + comment);
 	}
 
@@ -74,6 +80,7 @@ public class Customer {
 				&& Objects.equals(this.name, other.name)
 				&& Objects.equals(this.phone, other.phone)
 				&& Objects.equals(this.website, other.website)
+				&& Objects.equals(this.pictureName, other.pictureName)
 				&& Objects.equals(this.comment, other.comment);
 	}
 
@@ -84,6 +91,7 @@ public class Customer {
 		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
 		result = (result << 5) - result + (phone == null ? 0 : phone.hashCode());
 		result = (result << 5) - result + (website == null ? 0 : website.hashCode());
+		result = (result << 5) - result + pictureName.hashCode();
 		result = (result << 5) - result + comment.hashCode();
 		return result;
 	}
@@ -95,11 +103,13 @@ public class Customer {
 					@JsonProperty("name") String name, 
 					@JsonProperty("phone") String phone,
 					@JsonProperty("website") String website,
+					@JsonProperty("pictureName") String pictureName,
 					@JsonProperty("comment") String comment) {
 		this.id = id;
 		this.name = name;
 		this.phone = phone;
 		this.website = website;
+		this.pictureName = pictureName != null ? pictureName : "";
 		this.comment = comment != null ? comment : "";
 	}
 	
@@ -111,8 +121,9 @@ public class Customer {
 		String name = customerRecord.getValue(CUSTOMER.NAME);
 		String phone = customerRecord.getValue(CUSTOMER.PHONE);
 		String website = customerRecord.getValue(CUSTOMER.WEBSITE);
+		String pictureName = customerRecord.getValue(CUSTOMER.PICTURE_NAME);
 		String comment = customerRecord.getValue(CUSTOMER.COMMENT_ABOUT);
-		return new Customer(id, name, phone, website, comment);
+		return new Customer(id, name, phone, website, pictureName, comment);
 	}
 
 	// PRIVATE
@@ -131,6 +142,10 @@ public class Customer {
 	@NotNull(message = "The customer must have a website")
 	@Size(max = 30, message = "Website size must not exceed 30 characters")
 	private final String website;
+	
+	@NotNull(message = "The customer must have a website")
+	@Size(max = 100, message = "Picture name size must not exceed 100 characters")
+	private final String pictureName;
 	
 	@NotNull(message = "The customer must have a comment, even if empty")
 	@Size(max = 500, message = "The comment must not exceed 500 characters")

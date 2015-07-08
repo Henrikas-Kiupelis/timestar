@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.Email;
 import org.jooq.Record;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -128,6 +129,7 @@ public class Student {
 	
 	@NotNull(message = "The student must have an email")
 	@Size(max = 60, message = "Email size must not exceed 60 characters")
+	@Email
 	private final String email;
 	
 	@NotNull(message = "The student must have a name")

@@ -54,6 +54,16 @@ public class Teacher {
 		return email;
 	}
 	
+	@JsonProperty("pictureName")
+	public String getPictureName() {
+		return pictureName;
+	}
+	
+	@JsonProperty("documentName")
+	public String getDocumentName() {
+		return documentName;
+	}
+	
 	@JsonProperty("comment")
 	public String getComment() {
 		return comment;
@@ -70,6 +80,8 @@ public class Teacher {
 				"Phone: " + phone,
 				"City: " + city,
 				"Email: " + email, 
+				"Picture: " + pictureName, 
+				"Document: " + documentName, 
 				"Comment: " + comment);
 	}
 
@@ -89,6 +101,8 @@ public class Teacher {
 				&& Objects.equals(this.phone, other.phone)
 				&& Objects.equals(this.city, other.city)
 				&& Objects.equals(this.email, other.email)
+				&& Objects.equals(this.pictureName, other.pictureName)
+				&& Objects.equals(this.documentName, other.documentName)
 				&& Objects.equals(this.comment, other.comment);
 	}
 
@@ -101,6 +115,8 @@ public class Teacher {
 		result = (result << 5) - result + (phone == null ? 0 : phone.hashCode());
 		result = (result << 5) - result + (city == null ? 0 : city.hashCode());
 		result = (result << 5) - result + (email == null ? 0 : email.hashCode());
+		result = (result << 5) - result + pictureName.hashCode();
+		result = (result << 5) - result + documentName.hashCode();
 		result = (result << 5) - result + comment.hashCode();
 		return result;
 	}
@@ -114,6 +130,8 @@ public class Teacher {
 					@JsonProperty("phone") String phone, 
 					@JsonProperty("city") String city,
 					@JsonProperty("email") String email,
+					@JsonProperty("pictureName") String pictureName,
+					@JsonProperty("documentName") String documentName,
 					@JsonProperty("comment") String comment) {
 		this.id = id;
 		this.name = name;
@@ -121,6 +139,8 @@ public class Teacher {
 		this.phone = phone;
 		this.city = city;
 		this.email = email;
+		this.pictureName = pictureName != null ? pictureName : "";
+		this.documentName = documentName != null ? documentName : "";
 		this.comment = comment != null ? comment : "";
 	}
 	
@@ -134,8 +154,10 @@ public class Teacher {
 		String phone = teacherRecord.getValue(TEACHER.PHONE);
 		String city = teacherRecord.getValue(TEACHER.CITY);
 		String email = teacherRecord.getValue(TEACHER.EMAIL);
+		String pictureName = teacherRecord.getValue(TEACHER.PICTURE_NAME);
+		String documentName = teacherRecord.getValue(TEACHER.DOCUMENT_NAME);
 		String comment = teacherRecord.getValue(TEACHER.COMMENT_ABOUT);
-		return new Teacher(id, name, surname, phone, city, email, comment);
+		return new Teacher(id, name, surname, phone, city, email, pictureName, documentName, comment);
 	}
 
 	// PRIVATE
@@ -163,6 +185,14 @@ public class Teacher {
 	@Size(max = 60, message = "Email size must not exceed 60 characters")
 	@Email
 	private final String email;
+	
+	@NotNull(message = "The teacher must have a picture name")
+	@Size(max = 100, message = "Picture name size must not exceed 100 characters")
+	private final String pictureName;
+	
+	@NotNull(message = "The teacher must have a document name")
+	@Size(max = 100, message = "Document name size must not exceed 100 characters")
+	private final String documentName;
 	
 	@NotNull(message = "The teacher must have a comment, even if empty")
 	@Size(max = 500, message = "The comment must not exceed 500 characters")
