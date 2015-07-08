@@ -47,11 +47,12 @@ public class FileServiceImpl implements FileService {
 		contentType = fileTypeIndex < 0 ? "" : contentType.substring(fileTypeIndex);
 		if (!contentType.isEmpty() && name.endsWith(contentType))
 			name = name.substring(0, name.lastIndexOf(contentType));
+		LOG.debug("Determined the following file extension: {}", contentType);
 		
 		String updatedName;
 		File file;
 		do {
-			updatedName = name + System.currentTimeMillis() + contentType;
+			updatedName = name + "-" + System.currentTimeMillis() + contentType;
 			LOG.debug("Trying to save file '{}' in folder '{}'", name, folder);
 			
 			file = makeFile(folder, updatedName);
@@ -61,6 +62,7 @@ public class FileServiceImpl implements FileService {
 		byte[] bytes = multiPartFile.getBytes();
         stream.write(bytes);
         stream.close();
+        LOG.debug("File successfully saved.");
         
 		return updatedName;
 	}
@@ -101,19 +103,13 @@ public class FileServiceImpl implements FileService {
 	}
 	
 	private String deleteFile(String folder, String name) {
-		File file = makeFile(folder, name);
-		
-		if (file.exists()) {
-			file.delete();
-			return name;
-		}
-		
-		throw new FileNotFoundException("Couldn't find file: " + name);
+		getFile(folder, name).delete();
+		return name;
 	}
 	
 	private static final String PICTURE_FOLDER = "pictures";
 	private static final String DOCUMENT_FOLDER = "documents";
 	
-	private static final Logger LOG = LoggerFactory.getLogger(FileServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FileService.class);
 
 }

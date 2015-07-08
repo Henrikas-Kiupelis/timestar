@@ -42,13 +42,13 @@ public class FileController {
 	    return new FileSystemResource(fileService.getDocument(documentName)); 
 	}
 	
-	@RequestMapping(value = "/pictures/delete/{pictureName:.+}", method = RequestMethod.GET)
+	@RequestMapping(value = "/pictures/delete/{pictureName:.+}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public String deletePicture(@PathVariable String pictureName) {
 	    return fileService.deletePicture(pictureName); 
 	}
 	
-	@RequestMapping(value = "/documents/delete/{documentName:.+}", method = RequestMethod.GET)
+	@RequestMapping(value = "/documents/delete/{documentName:.+}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public String deleteDocument(@PathVariable String documentName) {
 	    return fileService.deleteDocument(documentName); 
