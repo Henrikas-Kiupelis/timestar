@@ -7,10 +7,10 @@ public interface CustomerContractService {
 
 	CustomerContract addContract(CustomerContract contract);
 	
-	CustomerContract findContract(int id);
+	CustomerContract findContract(int customerId);
 	
 	CustomerContract updateContract(CustomerContract contract);
 	
-	CustomerContract deleteContract(int id);
+	CustomerContract deleteContract(int customerId);
 	
 }
