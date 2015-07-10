@@ -36,7 +36,7 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 			try {
 				String fullBody = EMAIL_BODY + code;
 				mail.send(student.getEmail(), EMAIL_TITLE, fullBody);
-				LOG.debug("Sent email to student {}: title - {}; body - {}", student, EMAIL_TITLE, fullBody);
+				LOG.debug("Sent email to student '{}': title - '{}'; body - '{}'", student, EMAIL_TITLE, fullBody);
 			} catch (MessagingException e) {
 				lessonCodeDAO.find(attendance.getLessonId(), code);
 				throw new IllegalStateException("Failed to send mail! Code aborted.", e);
@@ -48,27 +48,52 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 
 	@Override
 	public LessonAttendance getAttendanceForLesson(long lessonId) {
-		return attendanceDAO.read(lessonId);
+		LOG.debug("Reading LessonAttendance by ID: {}", lessonId);
+		
+		LessonAttendance attendance = attendanceDAO.read(lessonId);
+		LOG.debug("LessonAttendance retrieved: {}", attendance);
+		
+		return attendance;
 	}
 
 	@Override
 	public LessonAttendance updateAttendanceForLesson(LessonAttendance attendance) {
-		return attendanceDAO.update(attendance);
+		LOG.debug("Updating LessonAttendance: {}", attendance);
+		
+		LessonAttendance oldAttendance = attendanceDAO.update(attendance);
+		LOG.debug("Old LessonAttendance retrieved: {}", oldAttendance);
+		
+		return oldAttendance;
 	}
 
 	@Override
 	public LessonAttendance deleteAttendanceForLesson(long lessonId) {
-		return attendanceDAO.delete(lessonId);
+		LOG.debug("Deleting LessonAttendance by ID: {}", lessonId);
+		
+		LessonAttendance deletedAttendance = attendanceDAO.delete(lessonId);
+		LOG.debug("Deleted LessonAttendance: {}", deletedAttendance);
+		
+		return deletedAttendance;
 	}
 
 	@Override
 	public LessonAttendance deleteAttendanceForLesson(LessonAttendance attendance) {
-		return attendanceDAO.delete(attendance);
+		LOG.debug("Deleting LessonAttendance: {}", attendance);
+		
+		LessonAttendance attendanceBeforeDeletion = attendanceDAO.delete(attendance);
+		LOG.debug("Attendance before deletion: {}", attendanceBeforeDeletion);
+		
+		return attendanceBeforeDeletion;
 	}
 	
 	@Override
 	public int deleteAttendanceForStudent(int studentId) {
-		return attendanceDAO.deleteForStudent(studentId);
+		LOG.debug("Deleting LessonAttendance for Student with ID: {}", studentId);
+		
+		int deletedAttendanceAmount = attendanceDAO.deleteForStudent(studentId);
+		LOG.debug("Deleted {} LessonAttendances", deletedAttendanceAmount);
+		
+		return deletedAttendanceAmount;
 	}
 
 	// CONSTRUCTORS
@@ -93,6 +118,6 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 	private static final String EMAIL_TITLE = "Your COTEM lesson code";
 	private static final String EMAIL_BODY = "Code: ";
 	
-	private static final Logger LOG = LoggerFactory.getLogger(LessonAttendanceServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LessonAttendanceService.class);
 
 }

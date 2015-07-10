@@ -52,10 +52,10 @@ public class CustomerContractLanguagesServiceImpl implements CustomerContractLan
 	public CustomerContractLanguages deleteLanguagesForCustomerContract(CustomerContractLanguages languages) {
 		LOG.debug("Deleting CustomerContractLanguages: {}", languages);
 		
-		CustomerContractLanguages deletedLanguages = languagesDAO.delete(languages);
-		LOG.debug("CustomerContractLanguages before deletion: {}", deletedLanguages);
+		CustomerContractLanguages languagesBeforeDeletion = languagesDAO.delete(languages);
+		LOG.debug("CustomerContractLanguages before deletion: {}", languagesBeforeDeletion);
 		
-		return deletedLanguages;
+		return languagesBeforeDeletion;
 	}
 	
 	// CONSTRUCTORS

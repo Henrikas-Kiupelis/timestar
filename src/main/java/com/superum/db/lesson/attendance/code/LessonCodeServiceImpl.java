@@ -39,16 +39,31 @@ public class LessonCodeServiceImpl implements LessonCodeService {
 	
 	@Override
 	public int verifyStudentId(long lessonId, int code) {
-		return codeDAO.find(lessonId, code);
+		LOG.debug("Verifying code '{}' for Lesson '{}'", code, lessonId);
+		
+		int studentId = codeDAO.find(lessonId, code);
+		LOG.debug("The code belongs to Student with ID: {}", studentId);
+		
+		return studentId;
 	}
 	
 	@Override
 	public int deleteCodesForStudent(int studentId) {
-		return codeDAO.deleteForStudent(studentId);
+		LOG.debug("Deleting LessonCodes for Student with ID: {}", studentId);
+		
+		int codeCount = codeDAO.deleteForStudent(studentId);
+		LOG.debug("LessonCodes deleted: {}", codeCount);
+		
+		return codeCount;
 	}
 	
 	@Override
 	public int deleteCodesForLesson(long lessonId) {
+		LOG.debug("Deleting LessonCodes for Lesson with ID: {}", lessonId);
+		
+		int codeCount = codeDAO.deleteForLesson(lessonId);
+		LOG.debug("LessonCodes deleted: {}", codeCount);
+		
 		return codeDAO.deleteForLesson(lessonId);
 	}
 
@@ -63,6 +78,6 @@ public class LessonCodeServiceImpl implements LessonCodeService {
 	
 	private final LessonCodeDAO codeDAO;
 	
-	private static final Logger LOG = LoggerFactory.getLogger(LessonCodeServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LessonCodeService.class);
 
 }
