@@ -46,19 +46,34 @@ public class Lesson {
 		return date;
 	}
 	
-	@JsonProperty("hour")
-	public byte getHour() {
-		return hour;
+	@JsonProperty("startHour")
+	public byte getStartHour() {
+		return startHour;
 	}
 	
-	@JsonProperty("minute")
-	public byte getMinute() {
-		return minute;
+	@JsonProperty("startMinute")
+	public byte getStartMinute() {
+		return startMinute;
 	}
 	
 	@JsonIgnore
-	public short getTime() {
-		return time(hour, minute);
+	public short getStartTime() {
+		return time(startHour, startMinute);
+	}
+	
+	@JsonProperty("endHour")
+	public byte getEndHour() {
+		return endHour;
+	}
+	
+	@JsonProperty("endMinute")
+	public byte getEndMinute() {
+		return endMinute;
+	}
+	
+	@JsonIgnore
+	public short getEndTime() {
+		return time(endHour, endMinute);
 	}
 	
 	@JsonProperty("length")
@@ -80,7 +95,8 @@ public class Lesson {
 				"Teacher ID: " + teacherId,
 				"Group ID: " + groupId,
 				"Date: " + date,
-				"Time: " + hour + ":" + minute,
+				"Start time: " + startHour + ":" + startMinute,
+				"End time: " + endHour + ":" + endMinute,
 				"Length: " + length,
 				"Comment: " + comment);
 	}
@@ -98,8 +114,8 @@ public class Lesson {
 		return this.id == other.id
 				&& this.teacherId == other.teacherId
 				&& this.groupId == other.groupId
-				&& this.hour == other.hour
-				&& this.minute == other.minute
+				&& this.startHour == other.startHour
+				&& this.startMinute == other.startMinute
 				&& this.length == other.length
 				&& Objects.equals(this.date, other.date)
 				&& Objects.equals(this.comment, other.comment);
@@ -111,8 +127,8 @@ public class Lesson {
 		result = (result << 5) - result + (int)id;
 		result = (result << 5) - result + teacherId;
 		result = (result << 5) - result + groupId;
-		result = (result << 5) - result + hour;
-		result = (result << 5) - result + minute;
+		result = (result << 5) - result + startHour;
+		result = (result << 5) - result + startMinute;
 		result = (result << 5) - result + length;
 		result = (result << 5) - result + (date == null ? 0 : date.hashCode());
 		result = (result << 5) - result + comment.hashCode();
@@ -125,16 +141,20 @@ public class Lesson {
 				@JsonProperty("teacherId") int teacherId, 
 				@JsonProperty("groupId") int groupId, 
 				@JsonProperty("date") Date date, 
-				@JsonProperty("hour") byte hour, 
-				@JsonProperty("minute") byte minute, 
+				@JsonProperty("startHour") byte startHour, 
+				@JsonProperty("startMinute") byte startMinute, 
+				@JsonProperty("endHour") byte endHour, 
+				@JsonProperty("endMinute") byte endMinute, 
 				@JsonProperty("length") short length, 
 				@JsonProperty("comment") String comment) {
 		this.id = id;
 		this.teacherId = teacherId;
 		this.groupId = groupId;
 		this.date = date;
-		this.hour = hour;
-		this.minute = minute;
+		this.startHour = startHour;
+		this.startMinute = startMinute;
+		this.endHour = endHour;
+		this.endMinute = endMinute;
 		this.length = length;
 		this.comment = comment != null ? comment : "";
 	}
@@ -147,12 +167,15 @@ public class Lesson {
 		int teacherId = lessonRecord.getValue(LESSON.TEACHER_ID);
 		int groupId = lessonRecord.getValue(LESSON.GROUP_ID);
 		Date date = lessonRecord.getValue(LESSON.DATE_OF_LESSON);
-		short time = lessonRecord.getValue(LESSON.TIME_OF_LESSON);
-		byte hour = hour(time);
-		byte minute = minute(time);
+		short startTime = lessonRecord.getValue(LESSON.TIME_OF_START);
+		byte startHour = hour(startTime);
+		byte startMinute = minute(startTime);
+		short endTime = lessonRecord.getValue(LESSON.TIME_OF_END);
+		byte endHour = hour(endTime);
+		byte endMinute = minute(endTime);
 		short length = lessonRecord.getValue(LESSON.LENGTH_IN_MINUTES);
 		String comment = lessonRecord.getValue(LESSON.COMMENT_ABOUT);
-		return new Lesson(id, teacherId, groupId, date, hour, minute, length, comment);
+		return new Lesson(id, teacherId, groupId, date, startHour, startMinute, endHour, endMinute, length, comment);
 	}
 
 	// PRIVATE
@@ -171,11 +194,19 @@ public class Lesson {
 	
 	@Min(value = 0, message = "The hour must be at least 0")
 	@Max(value = 23, message = "The hour must be at most 23")
-	private final byte hour;
+	private final byte startHour;
 	
 	@Min(value = 0, message = "The minute must be at least 0")
 	@Max(value = 59, message = "The minute must be at most 59")
-	private final byte minute;
+	private final byte startMinute;
+	
+	@Min(value = 0, message = "The hour must be at least 0")
+	@Max(value = 23, message = "The hour must be at most 23")
+	private final byte endHour;
+	
+	@Min(value = 0, message = "The minute must be at least 0")
+	@Max(value = 59, message = "The minute must be at most 59")
+	private final byte endMinute;
 	
 	@Min(value = 1, message = "The length of lesson must be set")
 	private final short length;

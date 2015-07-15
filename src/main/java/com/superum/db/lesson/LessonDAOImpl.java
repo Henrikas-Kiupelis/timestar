@@ -24,7 +24,8 @@ public class LessonDAOImpl implements LessonDAO {
 				.set(LESSON.TEACHER_ID, lesson.getTeacherId())
 				.set(LESSON.GROUP_ID, lesson.getGroupId())
 				.set(LESSON.DATE_OF_LESSON, lesson.getDate())
-				.set(LESSON.TIME_OF_LESSON, lesson.getTime())
+				.set(LESSON.TIME_OF_START, lesson.getStartTime())
+				.set(LESSON.TIME_OF_END, lesson.getEndTime())
 				.set(LESSON.LENGTH_IN_MINUTES, lesson.getLength())
 				.set(LESSON.COMMENT_ABOUT, lesson.getComment())
 				.returning()
@@ -54,7 +55,8 @@ public class LessonDAOImpl implements LessonDAO {
 			.set(LESSON.TEACHER_ID, lesson.getTeacherId())
 			.set(LESSON.GROUP_ID, lesson.getGroupId())
 			.set(LESSON.DATE_OF_LESSON, lesson.getDate())
-			.set(LESSON.TIME_OF_LESSON, lesson.getTime())
+			.set(LESSON.TIME_OF_START, lesson.getStartTime())
+			.set(LESSON.TIME_OF_END, lesson.getEndTime())
 			.set(LESSON.LENGTH_IN_MINUTES, lesson.getLength())
 			.set(LESSON.COMMENT_ABOUT, lesson.getComment())
 			.where(LESSON.ID.eq(id))
@@ -104,6 +106,32 @@ public class LessonDAOImpl implements LessonDAO {
 				.map(Lesson::valueOf);
 	}
 
+	@Override
+	public boolean isOverlapping(Lesson lesson) {
+		int teacherId = lesson.getTeacherId();
+		Date date = lesson.getDate();
+		short startTime = lesson.getStartTime();
+		short endTime = lesson.getEndTime();
+		
+		Condition aLessonForSameTeacher = LESSON.TEACHER_ID.eq(teacherId);
+		Condition aLessonOnTheSameDay = LESSON.DATE_OF_LESSON.eq(date);
+		
+		Condition aLessonStartsBetweenThisLesson = LESSON.TIME_OF_START.between(startTime, endTime);
+		Condition aLessonEndsBetweenThisLesson = LESSON.TIME_OF_END.between(startTime, endTime);
+		Condition thisLessonStartsBetweenALesson = LESSON.TIME_OF_START.le(startTime).and(LESSON.TIME_OF_END.ge(startTime));
+		// No need to check for end time, because it is automatically caught by the first two conditions as well
+		
+		Condition lessonIsOverlapping = aLessonForSameTeacher.and(aLessonOnTheSameDay).and(
+				aLessonStartsBetweenThisLesson.or(aLessonEndsBetweenThisLesson).or(thisLessonStartsBetweenALesson));
+		
+		if (lesson.hasId())
+			lessonIsOverlapping = LESSON.ID.ne(lesson.getId()).and(lessonIsOverlapping);
+		
+		int count = sql.fetchCount(LESSON, lessonIsOverlapping);
+		
+		return count > 0;
+	}
+	
 	// CONSTRUCTORS
 
 	@Autowired

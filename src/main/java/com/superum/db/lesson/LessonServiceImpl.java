@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.superum.db.exception.DatabaseException;
 import com.superum.db.lesson.attendance.LessonAttendance;
 import com.superum.db.lesson.attendance.LessonAttendanceService;
 import com.superum.db.lesson.attendance.code.LessonCodeService;
@@ -18,6 +19,9 @@ public class LessonServiceImpl implements LessonService {
 	@Override
 	public Lesson addLesson(Lesson lesson) {
 		LOG.debug("Creating new Lesson: {}", lesson);
+		
+		if (lessonDAO.isOverlapping(lesson))
+			throw new DatabaseException("This lesson cannot be added because it is overlapping with others!");
 		
 		Lesson newLesson = lessonDAO.create(lesson);
 		LOG.debug("New Lesson created: {}", newLesson);
@@ -38,6 +42,9 @@ public class LessonServiceImpl implements LessonService {
 	@Override
 	public Lesson updateLesson(Lesson lesson) {
 		LOG.debug("Updating lesson: {}");
+		
+		if (lessonDAO.isOverlapping(lesson))
+			throw new DatabaseException("This lesson cannot be updated because it is overlapping with others!");
 		
 		Lesson oldLesson = lessonDAO.update(lesson);
 		LOG.debug("Old Lesson retrieved: {}", oldLesson);

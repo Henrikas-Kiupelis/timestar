@@ -14,4 +14,6 @@ public interface LessonDAO extends SimpleDAO<Lesson, Long> {
 	
 	List<Lesson> readAllForGroup(int groupId, Date start, Date end);
 	
+	boolean isOverlapping(Lesson lesson);
+	
 }
