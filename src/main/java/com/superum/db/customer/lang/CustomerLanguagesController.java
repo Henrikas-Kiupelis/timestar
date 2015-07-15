@@ -20,35 +20,35 @@ import com.superum.utils.PrincipalUtils;
 @RequestMapping(value = "/timestar/api")
 public class CustomerLanguagesController {
 
-	@RequestMapping(value = "/customer/contract/lang/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/lang/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public CustomerLanguages addLanguagesToCustomerContract(Principal user, @RequestBody @Valid CustomerLanguages languages) {
 		int partitionId = PrincipalUtils.partitionId(user);
 		return languageService.addLanguagesToCustomerContract(languages, partitionId);
 	}
 	
-	@RequestMapping(value = "/customer/contract/lang/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/lang/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public CustomerLanguages getLanguagesForCustomerContract(Principal user, @PathVariable int customerId) {
 		int partitionId = PrincipalUtils.partitionId(user);
 		return languageService.getLanguagesForCustomerContract(customerId, partitionId);
 	}
 	
-	@RequestMapping(value = "/customer/contract/lang/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/lang/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public CustomerLanguages updateLanguagesForCustomerContract(Principal user, @RequestBody @Valid CustomerLanguages languages) {
 		int partitionId = PrincipalUtils.partitionId(user);
 		return languageService.updateLanguagesForCustomerContract(languages, partitionId);
 	}
 	
-	@RequestMapping(value = "/customer/contract/lang/delete/{customerId:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/lang/delete/{customerId:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public CustomerLanguages deleteLanguagesForCustomerContract(Principal user, @PathVariable int customerId) {
 		int partitionId = PrincipalUtils.partitionId(user);
 		return languageService.deleteLanguagesForCustomerContract(customerId, partitionId);
 	}
 	
-	@RequestMapping(value = "/customer/contract/lang/delete", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/lang/delete", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public CustomerLanguages deleteLanguagesForCustomerContract(Principal user, @RequestBody @Valid CustomerLanguages languages) {
 		int partitionId = PrincipalUtils.partitionId(user);
