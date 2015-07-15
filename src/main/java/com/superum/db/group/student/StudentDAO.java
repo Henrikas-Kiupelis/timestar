@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.superum.db.dao.SimpleDAO;
+import com.superum.db.dao.SimplePartitionedDAO;
 
 @Repository
-public interface StudentDAO extends SimpleDAO<Student, Integer> {
+public interface StudentDAO extends SimplePartitionedDAO<Student, Integer> {
 	
-	List<Student> readAllForGroup(int groupId);
+	List<Student> readAllForGroup(int groupId, int partitionId);
 	
-	List<Student> readAllForCustomer(int customerId);
+	List<Student> readAllForCustomer(int customerId, int partitionId);
 
-	List<Student> deleteAllForCustomer(int customerId);
+	List<Student> deleteAllForCustomer(int customerId, int partitionId);
 	
 }

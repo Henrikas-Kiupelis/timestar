@@ -9,8 +9,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.customer.Customer;
-import com.superum.db.customer.contract.CustomerContract;
-import com.superum.db.customer.contract.lang.CustomerContractLanguages;
+import com.superum.db.customer.lang.CustomerLanguages;
 import com.superum.utils.StringUtils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -23,13 +22,8 @@ public class CustomerLessonData {
 		return customer;
 	}
 	
-	@JsonProperty("customerContract")
-	public CustomerContract getCustomerContract() {
-		return customerContract;
-	}
-	
 	@JsonProperty("customerContractLanguages")
-	public CustomerContractLanguages getCustomerContractLanguages() {
+	public CustomerLanguages getCustomerContractLanguages() {
 		return customerContractLanguages;
 	}
 	
@@ -54,7 +48,6 @@ public class CustomerLessonData {
 	public String toString() {
 		return StringUtils.toString(
 				"Customer: " + customer,
-				"Customer contract: " + customerContract,
 				"Customer contract languages: " + customerContractLanguages,
 				"Lesson data: " + teacherLessonData,
 				"Total data: " + totalData,
@@ -72,7 +65,6 @@ public class CustomerLessonData {
 		CustomerLessonData other = (CustomerLessonData) o;
 
 		return Objects.equals(this.customer, other.customer)
-				&& Objects.equals(this.customerContract, other.customerContract)
 				&& Objects.equals(this.customerContractLanguages, other.customerContractLanguages)
 				&& Objects.equals(this.teacherLessonData, other.teacherLessonData)
 				&& Objects.equals(this.totalData, other.totalData)
@@ -83,7 +75,6 @@ public class CustomerLessonData {
 	public int hashCode() {
 		int result = 17;
 		result = (result << 5) - result + (customer == null ? 0 : customer.hashCode());
-		result = (result << 5) - result + (customerContract == null ? 0 : customerContract.hashCode());
 		result = (result << 5) - result + (customerContractLanguages == null ? 0 : customerContractLanguages.hashCode());
 		result = (result << 5) - result + (teacherLessonData == null ? 0 : teacherLessonData.hashCode());
 		result = (result << 5) - result + (totalData == null ? 0 : totalData.hashCode());
@@ -95,13 +86,11 @@ public class CustomerLessonData {
 
 	@JsonCreator
 	public CustomerLessonData(@JsonProperty("customer") Customer customer, 
-							  @JsonProperty("customerContract") CustomerContract customerContract, 
-							  @JsonProperty("customerContractLanguages") CustomerContractLanguages customerContractLanguages, 
+							  @JsonProperty("customerContractLanguages") CustomerLanguages customerContractLanguages, 
 							  @JsonProperty("teacherLessonData") List<TeacherLessonData> teacherLessonData,
 							  @JsonProperty("totalData") TotalLessonData totalData, 
 							  @JsonProperty("paymentData") PaymentData paymentData) {
 		this.customer = customer;
-		this.customerContract = customerContract;
 		this.customerContractLanguages = customerContractLanguages;
 		this.teacherLessonData = teacherLessonData;
 		this.totalData = totalData;
@@ -112,12 +101,9 @@ public class CustomerLessonData {
 	
 	@NotNull
 	private final Customer customer;
-	
+		
 	@NotNull
-	private final CustomerContract customerContract;
-	
-	@NotNull
-	private final CustomerContractLanguages customerContractLanguages;
+	private final CustomerLanguages customerContractLanguages;
 	
 	@NotNull
 	private final List<TeacherLessonData> teacherLessonData;

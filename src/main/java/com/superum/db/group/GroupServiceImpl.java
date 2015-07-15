@@ -16,76 +16,76 @@ import com.superum.db.lesson.LessonService;
 public class GroupServiceImpl implements GroupService {
 
 	@Override
-	public Group addGroup(Group group) {
+	public Group addGroup(Group group, int partitionId) {
 		LOG.debug("Creating new Group: {}", group);
 		
-		Group newGroup = groupDAO.create(group);
+		Group newGroup = groupDAO.create(group, partitionId);
 		LOG.debug("New Group created: {}", newGroup);
 		
 		return newGroup;
 	}
 
 	@Override
-	public Group findGroup(int id) {
+	public Group findGroup(int id, int partitionId) {
 		LOG.debug("Reading Group by ID: {}", id);
 		
-		Group group = groupDAO.read(id);
+		Group group = groupDAO.read(id, partitionId);
 		LOG.debug("Group retrieved: {}", group);
 		
 		return group;
 	}
 
 	@Override
-	public Group updateGroup(Group group) {
+	public Group updateGroup(Group group, int partitionId) {
 		LOG.debug("Updating Group: {}", group);
 		
-		Group oldGroup = groupDAO.update(group);
+		Group oldGroup = groupDAO.update(group, partitionId);
 		LOG.debug("Old Group retrieved: {}", oldGroup);
 		
 		return oldGroup;
 	}
 
 	@Override
-	public Group deleteGroup(int id) {
+	public Group deleteGroup(int id, int partitionId) {
 		LOG.debug("Deleting Group by ID: {}", id);
 		
-		List<Student> deletedStudents = studentService.deleteForGroup(id);
+		List<Student> deletedStudents = studentService.deleteForGroup(id, partitionId);
 		LOG.debug("Deleted Students for Group: {}", deletedStudents);
 		
-		List<Lesson> deletedLessons = lessonService.deleteForGroup(id);
+		List<Lesson> deletedLessons = lessonService.deleteForGroup(id, partitionId);
 		LOG.debug("Deleted Lessons for Group: {}", deletedLessons);
 		
-		Group deletedGroup = groupDAO.delete(id);
+		Group deletedGroup = groupDAO.delete(id, partitionId);
 		LOG.debug("Deleted Group: {}", deletedGroup);
 		
 		return deletedGroup;
 	}
 
 	@Override
-	public List<Group> findGroupsForCustomer(int customerId) {
+	public List<Group> findGroupsForCustomer(int customerId, int partitionId) {
 		LOG.debug("Reading Groups for Customer with ID: {}", customerId);
 		
-		List<Group> groupsForCustomer = groupQueries.readAllForCustomer(customerId);
+		List<Group> groupsForCustomer = groupQueries.readAllForCustomer(customerId, partitionId);
 		LOG.debug("Groups retrieved: {}", groupsForCustomer);
 		
 		return groupsForCustomer;
 	}
 	
 	@Override
-	public List<Group> findGroupsForTeacher(int teacherId) {
+	public List<Group> findGroupsForTeacher(int teacherId, int partitionId) {
 		LOG.debug("Reading Groups for Teacher with ID: {}", teacherId);
 		
-		List<Group> groupsForTeacher = groupDAO.readAllForTeacher(teacherId);
+		List<Group> groupsForTeacher = groupDAO.readAllForTeacher(teacherId, partitionId);
 		LOG.debug("Groups retrieved: {}", groupsForTeacher);
 		
 		return groupsForTeacher;
 	}
 	
 	@Override
-	public List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId) {
+	public List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId, int partitionId) {
 		LOG.debug("Reading Groups for Customer with ID '{}' and Teacher with ID '{}'", customerId, teacherId);
 		
-		List<Group> groupsForCustomerAndTeacher = groupQueries.readAllForCustomerAndTeacher(customerId, teacherId);
+		List<Group> groupsForCustomerAndTeacher = groupQueries.readAllForCustomerAndTeacher(customerId, teacherId, partitionId);
 		LOG.debug("Groups retrieved: {}", groupsForCustomerAndTeacher);
 		
 		return groupsForCustomerAndTeacher;

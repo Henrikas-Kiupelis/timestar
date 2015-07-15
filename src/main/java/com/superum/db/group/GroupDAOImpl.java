@@ -16,8 +16,9 @@ import com.superum.db.exception.DatabaseException;
 public class GroupDAOImpl implements GroupDAO {
 
 	@Override
-	public Group create(Group group) {
+	public Group create(Group group, int partitionId) {
 		return sql.insertInto(STUDENT_GROUP)
+				.set(STUDENT_GROUP.PARTITION_ID, partitionId)
 				.set(STUDENT_GROUP.TEACHER_ID, group.getTeacherId())
 				.set(STUDENT_GROUP.NAME, group.getName())
 				.returning()
@@ -28,9 +29,10 @@ public class GroupDAOImpl implements GroupDAO {
 	}
 
 	@Override
-	public Group read(Integer id) {
+	public Group read(Integer id, int partitionId) {
 		return sql.selectFrom(STUDENT_GROUP)
-				.where(STUDENT_GROUP.ID.eq(id))
+				.where(STUDENT_GROUP.ID.eq(id)
+						.and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
 				.fetch().stream()
 				.findFirst()
 				.map(Group::valueOf)
@@ -38,26 +40,28 @@ public class GroupDAOImpl implements GroupDAO {
 	}
 
 	@Override
-	public Group update(Group group) {
+	public Group update(Group group, int partitionId) {
 		int id = group.getId();
 
-		Group old = read(id);
+		Group old = read(id, partitionId);
 		
 		sql.update(STUDENT_GROUP)
 			.set(STUDENT_GROUP.TEACHER_ID, group.getTeacherId())
 			.set(STUDENT_GROUP.NAME, group.getName())
-			.where(STUDENT_GROUP.ID.eq(id))
+			.where(STUDENT_GROUP.ID.eq(id)
+					.and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
 			.execute();
 		
 		return old;
 	}
 
 	@Override
-	public Group delete(Integer id) {
-		Group old = read(id);
+	public Group delete(Integer id, int partitionId) {
+		Group old = read(id, partitionId);
 		
 		int result = sql.delete(STUDENT_GROUP)
-				.where(STUDENT_GROUP.ID.eq(id))
+				.where(STUDENT_GROUP.ID.eq(id)
+						.and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
 				.execute();
 		if (result == 0)
 			throw new DatabaseException("Couldn't delete group with ID: " + id);
@@ -66,9 +70,10 @@ public class GroupDAOImpl implements GroupDAO {
 	}
 	
 	@Override
-	public List<Group> readAllForTeacher(int teacherId) {
+	public List<Group> readAllForTeacher(int teacherId, int partitionId) {
 		return sql.selectFrom(STUDENT_GROUP)
-				.where(STUDENT_GROUP.TEACHER_ID.eq(teacherId))
+				.where(STUDENT_GROUP.TEACHER_ID.eq(teacherId)
+						.and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
 				.orderBy(STUDENT_GROUP.ID)
 				.fetch()
 				.map(Group::valueOf);

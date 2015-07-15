@@ -13,7 +13,6 @@ import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.SelectHavingStep;
 import org.jooq.SelectJoinStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -26,12 +25,13 @@ import com.superum.utils.ConditionUtils;
 public class CustomerQueriesImpl implements CustomerQueries {
 
 	@Override
-	public List<Customer> readAllForTeacher(int teacherId) {
+	public List<Customer> readAllForTeacher(int teacherId, int partitionId) {
 		return sql.select(CUSTOMER.fields())
 				.from(CUSTOMER)
 				.join(STUDENT).onKey(STUDENT_IBFK_2)
 				.join(STUDENT_GROUP).onKey(STUDENT_IBFK_1)
-				.where(STUDENT_GROUP.TEACHER_ID.eq(teacherId))
+				.where(STUDENT_GROUP.TEACHER_ID.eq(teacherId)
+						.and(CUSTOMER.PARTITION_ID.eq(partitionId)))
 				.groupBy(CUSTOMER.ID)
 				.orderBy(CUSTOMER.ID)
 				.fetch()
@@ -39,19 +39,23 @@ public class CustomerQueriesImpl implements CustomerQueries {
 	}
 	
 	@Override
-	public List<Customer> readAllForLessons(Date start, Date end) {
-		SelectJoinStep<Record> step1 = sql.select(CUSTOMER.fields())
+	public List<Customer> readAllForLessons(Date start, Date end, int partitionId) {
+		SelectJoinStep<Record> step = sql.select(CUSTOMER.fields())
 				.from(CUSTOMER)
 				.join(STUDENT).onKey(STUDENT_IBFK_2)
 				.join(LESSON)
 				.on(STUDENT.GROUP_ID.eq(LESSON.GROUP_ID));
 		
+		Condition condition = CUSTOMER.PARTITION_ID.eq(partitionId);
 		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
-		SelectHavingStep<Record> step2 = dateCondition == null
-				? step1.groupBy(CUSTOMER.ID)
-				: step1.where(dateCondition).groupBy(CUSTOMER.ID);
+		if (dateCondition != null)
+			condition = condition.and(dateCondition);
 		
-		return step2.orderBy(CUSTOMER.ID).fetch().map(Customer::valueOf);
+		return step.where(condition)
+				.groupBy(CUSTOMER.ID)
+				.orderBy(CUSTOMER.ID)
+				.fetch()
+				.map(Customer::valueOf);
 	}
 
 	// CONSTRUCTORS

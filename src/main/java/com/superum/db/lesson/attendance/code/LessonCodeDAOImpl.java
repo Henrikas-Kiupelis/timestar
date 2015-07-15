@@ -8,7 +8,7 @@ import com.superum.db.generated.timestar.tables.records.LessonCodeRecord;
 import java.util.List;
 
 import org.jooq.DSLContext;
-import org.jooq.InsertValuesStep3;
+import org.jooq.InsertValuesStep4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class LessonCodeDAOImpl implements LessonCodeDAO {
 
 	@Override
-	public int find(long lessonId, int code) {
+	public int find(long lessonId, int code, int partitionId) {
 		int studentId = sql.select(LESSON_CODE.STUDENT_ID)
 				.from(LESSON_CODE)
 				.where(LESSON_CODE.LESSON_ID.eq(lessonId)
-						.and(LESSON_CODE.CODE.eq(code)))
+						.and(LESSON_CODE.CODE.eq(code))
+						.and(LESSON_CODE.PARTITION_ID.eq(partitionId)))
 				.fetch().stream()
 				.findFirst()
 				.map(record -> record.getValue(LESSON_CODE.STUDENT_ID))
@@ -30,18 +31,19 @@ public class LessonCodeDAOImpl implements LessonCodeDAO {
 		
 		sql.delete(LESSON_CODE)
 				.where(LESSON_CODE.LESSON_ID.eq(lessonId)
-						.and(LESSON_CODE.CODE.eq(code)))
+						.and(LESSON_CODE.CODE.eq(code))
+						.and(LESSON_CODE.PARTITION_ID.eq(partitionId)))
 				.execute();
 		
 		return studentId;
 	}
 	
 	@Override
-	public List<LessonCode> add(List<LessonCode> lessonCodes) {
-		InsertValuesStep3<LessonCodeRecord,Long,Integer,Integer> step = sql.insertInto(LESSON_CODE, LESSON_CODE.LESSON_ID, LESSON_CODE.STUDENT_ID, LESSON_CODE.CODE);
+	public List<LessonCode> add(List<LessonCode> lessonCodes, int partitionId) {
+		InsertValuesStep4<LessonCodeRecord,Integer,Long,Integer,Integer> step = sql.insertInto(LESSON_CODE, LESSON_CODE.PARTITION_ID, LESSON_CODE.LESSON_ID, LESSON_CODE.STUDENT_ID, LESSON_CODE.CODE);
 		
 		for (LessonCode lessonCode : lessonCodes)
-			step = step.values(lessonCode.getLessonId(), lessonCode.getStudentId(), lessonCode.getCode());
+			step = step.values(partitionId, lessonCode.getLessonId(), lessonCode.getStudentId(), lessonCode.getCode());
 		
 		step.execute();
 		
@@ -49,16 +51,18 @@ public class LessonCodeDAOImpl implements LessonCodeDAO {
 	}
 	
 	@Override
-	public int deleteForStudent(int studentId) {
+	public int deleteForStudent(int studentId, int partitionId) {
 		return sql.delete(LESSON_CODE)
-				.where(LESSON_CODE.STUDENT_ID.eq(studentId))
+				.where(LESSON_CODE.STUDENT_ID.eq(studentId)
+						.and(LESSON_CODE.PARTITION_ID.eq(partitionId)))
 				.execute();
 	}
 	
 	@Override
-	public int deleteForLesson(long lessonId) {
+	public int deleteForLesson(long lessonId, int partitionId) {
 		return sql.delete(LESSON_CODE)
-				.where(LESSON_CODE.LESSON_ID.eq(lessonId))
+				.where(LESSON_CODE.LESSON_ID.eq(lessonId)
+						.and(LESSON_CODE.PARTITION_ID.eq(partitionId)))
 				.execute();
 	}
 

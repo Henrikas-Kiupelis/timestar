@@ -16,7 +16,7 @@ import com.superum.db.lesson.attendance.LessonAttendance;
 public class LessonCodeServiceImpl implements LessonCodeService {
 
 	@Override
-	public List<LessonCode> add(LessonAttendance attendance) {
+	public List<LessonCode> add(LessonAttendance attendance, int partitionId) {
 		LOG.debug("Creating codes for attendance: {}", attendance);
 		
 		long lessonId = attendance.getLessonId();
@@ -34,37 +34,37 @@ public class LessonCodeServiceImpl implements LessonCodeService {
 			lessonCodes.add(new LessonCode(lessonId, studentIds.get(i++), code));
 		LOG.debug("Assigned the codes to students: {}", lessonCodes);
 		
-		return codeDAO.add(lessonCodes);
+		return codeDAO.add(lessonCodes, partitionId);
 	}
 	
 	@Override
-	public int verifyStudentId(long lessonId, int code) {
+	public int verifyStudentId(long lessonId, int code, int partitionId) {
 		LOG.debug("Verifying code '{}' for Lesson '{}'", code, lessonId);
 		
-		int studentId = codeDAO.find(lessonId, code);
+		int studentId = codeDAO.find(lessonId, code, partitionId);
 		LOG.debug("The code belongs to Student with ID: {}", studentId);
 		
 		return studentId;
 	}
 	
 	@Override
-	public int deleteCodesForStudent(int studentId) {
+	public int deleteCodesForStudent(int studentId, int partitionId) {
 		LOG.debug("Deleting LessonCodes for Student with ID: {}", studentId);
 		
-		int codeCount = codeDAO.deleteForStudent(studentId);
+		int codeCount = codeDAO.deleteForStudent(studentId, partitionId);
 		LOG.debug("LessonCodes deleted: {}", codeCount);
 		
 		return codeCount;
 	}
 	
 	@Override
-	public int deleteCodesForLesson(long lessonId) {
+	public int deleteCodesForLesson(long lessonId, int partitionId) {
 		LOG.debug("Deleting LessonCodes for Lesson with ID: {}", lessonId);
 		
-		int codeCount = codeDAO.deleteForLesson(lessonId);
+		int codeCount = codeDAO.deleteForLesson(lessonId, partitionId);
 		LOG.debug("LessonCodes deleted: {}", codeCount);
 		
-		return codeDAO.deleteForLesson(lessonId);
+		return codeCount;
 	}
 
 	// CONSTRUCTORS

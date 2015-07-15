@@ -1,4 +1,4 @@
-package com.superum.db.customer.contract.lang;
+package com.superum.db.customer.lang;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerContractLanguages {
+public class CustomerLanguages {
 
 	// PUBLIC API
 
@@ -39,10 +39,10 @@ public class CustomerContractLanguages {
 		if (this == o)
 			return true;
 		
-		if (!(o instanceof CustomerContractLanguages))
+		if (!(o instanceof CustomerLanguages))
 			return false;
 		
-		CustomerContractLanguages other = (CustomerContractLanguages) o;
+		CustomerLanguages other = (CustomerLanguages) o;
 		
 		return this.customerId == other.customerId
 				&& Objects.equals(this.languages, other.languages);
@@ -58,7 +58,7 @@ public class CustomerContractLanguages {
 		
 	// CONSTRUCTORS
 	@JsonCreator
-	public CustomerContractLanguages(@JsonProperty("id") int customerId,
+	public CustomerLanguages(@JsonProperty("id") int customerId,
 									 @JsonProperty("languages") List<String> languages) {
 		this.customerId = customerId;
 		this.languages = languages != null ? languages : Collections.emptyList();

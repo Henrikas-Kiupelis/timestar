@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StudentQueries {
 	
-	List<Student> readAllForLesson(long lessonId);
+	List<Student> readAllForLesson(long lessonId, int partitionId);
 	
 }

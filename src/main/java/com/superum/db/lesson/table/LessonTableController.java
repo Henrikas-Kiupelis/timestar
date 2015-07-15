@@ -2,6 +2,7 @@ package com.superum.db.lesson.table;
 
 import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
 
+import java.security.Principal;
 import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.superum.db.lesson.table.core.LessonTable;
 import com.superum.utils.DateUtils;
+import com.superum.utils.PrincipalUtils;
 
 @Controller
 @RequestMapping(value = "/timestar/api")
@@ -21,9 +23,12 @@ public class LessonTableController {
 
 	@RequestMapping(value = "/lesson/table", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public LessonTable showLessonData(@RequestParam(value="per_page", required=false) Integer amount,
+	public LessonTable showLessonData(Principal user, 
+									  @RequestParam(value="per_page", required=false) Integer amount,
 									  @RequestParam(value="start", required=false) Date start,
 									  @RequestParam(value="end", required=false) Date end) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		
 		if (amount == null)
 			amount = DEFAULT_PAGE_AMOUNT;
 		
@@ -33,15 +38,17 @@ public class LessonTableController {
 		if (end == null)
 			end = DateUtils.sqlNow();
 		
-		return lessonTableService.lessonData(amount, 0, start, end);
+		return lessonTableService.lessonData(amount, 0, start, end, partitionId);
 	}
 	
 	@RequestMapping(value = "/lesson/table/{pageId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public LessonTable showLessonData(@PathVariable int pageId,
+	public LessonTable showLessonData(Principal user, @PathVariable int pageId,
 									  @RequestParam(value="per_page", required=false) Integer amount,
 									  @RequestParam(value="start", required=false) Date start,
 									  @RequestParam(value="end", required=false) Date end) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		
 		if (amount == null)
 			amount = DEFAULT_PAGE_AMOUNT;
 		
@@ -51,7 +58,7 @@ public class LessonTableController {
 		if (end == null)
 			end = DateUtils.sqlNow();
 		
-		return lessonTableService.lessonData(amount, pageId * amount, start, end);
+		return lessonTableService.lessonData(amount, pageId * amount, start, end, partitionId);
 	}
 
 	// CONSTRUCTORS

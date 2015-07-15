@@ -5,6 +5,9 @@ import static com.superum.db.generated.timestar.Tables.ACCOUNT;
 import java.util.Arrays;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
 import org.jooq.Record;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -36,6 +39,7 @@ public class Account {
 		return StringUtils.toStr(password);
 	}
 	
+	@JsonIgnore
 	public void erasePassword() {
 		StringUtils.erase(password);
 		password = null;
@@ -91,19 +95,27 @@ public class Account {
 		this.password = password;
 	}
 	
-	public static Account valueOf(Record record) {
-		int id = record.getValue(ACCOUNT.ID);
-		String username = record.getValue(ACCOUNT.USERNAME);
-		String accountType = record.getValue(ACCOUNT.ACCOUNT_TYPE);
-		char[] password = record.getValue(ACCOUNT.PASSWORD).toCharArray();
+	public static Account valueOf(Record accountRecord) {
+		if (accountRecord == null)
+			return null;
+		
+		int id = accountRecord.getValue(ACCOUNT.ID);
+		String username = accountRecord.getValue(ACCOUNT.USERNAME);
+		String accountType = accountRecord.getValue(ACCOUNT.ACCOUNT_TYPE);
+		char[] password = accountRecord.getValue(ACCOUNT.PASSWORD).toCharArray();
 		return new Account(id, username, accountType, password);
 	}
 
 	// PRIVATE
 	
 	private final int id;
+	
+	@NotNull
 	private final String username;
+	
 	private final AccountType accountType;
+	
+	@NotEmpty
 	private char[] password;
 	
 }

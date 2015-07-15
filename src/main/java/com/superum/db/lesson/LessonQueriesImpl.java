@@ -19,8 +19,9 @@ import com.superum.utils.ConditionUtils;
 public class LessonQueriesImpl implements LessonQueries {
 
 	@Override
-	public List<Lesson> readAllForCustomer(int customerId, Date start, Date end) {
-		Condition condition = STUDENT.CUSTOMER_ID.eq(customerId);
+	public List<Lesson> readAllForCustomer(int customerId, Date start, Date end, int partitionId) {
+		Condition condition = STUDENT.CUSTOMER_ID.eq(customerId)
+				.and(LESSON.PARTITION_ID.eq(partitionId));
 		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
 		if (dateCondition != null)
 			condition = condition.and(dateCondition);

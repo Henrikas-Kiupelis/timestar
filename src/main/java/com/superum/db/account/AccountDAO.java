@@ -2,7 +2,15 @@ package com.superum.db.account;
 
 import org.springframework.stereotype.Repository;
 
-import com.superum.db.dao.SimpleDAO;
-
 @Repository
-public interface AccountDAO extends SimpleDAO<Account, String> {}
+public interface AccountDAO {
+
+	Account create(Account account);
+
+	Account read(String username);
+
+	Account update(Account account);
+
+	Account delete(String username);
+		
+}

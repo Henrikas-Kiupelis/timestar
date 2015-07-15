@@ -2,11 +2,17 @@ package com.superum.db.account.roles;
 
 import org.springframework.stereotype.Repository;
 
-import com.superum.db.dao.SimpleDAO;
-
 @Repository
-public interface AccountRolesDAO extends SimpleDAO<AccountRoles, String> {
+public interface AccountRolesDAO {
 
+	AccountRoles create(AccountRoles roles);
+
+	AccountRoles read(String username);
+
+	AccountRoles update(AccountRoles roles);
+
+	AccountRoles delete(String username);
+	
 	AccountRoles delete(AccountRoles accountRoles);
 	
 }

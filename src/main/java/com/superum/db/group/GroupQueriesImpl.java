@@ -16,11 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class GroupQueriesImpl implements GroupQueries {
 
 	@Override
-	public List<Group> readAllForCustomer(int customerId) {
+	public List<Group> readAllForCustomer(int customerId, int partitionId) {
 		return sql.select(STUDENT_GROUP.fields())
 				.from(STUDENT_GROUP)
 				.join(STUDENT).onKey(STUDENT_IBFK_1)
-				.where(STUDENT.CUSTOMER_ID.eq(customerId))
+				.where(STUDENT.CUSTOMER_ID.eq(customerId)
+						.and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
 				.groupBy(STUDENT_GROUP.ID)
 				.orderBy(STUDENT_GROUP.ID)
 				.fetch()
@@ -28,12 +29,13 @@ public class GroupQueriesImpl implements GroupQueries {
 	}
 
 	@Override
-	public List<Group> readAllForCustomerAndTeacher(int customerId, int teacherId) {
+	public List<Group> readAllForCustomerAndTeacher(int customerId, int teacherId, int partitionId) {
 		return sql.select(STUDENT_GROUP.fields())
 				.from(STUDENT_GROUP)
 				.join(STUDENT).onKey(STUDENT_IBFK_1)
 				.where(STUDENT.CUSTOMER_ID.eq(customerId)
-						.and(STUDENT_GROUP.TEACHER_ID.eq(teacherId)))
+						.and(STUDENT_GROUP.TEACHER_ID.eq(teacherId))
+						.and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
 				.groupBy(STUDENT_GROUP.ID)
 				.orderBy(STUDENT_GROUP.ID)
 				.fetch()

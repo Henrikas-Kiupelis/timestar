@@ -7,22 +7,22 @@ import org.springframework.stereotype.Service;
 @Service
 public interface StudentService {
 
-	Student addStudent(Student student);
+	Student addStudent(Student student, int partitionId);
 	
-	Student findStudent(int id);
+	Student findStudent(int id, int partitionId);
 	
-	Student updateStudent(Student student);
+	Student updateStudent(Student student, int partitionId);
 	
-	Student deleteStudent(int id);
+	Student deleteStudent(int id, int partitionId);
 	
-	List<Student> findStudentsForCustomer(int customerId);
+	List<Student> findStudentsForCustomer(int customerId, int partitionId);
 	
-	List<Student> findStudentsForGroup(int groupId);
+	List<Student> findStudentsForGroup(int groupId, int partitionId);
 
-	List<Student> findStudentsForLesson(long lessonId);
+	List<Student> findStudentsForLesson(long lessonId, int partitionId);
 
-	List<Student> deleteForCustomer(int customerId);
+	List<Student> deleteForCustomer(int customerId, int partitionId);
 
-	List<Student> deleteForGroup(int groupId);
+	List<Student> deleteForGroup(int groupId, int partitionId);
 	
 }

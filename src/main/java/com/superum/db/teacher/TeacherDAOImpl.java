@@ -16,8 +16,10 @@ import com.superum.db.exception.DatabaseException;
 public class TeacherDAOImpl implements TeacherDAO {
 
 	@Override
-	public Teacher create(Teacher teacher) {
+	public Teacher create(Teacher teacher, int partitionId) {
 		return sql.insertInto(TEACHER)
+				.set(TEACHER.PARTITION_ID, partitionId)
+				.set(TEACHER.PAYMENT_DAY, teacher.getPaymentDay())
 				.set(TEACHER.NAME, teacher.getName())
 				.set(TEACHER.SURNAME, teacher.getSurname())
 				.set(TEACHER.PHONE, teacher.getPhone())
@@ -34,9 +36,10 @@ public class TeacherDAOImpl implements TeacherDAO {
 	}
 
 	@Override
-	public Teacher read(Integer id) {
+	public Teacher read(Integer id, int partitionId) {
 		return sql.selectFrom(TEACHER)
-				.where(TEACHER.ID.eq(id))
+				.where(TEACHER.ID.eq(id)
+						.and(TEACHER.PARTITION_ID.eq(partitionId)))
 				.fetch().stream()
 				.findFirst()
 				.map(Teacher::valueOf)
@@ -44,12 +47,13 @@ public class TeacherDAOImpl implements TeacherDAO {
 	}
 
 	@Override
-	public Teacher update(Teacher teacher) {
+	public Teacher update(Teacher teacher, int partitionId) {
 		int id = teacher.getId();
 		
-		Teacher old = read(id);
+		Teacher old = read(id, partitionId);
 		
 		sql.update(TEACHER)
+			.set(TEACHER.PAYMENT_DAY, teacher.getPaymentDay())
 			.set(TEACHER.NAME, teacher.getName())
 			.set(TEACHER.SURNAME, teacher.getSurname())
 			.set(TEACHER.PHONE, teacher.getPhone())
@@ -58,18 +62,20 @@ public class TeacherDAOImpl implements TeacherDAO {
 			.set(TEACHER.PICTURE_NAME, teacher.getPictureName())
 			.set(TEACHER.DOCUMENT_NAME, teacher.getDocumentName())
 			.set(TEACHER.COMMENT_ABOUT, teacher.getComment())
-			.where(TEACHER.ID.eq(id))
+			.where(TEACHER.ID.eq(id)
+					.and(TEACHER.PARTITION_ID.eq(partitionId)))
 			.execute();
 		
 		return old;
 	}
 
 	@Override
-	public Teacher delete(Integer id) {
-		Teacher old = read(id);
+	public Teacher delete(Integer id, int partitionId) {
+		Teacher old = read(id, partitionId);
 		
 		int result = sql.delete(TEACHER)
-				.where(TEACHER.ID.eq(id))
+				.where(TEACHER.ID.eq(id)
+						.and(TEACHER.PARTITION_ID.eq(partitionId)))
 				.execute();
 		if (result == 0)
 			throw new DatabaseException("Couldn't delete teacher with ID: " + id);
@@ -78,16 +84,18 @@ public class TeacherDAOImpl implements TeacherDAO {
 	}
 
 	@Override
-	public List<Teacher> readAll() {
+	public List<Teacher> readAll(int partitionId) {
 		return sql.selectFrom(TEACHER)
+				.where(TEACHER.PARTITION_ID.eq(partitionId))
 				.orderBy(TEACHER.ID)
 				.fetch()
 				.map(Teacher::valueOf);
 	}
 	
 	@Override
-	public List<Teacher> readSome(int amount, int offset) {
+	public List<Teacher> readSome(int amount, int offset, int partitionId) {
 		return sql.selectFrom(TEACHER)
+				.where(TEACHER.PARTITION_ID.eq(partitionId))
 				.orderBy(TEACHER.ID)
 				.limit(amount)
 				.offset(offset)
@@ -96,7 +104,7 @@ public class TeacherDAOImpl implements TeacherDAO {
 	}
 	
 	@Override
-	public int count() {
+	public int count(int partitionId) {
 		return sql.fetchCount(TEACHER);
 	}
 	

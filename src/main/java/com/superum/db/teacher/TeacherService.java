@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TeacherService {
 
-	Teacher addTeacher(Teacher teacher);
+	Teacher addTeacher(Teacher teacher, int partitionId);
 	
-	Teacher findTeacher(int id);
+	Teacher findTeacher(int id, int partitionId);
 	
-	Teacher updateTeacher(Teacher teacher);
+	Teacher updateTeacher(Teacher teacher, int partitionId);
 	
-	Teacher deleteTeacher(int id);
+	Teacher deleteTeacher(int id, int partitionId);
 
-	List<Teacher> getAllTeachers();
+	List<Teacher> getAllTeachers(int partitionId);
 
 }

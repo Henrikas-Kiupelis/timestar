@@ -15,30 +15,34 @@ import com.superum.db.group.student.StudentDAO;
 import com.superum.db.lesson.attendance.code.LessonCode;
 import com.superum.db.lesson.attendance.code.LessonCodeDAO;
 import com.superum.db.lesson.attendance.code.LessonCodeService;
+import com.superum.db.partition.PartitionService;
 
 @Service
 public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 
 	@Override
-	public LessonAttendance addAttendanceToLesson(LessonAttendance attendance) {
+	public LessonAttendance addAttendanceToLesson(LessonAttendance attendance, int partitionId) {
+		String name = partitionService.findPartition(partitionId).getName();
+		
 		LOG.debug("Adding attendance: {}", attendance);
 		
-		LessonAttendance newAttendance = attendanceDAO.create(attendance);
+		LessonAttendance newAttendance = attendanceDAO.create(attendance, partitionId);
 		LOG.debug("Attendance added: {}", newAttendance);
 		
-		List<LessonCode> lessonCodes = lessonCodeService.add(newAttendance);
+		List<LessonCode> lessonCodes = lessonCodeService.add(newAttendance, partitionId);
 		LOG.debug("Codes for students generated: {}", lessonCodes);
 		
 		for (LessonCode lessonCode : lessonCodes) {
 			int studentId = lessonCode.getStudentId();
 			int code = lessonCode.getCode();
-			Student student = studentDAO.read(studentId);
+			Student student = studentDAO.read(studentId, partitionId);
 			try {
+				String fullTitle = EMAIL_TITLE + name;
 				String fullBody = EMAIL_BODY + code;
-				mail.send(student.getEmail(), EMAIL_TITLE, fullBody);
-				LOG.debug("Sent email to student '{}': title - '{}'; body - '{}'", student, EMAIL_TITLE, fullBody);
+				mail.send(student.getEmail(), fullTitle, fullBody);
+				LOG.debug("Sent email to student '{}': title - '{}'; body - '{}'", student, fullTitle, fullBody);
 			} catch (MessagingException e) {
-				lessonCodeDAO.find(attendance.getLessonId(), code);
+				lessonCodeDAO.find(attendance.getLessonId(), code, partitionId);
 				throw new IllegalStateException("Failed to send mail! Code aborted.", e);
 			}
 		}
@@ -47,50 +51,50 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 	}
 
 	@Override
-	public LessonAttendance getAttendanceForLesson(long lessonId) {
+	public LessonAttendance getAttendanceForLesson(long lessonId, int partitionId) {
 		LOG.debug("Reading LessonAttendance by ID: {}", lessonId);
 		
-		LessonAttendance attendance = attendanceDAO.read(lessonId);
+		LessonAttendance attendance = attendanceDAO.read(lessonId, partitionId);
 		LOG.debug("LessonAttendance retrieved: {}", attendance);
 		
 		return attendance;
 	}
 
 	@Override
-	public LessonAttendance updateAttendanceForLesson(LessonAttendance attendance) {
+	public LessonAttendance updateAttendanceForLesson(LessonAttendance attendance, int partitionId) {
 		LOG.debug("Updating LessonAttendance: {}", attendance);
 		
-		LessonAttendance oldAttendance = attendanceDAO.update(attendance);
+		LessonAttendance oldAttendance = attendanceDAO.update(attendance, partitionId);
 		LOG.debug("Old LessonAttendance retrieved: {}", oldAttendance);
 		
 		return oldAttendance;
 	}
 
 	@Override
-	public LessonAttendance deleteAttendanceForLesson(long lessonId) {
+	public LessonAttendance deleteAttendanceForLesson(long lessonId, int partitionId) {
 		LOG.debug("Deleting LessonAttendance by ID: {}", lessonId);
 		
-		LessonAttendance deletedAttendance = attendanceDAO.delete(lessonId);
+		LessonAttendance deletedAttendance = attendanceDAO.delete(lessonId, partitionId);
 		LOG.debug("Deleted LessonAttendance: {}", deletedAttendance);
 		
 		return deletedAttendance;
 	}
 
 	@Override
-	public LessonAttendance deleteAttendanceForLesson(LessonAttendance attendance) {
+	public LessonAttendance deleteAttendanceForLesson(LessonAttendance attendance, int partitionId) {
 		LOG.debug("Deleting LessonAttendance: {}", attendance);
 		
-		LessonAttendance attendanceBeforeDeletion = attendanceDAO.delete(attendance);
+		LessonAttendance attendanceBeforeDeletion = attendanceDAO.delete(attendance, partitionId);
 		LOG.debug("Attendance before deletion: {}", attendanceBeforeDeletion);
 		
 		return attendanceBeforeDeletion;
 	}
 	
 	@Override
-	public int deleteAttendanceForStudent(int studentId) {
+	public int deleteAttendanceForStudent(int studentId, int partitionId) {
 		LOG.debug("Deleting LessonAttendance for Student with ID: {}", studentId);
 		
-		int deletedAttendanceAmount = attendanceDAO.deleteForStudent(studentId);
+		int deletedAttendanceAmount = attendanceDAO.deleteForStudent(studentId, partitionId);
 		LOG.debug("Deleted {} LessonAttendances", deletedAttendanceAmount);
 		
 		return deletedAttendanceAmount;
@@ -99,12 +103,14 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public LessonAttendanceServiceImpl(LessonAttendanceDAO attendanceDAO, LessonCodeService lessonCodeService, LessonCodeDAO lessonCodeDAO, StudentDAO studentDAO, Gmail mail) {
+	public LessonAttendanceServiceImpl(LessonAttendanceDAO attendanceDAO, LessonCodeService lessonCodeService, LessonCodeDAO lessonCodeDAO, 
+			StudentDAO studentDAO, Gmail mail, PartitionService partitionService) {
 		this.attendanceDAO = attendanceDAO;
 		this.lessonCodeService = lessonCodeService;
 		this.lessonCodeDAO = lessonCodeDAO;
 		this.studentDAO = studentDAO;
 		this.mail = mail;
+		this.partitionService = partitionService;
 	}
 
 	// PRIVATE
@@ -114,8 +120,9 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 	private final LessonCodeDAO lessonCodeDAO;
 	private final StudentDAO studentDAO;
 	private final Gmail mail;
+	private final PartitionService partitionService;
 	
-	private static final String EMAIL_TITLE = "Your COTEM lesson code";
+	private static final String EMAIL_TITLE = "Your lesson code for ";
 	private static final String EMAIL_BODY = "Code: ";
 	
 	private static final Logger LOG = LoggerFactory.getLogger(LessonAttendanceService.class);

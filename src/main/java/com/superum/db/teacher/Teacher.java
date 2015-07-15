@@ -4,6 +4,7 @@ import static com.superum.db.generated.timestar.Tables.TEACHER;
 
 import java.util.Objects;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,6 +13,7 @@ import org.hibernate.validator.constraints.Email;
 import org.jooq.Record;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
@@ -25,8 +27,14 @@ public class Teacher {
 	public int getId() {
 		return id;
 	}
+	@JsonIgnore
 	public boolean hasId() {
 		return id > 0;
+	}
+	
+	@JsonProperty("paymentDay")
+	public byte getPaymentDay() {
+		return paymentDay;
 	}
 	
 	@JsonProperty("name")
@@ -75,6 +83,7 @@ public class Teacher {
 	public String toString() {
 		return StringUtils.toString(
 				"Teacher ID: " + id,
+				"Payment day: " + paymentDay, 
 				"Name: " + name,
 				"Surname: " + surname,
 				"Phone: " + phone,
@@ -96,6 +105,7 @@ public class Teacher {
 		Teacher other = (Teacher) o;
 
 		return this.id == other.id
+				&& this.paymentDay == other.paymentDay
 				&& Objects.equals(this.name, other.name)
 				&& Objects.equals(this.surname, other.surname)
 				&& Objects.equals(this.phone, other.phone)
@@ -110,6 +120,7 @@ public class Teacher {
 	public int hashCode() {
 		int result = 17;
 		result = (result << 5) - result + id;
+		result = (result << 5) - result + paymentDay;
 		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
 		result = (result << 5) - result + (surname == null ? 0 : surname.hashCode());
 		result = (result << 5) - result + (phone == null ? 0 : phone.hashCode());
@@ -125,6 +136,7 @@ public class Teacher {
 
 	@JsonCreator
 	public Teacher(@JsonProperty("id") int id, 
+					@JsonProperty("paymentDay") byte paymentDay, 
 					@JsonProperty("name") String name, 
 					@JsonProperty("surname") String surname, 
 					@JsonProperty("phone") String phone, 
@@ -134,6 +146,7 @@ public class Teacher {
 					@JsonProperty("documentName") String documentName,
 					@JsonProperty("comment") String comment) {
 		this.id = id;
+		this.paymentDay = paymentDay;
 		this.name = name;
 		this.surname = surname;
 		this.phone = phone;
@@ -149,6 +162,7 @@ public class Teacher {
 			return null;
 		
 		int id = teacherRecord.getValue(TEACHER.ID);
+		byte paymentDay = teacherRecord.getValue(TEACHER.PAYMENT_DAY);
 		String name = teacherRecord.getValue(TEACHER.NAME);
 		String surname = teacherRecord.getValue(TEACHER.SURNAME);
 		String phone = teacherRecord.getValue(TEACHER.PHONE);
@@ -157,13 +171,17 @@ public class Teacher {
 		String pictureName = teacherRecord.getValue(TEACHER.PICTURE_NAME);
 		String documentName = teacherRecord.getValue(TEACHER.DOCUMENT_NAME);
 		String comment = teacherRecord.getValue(TEACHER.COMMENT_ABOUT);
-		return new Teacher(id, name, surname, phone, city, email, pictureName, documentName, comment);
+		return new Teacher(id, paymentDay, name, surname, phone, city, email, pictureName, documentName, comment);
 	}
 
 	// PRIVATE
 	
 	@Min(value = 0, message = "Negative teacher ids not allowed")
 	private final int id;
+	
+	@Min(value = 1, message = "The payment day must be at least the first day of the month")
+	@Max(value = 31, message = "The payment day must be at most the last day of the month")
+	private final byte paymentDay;
 	
 	@NotNull(message = "The teacher must have a name")
 	@Size(max = 30, message = "Name size must not exceed 30 characters")

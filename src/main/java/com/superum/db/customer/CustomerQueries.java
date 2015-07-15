@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CustomerQueries {
 
-	List<Customer> readAllForTeacher(int teacherId);
+	List<Customer> readAllForTeacher(int teacherId, int partitionId);
 	
-	List<Customer> readAllForLessons(Date start, Date end);
+	List<Customer> readAllForLessons(Date start, Date end, int partitionId);
 	
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.InsertValuesStep2;
+import org.jooq.InsertValuesStep3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,50 +19,53 @@ import com.superum.db.generated.timestar.tables.records.LessonAttendanceRecord;
 public class LessonAttendanceDAOImpl implements LessonAttendanceDAO {
 
 	@Override
-	public LessonAttendance create(LessonAttendance attendance) {
+	public LessonAttendance create(LessonAttendance attendance, int partitionId) {
 		Long lessonId = attendance.getLessonId();
 		List<Integer> studentIds = attendance.getStudentIds();
 		
-		InsertValuesStep2<LessonAttendanceRecord, Long, Integer> step = sql.insertInto(LESSON_ATTENDANCE, LESSON_ATTENDANCE.LESSON_ID, LESSON_ATTENDANCE.STUDENT_ID);
+		InsertValuesStep3<LessonAttendanceRecord, Integer, Long, Integer> step =
+				sql.insertInto(LESSON_ATTENDANCE, LESSON_ATTENDANCE.PARTITION_ID, LESSON_ATTENDANCE.LESSON_ID, LESSON_ATTENDANCE.STUDENT_ID);
 		for (Integer studentId : studentIds)
-			step = step.values(lessonId, studentId);
+			step = step.values(partitionId, lessonId, studentId);
 		
 		step.execute();
 		return attendance;
 	}
 
 	@Override
-	public LessonAttendance read(Long lessonId) {
+	public LessonAttendance read(Long lessonId, int partitionId) {
 		List<Integer> studentIds =  sql.select(LESSON_ATTENDANCE.STUDENT_ID)
 				.from(LESSON_ATTENDANCE)
-				.where(LESSON_ATTENDANCE.LESSON_ID.eq(lessonId))
+				.where(LESSON_ATTENDANCE.LESSON_ID.eq(lessonId)
+						.and(LESSON_ATTENDANCE.PARTITION_ID.eq(partitionId)))
 				.fetch()
 				.map(record -> record.getValue(LESSON_ATTENDANCE.STUDENT_ID));
 		return new LessonAttendance(lessonId, studentIds);
 	}
 
 	@Override
-	public LessonAttendance update(LessonAttendance attendance) {
+	public LessonAttendance update(LessonAttendance attendance, int partitionId) {
 		long lessonId = attendance.getLessonId();
-		LessonAttendance old = delete(lessonId);
+		LessonAttendance old = delete(lessonId, partitionId);
 		
-		create(attendance);
+		create(attendance, partitionId);
 		return old;
 	}
 
 	@Override
-	public LessonAttendance delete(Long lessonId) {
-		return delete(new LessonAttendance(lessonId, Collections.emptyList()));
+	public LessonAttendance delete(Long lessonId, int partitionId) {
+		return delete(new LessonAttendance(lessonId, Collections.emptyList()), partitionId);
 	}
 
 	@Override
-	public LessonAttendance delete(LessonAttendance attendance) {
+	public LessonAttendance delete(LessonAttendance attendance, int partitionId) {
 		Long lessonId = attendance.getLessonId();
-		LessonAttendance old = read(lessonId);
+		LessonAttendance old = read(lessonId, partitionId);
 		
 		List<Integer> studentIds = attendance.getStudentIds();
 		
-		Condition condition = LESSON_ATTENDANCE.LESSON_ID.eq(lessonId);
+		Condition condition = LESSON_ATTENDANCE.LESSON_ID.eq(lessonId)
+				.and(LESSON_ATTENDANCE.PARTITION_ID.eq(partitionId));
 		for (Integer studentId : studentIds)
 			condition = condition.and(LESSON_ATTENDANCE.STUDENT_ID.eq(studentId));
 		
@@ -74,9 +77,10 @@ public class LessonAttendanceDAOImpl implements LessonAttendanceDAO {
 	}
 	
 	@Override
-	public int deleteForStudent(int studentId) {
+	public int deleteForStudent(int studentId, int partitionId) {
 		return sql.delete(LESSON_ATTENDANCE)
-				.where(LESSON_ATTENDANCE.STUDENT_ID.eq(studentId))
+				.where(LESSON_ATTENDANCE.STUDENT_ID.eq(studentId)
+						.and(LESSON_ATTENDANCE.PARTITION_ID.eq(partitionId)))
 				.execute();
 	}
 

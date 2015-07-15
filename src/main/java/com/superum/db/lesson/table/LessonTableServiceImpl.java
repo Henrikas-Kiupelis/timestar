@@ -13,10 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.CustomerDAO;
-import com.superum.db.customer.contract.CustomerContract;
-import com.superum.db.customer.contract.CustomerContractDAO;
-import com.superum.db.customer.contract.lang.CustomerContractLanguages;
-import com.superum.db.customer.contract.lang.CustomerContractLanguagesDAO;
+import com.superum.db.customer.lang.CustomerLanguages;
+import com.superum.db.customer.lang.CustomerLanguagesDAO;
 import com.superum.db.lesson.table.core.CustomerLessonData;
 import com.superum.db.lesson.table.core.LessonTable;
 import com.superum.db.lesson.table.core.PaymentData;
@@ -31,23 +29,23 @@ import com.superum.db.teacher.lang.TeacherLanguagesDAO;
 public class LessonTableServiceImpl implements LessonTableService {
 
 	@Override
-	public LessonTable lessonData(int amount, int offset, Date start, Date end) {
+	public LessonTable lessonData(int amount, int offset, Date start, Date end, int partitionId) {
 		LOG.debug("Retrieving lesson table.");
 		
-		int totalTeacherCount = teacherDAO.count();
+		int totalTeacherCount = teacherDAO.count(partitionId);
 		LOG.debug("Total amount of teachers: {}", totalTeacherCount);
 		
-		List<Teacher> teachers = teacherDAO.readSome(amount, offset);
+		List<Teacher> teachers = teacherDAO.readSome(amount, offset, partitionId);
 		LOG.debug("List of teachers: {}", teachers);
 		
 		List<TeacherLanguages> languages = teachers.stream()
 				.map(Teacher::getId)
-				.map(languagesDAO::read)
+				.map(teacherId -> languagesDAO.read(teacherId, partitionId))
 				.collect(Collectors.toList());
 		LOG.debug("List of languages: {}", languages);
 		
-		List<CustomerLessonData> lessonData = customerDAO.readAll().stream()
-				.map(customer -> customerData(customer, teachers, start, end))
+		List<CustomerLessonData> lessonData = customerDAO.readAll(partitionId).stream()
+				.map(customer -> customerData(customer, teachers, start, end, partitionId))
 				.collect(Collectors.toList());
 		LOG.debug("Customer data: {}", lessonData);
 				
@@ -68,7 +66,7 @@ public class LessonTableServiceImpl implements LessonTableService {
 		
 		List<PaymentData> paymentData = teachers.stream()
 				.mapToInt(Teacher::getId)
-				.mapToObj(lessonTableQueries::countPriceForTeacher)
+				.mapToObj(teacherId -> lessonTableQueries.countPriceForTeacher(teacherId, partitionId))
 				.collect(Collectors.toList());
 		LOG.debug("Teacher payment data: {}", paymentData);
 		
@@ -82,11 +80,10 @@ public class LessonTableServiceImpl implements LessonTableService {
 
 	@Autowired
 	public LessonTableServiceImpl(TeacherDAO teacherDAO, TeacherLanguagesDAO languagesDAO, CustomerDAO customerDAO,
-			CustomerContractDAO customerContractDAO, CustomerContractLanguagesDAO customerContractLanguagesDAO, LessonTableQueries lessonTableQueries) {
+			CustomerLanguagesDAO customerContractLanguagesDAO, LessonTableQueries lessonTableQueries) {
 		this.teacherDAO = teacherDAO;
 		this.languagesDAO = languagesDAO;
 		this.customerDAO = customerDAO;
-		this.customerContractDAO = customerContractDAO;
 		this.customerContractLanguagesDAO = customerContractLanguagesDAO;
 		this.lessonTableQueries = lessonTableQueries;
 	}
@@ -96,16 +93,14 @@ public class LessonTableServiceImpl implements LessonTableService {
 	private final TeacherDAO teacherDAO;
 	private final TeacherLanguagesDAO languagesDAO;
 	private final CustomerDAO customerDAO;
-	private final CustomerContractDAO customerContractDAO;
-	private final CustomerContractLanguagesDAO customerContractLanguagesDAO;
+	private final CustomerLanguagesDAO customerContractLanguagesDAO;
 	private final LessonTableQueries lessonTableQueries;
 	
-	private CustomerLessonData customerData(Customer customer, List<Teacher> teachers, Date start, Date end) {
-		CustomerContract contract = customerContractDAO.read(customer.getId());
-		CustomerContractLanguages contractLanguages = customerContractLanguagesDAO.read(customer.getId());
+	private CustomerLessonData customerData(Customer customer, List<Teacher> teachers, Date start, Date end, int partitionId) {
+		CustomerLanguages contractLanguages = customerContractLanguagesDAO.read(customer.getId(), partitionId);
 		
 		List<TeacherLessonData> lessonData = teachers.stream()
-				.map(teacher -> teacherData(teacher, customer, start, end))
+				.map(teacher -> teacherData(teacher, customer, start, end, partitionId))
 				.collect(Collectors.toList());
 		
 		int count = 0;
@@ -118,13 +113,13 @@ public class LessonTableServiceImpl implements LessonTableService {
 		}
 		TotalLessonData totalData = new TotalLessonData(count, duration, cost);
 		
-		PaymentData paymentData = lessonTableQueries.countPriceForCustomer(customer.getId());
+		PaymentData paymentData = lessonTableQueries.countPriceForCustomer(customer.getId(), partitionId);
 		
-		return new CustomerLessonData(customer, contract, contractLanguages, lessonData, totalData, paymentData);
+		return new CustomerLessonData(customer, contractLanguages, lessonData, totalData, paymentData);
 	}
 	
-	private TeacherLessonData teacherData(Teacher teacher, Customer customer, Date start, Date end) {
-		return lessonTableQueries.readForTeacherAndCustomer(teacher.getId(), customer.getId(), start, end);
+	private TeacherLessonData teacherData(Teacher teacher, Customer customer, Date start, Date end, int partitionId) {
+		return lessonTableQueries.readForTeacherAndCustomer(teacher.getId(), customer.getId(), start, end, partitionId);
 	}
 	
 	private static final Logger LOG = LoggerFactory.getLogger(LessonTableServiceImpl.class);

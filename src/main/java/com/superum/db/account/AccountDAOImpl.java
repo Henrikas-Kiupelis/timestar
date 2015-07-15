@@ -27,7 +27,7 @@ public class AccountDAOImpl implements AccountDAO {
 				.set(ACCOUNT.PASSWORD, password)
 				.execute();
 		if (createResult == 0)
-			throw new DatabaseException("Couldn't insert contract: " + account);
+			throw new DatabaseException("Couldn't insert account: " + account);
 		
 		return new Account(id, username, accountType, password.toCharArray());
 	}

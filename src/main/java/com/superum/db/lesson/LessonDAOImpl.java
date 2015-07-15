@@ -19,8 +19,9 @@ import com.superum.utils.ConditionUtils;
 public class LessonDAOImpl implements LessonDAO {
 
 	@Override
-	public Lesson create(Lesson lesson) {
+	public Lesson create(Lesson lesson, int partitionId) {
 		return sql.insertInto(LESSON)
+				.set(LESSON.PARTITION_ID, partitionId)
 				.set(LESSON.TEACHER_ID, lesson.getTeacherId())
 				.set(LESSON.GROUP_ID, lesson.getGroupId())
 				.set(LESSON.DATE_OF_LESSON, lesson.getDate())
@@ -36,9 +37,10 @@ public class LessonDAOImpl implements LessonDAO {
 	}
 
 	@Override
-	public Lesson read(Long id) {
+	public Lesson read(Long id, int partitionId) {
 		return sql.selectFrom(LESSON)
-				.where(LESSON.ID.eq(id))
+				.where(LESSON.ID.eq(id)
+						.and(LESSON.PARTITION_ID.eq(partitionId)))
 				.fetch().stream()
 				.findFirst()
 				.map(Lesson::valueOf)
@@ -46,10 +48,10 @@ public class LessonDAOImpl implements LessonDAO {
 	}
 
 	@Override
-	public Lesson update(Lesson lesson) {
+	public Lesson update(Lesson lesson, int partitionId) {
 		long id = lesson.getId();
 		
-		Lesson old = read(id);
+		Lesson old = read(id, partitionId);
 		
 		sql.update(LESSON)
 			.set(LESSON.TEACHER_ID, lesson.getTeacherId())
@@ -59,18 +61,20 @@ public class LessonDAOImpl implements LessonDAO {
 			.set(LESSON.TIME_OF_END, lesson.getEndTime())
 			.set(LESSON.LENGTH_IN_MINUTES, lesson.getLength())
 			.set(LESSON.COMMENT_ABOUT, lesson.getComment())
-			.where(LESSON.ID.eq(id))
+			.where(LESSON.ID.eq(id)
+					.and(LESSON.PARTITION_ID.eq(partitionId)))
 			.execute();
 		
 		return old;
 	}
 
 	@Override
-	public Lesson delete(Long id) {
-		Lesson old = read(id);
+	public Lesson delete(Long id, int partitionId) {
+		Lesson old = read(id, partitionId);
 		
 		int result = sql.delete(LESSON)
-				.where(LESSON.ID.eq(id))
+				.where(LESSON.ID.eq(id)
+						.and(LESSON.PARTITION_ID.eq(partitionId)))
 				.execute();
 		if (result == 0)
 			throw new DatabaseException("Couldn't delete lesson with ID: " + id);
@@ -79,8 +83,9 @@ public class LessonDAOImpl implements LessonDAO {
 	}
 
 	@Override
-	public List<Lesson> readAllForTeacher(int teacherId, Date start, Date end) {
-		Condition condition = LESSON.TEACHER_ID.eq(teacherId);
+	public List<Lesson> readAllForTeacher(int teacherId, Date start, Date end, int partitionId) {
+		Condition condition = LESSON.TEACHER_ID.eq(teacherId)
+				.and(LESSON.PARTITION_ID.eq(partitionId));
 		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
 		if (dateCondition != null)
 			condition = condition.and(dateCondition);
@@ -93,8 +98,9 @@ public class LessonDAOImpl implements LessonDAO {
 	}
 	
 	@Override
-	public List<Lesson> readAllForGroup(int groupId, Date start, Date end) {
-		Condition condition = LESSON.GROUP_ID.eq(groupId);
+	public List<Lesson> readAllForGroup(int groupId, Date start, Date end, int partitionId) {
+		Condition condition = LESSON.GROUP_ID.eq(groupId)
+				.and(LESSON.PARTITION_ID.eq(partitionId));
 		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
 		if (dateCondition != null)
 			condition = condition.and(dateCondition);
@@ -107,13 +113,14 @@ public class LessonDAOImpl implements LessonDAO {
 	}
 
 	@Override
-	public boolean isOverlapping(Lesson lesson) {
+	public boolean isOverlapping(Lesson lesson, int partitionId) {
 		int teacherId = lesson.getTeacherId();
 		Date date = lesson.getDate();
 		short startTime = lesson.getStartTime();
 		short endTime = lesson.getEndTime();
 		
-		Condition aLessonForSameTeacher = LESSON.TEACHER_ID.eq(teacherId);
+		Condition aLessonForSameTeacher = LESSON.TEACHER_ID.eq(teacherId)
+				.and(LESSON.PARTITION_ID.eq(partitionId));
 		Condition aLessonOnTheSameDay = LESSON.DATE_OF_LESSON.eq(date);
 		
 		Condition aLessonStartsBetweenThisLesson = LESSON.TIME_OF_START.between(startTime, endTime);

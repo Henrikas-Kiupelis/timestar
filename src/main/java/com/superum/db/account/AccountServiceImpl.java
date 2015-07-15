@@ -18,7 +18,7 @@ public class AccountServiceImpl implements AccountService {
 		Account newAdmin = accountDAO.create(account);
 		LOG.debug("New admin Account created: {}", newAdmin);
 		
-		AccountRoles roles = accountRolesDAO.create(new AccountRoles(account.getUsername(), AccountType.COTEM.roleNames()));
+		AccountRoles roles = accountRolesDAO.create(new AccountRoles(account.getUsername(), AccountType.ADMIN.roleNames()));
 		LOG.debug("Account roles added: {}", roles);
 		
 		return newAdmin;

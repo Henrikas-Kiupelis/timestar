@@ -10,7 +10,6 @@ import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.SelectHavingStep;
 import org.jooq.SelectJoinStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -23,17 +22,22 @@ import com.superum.utils.ConditionUtils;
 public class TeacherQueriesImpl implements TeacherQueries {
 
 	@Override
-	public List<Teacher> readAllforLessons(Date start, Date end) {
-		SelectJoinStep<Record> join = sql.select(TEACHER.fields())
+	public List<Teacher> readAllforLessons(Date start, Date end, int partitionId) {
+		SelectJoinStep<Record> step = sql.select(TEACHER.fields())
 				.from(TEACHER)
 				.join(LESSON).onKey(LESSON_IBFK_1);
 		
+		Condition condition = TEACHER.PARTITION_ID.eq(partitionId);
 		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
-		SelectHavingStep<Record> result = dateCondition == null
-				? join.groupBy(TEACHER.ID)
-				: join.where(dateCondition).groupBy(TEACHER.ID);
-		
-		return result.orderBy(TEACHER.ID).fetch().map(Teacher::valueOf);
+		if (dateCondition != null)
+			condition = condition.and(dateCondition);
+
+		return step
+				.where(condition)
+				.groupBy(TEACHER.ID)
+				.orderBy(TEACHER.ID)
+				.fetch()
+				.map(Teacher::valueOf);
 	}
 
 	// CONSTRUCTORS

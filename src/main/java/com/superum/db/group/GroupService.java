@@ -7,18 +7,18 @@ import org.springframework.stereotype.Service;
 @Service
 public interface GroupService {
 
-	Group addGroup(Group group);
+	Group addGroup(Group group, int partitionId);
 	
-	Group findGroup(int id);
+	Group findGroup(int id, int partitionId);
 	
-	Group updateGroup(Group group);
+	Group updateGroup(Group group, int partitionId);
 	
-	Group deleteGroup(int id);
+	Group deleteGroup(int id, int partitionId);
 	
-	List<Group> findGroupsForCustomer(int customerId);
+	List<Group> findGroupsForCustomer(int customerId, int partitionId);
 	
-	List<Group> findGroupsForTeacher(int teacherId);
+	List<Group> findGroupsForTeacher(int teacherId, int partitionId);
 	
-	List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId);
+	List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId, int partitionId);
 	
 }

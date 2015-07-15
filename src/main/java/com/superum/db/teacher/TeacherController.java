@@ -2,6 +2,7 @@ package com.superum.db.teacher;
 
 import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
 
+import java.security.Principal;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -16,16 +17,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.superum.utils.PrincipalUtils;
+
 @RestController
 @RequestMapping(value = "/timestar/api")
 public class TeacherController {
 
 	@RequestMapping(value = "/teacher/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Teacher addTeacher(@RequestBody @Valid Teacher teacher) {
+	public Teacher addTeacher(Principal user, @RequestBody @Valid Teacher teacher) {
+		int partitionId = PrincipalUtils.partitionId(user);
 		log.info("Request to add a new teacher: {}", teacher);
 		
-		Teacher addedTeacher = teacherService.addTeacher(teacher);
+		Teacher addedTeacher = teacherService.addTeacher(teacher, partitionId);
 		log.info("Teacher added: {}", addedTeacher);
 		
 		return addedTeacher;
@@ -33,10 +37,11 @@ public class TeacherController {
 	
 	@RequestMapping(value = "/teacher/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Teacher findTeacher(@PathVariable int id) {
+	public Teacher findTeacher(Principal user, @PathVariable int id) {
+		int partitionId = PrincipalUtils.partitionId(user);
 		log.info("Request to find a teacher with ID {}", id);
 		
-		Teacher teacher = teacherService.findTeacher(id);
+		Teacher teacher = teacherService.findTeacher(id, partitionId);
 		log.info("Teacher found: {}", teacher);
 		
 		return teacher;
@@ -44,10 +49,11 @@ public class TeacherController {
 	
 	@RequestMapping(value = "/teacher/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Teacher updateTeacher(@RequestBody @Valid Teacher teacher) {
+	public Teacher updateTeacher(Principal user, @RequestBody @Valid Teacher teacher) {
+		int partitionId = PrincipalUtils.partitionId(user);
 		log.info("Request to find update teacher: {}", teacher);
 		
-		Teacher outdatedTeacher = teacherService.updateTeacher(teacher);
+		Teacher outdatedTeacher = teacherService.updateTeacher(teacher, partitionId);
 		log.info("Teacher before update: {}", outdatedTeacher);
 		
 		return outdatedTeacher;
@@ -55,10 +61,11 @@ public class TeacherController {
 	
 	@RequestMapping(value = "/teacher/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Teacher deleteTeacher(@PathVariable int id) {
+	public Teacher deleteTeacher(Principal user, @PathVariable int id) {
+		int partitionId = PrincipalUtils.partitionId(user);
 		log.info("Request to delete a teacher with ID {}", id);
 		
-		Teacher teacher = teacherService.deleteTeacher(id);
+		Teacher teacher = teacherService.deleteTeacher(id, partitionId);
 		log.info("Teacher deleted: {}", teacher);
 		
 		return teacher;
@@ -66,8 +73,9 @@ public class TeacherController {
 	
 	@RequestMapping(value = "/teacher/all", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public List<Teacher> getAllTeachers() {
-		return teacherService.getAllTeachers();
+	public List<Teacher> getAllTeachers(Principal user) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		return teacherService.getAllTeachers(partitionId);
 	}
 	
 	// CONSTRUCTORS

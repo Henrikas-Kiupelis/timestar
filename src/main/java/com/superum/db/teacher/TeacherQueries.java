@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TeacherQueries {
 
-	List<Teacher> readAllforLessons(Date start, Date end);
+	List<Teacher> readAllforLessons(Date start, Date end, int partitionId);
 	
 }

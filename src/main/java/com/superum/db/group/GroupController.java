@@ -2,6 +2,7 @@ package com.superum.db.group;
 
 import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
 
+import java.security.Principal;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -14,50 +15,59 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.superum.utils.PrincipalUtils;
+
 @RestController
 @RequestMapping(value = "/timestar/api")
 public class GroupController {
 
 	@RequestMapping(value = "/group/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Group addGroup(@RequestBody @Valid Group group) {
-		return groupService.addGroup(group);
+	public Group addGroup(Principal user, @RequestBody @Valid Group group) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		return groupService.addGroup(group, partitionId);
 	}
 	
 	@RequestMapping(value = "/group/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Group findGroup(@PathVariable int id) {
-		return groupService.findGroup(id);
+	public Group findGroup(Principal user, @PathVariable int id) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		return groupService.findGroup(id, partitionId);
 	}
 	
 	@RequestMapping(value = "/group/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Group updateGroup(@RequestBody @Valid Group group) {
-		return groupService.updateGroup(group);
+	public Group updateGroup(Principal user, @RequestBody @Valid Group group) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		return groupService.updateGroup(group, partitionId);
 	}
 	
 	@RequestMapping(value = "/group/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Group deleteGroup(@PathVariable int id) {
-		return groupService.deleteGroup(id);
+	public Group deleteGroup(Principal user, @PathVariable int id) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		return groupService.deleteGroup(id, partitionId);
 	}
 	
 	@RequestMapping(value = "/group/customer/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public List<Group> findGroupsForCustomer(@PathVariable int customerId) {
-		return groupService.findGroupsForCustomer(customerId);
+	public List<Group> findGroupsForCustomer(Principal user, @PathVariable int customerId) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		return groupService.findGroupsForCustomer(customerId, partitionId);
 	}
 	
 	@RequestMapping(value = "/group/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public List<Group> findGroupsForTeacher(@PathVariable int teacherId) {
-		return groupService.findGroupsForTeacher(teacherId);
+	public List<Group> findGroupsForTeacher(Principal user, @PathVariable int teacherId) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		return groupService.findGroupsForTeacher(teacherId, partitionId);
 	}
 	
 	@RequestMapping(value = "/group/customer/{customerId:[\\d]+}/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId) {
-		return groupService.findGroupsForCustomerAndTeacher(customerId, teacherId);
+	public List<Group> findGroupsForCustomerAndTeacher(Principal user, @PathVariable int customerId, @PathVariable int teacherId) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		return groupService.findGroupsForCustomerAndTeacher(customerId, teacherId, partitionId);
 	}
 	
 	// CONSTRUCTORS

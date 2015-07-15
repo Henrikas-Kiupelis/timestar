@@ -7,10 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.superum.db.customer.contract.CustomerContract;
-import com.superum.db.customer.contract.CustomerContractService;
-import com.superum.db.customer.contract.lang.CustomerContractLanguages;
-import com.superum.db.customer.contract.lang.CustomerContractLanguagesService;
+import com.superum.db.customer.lang.CustomerLanguages;
+import com.superum.db.customer.lang.CustomerLanguagesService;
 import com.superum.db.group.student.Student;
 import com.superum.db.group.student.StudentService;
 
@@ -18,69 +16,66 @@ import com.superum.db.group.student.StudentService;
 public class CustomerServiceImpl implements CustomerService {
 
 	@Override
-	public Customer addCustomer(Customer customer) {
+	public Customer addCustomer(Customer customer, int partitionId) {
 		LOG.debug("Creating new customer: {}", customer);
 		
-		Customer newCustomer = customerDAO.create(customer);
+		Customer newCustomer = customerDAO.create(customer, partitionId);
 		LOG.debug("New customer created: {}", newCustomer);
 		
 		return newCustomer;
 	}
 	
 	@Override
-	public Customer findCustomer(int id) {
+	public Customer findCustomer(int id, int partitionId) {
 		LOG.debug("Reading Customer by ID: {}", id);
 		
-		Customer customer = customerDAO.read(id);
+		Customer customer = customerDAO.read(id, partitionId);
 		LOG.debug("Customer retrieved: {}", customer);
 		
 		return customer;
 	}
 	
 	@Override
-	public Customer updateCustomer(Customer customer) {
+	public Customer updateCustomer(Customer customer, int partitionId) {
 		LOG.debug("Updating Customer: {}", customer);
 		
-		Customer oldCustomer = customerDAO.update(customer);
+		Customer oldCustomer = customerDAO.update(customer, partitionId);
 		LOG.debug("Old Customer retrieved: {}", oldCustomer);
 		
 		return oldCustomer;
 	}
 	
 	@Override
-	public Customer deleteCustomer(int id) {
+	public Customer deleteCustomer(int id, int partitionId) {
 		LOG.debug("Deleting Customer by ID: {}", id);
 		
-		CustomerContract deletedContract = customerContractService.deleteContract(id);
-		LOG.debug("Deleted CustomerContract for this Customer: {}", deletedContract);
-		
-		CustomerContractLanguages deletedLanguages = customerContractLanguagesService.deleteLanguagesForCustomerContract(id);
+		CustomerLanguages deletedLanguages = customerLanguagesService.deleteLanguagesForCustomerContract(id, partitionId);
 		LOG.debug("Deleted CustomerContractLanguages for this Customer: {}", deletedLanguages);
 		
-		List<Student> deletedStudents = studentService.deleteForCustomer(id);
+		List<Student> deletedStudents = studentService.deleteForCustomer(id, partitionId);
 		LOG.debug("Deleted Students for this Customer: {}", deletedStudents);
 		
-		Customer deletedCustomer = customerDAO.delete(id);
+		Customer deletedCustomer = customerDAO.delete(id, partitionId);
 		LOG.debug("Deleted Customer: {}", deletedCustomer);
 		
 		return deletedCustomer;
 	}
 	
 	@Override
-	public List<Customer> findCustomersForTeacher(int teacherId) {
+	public List<Customer> findCustomersForTeacher(int teacherId, int partitionId) {
 		LOG.debug("Reading Customers for Teacher with ID: {}", teacherId);
 		
-		List<Customer> customersForTeacher = customerQueries.readAllForTeacher(teacherId);
+		List<Customer> customersForTeacher = customerQueries.readAllForTeacher(teacherId, partitionId);
 		LOG.debug("Customers retrieved: {}", customersForTeacher);
 		
 		return customersForTeacher;
 	}
 	
 	@Override
-	public List<Customer> getAllCustomers() {
+	public List<Customer> getAllCustomers(int partitionId) {
 		LOG.debug("Reading all Customers");
 		
-		List<Customer> allCustomers = customerDAO.readAll();
+		List<Customer> allCustomers = customerDAO.readAll(partitionId);
 		LOG.debug("Customers retrieved: {}", allCustomers);
 		
 		return allCustomers;
@@ -89,12 +84,10 @@ public class CustomerServiceImpl implements CustomerService {
 	// CONSTRUCTORS
 	
 	@Autowired
-	public CustomerServiceImpl(CustomerDAO customerDAO, CustomerQueries customerQueries,
-			CustomerContractService customerContractService, CustomerContractLanguagesService customerContractLanguagesService, StudentService studentService) {
+	public CustomerServiceImpl(CustomerDAO customerDAO, CustomerQueries customerQueries, CustomerLanguagesService customerLanguagesService, StudentService studentService) {
 		this.customerDAO = customerDAO;
 		this.customerQueries = customerQueries;
-		this.customerContractService = customerContractService;
-		this.customerContractLanguagesService = customerContractLanguagesService;
+		this.customerLanguagesService = customerLanguagesService;
 		this.studentService = studentService;
 	}
 	
@@ -102,8 +95,7 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	private final CustomerDAO customerDAO;
 	private final CustomerQueries customerQueries;
-	private final CustomerContractService customerContractService;
-	private final CustomerContractLanguagesService customerContractLanguagesService;
+	private final CustomerLanguagesService customerLanguagesService;
 	private final StudentService studentService;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(CustomerService.class);

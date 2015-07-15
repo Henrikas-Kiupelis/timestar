@@ -8,7 +8,7 @@ import com.superum.config.Role;
 
 public enum AccountType {
 
-	COTEM(Role.ADMIN, Role.TEACHER),
+	ADMIN(Role.ADMIN, Role.TEACHER),
 	TEACHER(Role.TEACHER);
 	
 	public List<Role> roles() {

@@ -16,11 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudentQueriesImpl implements StudentQueries {
 	
 	@Override
-	public List<Student> readAllForLesson(long lessonId) {
+	public List<Student> readAllForLesson(long lessonId, int partitionId) {
 		return sql.select(STUDENT.fields())
 				.from(STUDENT)
 				.join(LESSON_ATTENDANCE).onKey(LESSON_ATTENDANCE_IBFK_2)
-				.where(LESSON_ATTENDANCE.LESSON_ID.eq(lessonId))
+				.where(LESSON_ATTENDANCE.LESSON_ID.eq(lessonId)
+						.and(STUDENT.PARTITION_ID.eq(partitionId)))
 				.groupBy(STUDENT.ID)
 				.orderBy(STUDENT.ID)
 				.fetch()

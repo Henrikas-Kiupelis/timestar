@@ -2,8 +2,8 @@ package com.superum.db.lesson.table;
 
 import static com.superum.db.generated.timestar.Tables.LESSON;
 import static com.superum.db.generated.timestar.Tables.STUDENT;
-import static com.superum.db.generated.timestar.Tables.TEACHER_CONTRACT;
-import static com.superum.db.generated.timestar.Tables.CUSTOMER_CONTRACT;
+import static com.superum.db.generated.timestar.Tables.TEACHER;
+import static com.superum.db.generated.timestar.Tables.CUSTOMER;
 import static com.superum.utils.DateUtils.*;
 
 import java.math.BigDecimal;
@@ -30,18 +30,20 @@ import com.superum.utils.ConditionUtils;
 public class LessonTableQueriesImpl implements LessonTableQueries {
 
 	@Override
-	public TeacherLessonData readForTeacherAndCustomer(int teacherId, int customerId, Date start, Date end) {
-		Condition condition = LESSON.TEACHER_ID.eq(teacherId).and(STUDENT.CUSTOMER_ID.eq(customerId));
+	public TeacherLessonData readForTeacherAndCustomer(int teacherId, int customerId, Date start, Date end, int partitionId) {
+		Condition condition = LESSON.TEACHER_ID.eq(teacherId)
+				.and(STUDENT.CUSTOMER_ID.eq(customerId))
+				.and(LESSON.PARTITION_ID.eq(partitionId));
 		Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
 		if (dateCondition != null)
 			condition = condition.and(dateCondition);
 		
-		Result<Record3<Long,Short,BigDecimal>> result = sql.select(LESSON.ID, LESSON.LENGTH_IN_MINUTES, CUSTOMER_CONTRACT.PAYMENT_VALUE.mul(LESSON.LENGTH_IN_MINUTES).div(60).as("cost"))
+		Result<Record3<Long,Short,BigDecimal>> result = sql.select(LESSON.ID, LESSON.LENGTH_IN_MINUTES, CUSTOMER.PAYMENT_VALUE.mul(LESSON.LENGTH_IN_MINUTES).div(60).as("cost"))
 				.from(LESSON)
 				.join(STUDENT)
 				.on(LESSON.GROUP_ID.eq(STUDENT.GROUP_ID))
-				.join(CUSTOMER_CONTRACT)
-				.on(STUDENT.CUSTOMER_ID.eq(CUSTOMER_CONTRACT.CUSTOMER_ID))
+				.join(CUSTOMER)
+				.on(STUDENT.CUSTOMER_ID.eq(CUSTOMER.ID))
 				.where(condition)
 				.groupBy(LESSON.ID)
 				.orderBy(LESSON.ID)
@@ -62,26 +64,28 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 	}
 	
 	@Override
-	public PaymentData countPriceForTeacher(int teacherId) {
-		byte paymentDay = sql.select(TEACHER_CONTRACT.PAYMENT_DAY)
-				.from(TEACHER_CONTRACT)
-				.where(TEACHER_CONTRACT.TEACHER_ID.eq(teacherId))
+	public PaymentData countPriceForTeacher(int teacherId, int partitionId) {
+		byte paymentDay = sql.select(TEACHER.PAYMENT_DAY)
+				.from(TEACHER)
+				.where(TEACHER.ID.eq(teacherId)
+						.and(TEACHER.PARTITION_ID.eq(partitionId)))
 				.fetch().stream()
 				.findFirst()
-				.map(record -> record.getValue(TEACHER_CONTRACT.PAYMENT_DAY))
+				.map(record -> record.getValue(TEACHER.PAYMENT_DAY))
 				.orElseThrow(() -> new DatabaseException("Couldn't find teacher with id " + teacherId));
 		
 		Calendar init = initialDay(paymentDay);
 		Date start = sqlDate(init);
 		Date end = sqlDate(finalDay(init, paymentDay));
 		
-		BigDecimal cost = sql.select(CUSTOMER_CONTRACT.PAYMENT_VALUE.mul(LESSON.LENGTH_IN_MINUTES).div(60).as("cost"))
+		BigDecimal cost = sql.select(CUSTOMER.PAYMENT_VALUE.mul(LESSON.LENGTH_IN_MINUTES).div(60).as("cost"))
 				.from(LESSON)
 				.join(STUDENT)
 				.on(LESSON.GROUP_ID.eq(STUDENT.GROUP_ID))
-				.join(CUSTOMER_CONTRACT)
-				.on(STUDENT.CUSTOMER_ID.eq(CUSTOMER_CONTRACT.CUSTOMER_ID))
+				.join(CUSTOMER)
+				.on(STUDENT.CUSTOMER_ID.eq(CUSTOMER.ID))
 				.where(LESSON.TEACHER_ID.eq(teacherId)
+						.and(LESSON.PARTITION_ID.eq(partitionId))
 						.and(LESSON.DATE_OF_LESSON.ge(start)
 						.and(LESSON.DATE_OF_LESSON.lessThan(end))))
 				.groupBy(LESSON.ID)
@@ -95,26 +99,28 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 	}
 
 	@Override
-	public PaymentData countPriceForCustomer(int customerId) {
-		byte paymentDay = sql.select(CUSTOMER_CONTRACT.PAYMENT_DAY)
-				.from(CUSTOMER_CONTRACT)
-				.where(CUSTOMER_CONTRACT.CUSTOMER_ID.eq(customerId))
+	public PaymentData countPriceForCustomer(int customerId, int partitionId) {
+		byte paymentDay = sql.select(CUSTOMER.PAYMENT_DAY)
+				.from(CUSTOMER)
+				.where(CUSTOMER.ID.eq(customerId)
+						.and(CUSTOMER.PARTITION_ID.eq(partitionId)))
 				.fetch().stream()
 				.findFirst()
-				.map(record -> record.getValue(CUSTOMER_CONTRACT.PAYMENT_DAY))
+				.map(record -> record.getValue(CUSTOMER.PAYMENT_DAY))
 				.orElseThrow(() -> new DatabaseException("Couldn't find customer with id " + customerId));
 		
 		Calendar init = initialDay(paymentDay);
 		Date start = sqlDate(init);
 		Date end = sqlDate(finalDay(init, paymentDay));
 		
-		BigDecimal cost = sql.select(CUSTOMER_CONTRACT.PAYMENT_VALUE.mul(LESSON.LENGTH_IN_MINUTES).div(60).as("Cost"))
+		BigDecimal cost = sql.select(CUSTOMER.PAYMENT_VALUE.mul(LESSON.LENGTH_IN_MINUTES).div(60).as("Cost"))
 				.from(LESSON)
 				.join(STUDENT)
 				.on(LESSON.GROUP_ID.eq(STUDENT.GROUP_ID))
-				.join(CUSTOMER_CONTRACT)
-				.on(STUDENT.CUSTOMER_ID.eq(CUSTOMER_CONTRACT.CUSTOMER_ID))
+				.join(CUSTOMER)
+				.on(STUDENT.CUSTOMER_ID.eq(CUSTOMER.ID))
 				.where(STUDENT.CUSTOMER_ID.eq(customerId)
+						.and(LESSON.PARTITION_ID.eq(partitionId))
 						.and(LESSON.DATE_OF_LESSON.ge(start)
 						.and(LESSON.DATE_OF_LESSON.lessThan(end))))
 				.groupBy(LESSON.ID)

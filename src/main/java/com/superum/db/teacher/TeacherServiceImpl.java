@@ -16,10 +16,10 @@ import com.superum.db.account.AccountDAO;
 import com.superum.db.account.AccountType;
 import com.superum.db.account.roles.AccountRoles;
 import com.superum.db.account.roles.AccountRolesDAO;
-import com.superum.db.teacher.contract.TeacherContract;
-import com.superum.db.teacher.contract.TeacherContractService;
+import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguages;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
+import com.superum.utils.PrincipalUtils;
 import com.superum.utils.RandomUtils;
 import com.superum.utils.StringUtils;
 
@@ -27,10 +27,12 @@ import com.superum.utils.StringUtils;
 public class TeacherServiceImpl implements TeacherService {
 
 	@Override
-	public Teacher addTeacher(Teacher teacher) {
+	public Teacher addTeacher(Teacher teacher, int partitionId) {
+		String name = partitionService.findPartition(partitionId).getName();
+		
 		LOG.debug("Creating new Teacher: {}");
 		
-		Teacher newTeacher = teacherDAO.create(teacher);
+		Teacher newTeacher = teacherDAO.create(teacher, partitionId);
 		LOG.debug("New Teacher created: {}", newTeacher);
 		
 		char[] randomPassword = RandomUtils.randomPassword(PASSWORD_LENGTH);
@@ -41,10 +43,11 @@ public class TeacherServiceImpl implements TeacherService {
 		LOG.debug("Random password generated");
 			
 		try {
-			mail.send(newTeacher.getEmail(), EMAIL_TITLE, message.toString());
-			LOG.debug("Sent email to teacher '{}': title - '{}'; body - '{}'", teacher, EMAIL_TITLE, EMAIL_BODY + "[PROTECTED}");
+			String fullTitle = EMAIL_TITLE + name;
+			mail.send(newTeacher.getEmail(), fullTitle, message.toString());
+			LOG.debug("Sent email to teacher '{}': title - '{}'; body - '{}'", teacher, fullTitle, EMAIL_BODY + "[PROTECTED}");
 		} catch (MessagingException e) {
-			teacherDAO.delete(newTeacher.getId());
+			teacherDAO.delete(newTeacher.getId(), partitionId);
 			throw new IllegalStateException("Failed to send mail! Creation aborted.", e);
 		}
 		
@@ -52,49 +55,47 @@ public class TeacherServiceImpl implements TeacherService {
 		StringUtils.erase(randomPassword);
 		LOG.debug("Password encoded and erased from memory");
 		
-		Account teacherAccount = accountDAO.create(new Account(newTeacher.getId(), newTeacher.getEmail(), AccountType.TEACHER.name(), securePassword.toCharArray()));
+		String accountName = PrincipalUtils.makeName(newTeacher.getEmail(), partitionId);
+		Account teacherAccount = accountDAO.create(new Account(newTeacher.getId(), accountName, AccountType.TEACHER.name(), securePassword.toCharArray()));
 		LOG.debug("New Teacher Account created: {}", teacherAccount);
 		
-		AccountRoles teacherRoles = accountRolesDAO.create(new AccountRoles(newTeacher.getEmail(), AccountType.TEACHER.roleNames()));
+		AccountRoles teacherRoles = accountRolesDAO.create(new AccountRoles(accountName, AccountType.TEACHER.roleNames()));
 		LOG.debug("Roles added to Account: {}", teacherRoles);
 		
 		return newTeacher;
 	}
 	
 	@Override
-	public Teacher findTeacher(int id) {
+	public Teacher findTeacher(int id, int partitionId) {
 		LOG.debug("Reading teacher by ID: {}", id);
 		
-		Teacher teacher = teacherDAO.read(id);
+		Teacher teacher = teacherDAO.read(id, partitionId);
 		LOG.debug("Teacher retrieved: {}", teacher);
 		
 		return teacher;
 	}
 	
 	@Override
-	public Teacher updateTeacher(Teacher teacher) {
+	public Teacher updateTeacher(Teacher teacher, int partitionId) {
 		LOG.debug("Updating Teacher: {}", teacher);
 		
-		Teacher oldTeacher = teacherDAO.update(teacher);
+		Teacher oldTeacher = teacherDAO.update(teacher, partitionId);
 		LOG.debug("Old Teacher retrieved: {}", oldTeacher);
 		
 		return oldTeacher;
 	}
 	
 	@Override
-	public Teacher deleteTeacher(int id) {
+	public Teacher deleteTeacher(int id, int partitionId) {
 		LOG.debug("Deleting Teacher by ID: {}", id);
 		
-		TeacherContract deletedContract = teacherContractService.deleteContract(id);
-		LOG.debug("Deleted TeacherContract: {}", deletedContract);
-		
-		TeacherLanguages deletedLanguages = teacherLanguagesService.deleteLanguagesForTeacher(id);
+		TeacherLanguages deletedLanguages = teacherLanguagesService.deleteLanguagesForTeacher(id, partitionId);
 		LOG.debug("Deleted TeacherLanguages: {}", deletedLanguages);
 		
-		Teacher deletedTeacher = teacherDAO.delete(id);
+		Teacher deletedTeacher = teacherDAO.delete(id, partitionId);
 		LOG.debug("Deleted Teacher: {}", deletedTeacher);
 		
-		String username = deletedTeacher.getEmail();
+		String username = PrincipalUtils.makeName(deletedTeacher.getEmail(), partitionId);
 		AccountRoles deletedAccountRoles = accountRolesDAO.delete(username);
 		LOG.debug("Deleted AccountRoles: {}", deletedAccountRoles);
 		
@@ -105,10 +106,10 @@ public class TeacherServiceImpl implements TeacherService {
 	}
 	
 	@Override
-	public List<Teacher> getAllTeachers() {
+	public List<Teacher> getAllTeachers(int partitionId) {
 		LOG.debug("Reading all Teachers");
 		
-		List<Teacher> allTeachers = teacherDAO.readAll();
+		List<Teacher> allTeachers = teacherDAO.readAll(partitionId);
 		LOG.debug("Teachers retrieved: {}", allTeachers);
 		
 		return allTeachers;
@@ -118,14 +119,14 @@ public class TeacherServiceImpl implements TeacherService {
 	
 	@Autowired
 	public TeacherServiceImpl(TeacherDAO teacherDAO, PasswordEncoder encoder, Gmail mail, AccountDAO accountDAO, AccountRolesDAO accountRolesDAO, 
-			TeacherContractService teacherContractService, TeacherLanguagesService teacherLanguagesService) {
+			TeacherLanguagesService teacherLanguagesService, PartitionService partitionService) {
 		this.teacherDAO = teacherDAO;
 		this.encoder = encoder;
 		this.mail = mail;
 		this.accountDAO = accountDAO;
 		this.accountRolesDAO = accountRolesDAO;
-		this.teacherContractService = teacherContractService;
 		this.teacherLanguagesService = teacherLanguagesService;
+		this.partitionService = partitionService;
 	}
 	
 	// PRIVATE
@@ -135,12 +136,12 @@ public class TeacherServiceImpl implements TeacherService {
 	private final Gmail mail;
 	private final AccountDAO accountDAO;
 	private final AccountRolesDAO accountRolesDAO;
-	private final TeacherContractService teacherContractService;
 	private final TeacherLanguagesService teacherLanguagesService;
+	private final PartitionService partitionService;
 	
 	private static final int PASSWORD_LENGTH = 7;
 	
-	private static final String EMAIL_TITLE = "Your COTEM password";
+	private static final String EMAIL_TITLE = "Your password for ";
 	private static final String EMAIL_BODY = "Password: ";
 	
 	private static final Logger LOG = LoggerFactory.getLogger(TeacherService.class);

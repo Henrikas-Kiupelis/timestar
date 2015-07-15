@@ -16,9 +16,13 @@ import com.superum.db.exception.DatabaseException;
 public class CustomerDAOImpl implements CustomerDAO {
 
 	@Override
-	public Customer create(Customer customer) {
+	public Customer create(Customer customer, int partitionId) {
 		return sql.insertInto(CUSTOMER)
+				.set(CUSTOMER.PARTITION_ID, partitionId)
 				.set(CUSTOMER.NAME, customer.getName())
+				.set(CUSTOMER.PAYMENT_DAY, customer.getPaymentDay())
+				.set(CUSTOMER.START_DATE, customer.getStartDate())
+				.set(CUSTOMER.PAYMENT_VALUE, customer.getPaymentValue())
 				.set(CUSTOMER.PHONE, customer.getPhone())
 				.set(CUSTOMER.WEBSITE, customer.getWebsite())
 				.set(CUSTOMER.PICTURE_NAME, customer.getPictureName())
@@ -31,9 +35,10 @@ public class CustomerDAOImpl implements CustomerDAO {
 	}
 
 	@Override
-	public Customer read(Integer id) {
+	public Customer read(Integer id, int partitionId) {
 		return sql.selectFrom(CUSTOMER)
-				.where(CUSTOMER.ID.eq(id))
+				.where(CUSTOMER.ID.eq(id)
+						.and(CUSTOMER.PARTITION_ID.eq(partitionId)))
 				.fetch().stream()
 				.findFirst()
 				.map(Customer::valueOf)
@@ -41,29 +46,34 @@ public class CustomerDAOImpl implements CustomerDAO {
 	}
 
 	@Override
-	public Customer update(Customer customer) {
+	public Customer update(Customer customer, int partitionId) {
 		int id = customer.getId();
 		
-		Customer old = read(id);
+		Customer old = read(id, partitionId);
 		
 		sql.update(CUSTOMER)
 			.set(CUSTOMER.NAME, customer.getName())
+			.set(CUSTOMER.PAYMENT_DAY, customer.getPaymentDay())
+			.set(CUSTOMER.START_DATE, customer.getStartDate())
+			.set(CUSTOMER.PAYMENT_VALUE, customer.getPaymentValue())
 			.set(CUSTOMER.PHONE, customer.getPhone())
 			.set(CUSTOMER.WEBSITE, customer.getWebsite())
 			.set(CUSTOMER.PICTURE_NAME, customer.getPictureName())
 			.set(CUSTOMER.COMMENT_ABOUT, customer.getComment())
-			.where(CUSTOMER.ID.eq(id))
+			.where(CUSTOMER.ID.eq(id)
+					.and(CUSTOMER.PARTITION_ID.eq(partitionId)))
 			.execute();
 		
 		return old;
 	}
 
 	@Override
-	public Customer delete(Integer id) {
-		Customer old = read(id);
+	public Customer delete(Integer id, int partitionId) {
+		Customer old = read(id, partitionId);
 		
 		int result = sql.delete(CUSTOMER)
-				.where(CUSTOMER.ID.eq(id))
+				.where(CUSTOMER.ID.eq(id)
+						.and(CUSTOMER.PARTITION_ID.eq(partitionId)))
 				.execute();
 		if (result == 0)
 			throw new DatabaseException("Couldn't delete customer with ID: " + id);
@@ -72,8 +82,9 @@ public class CustomerDAOImpl implements CustomerDAO {
 	}
 	
 	@Override
-	public List<Customer> readAll() {
+	public List<Customer> readAll(int partitionId) {
 		return sql.selectFrom(CUSTOMER)
+				.where(CUSTOMER.PARTITION_ID.eq(partitionId))
 				.orderBy(CUSTOMER.ID)
 				.fetch()
 				.map(Customer::valueOf);

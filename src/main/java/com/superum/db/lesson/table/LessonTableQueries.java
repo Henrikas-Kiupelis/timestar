@@ -10,10 +10,10 @@ import com.superum.db.lesson.table.core.TeacherLessonData;
 @Repository
 public interface LessonTableQueries {
 
-	TeacherLessonData readForTeacherAndCustomer(int teacherId, int customerId, Date start, Date end);
+	TeacherLessonData readForTeacherAndCustomer(int teacherId, int customerId, Date start, Date end, int partitionId);
 	
-	PaymentData countPriceForTeacher(int teacherId);
+	PaymentData countPriceForTeacher(int teacherId, int partitionId);
 	
-	PaymentData countPriceForCustomer(int customerId);
+	PaymentData countPriceForCustomer(int customerId, int partitionId);
 	
 }

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LessonQueries {
 
-	List<Lesson> readAllForCustomer(int customerId, Date start, Date end);
+	List<Lesson> readAllForCustomer(int customerId, Date start, Date end, int partitionId);
 	
 }

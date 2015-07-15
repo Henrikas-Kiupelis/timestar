@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final String AUTHORITIES_QUERY = "select username,role from roles where username = ?";
 	
 	private static final String[] PERMISION_ALL = {
-		"/timestar/api/account/info"
+		//"/timestar/api/account/info"
 	};
 	private static final String[] PERMISION_TEACHER = {
 		"/timestar/api/account/update",

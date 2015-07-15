@@ -5,15 +5,15 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.superum.db.dao.SimpleDAO;
+import com.superum.db.dao.SimplePartitionedDAO;
 
 @Repository
-public interface LessonDAO extends SimpleDAO<Lesson, Long> {
+public interface LessonDAO extends SimplePartitionedDAO<Lesson, Long> {
 
-	List<Lesson> readAllForTeacher(int teacherId, Date start, Date end);
+	List<Lesson> readAllForTeacher(int teacherId, Date start, Date end, int partitionId);
 	
-	List<Lesson> readAllForGroup(int groupId, Date start, Date end);
+	List<Lesson> readAllForGroup(int groupId, Date start, Date end, int partitionId);
 	
-	boolean isOverlapping(Lesson lesson);
+	boolean isOverlapping(Lesson lesson, int partitionId);
 	
 }

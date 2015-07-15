@@ -7,16 +7,16 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CustomerService {
 
-	Customer addCustomer(Customer customer);
+	Customer addCustomer(Customer customer, int partitionId);
 	
-	Customer findCustomer(int id);
+	Customer findCustomer(int id, int partitionId);
 	
-	Customer updateCustomer(Customer customer);
+	Customer updateCustomer(Customer customer, int partitionId);
 	
-	Customer deleteCustomer(int id);
+	Customer deleteCustomer(int id, int partitionId);
 	
-	List<Customer> findCustomersForTeacher(int teacherId);
+	List<Customer> findCustomersForTeacher(int teacherId, int partitionId);
 
-	List<Customer> getAllCustomers();
+	List<Customer> getAllCustomers(int partitionId);
 
 }
