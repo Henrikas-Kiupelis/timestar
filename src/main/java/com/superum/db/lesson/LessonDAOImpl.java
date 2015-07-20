@@ -1,18 +1,17 @@
 package com.superum.db.lesson;
 
-import static com.superum.db.generated.timestar.Tables.LESSON;
-
-import java.sql.Date;
-import java.util.List;
-
+import com.superum.exception.DatabaseException;
+import com.superum.utils.ConditionUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.superum.db.exception.DatabaseException;
-import com.superum.utils.ConditionUtils;
+import java.sql.Date;
+import java.util.List;
+
+import static com.superum.db.generated.timestar.Tables.LESSON;
 
 @Repository
 @Transactional

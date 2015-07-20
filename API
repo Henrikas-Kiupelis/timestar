@@ -1,3 +1,19 @@
+API V2:
+
+First of all, the API is partitioned. This basically means that depending on the user who is accessing the API,
+a different portion of the database will be used. All API calls are available only for the user's partition, with
+the exception of the partition API itself.
+Generally, this means that the username authorization is slightly more complicated (partition id must be added to the
+auth header) - this might be changed into PathVariable instead - but for all intents and purposes, every partition
+functions in exactly the same manner.
+
+
+
+
+
+Below is a rough explanation of v1 API; for all intents and purposes it is deprecated, with the exception of everything,
+that is also documented above;
+
 PREFIX:
 
 http://{IP}:{PORT}

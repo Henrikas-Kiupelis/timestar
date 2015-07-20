@@ -1,17 +1,9 @@
 package com.superum.db.lesson.table;
 
-import static com.superum.db.generated.timestar.Tables.LESSON;
-import static com.superum.db.generated.timestar.Tables.STUDENT;
-import static com.superum.db.generated.timestar.Tables.TEACHER;
-import static com.superum.db.generated.timestar.Tables.CUSTOMER;
-import static com.superum.utils.DateUtils.*;
-
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-
+import com.superum.db.lesson.table.core.PaymentData;
+import com.superum.db.lesson.table.core.TeacherLessonData;
+import com.superum.exception.DatabaseException;
+import com.superum.utils.ConditionUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record3;
@@ -20,10 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.superum.db.exception.DatabaseException;
-import com.superum.db.lesson.table.core.PaymentData;
-import com.superum.db.lesson.table.core.TeacherLessonData;
-import com.superum.utils.ConditionUtils;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+
+import static com.superum.db.generated.timestar.Tables.*;
+import static com.superum.utils.DateUtils.*;
 
 @Repository
 @Transactional
@@ -58,7 +54,7 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 		
 		BigDecimal cost = result.getValues("cost").stream()
 				.map(cst -> (BigDecimal)cst)
-				.reduce(BigDecimal.ZERO, (cost1, cost2) -> cost1.add(cost2));
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		
 		return new TeacherLessonData(lessonIds, duration, cost);
 	}
@@ -93,7 +89,7 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 				.fetch()
 				.getValues("cost").stream()
 				.map(object -> (BigDecimal) object)
-				.reduce(BigDecimal.ZERO, (cost1, cost2) -> cost1.add(cost2));
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		
 		return new PaymentData(end, cost);
 	}
@@ -128,7 +124,7 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 				.fetch()
 				.getValues("Cost").stream()
 				.map(object -> (BigDecimal) object)
-				.reduce(BigDecimal.ZERO, (cost1, cost2) -> cost1.add(cost2));
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		
 		return new PaymentData(end, cost);
 	}
