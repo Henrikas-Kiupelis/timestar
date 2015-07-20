@@ -1,0 +1,4 @@
+preferredTestQuery = SELECT 1
+testConnectionOnCheckout = false
+testConnectionOnCheckin = true
+idleConnectionTestPeriod = 300
