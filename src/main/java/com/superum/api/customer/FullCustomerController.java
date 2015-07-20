@@ -24,7 +24,7 @@ import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
 @RequestMapping(value = "/timestar/api/v2")
 public class FullCustomerController {
 
-	@RequestMapping(value = "/customer/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/customer/insert", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public FullCustomer insertCustomer(Principal user, @RequestBody @Valid FullCustomer customer) {
 		int partitionId = PrincipalUtils.partitionId(user);

@@ -7,9 +7,55 @@ Generally, this means that the username authorization is slightly more complicat
 auth header) - this might be changed into PathVariable instead - but for all intents and purposes, every partition
 functions in exactly the same manner.
 
+Secondly, all APIv2 calls will have the following prefix, unless stated otherwise:
+
+    http://{IP}:{PORT}/timestar/api/v2/
+
+The API might switch to HTTPS eventually.
+
+All the methods will be given in this format (example):
+
+(1)    GET /lesson/table/{pageId}
+(2)        pageId      int            0 < pageId <= MAX_INT
+(3)    OPT per_page    int            0 < per_page <= 100; DEF 6
+(4)    OPT start_date  java.sql.Date  any; DEF today
+(5)    OPT end_date    java.sql.Date  any; DEF start_date
+
+GET refers to the HTTP method the request expects;
+/lesson/table are constant mappings, which should always be in the request;
+/{pageId} is a mutable mapping; it must also always be in the request, but just like a normal parameter,
+    it can have different values and has certain limitations;
+(2) shows what the limitations for {pageId} are; specifically, that it is an integer and must be positive;
+(3) to (5) show parameters; REQ means that the parameter must be in the request, whereas OPT means that
+this parameter can be skipped; finally, if the parameter is optional, then it WILL provide the default value
+using the
+    ; DEF
+modifier; in this case, if per_page is not present, it defaults to 6; if start_date is not present, it defaults to
+today's date; if end_date is not present, it defaults to start_date
+(which will be today's date, if it also was not present)
+
+Finally, all API methods expect an auth header, unless stated otherwise;
+Currently (2015-07-20) a BASIC auth header is used:
+
+    Authentication: BASIC base64(username:password)
+
+It is important to note, that username takes the following form:
+
+    partitionId;actualUsername
+
+This allows same usernames/emails/etc to be used in separate partitions;
+This will be changed into a more secure scheme at a later date, when the basic functionality of the app has been
+realized and somewhat tested.
+
+Customer API:
+
+http://localhost:8090/timestar
 
 
 
+
+
+API V1:
 
 Below is a rough explanation of v1 API; for all intents and purposes it is deprecated, with the exception of everything,
 that is also documented above;

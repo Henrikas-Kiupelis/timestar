@@ -16,6 +16,7 @@ import java.util.Objects;
 
 /**
  * <pre>
+ * Contains all information about the Customer in one place
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

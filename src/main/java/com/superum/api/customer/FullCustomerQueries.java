@@ -22,7 +22,7 @@ public interface FullCustomerQueries {
      *
      * The check is made by using all the set fields (Languages field is ignored)
      *
-     * partitionId separates different app partitions (please refer to PartitionController)
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
      * @throws InvalidRequestException customer is null
@@ -37,7 +37,7 @@ public interface FullCustomerQueries {
      *
      * Only set fields are updated
      *
-     * partitionId separates different app partitions (please refer to PartitionController)
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
      * @throws InvalidRequestException customer is null
@@ -54,7 +54,7 @@ public interface FullCustomerQueries {
      * <pre>
      * Deletes a Customer with specified id
      *
-     * partitionId separates different app partitions (please refer to PartitionController)
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
      * @throws InvalidRequestException id is illegal (<=0)

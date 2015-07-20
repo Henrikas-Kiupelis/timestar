@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * <pre>
- * Responsible for handling the app logic in regards to customers
+ * Responsible for handling the app logic in regard to customers
  * </pre>
  */
 @Service
@@ -23,7 +23,7 @@ public interface FullCustomerService {
      * If any other fields are not set when creating, they can throw an exception
      * If any other fields are not set when updating, they are ignored
      *
-     * partitionId separates different app partitions (please refer to PartitionController)
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
      * @throws InvalidRequestException customer is null
@@ -37,7 +37,7 @@ public interface FullCustomerService {
      * <pre>
      * Reads a customer with specified id
      *
-     * partitionId separates different app partitions (please refer to PartitionController)
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
      * @throws InvalidRequestException id is illegal (<=0)
@@ -52,7 +52,7 @@ public interface FullCustomerService {
      *
      * The deleted customer data is returned, as if read(customerId) was called before deleting
      *
-     * partitionId separates different app partitions (please refer to PartitionController)
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
      * @throws InvalidRequestException id is illegal (<=0)
@@ -72,7 +72,7 @@ public interface FullCustomerService {
      * 4) Therefore, if a Customer has a student, which belongs to a group the specified teacher is responsible for,
      *    this Customer is added to the list
      *
-     * partitionId separates different app partitions (please refer to PartitionController)
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
      * @throws InvalidRequestException id is illegal (<=0)
@@ -87,7 +87,7 @@ public interface FullCustomerService {
      *
      * Pages start at 0, whereas the maximum amount is 100
      *
-     * partitionId separates different app partitions (please refer to PartitionController)
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
      * @throws InvalidRequestException id is illegal (<=0)
