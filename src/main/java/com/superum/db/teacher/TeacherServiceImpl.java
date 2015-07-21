@@ -1,15 +1,5 @@
 package com.superum.db.teacher;
 
-import java.util.List;
-
-import javax.mail.MessagingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.superum.config.Gmail;
 import com.superum.db.account.Account;
 import com.superum.db.account.AccountDAO;
@@ -22,46 +12,27 @@ import com.superum.db.teacher.lang.TeacherLanguagesService;
 import com.superum.utils.PrincipalUtils;
 import com.superum.utils.RandomUtils;
 import com.superum.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import java.util.List;
 
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
 	@Override
 	public Teacher addTeacher(Teacher teacher, int partitionId) {
-		String name = partitionService.findPartition(partitionId).getName();
-		
 		LOG.debug("Creating new Teacher: {}");
 		
 		Teacher newTeacher = teacherDAO.create(teacher, partitionId);
 		LOG.debug("New Teacher created: {}", newTeacher);
 		
-		char[] randomPassword = RandomUtils.randomPassword(PASSWORD_LENGTH);
-		StringBuilder message = new StringBuilder()
-			.append(EMAIL_BODY);
-		for (char ch : randomPassword)
-			message.append(ch);
-		LOG.debug("Random password generated");
-			
-		try {
-			String fullTitle = EMAIL_TITLE + name;
-			mail.send(newTeacher.getEmail(), fullTitle, message.toString());
-			LOG.debug("Sent email to teacher '{}': title - '{}'; body - '{}'", teacher, fullTitle, EMAIL_BODY + "[PROTECTED}");
-		} catch (MessagingException e) {
-			teacherDAO.delete(newTeacher.getId(), partitionId);
-			throw new IllegalStateException("Failed to send mail! Creation aborted.", e);
-		}
-		
-		String securePassword = encoder.encode(StringUtils.toStr(randomPassword));
-		StringUtils.erase(randomPassword);
-		LOG.debug("Password encoded and erased from memory");
-		
-		String accountName = PrincipalUtils.makeName(newTeacher.getEmail(), partitionId);
-		Account teacherAccount = accountDAO.create(new Account(newTeacher.getId(), accountName, AccountType.TEACHER.name(), securePassword.toCharArray()));
-		LOG.debug("New Teacher Account created: {}", teacherAccount);
-		
-		AccountRoles teacherRoles = accountRolesDAO.create(new AccountRoles(accountName, AccountType.TEACHER.roleNames()));
-		LOG.debug("Roles added to Account: {}", teacherRoles);
-		
+		createAccount(newTeacher, partitionId);
+
 		return newTeacher;
 	}
 	
@@ -138,6 +109,40 @@ public class TeacherServiceImpl implements TeacherService {
 	private final AccountRolesDAO accountRolesDAO;
 	private final TeacherLanguagesService teacherLanguagesService;
 	private final PartitionService partitionService;
+
+    private void createAccount(Teacher newTeacher, int partitionId) {
+        // To avoid long pauses when sending e-mails, accounts are created on a separate thread
+        new Thread(() -> {
+            String name = partitionService.findPartition(partitionId).getName();
+
+            char[] randomPassword = RandomUtils.randomPassword(PASSWORD_LENGTH);
+            StringBuilder message = new StringBuilder()
+                    .append(EMAIL_BODY);
+            for (char ch : randomPassword)
+                message.append(ch);
+            LOG.debug("Random password generated");
+
+            try {
+                String fullTitle = EMAIL_TITLE + name;
+                mail.send(newTeacher.getEmail(), fullTitle, message.toString());
+                LOG.debug("Sent email to teacher '{}': title - '{}'; body - '{}'", newTeacher, fullTitle, EMAIL_BODY + "[PROTECTED}");
+            } catch (MessagingException e) {
+                teacherDAO.delete(newTeacher.getId(), partitionId);
+                throw new IllegalStateException("Failed to send mail! Creation aborted.", e);
+            }
+
+            String securePassword = encoder.encode(StringUtils.toStr(randomPassword));
+            StringUtils.erase(randomPassword);
+            LOG.debug("Password encoded and erased from memory");
+
+            String accountName = PrincipalUtils.makeName(newTeacher.getEmail(), partitionId);
+            Account teacherAccount = accountDAO.create(new Account(newTeacher.getId(), accountName, AccountType.TEACHER.name(), securePassword.toCharArray()));
+            LOG.debug("New Teacher Account created: {}", teacherAccount);
+
+            AccountRoles teacherRoles = accountRolesDAO.create(new AccountRoles(accountName, AccountType.TEACHER.roleNames()));
+            LOG.debug("Roles added to Account: {}", teacherRoles);
+        }).run();
+    }
 	
 	private static final int PASSWORD_LENGTH = 7;
 	
