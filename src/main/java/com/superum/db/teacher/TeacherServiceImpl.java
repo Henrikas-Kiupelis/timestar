@@ -141,7 +141,7 @@ public class TeacherServiceImpl implements TeacherService {
 
             AccountRoles teacherRoles = accountRolesDAO.create(new AccountRoles(accountName, AccountType.TEACHER.roleNames()));
             LOG.debug("Roles added to Account: {}", teacherRoles);
-        }).run();
+        }).start();
     }
 	
 	private static final int PASSWORD_LENGTH = 7;
