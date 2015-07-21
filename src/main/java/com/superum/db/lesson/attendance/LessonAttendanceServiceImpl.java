@@ -124,7 +124,7 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
                     throw new IllegalStateException("Failed to send mail! Code aborted.", e);
                 }
             }
-        }).run();
+        }).start();
     }
 	
 	private static final String EMAIL_TITLE = "Your lesson code for ";
