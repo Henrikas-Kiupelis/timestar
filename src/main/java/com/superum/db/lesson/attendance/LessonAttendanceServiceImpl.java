@@ -1,14 +1,5 @@
 package com.superum.db.lesson.attendance;
 
-import java.util.List;
-
-import javax.mail.MessagingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.superum.config.Gmail;
 import com.superum.db.group.student.Student;
 import com.superum.db.group.student.StudentDAO;
@@ -16,36 +7,25 @@ import com.superum.db.lesson.attendance.code.LessonCode;
 import com.superum.db.lesson.attendance.code.LessonCodeDAO;
 import com.superum.db.lesson.attendance.code.LessonCodeService;
 import com.superum.db.partition.PartitionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import java.util.List;
 
 @Service
 public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 
 	@Override
 	public LessonAttendance addAttendanceToLesson(LessonAttendance attendance, int partitionId) {
-		String name = partitionService.findPartition(partitionId).getName();
-		
 		LOG.debug("Adding attendance: {}", attendance);
 		
 		LessonAttendance newAttendance = attendanceDAO.create(attendance, partitionId);
 		LOG.debug("Attendance added: {}", newAttendance);
-		
-		List<LessonCode> lessonCodes = lessonCodeService.add(newAttendance, partitionId);
-		LOG.debug("Codes for students generated: {}", lessonCodes);
-		
-		for (LessonCode lessonCode : lessonCodes) {
-			int studentId = lessonCode.getStudentId();
-			int code = lessonCode.getCode();
-			Student student = studentDAO.read(studentId, partitionId);
-			try {
-				String fullTitle = EMAIL_TITLE + name;
-				String fullBody = EMAIL_BODY + code;
-				mail.send(student.getEmail(), fullTitle, fullBody);
-				LOG.debug("Sent email to student '{}': title - '{}'; body - '{}'", student, fullTitle, fullBody);
-			} catch (MessagingException e) {
-				lessonCodeDAO.find(attendance.getLessonId(), code, partitionId);
-				throw new IllegalStateException("Failed to send mail! Code aborted.", e);
-			}
-		}
+
+        generateCode(newAttendance, partitionId);
 		
 		return newAttendance;
 	}
@@ -121,6 +101,31 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 	private final StudentDAO studentDAO;
 	private final Gmail mail;
 	private final PartitionService partitionService;
+
+	private void generateCode(LessonAttendance newAttendance, int partitionId) {
+        // To avoid long pauses when sending e-mails, accounts are created on a separate thread
+        new Thread(() -> {
+            String name = partitionService.findPartition(partitionId).getName();
+
+            List<LessonCode> lessonCodes = lessonCodeService.add(newAttendance, partitionId);
+            LOG.debug("Codes for students generated: {}", lessonCodes);
+
+            for (LessonCode lessonCode : lessonCodes) {
+                int studentId = lessonCode.getStudentId();
+                int code = lessonCode.getCode();
+                Student student = studentDAO.read(studentId, partitionId);
+                try {
+                    String fullTitle = EMAIL_TITLE + name;
+                    String fullBody = EMAIL_BODY + code;
+                    mail.send(student.getEmail(), fullTitle, fullBody);
+                    LOG.debug("Sent email to student '{}': title - '{}'; body - '{}'", student, fullTitle, fullBody);
+                } catch (MessagingException e) {
+                    lessonCodeDAO.find(newAttendance.getLessonId(), code, partitionId);
+                    throw new IllegalStateException("Failed to send mail! Code aborted.", e);
+                }
+            }
+        }).run();
+    }
 	
 	private static final String EMAIL_TITLE = "Your lesson code for ";
 	private static final String EMAIL_BODY = "Code: ";
