@@ -30,13 +30,10 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot' 
 apply plugin: 'application'
 
-mainClassName = "com.superum.TimeStarBackEndApplication"
 jar {
     baseName = 'timestar'
     version = '0.4.1'
 }
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
