@@ -1,3 +1,7 @@
+import groovy.xml.MarkupBuilder
+
+import static javax.xml.bind.JAXB.unmarshal
+
 buildscript {
 	ext {
         springBootVersion = '1.2.2.RELEASE'
@@ -29,7 +33,7 @@ apply plugin: 'application'
 mainClassName = "com.superum.TimeStarBackEndApplication"
 jar {
     baseName = 'timestar'
-    version = '0.4.0'
+    version = '0.4.1'
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -79,7 +83,7 @@ task generate << {
 	def usr = usrProp
 	def pwd = pwdProp
 	def writer = new StringWriter()
-	def xml = new groovy.xml.MarkupBuilder(writer)
+	new MarkupBuilder(writer)
 	.configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.6.0.xsd') {
 		jdbc() {
 			driver('com.mysql.jdbc.Driver')
@@ -104,7 +108,7 @@ task generate << {
 	// Run the code generator
 	// ----------------------
 	org.jooq.util.GenerationTool.main(
-		javax.xml.bind.JAXB.unmarshal(
+		unmarshal(
 			new StringReader(writer.toString()),
 			org.jooq.util.jaxb.Configuration.class
 		)
