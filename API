@@ -4,8 +4,8 @@ First of all, the API is partitioned. This basically means that depending on the
 a different portion of the database will be used. All API calls are available only for the user's partition, with
 the exception of the partition API itself.
 Generally, this means that the username authorization is slightly more complicated (partition id must be added to the
-auth header) - this might be changed into PathVariable instead - but for all intents and purposes, every partition
-functions in exactly the same manner.
+auth header) - this might be changed into PathVariable instead at a later date - but for all intents and purposes,
+every partition functions in exactly the same manner.
 
 Secondly, all APIv2 calls will have the following prefix, unless stated otherwise:
 
@@ -29,7 +29,9 @@ GET refers to the HTTP method the request expects;
 (3) to (5) show parameters; REQ means that the parameter must be in the request, whereas OPT means that
 this parameter can be skipped; finally, if the parameter is optional, then it WILL provide the default value
 using the
+
     ; DEF
+
 modifier; in this case, if per_page is not present, it defaults to 6; if start_date is not present, it defaults to
 today's date; if end_date is not present, it defaults to start_date
 (which will be today's date, if it also was not present)
@@ -37,19 +39,19 @@ today's date; if end_date is not present, it defaults to start_date
 Finally, all API methods expect an auth header, unless stated otherwise;
 Currently (2015-07-20) a BASIC auth header is used:
 
-    Authentication: BASIC base64(username:password)
+    Authentication: Basic base64(username:password)
 
 It is important to note, that username takes the following form:
 
-    partitionId;actualUsername
+    partitionId.actualUsername
 
-This allows same usernames/emails/etc to be used in separate partitions;
+This allows same username/email/etc to be used in separate partitions;
 This will be changed into a more secure scheme at a later date, when the basic functionality of the app has been
 realized and somewhat tested.
 
 Customer API:
 
-http://localhost:8090/timestar
+
 
 
 
