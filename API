@@ -4,8 +4,8 @@ First of all, the API is partitioned. This basically means that depending on the
 a different portion of the database will be used. All API calls are available only for the user's partition, with
 the exception of the partition API itself.
 Generally, this means that the username authorization is slightly more complicated (partition id must be added to the
-auth header) - this might be changed into PathVariable instead at a later date - but for all intents and purposes,
-every partition functions in exactly the same manner.
+auth header) - this might be changed at a later date - but for all intents and purposes, every partition functions
+in exactly the same manner.
 
 Secondly, all APIv2 calls will have the following prefix, unless stated otherwise:
 
@@ -72,7 +72,7 @@ Customer API:
     In case of b), at least one field, besides the id, must be set, otherwise the update will fail;
 
     In both cases, the returned FullCustomer is the inserted one;
-    In case of a), the id field will not be set;
+    In case of a), the id field will be set;
     In case of b), all the missing fields will be set
 
 2)
