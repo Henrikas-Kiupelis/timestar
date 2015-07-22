@@ -6,6 +6,9 @@
 .project
 .springBeans
 .idea
+*.iml
+*.ipr
+*.iws
 
 # Build files - unnecessary, rebuild yourself
 
