@@ -4,19 +4,58 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.superum.db.customer.Customer;
+import com.superum.db.customer.lang.CustomerLanguages;
 import com.superum.utils.StringUtils;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+import static com.superum.api.customer.FullCustomer.RequiredBuilder.fullCustomer;
+import static com.superum.utils.ValidationUtils.*;
 
 /**
  * <pre>
- * Contains all information about the Customer in one place
+ * Contains all information about the customer in one place
+ *
+ * When creating an instance of FullCustomer with JSON, these fields are required:
+ *     FIELD_NAME    : FIELD_DESCRIPTION                                          FIELD_CONSTRAINTS
+ *
+ *     paymentDay    : day of the month that the customer must pay money before;  1 <= paymentDay <= 31
+ *     startDate     : date when a contract was signed;                           any java.sql.Date
+ *     paymentValue  : hourly rate for services, in euros;                        0 <= paymentValue; BigDecimal
+ *     name          : name                                                       any String, max 30 chars
+ *     phone         : phone number                                               any String, max 30 chars
+ *     website       : website                                                    any String, max 30 chars
+ *     languages     : list of languages and levels the customer is paying for    any List of Strings, max 20 chars
+ *
+ * These fields are optional:
+ *     pictureName   : name of the picture of the customer, stored somewhere      any String, max 100 chars
+ *     comment       : comment, made by the app client                            any String, max 500 chars
+ *
+ * These fields should only be specified if they are known:
+ *     id            : number representation of this customer in the system       1 <= id
+ *
+ * When building JSON, use formats:
+ *      for single objects:  "FIELD_NAME":"VALUE"
+ *      for lists:           "FIELD_NAME":["VALUE1", "VALUE2", ...]
+ * If you omit a field, it will assume default value (null for objects, 0 for primitive numbers, false for boolean),
+ * all of which are assumed to be allowed unless stated otherwise (check FIELD_CONSTRAINTS)
+ *
+ * Example of JSON:
+ * {
+ *     "id":"1",
+ *     "paymentDay":"1",
+ *     "startDate":"2015-07-22",
+ *     "paymentValue":"23,33",
+ *     "name":"SUPERUM",
+ *     "phone":"+37069900001",
+ *     "website":"http://superum.eu",
+ *     "languages":["English: C1", "English: C2"],
+ *     "pictureName":"superum.jpg",
+ *     "comment":"What a company"
+ * }
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,6 +71,10 @@ public class FullCustomer {
 	public boolean hasId() {
 		return id > 0;
 	}
+    @JsonIgnore
+    public FullCustomer withId(int id) {
+        return new FullCustomer(id, paymentDay, startDate, paymentValue, name, phone, website, pictureName, comment, languages);
+    }
 	
 	@JsonProperty("paymentDay")
 	public byte getPaymentDay() {
@@ -114,20 +157,46 @@ public class FullCustomer {
         return languages != null;
     }
 
-    public boolean canBeInsertedAsCustomer() {
-        return !hasId() && hasPaymentDay() && hasStartDate() && hasPaymentValue() && hasName() && hasPhone() && hasWebsite();
+    /**
+     * <pre>
+     * Returns true if all the mandatory fields are set, and the id field is NOT set; false otherwise
+     * </pre>
+     */
+    @JsonIgnore
+    public boolean canBeInserted() {
+        return !hasId() && hasPaymentDay() && hasStartDate() && hasPaymentValue() && hasName() && hasPhone() && hasWebsite() && hasLanguages();
     }
 
-	public boolean canBeInsertedAsCustomerLanguages() {
-        return hasId() && hasLanguages();
-    }
-
+    /**
+     * <pre>
+     * Returns true if the id field is set, and at least one more Customer field is set; false otherwise
+     * </pre>
+     */
+    @JsonIgnore
     public boolean canUpdateCustomer() {
         return hasId() && (hasPaymentDay() || hasStartDate() || hasPaymentValue() || hasName() || hasPhone() || hasWebsite() || hasPictureName() || hasComment());
     }
 
+    /**
+     * <pre>
+     * Returns true if the id field is set, and languages field is set; false otherwise;
+     *
+     * Languages is the only other field in CustomerLanguages
+     * </pre>
+     */
+    @JsonIgnore
     public boolean canUpdateCustomerLanguages() {
         return hasId() && hasLanguages();
+    }
+
+    @JsonIgnore
+    public Customer toCustomer() {
+        return new Customer(id, paymentDay, startDate, paymentValue, name, phone, website, pictureName, comment);
+    }
+
+    @JsonIgnore
+    public CustomerLanguages toCustomerLanguages() {
+        return new CustomerLanguages(id, languages);
     }
 	
 	// OBJECT OVERRIDES
@@ -181,7 +250,7 @@ public class FullCustomer {
 		result = (result << 5) - result + (website == null ? 0 : website.hashCode());
 		result = (result << 5) - result + (website == null ? 0 : pictureName.hashCode());
 		result = (result << 5) - result + (website == null ? 0 : comment.hashCode());
-        result = (result << 5) - result + languages.hashCode();
+        result = (result << 5) - result + (languages == null ? 0 : languages.hashCode());
         return result;
 	}
 
@@ -198,66 +267,262 @@ public class FullCustomer {
                         @JsonProperty("pictureName") String pictureName,
                         @JsonProperty("comment") String comment,
                         @JsonProperty("languages") List<String> languages) {
+        // Equivalent to (id != 0 && id <= 0); when id == 0, it simply was not set, so the state is valid, while id is not
+        if (id < 0)
+            throw new InvalidCustomerException("Customer id must be positive.");
 		this.id = id;
+
+        if (paymentDay != 0 && !isDayOfMonth(paymentDay))
+            throw new InvalidCustomerException("Payment day for customer doesn't exist: " + paymentDay);
 		this.paymentDay = paymentDay;
-		this.startDate = startDate;
+
+        if (isNegativeNotNull(paymentValue))
+            throw new InvalidCustomerException("Payment value for customer must be non-negative: " + paymentValue);
 		this.paymentValue = paymentValue;
+
+        if (!fitsOrNull(NAME_SIZE_LIMIT, name))
+            throw new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars");
 		this.name = name;
+
+        if (!fitsOrNull(PHONE_SIZE_LIMIT, phone))
+            throw new InvalidCustomerException("Customer phone must not exceed " + PHONE_SIZE_LIMIT + " chars");
 		this.phone = phone;
+
+        if (!fitsOrNull(WEBSITE_SIZE_LIMIT, website))
+            throw new InvalidCustomerException("Customer website must not exceed " + WEBSITE_SIZE_LIMIT + " chars");
 		this.website = website;
+
+        if (!fitsOrNull(PICTURE_NAME_SIZE_LIMIT, pictureName))
+            throw new InvalidCustomerException("Customer picture name must not exceed " + PICTURE_NAME_SIZE_LIMIT + " chars");
 		this.pictureName = pictureName;
+
+        if (!fitsOrNull(COMMENT_SIZE_LIMIT, comment))
+            throw new InvalidCustomerException("Customer comment must not exceed " + COMMENT_SIZE_LIMIT + " chars");
 		this.comment = comment;
-        this.languages = languages;
+
+        if (languages == null)
+            this.languages = null;
+        else {
+            if (!languages.stream().allMatch(languageString -> fitsNotNull(LANGUAGE_SIZE_LIMIT, languageString)))
+                throw new InvalidCustomerException("Customer languages must not be null or exceed " + LANGUAGE_SIZE_LIMIT + " chars");
+            // To ensure that this object is immutable, we wrap the list with an unmodifiable version
+            this.languages = Collections.unmodifiableList(languages);
+        }
+
+        this.startDate = startDate;
 	}
 
-    private FullCustomer(Builder builder) {
-        id = builder.id;
-        paymentDay = builder.paymentDay;
-        startDate = builder.startDate;
-        paymentValue = builder.paymentValue;
-        name = builder.name;
-        phone = builder.phone;
-        website = builder.website;
-        pictureName = builder.pictureName;
-        comment = builder.comment;
-        languages = builder.languages;
+    public FullCustomer(Customer customer, CustomerLanguages languages) {
+        this(customer, languages.getLanguages());
     }
 
+    public FullCustomer(Customer customer, List<String> languages) {
+        this(customer.getId(), customer.getPaymentDay(), customer.getStartDate(), customer.getPaymentValue(),
+                customer.getName(), customer.getPhone(), customer.getWebsite(), customer.getPictureName(),
+                customer.getComment(), languages);
+    }
+
+    /**
+     * <pre>
+     * Creates a new builder which can be used to make any kind of FullCustomer
+     *
+     * Intended for updating
+     * </pre>
+     */
     public static Builder newBuilder() {
         return new Builder();
     }
 
+    /**
+     * <pre>
+     * Creates a new builder which creates a FullCustomer that has all its mandatory fields set
+     *
+     * Intended for inserting
+     * </pre>
+     */
+    public static PaymentDayStep newRequiredBuilder() {
+        return fullCustomer();
+    }
+
 	// PRIVATE
 	
-	@Min(value = 0, message = "All IDs must be non-negative")
 	private final int id;
-	
-	@Min(value = 0, message = "No negative days exist")
-	@Max(value = 31, message = "The payment day must be at most the last day of the month")
 	private final byte paymentDay;
-	
 	private final Date startDate;
-	
 	private final BigDecimal paymentValue;
-	
-	@Size(max = 30, message = "Name size must not exceed 30 characters")
 	private final String name;
-	
-	@Size(max = 30, message = "Phone size must not exceed 30 characters")
 	private final String phone;
-	
-	@Size(max = 30, message = "Website size must not exceed 30 characters")
 	private final String website;
-	
-	@Size(max = 100, message = "Picture name size must not exceed 100 characters")
 	private final String pictureName;
-	
-	@Size(max = 500, message = "The comment must not exceed 500 characters")
 	private final String comment;
-
     private final List<String> languages;
 
+    private static final int NAME_SIZE_LIMIT = 30;
+    private static final int PHONE_SIZE_LIMIT = 30;
+    private static final int WEBSITE_SIZE_LIMIT = 30;
+    private static final int PICTURE_NAME_SIZE_LIMIT = 100;
+    private static final int COMMENT_SIZE_LIMIT = 500;
+    private static final int LANGUAGE_SIZE_LIMIT = 20;
+
     // GENERATED
+
+    public interface PaymentDayStep {
+        StartDateStep withPaymentDay(byte paymentDay);
+        StartDateStep withPaymentDay(int paymentDay);
+    }
+
+    public interface StartDateStep {
+        PaymentValueStep withStartDate(Date startDate);
+    }
+
+    public interface PaymentValueStep {
+        NameStep withPaymentValue(BigDecimal paymentValue);
+    }
+
+    public interface NameStep {
+        PhoneStep withName(String name);
+    }
+
+    public interface PhoneStep {
+        WebsiteStep withPhone(String phone);
+    }
+
+    public interface WebsiteStep {
+        LanguagesStep withWebsite(String website);
+    }
+
+    public interface LanguagesStep {
+        BuildStep withLanguages(String... languages);
+        BuildStep withLanguages(Collection<String> languages);
+        BuildStep withLanguages(List<String> languages);
+        BuildStep noLanguages();
+    }
+
+    public interface BuildStep {
+        BuildStep withId(int id);
+        BuildStep withPictureName(String pictureName);
+        BuildStep withComment(String comment);
+        FullCustomer build();
+    }
+
+    public static class RequiredBuilder implements PaymentDayStep, StartDateStep, PaymentValueStep, NameStep, PhoneStep, WebsiteStep, LanguagesStep, BuildStep {
+        private int id;
+        private byte paymentDay;
+        private Date startDate;
+        private BigDecimal paymentValue;
+        private String name;
+        private String phone;
+        private String website;
+        private String pictureName;
+        private String comment;
+        private List<String> languages;
+
+        private RequiredBuilder() {}
+
+        public static PaymentDayStep fullCustomer() {
+            return new RequiredBuilder();
+        }
+
+        @Override
+        public StartDateStep withPaymentDay(byte paymentDay) {
+            this.paymentDay = paymentDay;
+            return this;
+        }
+
+        @Override
+        public StartDateStep withPaymentDay(int paymentDay) {
+            this.paymentDay = (byte)paymentDay;
+            return this;
+        }
+
+        @Override
+        public PaymentValueStep withStartDate(Date startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        @Override
+        public NameStep withPaymentValue(BigDecimal paymentValue) {
+            this.paymentValue = paymentValue;
+            return this;
+        }
+
+        @Override
+        public PhoneStep withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public WebsiteStep withPhone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        @Override
+        public LanguagesStep withWebsite(String website) {
+            this.website = website;
+            return this;
+        }
+
+        @Override
+        public BuildStep withLanguages(String... languages) {
+            this.languages = Arrays.asList(languages);
+            return this;
+        }
+
+        @Override
+        public BuildStep withLanguages(Collection<String> languages) {
+            this.languages = new ArrayList<>(languages);
+            return this;
+        }
+
+        @Override
+        public BuildStep withLanguages(List<String> languages) {
+            this.languages = languages;
+            return this;
+        }
+
+        @Override
+        public BuildStep noLanguages() {
+            this.languages = Collections.emptyList();
+            return this;
+        }
+
+        @Override
+        public BuildStep withId(int id) {
+            this.id = id;
+            return this;
+        }
+
+        @Override
+        public BuildStep withPictureName(String pictureName) {
+            this.pictureName = pictureName;
+            return this;
+        }
+
+        @Override
+        public BuildStep withComment(String comment) {
+            this.comment = comment;
+            return this;
+        }
+
+        @Override
+        public FullCustomer build() {
+            return new FullCustomer(
+                    this.id,
+                    this.paymentDay,
+                    this.startDate,
+                    this.paymentValue,
+                    this.name,
+                    this.phone,
+                    this.website,
+                    this.pictureName,
+                    this.comment,
+                    this.languages
+            );
+        }
+    }
 
     public static final class Builder {
         private int id;
@@ -278,8 +543,8 @@ public class FullCustomer {
             return this;
         }
 
-        public Builder withPaymentDay(byte paymentDay) {
-            this.paymentDay = paymentDay;
+        public Builder withPaymentDay(int paymentDay) {
+            this.paymentDay = (byte)paymentDay;
             return this;
         }
 
@@ -324,7 +589,18 @@ public class FullCustomer {
         }
 
         public FullCustomer build() {
-            return new FullCustomer(this);
+            return new FullCustomer(
+                    this.id,
+                    this.paymentDay,
+                    this.startDate,
+                    this.paymentValue,
+                    this.name,
+                    this.phone,
+                    this.website,
+                    this.pictureName,
+                    this.comment,
+                    this.languages
+            );
         }
     }
 

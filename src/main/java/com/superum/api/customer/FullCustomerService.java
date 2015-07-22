@@ -20,16 +20,18 @@ public interface FullCustomerService {
      * Creates a new customer if the id field is set
      * Updates an existing customer if the id field is not set
      *
-     * If any other fields are not set when creating, they can throw an exception
+     * If any other fields are not set when creating, an exception might be thrown
      * If any other fields are not set when updating, they are ignored
+     *
+     * Returns the inserted customer with all missing fields now set
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
-     * @throws InvalidRequestException customer is null
-     * @throws InvalidCustomerException attempt to create was made, yet a mandatory field was not set
-     * @throws CustomerNotFoundException attempt to update was made, yet the customer with specified id does not exist
-     * @throws DatabaseException database error occurred
+     * @throws InvalidRequestException if customer is null
+     * @throws InvalidCustomerException if attempt to create was made, yet a mandatory field was not set
+     * @throws CustomerNotFoundException if attempt to update was made, yet the customer with specified id does not exist
+     * @throws DatabaseException if database error occurred
      */
     FullCustomer insert(FullCustomer customer, int partitionId);
 
@@ -40,9 +42,9 @@ public interface FullCustomerService {
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
-     * @throws InvalidRequestException id is illegal (<=0)
-     * @throws CustomerNotFoundException no customer with this id exists
-     * @throws DatabaseException database error occurred
+     * @throws InvalidRequestException if id is illegal (<=0)
+     * @throws CustomerNotFoundException if no customer with this id exists
+     * @throws DatabaseException if database error occurred
      */
     FullCustomer read(int customerId, int partitionId);
 
@@ -55,9 +57,9 @@ public interface FullCustomerService {
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
-     * @throws InvalidRequestException id is illegal (<=0)
-     * @throws CustomerNotFoundException no customer with this id exists
-     * @throws DatabaseException database error occurred
+     * @throws InvalidRequestException if id is illegal (<=0)
+     * @throws CustomerNotFoundException if no customer with this id exists
+     * @throws DatabaseException if database error occurred
      */
     FullCustomer delete(int customerId, int partitionId);
 
@@ -65,7 +67,7 @@ public interface FullCustomerService {
      * <pre>
      * Reads all Customers for a teacher with specified id
      *
-     * Customers that are chosen work as follows:
+     * Customers that are chosen in the following manner:
      * 1) Customers have students;
      * 2) Students belong to groups;
      * 3) Teachers are responsible for groups;
@@ -75,9 +77,9 @@ public interface FullCustomerService {
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
-     * @throws InvalidRequestException id is illegal (<=0)
-     * @throws TeacherNotFoundException no teacher with this id exists
-     * @throws DatabaseException database error occurred
+     * @throws InvalidRequestException if id is illegal (<=0)
+     * @throws TeacherNotFoundException if no teacher with this id exists
+     * @throws DatabaseException if database error occurred
      */
     List<FullCustomer> readAllForTeacher(int teacherId, int partitionId);
 
@@ -90,9 +92,9 @@ public interface FullCustomerService {
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
-     * @throws InvalidRequestException id is illegal (<=0)
-     * @throws InvalidRequestException amount is illegal (<=0 || >100)
-     * @throws DatabaseException database error occurred
+     * @throws InvalidRequestException if id is illegal (<=0)
+     * @throws InvalidRequestException if amount is illegal (<=0 || >100)
+     * @throws DatabaseException if database error occurred
      */
     List<FullCustomer> all(int page, int amount, int partitionId);
 

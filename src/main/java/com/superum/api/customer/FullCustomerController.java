@@ -3,6 +3,8 @@ package com.superum.api.customer;
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.CustomerService;
 import com.superum.utils.PrincipalUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,18 +19,23 @@ import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
  * API v2
  * Manages all requests for Customers
  * Please refer to API file for documentation of particular methods
- * (you should not be calling these methods directly anyway)
+ * (you should not be calling these methods directly unless you know what you're doing)
  * </pre>
  */
 @RestController
-@RequestMapping(value = "/timestar/api/v2")
+@RequestMapping(value = "/timestar/api/v2/customer")
 public class FullCustomerController {
 
-	@RequestMapping(value = "/customer/insert", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/insert", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public FullCustomer insertCustomer(Principal user, @RequestBody @Valid FullCustomer customer) {
+        LOG.info("User {} is inserting FullCustomer {}", user, customer);
+
 		int partitionId = PrincipalUtils.partitionId(user);
-		return service.insert(customer, partitionId);
+        FullCustomer insertedCustomer = service.insert(customer, partitionId);
+        LOG.info("Successful FullCustomer insertion: {}", insertedCustomer);
+
+        return insertedCustomer;
 	}
 
 
@@ -86,5 +93,7 @@ public class FullCustomerController {
 	
 	private final CustomerService customerService;
 	private final FullCustomerService service;
+
+	private static final Logger LOG = LoggerFactory.getLogger(FullCustomerController.class);
 
 }

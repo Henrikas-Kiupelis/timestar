@@ -15,11 +15,12 @@ The API might switch to HTTPS eventually.
 
 All the methods will be given in this format (example):
 
-(1)    GET /lesson/table/{pageId}
-(2)        pageId      int            0 < pageId <= MAX_INT
-(3)    OPT per_page    int            0 < per_page <= 100; DEF 6
-(4)    OPT start_date  java.sql.Date  any; DEF today
-(5)    OPT end_date    java.sql.Date  any; DEF start_date
+(1)    GET  /lesson/table/{pageId}
+(2)         pageId      int            0 < pageId <= MAX_INT
+(3)    OPT  per_page    int            0 < per_page <= 100; DEF 6
+(4)    OPT  start_date  java.sql.Date  any; DEF today
+(5)    OPT  end_date    java.sql.Date  any; DEF start_date
+(6)    RET  com.superum.db.lesson.table.core.LessonTable
 
 GET refers to the HTTP method the request expects;
 /lesson/table are constant mappings, which should always be in the request;
@@ -35,6 +36,13 @@ using the
 modifier; in this case, if per_page is not present, it defaults to 6; if start_date is not present, it defaults to
 today's date; if end_date is not present, it defaults to start_date
 (which will be today's date, if it also was not present)
+(6) shows what kind of Class object is returned by the request, assuming it is successful; JSON format is used in all
+methods, unless stated otherwise; please refer to the appropriate Class documentation
+One more modifier exists:
+
+    BODY
+
+which means that the method expects HTTP Body part; it also specifies a particular Class, just like RET.
 
 Finally, all API methods expect an auth header, unless stated otherwise;
 Currently (2015-07-20) a BASIC auth header is used:
@@ -51,8 +59,23 @@ realized and somewhat tested.
 
 Customer API:
 
+1)
+    POST  /customer/insert
+    BODY  com.superum.api.customer.FullCustomer
+    RET   com.superum.api.customer.FullCustomer
 
+    This method does one of the following:
+    a) if id field of FullCustomer is set, it creates a new customer;
+    b) if id field of FullCustomer is not set, it updates an existing customer;
 
+    In case of a), all mandatory fields must be set, otherwise the creation will fail;
+    In case of b), at least one field, besides the id, must be set, otherwise the update will fail;
+
+    In both cases, the returned FullCustomer is the inserted one;
+    In case of a), the id field will not be set;
+    In case of b), all the missing fields will be set
+
+2)
 
 
 

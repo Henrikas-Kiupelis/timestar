@@ -25,9 +25,9 @@ public interface FullCustomerQueries {
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
-     * @throws InvalidRequestException customer is null
-     * @throws InvalidCustomerException customer has no fields set
-     * @throws DatabaseException database error occurred
+     * @throws InvalidRequestException if customer is null
+     * @throws InvalidCustomerException if customer has no fields set
+     * @throws DatabaseException if database error occurred
      */
     boolean exists(FullCustomer customer, int partitionId);
 
@@ -40,13 +40,13 @@ public interface FullCustomerQueries {
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
-     * @throws InvalidRequestException customer is null
-     * @throws InvalidCustomerException customer is illegal:
+     * @throws InvalidRequestException if customer is null
+     * @throws InvalidCustomerException if customer is illegal:
      *          only id field set,
      *          id field not set,
      *          no fields set
-     * @throws CustomerNotFoundException id is set, but no customer with given id exists
-     * @throws DatabaseException database error occurred
+     * @throws CustomerNotFoundException if id is set, but no customer with given id exists
+     * @throws DatabaseException if database error occurred
      */
     FullCustomer updatePartial(FullCustomer customer, int partitionId);
 
@@ -57,10 +57,10 @@ public interface FullCustomerQueries {
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
-     * @throws InvalidRequestException id is illegal (<=0)
-     * @throws CustomerNotFoundException no customer with this id exists
-     * @throws UnsafeCustomerDeleteException attempt to delete a Customer was made, but this customer still has valid data
-     * @throws DatabaseException database error occurred
+     * @throws InvalidRequestException if id is illegal (<=0)
+     * @throws CustomerNotFoundException if no customer with this id exists
+     * @throws UnsafeCustomerDeleteException if attempt to delete a Customer was made, but this customer still has valid data
+     * @throws DatabaseException if database error occurred
      */
     FullCustomer safeDelete(int customerId, int partitionId);
 
