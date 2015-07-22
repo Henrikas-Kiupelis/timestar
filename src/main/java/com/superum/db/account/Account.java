@@ -1,19 +1,17 @@
 package com.superum.db.account;
 
-import static com.superum.db.generated.timestar.Tables.ACCOUNT;
-
-import java.util.Arrays;
-import java.util.Objects;
-
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.jooq.Record;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.jooq.Record;
+
+import javax.validation.constraints.NotNull;
+import java.util.Arrays;
+import java.util.Objects;
+
+import static com.superum.db.generated.timestar.Tables.ACCOUNT;
 
 public class Account {
 
@@ -31,7 +29,7 @@ public class Account {
 	
 	@JsonProperty("accountType")
 	public String getAccountType() {
-		return accountType.name();
+		return accountType == null ? null : accountType.name();
 	}
 	
 	@JsonIgnore
@@ -91,7 +89,7 @@ public class Account {
 				   @JsonProperty("password") char[] password) {
 		this.id = id;
 		this.username = username;
-		this.accountType = AccountType.valueOf(accountType);
+		this.accountType = accountType == null ? null : AccountType.valueOf(accountType);
 		this.password = password;
 	}
 	
