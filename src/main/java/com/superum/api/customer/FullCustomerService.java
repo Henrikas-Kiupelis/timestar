@@ -17,23 +17,20 @@ public interface FullCustomerService {
 
     /**
      * <pre>
-     * Creates a new customer if the id field is set
-     * Updates an existing customer if the id field is not set
+     * Creates a new customer
      *
-     * If any other fields are not set when creating, an exception might be thrown
-     * If any other fields are not set when updating, they are ignored
+     * The id fields must not be set, but all the other mandatory fields must be set
      *
-     * Returns the inserted customer with all missing fields now set
+     * Returns the created customer with id field now set
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
      * @throws InvalidRequestException if customer is null
-     * @throws InvalidCustomerException if attempt to create was made, yet a mandatory field was not set
-     * @throws CustomerNotFoundException if attempt to update was made, yet the customer with specified id does not exist
+     * @throws InvalidCustomerException if id field was set or a mandatory field was not set
      * @throws DatabaseException if database error occurred
      */
-    FullCustomer insert(FullCustomer customer, int partitionId);
+    FullCustomer createCustomer(FullCustomer customer, int partitionId);
 
     /**
      * <pre>
@@ -46,7 +43,25 @@ public interface FullCustomerService {
      * @throws CustomerNotFoundException if no customer with this id exists
      * @throws DatabaseException if database error occurred
      */
-    FullCustomer read(int customerId, int partitionId);
+    FullCustomer readCustomer(int customerId, int partitionId);
+
+    /**
+     * <pre>
+     * Updates an existing customer
+     *
+     * The id fields must be set, and at least one more field must be set
+     *
+     * Returns the updated customer with all missing fields now set
+     *
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
+     * </pre>
+     *
+     * @throws InvalidRequestException if customer is null
+     * @throws InvalidCustomerException if id field was not set, or no other fields were set
+     * @throws CustomerNotFoundException if a customer with specified id does not exist
+     * @throws DatabaseException if database error occurred
+     */
+    FullCustomer updateCustomer(FullCustomer customer, int partitionId);
 
     /**
      * <pre>
@@ -61,11 +76,13 @@ public interface FullCustomerService {
      * @throws CustomerNotFoundException if no customer with this id exists
      * @throws DatabaseException if database error occurred
      */
-    FullCustomer delete(int customerId, int partitionId);
+    FullCustomer deleteCustomer(int customerId, int partitionId);
 
     /**
      * <pre>
-     * Reads all Customers for a teacher with specified id
+     * Reads all Customers for a teacher with specified id; reading is paged;
+     *
+     * Pages start at 0, whereas the maximum amount is 100
      *
      * Customers that are chosen in the following manner:
      * 1) Customers have students;
@@ -78,10 +95,12 @@ public interface FullCustomerService {
      * </pre>
      *
      * @throws InvalidRequestException if id is illegal (<=0)
+     * @throws InvalidRequestException if page is illegal (<0)
+     * @throws InvalidRequestException if amount is illegal (<=0 || >100)
      * @throws TeacherNotFoundException if no teacher with this id exists
      * @throws DatabaseException if database error occurred
      */
-    List<FullCustomer> readAllForTeacher(int teacherId, int partitionId);
+    List<FullCustomer> readCustomersForTeacher(int teacherId, int page, int amount, int partitionId);
 
     /**
      * <pre>
@@ -93,9 +112,10 @@ public interface FullCustomerService {
      * </pre>
      *
      * @throws InvalidRequestException if id is illegal (<=0)
+     * @throws InvalidRequestException if page is illegal (<0)
      * @throws InvalidRequestException if amount is illegal (<=0 || >100)
      * @throws DatabaseException if database error occurred
      */
-    List<FullCustomer> all(int page, int amount, int partitionId);
+    List<FullCustomer> readCustomersAll(int page, int amount, int partitionId);
 
 }

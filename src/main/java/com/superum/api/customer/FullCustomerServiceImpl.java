@@ -9,27 +9,32 @@ import java.util.List;
 public class FullCustomerServiceImpl implements FullCustomerService{
 
     @Override
-    public FullCustomer insert(FullCustomer customer, int partitionId) {
+    public FullCustomer createCustomer(FullCustomer customer, int partitionId) {
         return null;
     }
 
     @Override
-    public FullCustomer read(int customerId, int partitionId) {
+    public FullCustomer readCustomer(int customerId, int partitionId) {
         return null;
     }
 
     @Override
-    public FullCustomer delete(int customerId, int partitionId) {
+    public FullCustomer updateCustomer(FullCustomer customer, int partitionId) {
         return null;
     }
 
     @Override
-    public List<FullCustomer> readAllForTeacher(int teacherId, int partitionId) {
+    public FullCustomer deleteCustomer(int customerId, int partitionId) {
         return null;
     }
 
     @Override
-    public List<FullCustomer> all(int page, int amount, int partitionId) {
+    public List<FullCustomer> readCustomersForTeacher(int teacherId, int page, int amount, int partitionId) {
+        return null;
+    }
+
+    @Override
+    public List<FullCustomer> readCustomersAll(int page, int amount, int partitionId) {
         return null;
     }
 

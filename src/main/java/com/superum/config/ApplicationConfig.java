@@ -30,7 +30,7 @@ public class ApplicationConfig {
 
     @Bean
     public FullCustomerController fullCustomerController() {
-        return new FullCustomerController(customerService(), fullCustomerService());
+        return new FullCustomerController(fullCustomerService());
     }
 
     @Bean

@@ -1,14 +1,11 @@
 package com.superum.api.customer;
 
-import com.superum.db.customer.Customer;
-import com.superum.db.customer.CustomerService;
 import com.superum.utils.PrincipalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -26,73 +23,133 @@ import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
 @RequestMapping(value = "/timestar/api/v2/customer")
 public class FullCustomerController {
 
-	@RequestMapping(value = "/insert", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/create", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public FullCustomer insertCustomer(Principal user, @RequestBody @Valid FullCustomer customer) {
-        LOG.info("User {} is inserting FullCustomer {}", user, customer);
+	public FullCustomer createCustomer(Principal user, @RequestBody FullCustomer customer) {
+        LOG.info("User {} is creating FullCustomer {}", user, customer);
 
 		int partitionId = PrincipalUtils.partitionId(user);
-        FullCustomer insertedCustomer = service.insert(customer, partitionId);
-        LOG.info("Successful FullCustomer insertion: {}", insertedCustomer);
+        FullCustomer createdCustomer = fullCustomerService.createCustomer(customer, partitionId);
+        LOG.info("Successfully created FullCustomer: {}", createdCustomer);
 
-        return insertedCustomer;
+        return createdCustomer;
 	}
 
+    @RequestMapping(value = "/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+    @ResponseBody
+	public FullCustomer readCustomer(Principal user, @PathVariable int customerId) {
+        LOG.info("User {} is reading FullCustomer with id {}", user, customerId);
 
-	@RequestMapping(value = "/customer/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
-	@ResponseBody
-	public Customer addCustomer(Principal user, @RequestBody @Valid Customer customer) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return customerService.addCustomer(customer, partitionId);
+        int partitionId = PrincipalUtils.partitionId(user);
+        FullCustomer customer = fullCustomerService.readCustomer(customerId, partitionId);
+        LOG.info("Successfully read FullCustomer: {}", customer);
+
+        return customer;
 	}
-	
-	@RequestMapping(value = "/customer/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
-	@ResponseBody
-	public Customer findCustomer(Principal user, @PathVariable int id) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return customerService.findCustomer(id, partitionId);
-	}
-	
-	@RequestMapping(value = "/customer/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
-	@ResponseBody
-	public Customer updateCustomer(Principal user, @RequestBody @Valid Customer customer) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return customerService.updateCustomer(customer, partitionId);
-	}
-	
-	@RequestMapping(value = "/customer/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
-	@ResponseBody
-	public Customer deleteCustomer(Principal user, @PathVariable int id) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return customerService.deleteCustomer(id, partitionId);
-	}
-	
-	@RequestMapping(value = "/customer/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
-	@ResponseBody
-	public List<Customer> findCustomersForTeacher(Principal user, @PathVariable int teacherId) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return customerService.findCustomersForTeacher(teacherId, partitionId);
-	}
-	
-	@RequestMapping(value = "/customer/all", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
-	@ResponseBody
-	public List<Customer> getAllCustomers(Principal user) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return customerService.getAllCustomers(partitionId);
-	}
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+    @ResponseBody
+    public FullCustomer updateCustomer(Principal user, @RequestBody FullCustomer customer) {
+        LOG.info("User {} is updating FullCustomer {}", user, customer);
+
+        int partitionId = PrincipalUtils.partitionId(user);
+        FullCustomer updatedCustomer = fullCustomerService.updateCustomer(customer, partitionId);
+        LOG.info("Successfully updated FullCustomer: {}", updatedCustomer);
+
+        return updatedCustomer;
+    }
+
+    @RequestMapping(value = "/delete/{customerId:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
+    @ResponseBody
+    public FullCustomer deleteCustomer(Principal user, @PathVariable int customerId) {
+        LOG.info("User {} is deleting FullCustomer with id {}", user, customerId);
+
+        int partitionId = PrincipalUtils.partitionId(user);
+        FullCustomer deletedCustomer = fullCustomerService.deleteCustomer(customerId, partitionId);
+        LOG.info("Successfully deleted FullCustomer: {}", deletedCustomer);
+
+        return deletedCustomer;
+    }
+
+    @RequestMapping(value = "/forTeacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+    @ResponseBody
+    public List<FullCustomer> readCustomersForTeacher(Principal user, @PathVariable int teacherId,
+                                                      @RequestParam(value="page", required=false) Integer page,
+                                                      @RequestParam(value="per_page", required=false) Integer per_page) {
+        /**
+         * Defaults are set up below rather than in annotation because otherwise
+         *
+         *      ...?page=&per_page=
+         *
+         * would cause an exception instead of using default values; this is fixed by:
+         * 1) setting the field to Integer rather than int, causing empty param to default to null rather than
+         *    fail to parse an empty string;
+         * 2) since null would now be a valid value, it would no longer be overridden by @RequestParam(defaultValue)
+         *    and would instead propagate down;
+         */
+        if (page == null)
+            page = DEFAULT_PAGE;
+        page--; //Pages start with 1 in the URL, but start with 0 in the app logic
+
+        if (per_page == null)
+            per_page = DEFAULT_PER_PAGE;
+
+        LOG.info("User {} is reading FullCustomers for teacher with id {}", user, teacherId);
+        LOG.info("Reading page {}, with {} entries per page", page, per_page);
+
+        int partitionId = PrincipalUtils.partitionId(user);
+        List<FullCustomer> customers = fullCustomerService.readCustomersForTeacher(teacherId, page, per_page, partitionId);
+        LOG.info("Successfully read FullCustomers: {}", customers);
+
+        return customers;
+    }
+
+    @RequestMapping(value = "/all", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+    @ResponseBody
+    public List<FullCustomer> readCustomersAll(Principal user,
+                                               @RequestParam(value="page", required=false) Integer page,
+                                               @RequestParam(value="per_page", required=false) Integer per_page) {
+        /**
+         * Defaults are set up below rather than in annotation because otherwise
+         *
+         *      ...?page=&per_page=
+         *
+         * would cause an exception instead of using default values; this is fixed by:
+         * 1) setting the field to Integer rather than int, causing empty param to default to null rather than
+         *    fail to parse an empty string;
+         * 2) since null would now be a valid value, it would no longer be overridden by @RequestParam(defaultValue)
+         *    and would instead propagate down;
+         */
+        if (page == null)
+            page = DEFAULT_PAGE;
+        page--; //Pages start with 1 in the URL, but start with 0 in the app logic
+
+        if (per_page == null)
+            per_page = DEFAULT_PER_PAGE;
+
+        LOG.info("User {} is reading all FullCustomers", user);
+        LOG.info("Reading page {}, with {} entries per page", page, per_page);
+
+        int partitionId = PrincipalUtils.partitionId(user);
+        List<FullCustomer> customers = fullCustomerService.readCustomersAll(page, per_page, partitionId);
+        LOG.info("Successfully read FullCustomers: {}", customers);
+
+        return customers;
+    }
 	
 	// CONSTRUCTORS
 	
 	@Autowired
-	public FullCustomerController(CustomerService customerService, FullCustomerService service) {
-		this.customerService = customerService;
-		this.service = service;
+	public FullCustomerController(FullCustomerService fullCustomerService) {
+		this.fullCustomerService = fullCustomerService;
 	}
 	
 	// PRIVATE
 	
-	private final CustomerService customerService;
-	private final FullCustomerService service;
+	private final FullCustomerService fullCustomerService;
+
+    private static final int DEFAULT_PAGE = 1;
+    private static final int DEFAULT_PER_PAGE = 25;
 
 	private static final Logger LOG = LoggerFactory.getLogger(FullCustomerController.class);
 

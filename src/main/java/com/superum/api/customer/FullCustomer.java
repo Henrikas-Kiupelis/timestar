@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.lang.CustomerLanguages;
+import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
 
 import java.math.BigDecimal;
@@ -37,7 +38,7 @@ import static com.superum.utils.ValidationUtils.*;
  * These fields should only be specified if they are known:
  *     id            : number representation of this customer in the system       1 <= id
  *
- * When building JSON, use formats:
+ * When building JSON, use format
  *      for single objects:  "FIELD_NAME":"VALUE"
  *      for lists:           "FIELD_NAME":["VALUE1", "VALUE2", ...]
  * If you omit a field, it will assume default value (null for objects, 0 for primitive numbers, false for boolean),
@@ -240,18 +241,7 @@ public class FullCustomer {
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result = (result << 5) - result + id;
-		result = (result << 5) - result + paymentDay;
-		result = (result << 5) - result + (startDate == null ? 0 : startDate.hashCode());
-		result = (result << 5) - result + (paymentValue == null ? 0 : paymentValue.hashCode());
-		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
-		result = (result << 5) - result + (phone == null ? 0 : phone.hashCode());
-		result = (result << 5) - result + (website == null ? 0 : website.hashCode());
-		result = (result << 5) - result + (website == null ? 0 : pictureName.hashCode());
-		result = (result << 5) - result + (website == null ? 0 : comment.hashCode());
-        result = (result << 5) - result + (languages == null ? 0 : languages.hashCode());
-        return result;
+        return ObjectUtils.hash(id, paymentDay, startDate, paymentValue, name, phone, website, pictureName, comment, languages);
 	}
 
 	// CONSTRUCTORS
@@ -310,7 +300,7 @@ public class FullCustomer {
         }
 
         this.startDate = startDate;
-	}
+    }
 
     public FullCustomer(Customer customer, CustomerLanguages languages) {
         this(customer, languages.getLanguages());

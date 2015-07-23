@@ -22,6 +22,8 @@ public interface FullCustomerQueries {
      *
      * The check is made by using all the set fields (Languages field is ignored)
      *
+     * Returns the id field of a customer if one is found, 0 otherwise
+     *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
      *
@@ -29,7 +31,7 @@ public interface FullCustomerQueries {
      * @throws InvalidCustomerException if customer has no fields set
      * @throws DatabaseException if database error occurred
      */
-    boolean exists(FullCustomer customer, int partitionId);
+    int exists(FullCustomer customer, int partitionId);
 
     /**
      * <pre>

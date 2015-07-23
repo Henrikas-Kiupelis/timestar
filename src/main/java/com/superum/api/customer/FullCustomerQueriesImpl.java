@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class FullCustomerQueriesImpl implements FullCustomerQueries {
 
     @Override
-    public boolean exists(FullCustomer customer, int partitionId) {
-        return false;
+    public int exists(FullCustomer customer, int partitionId) {
+        return 0;
     }
 
     @Override
