@@ -10,7 +10,7 @@ public class FullCustomerServiceImpl implements FullCustomerService{
 
     @Override
     public FullCustomer createCustomer(FullCustomer customer, int partitionId) {
-        return null;
+        return customer.withId(1);
     }
 
     @Override

@@ -1,14 +1,17 @@
 package com.superum.api.customer;
 
-import com.superum.TimeStarBackEndApplication;
 import com.superum.config.ApplicationConfig;
+import com.superum.config.EmailConfig;
 import com.superum.config.PersistenceContext;
+import com.superum.config.SecurityConfig;
 import com.superum.db.customer.Customer;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.jooq.DSLContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -30,8 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TimeStarBackEndApplication.class, ApplicationConfig.class, PersistenceContext.class})
+@ContextConfiguration(classes = {ApplicationConfig.class, EmailConfig.class, PersistenceContext.class, SecurityConfig.class})
 @TransactionConfiguration(defaultRollback = true)
+@ActiveProfiles("dev")
 public class FullCustomerControllerTests {
 
     @Test
@@ -58,7 +62,8 @@ public class FullCustomerControllerTests {
                 .withComment(comment)
                 .build();
 
-        MvcResult result = mockMvc.perform(post("/timestar/api/v2/customer/add")
+        MvcResult result = mockMvc.perform(post("/timestar/api/v2/customer/create")
+                .header("Authorization", TEST_AUTH_HEADER)
                 .contentType(APPLICATION_JSON_UTF8)
                 .content(convertObjectToJsonBytes(customer)))
                 .andExpect(status().isOk())
@@ -123,5 +128,7 @@ public class FullCustomerControllerTests {
 
         return new FullCustomer(customer, languages);
     }
+
+    private static final String TEST_AUTH_HEADER = "Basic " + Base64.encodeBase64String("test:test".getBytes());
 
 }

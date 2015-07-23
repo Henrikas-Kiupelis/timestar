@@ -1,5 +1,6 @@
 package com.superum.api.customer;
 
+import com.superum.api.exception.UnauthorizedRequestException;
 import com.superum.utils.PrincipalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,9 @@ public class FullCustomerController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
 	public FullCustomer createCustomer(Principal user, @RequestBody FullCustomer customer) {
+        if (user == null)
+            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+
         LOG.info("User {} is creating FullCustomer {}", user, customer);
 
 		int partitionId = PrincipalUtils.partitionId(user);
@@ -38,6 +42,9 @@ public class FullCustomerController {
     @RequestMapping(value = "/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
     @ResponseBody
 	public FullCustomer readCustomer(Principal user, @PathVariable int customerId) {
+        if (user == null)
+            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+
         LOG.info("User {} is reading FullCustomer with id {}", user, customerId);
 
         int partitionId = PrincipalUtils.partitionId(user);
@@ -50,6 +57,9 @@ public class FullCustomerController {
     @RequestMapping(value = "/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
     @ResponseBody
     public FullCustomer updateCustomer(Principal user, @RequestBody FullCustomer customer) {
+        if (user == null)
+            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+
         LOG.info("User {} is updating FullCustomer {}", user, customer);
 
         int partitionId = PrincipalUtils.partitionId(user);
@@ -62,6 +72,9 @@ public class FullCustomerController {
     @RequestMapping(value = "/delete/{customerId:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
     @ResponseBody
     public FullCustomer deleteCustomer(Principal user, @PathVariable int customerId) {
+        if (user == null)
+            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+
         LOG.info("User {} is deleting FullCustomer with id {}", user, customerId);
 
         int partitionId = PrincipalUtils.partitionId(user);
@@ -76,6 +89,9 @@ public class FullCustomerController {
     public List<FullCustomer> readCustomersForTeacher(Principal user, @PathVariable int teacherId,
                                                       @RequestParam(value="page", required=false) Integer page,
                                                       @RequestParam(value="per_page", required=false) Integer per_page) {
+        if (user == null)
+            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+
         /**
          * Defaults are set up below rather than in annotation because otherwise
          *
@@ -109,6 +125,9 @@ public class FullCustomerController {
     public List<FullCustomer> readCustomersAll(Principal user,
                                                @RequestParam(value="page", required=false) Integer page,
                                                @RequestParam(value="per_page", required=false) Integer per_page) {
+        if (user == null)
+            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+
         /**
          * Defaults are set up below rather than in annotation because otherwise
          *
