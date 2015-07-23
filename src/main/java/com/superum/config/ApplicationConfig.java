@@ -31,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     @Bean
+    
     public FullCustomerController fullCustomerController() {
         return new FullCustomerController(fullCustomerService());
     }

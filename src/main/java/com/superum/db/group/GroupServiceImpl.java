@@ -1,16 +1,15 @@
 package com.superum.db.group;
 
-import java.util.List;
-
+import com.superum.db.group.student.Student;
+import com.superum.db.group.student.StudentService;
+import com.superum.db.lesson.Lesson;
+import com.superum.db.lesson.LessonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.superum.db.group.student.Student;
-import com.superum.db.group.student.StudentService;
-import com.superum.db.lesson.Lesson;
-import com.superum.db.lesson.LessonService;
+import java.util.List;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -90,6 +89,16 @@ public class GroupServiceImpl implements GroupService {
 		
 		return groupsForCustomerAndTeacher;
 	}
+
+	@Override
+	public List<Group> all(int partitionId) {
+        LOG.debug("Reading all Groups");
+
+        List<Group> all = groupDAO.all(partitionId);
+        LOG.debug("Groups retrieved: {}", all);
+
+        return all;
+    }
 
 	// CONSTRUCTORS
 

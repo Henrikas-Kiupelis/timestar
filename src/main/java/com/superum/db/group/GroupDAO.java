@@ -1,14 +1,15 @@
 package com.superum.db.group;
 
-import java.util.List;
-
+import com.superum.db.dao.SimplePartitionedDAO;
 import org.springframework.stereotype.Repository;
 
-import com.superum.db.dao.SimplePartitionedDAO;
+import java.util.List;
 
 @Repository
 public interface GroupDAO extends SimplePartitionedDAO<Group, Integer> {
 	
 	List<Group> readAllForTeacher(int teacherId, int partitionId);
+
+	List<Group> all(int partitionId);
 	
 }
