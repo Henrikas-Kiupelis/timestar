@@ -74,6 +74,7 @@ GET /group/delete/{id}
 GET /group/customer/{customerId}
 GET /group/teacher/{teacherId}
 GET /group/customer/{customerId}/teacher/{teacherId}
+GET /group/all
 
 ------------------------------------------------------------------------------------
 Student:

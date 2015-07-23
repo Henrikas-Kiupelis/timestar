@@ -1,8 +1,8 @@
 package com.superum.db.group;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface GroupService {
@@ -20,5 +20,7 @@ public interface GroupService {
 	List<Group> findGroupsForTeacher(int teacherId, int partitionId);
 	
 	List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId, int partitionId);
+
+	List<Group> all(int partitionId);
 	
 }

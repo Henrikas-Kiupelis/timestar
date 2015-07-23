@@ -1,21 +1,14 @@
 package com.superum.db.group;
 
-import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
+import com.superum.utils.PrincipalUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.superum.utils.PrincipalUtils;
+import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
 
 @RestController
 @RequestMapping(value = "/timestar/api")
@@ -68,6 +61,13 @@ public class GroupController {
 	public List<Group> findGroupsForCustomerAndTeacher(Principal user, @PathVariable int customerId, @PathVariable int teacherId) {
 		int partitionId = PrincipalUtils.partitionId(user);
 		return groupService.findGroupsForCustomerAndTeacher(customerId, teacherId, partitionId);
+	}
+
+	@RequestMapping(value = "/group/all", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@ResponseBody
+	public List<Group> all(Principal user) {
+		int partitionId = PrincipalUtils.partitionId(user);
+		return groupService.all(partitionId);
 	}
 	
 	// CONSTRUCTORS

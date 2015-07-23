@@ -1,15 +1,14 @@
 package com.superum.db.group;
 
-import static com.superum.db.generated.timestar.Tables.STUDENT_GROUP;
-
-import java.util.List;
-
+import com.superum.db.exception.DatabaseException;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.superum.db.exception.DatabaseException;
+import java.util.List;
+
+import static com.superum.db.generated.timestar.Tables.STUDENT_GROUP;
 
 @Repository
 @Transactional
@@ -74,6 +73,15 @@ public class GroupDAOImpl implements GroupDAO {
 		return sql.selectFrom(STUDENT_GROUP)
 				.where(STUDENT_GROUP.TEACHER_ID.eq(teacherId)
 						.and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
+				.orderBy(STUDENT_GROUP.ID)
+				.fetch()
+				.map(Group::valueOf);
+	}
+
+	@Override
+	public List<Group> all(int partitionId) {
+		return sql.selectFrom(STUDENT_GROUP)
+                .where(STUDENT_GROUP.PARTITION_ID.eq(partitionId))
 				.orderBy(STUDENT_GROUP.ID)
 				.fetch()
 				.map(Group::valueOf);
