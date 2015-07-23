@@ -1,5 +1,7 @@
 package com.superum.utils;
 
+import java.sql.Date;
+
 public class ObjectUtils {
 
     public static int hash(Object... objects) {
@@ -13,4 +15,7 @@ public class ObjectUtils {
         return init;
     }
 
+    public static boolean equalsJavaSqlDate(Date date1, Date date2) {
+        return date1.toString().equals(date2.toString());
+    }
 }

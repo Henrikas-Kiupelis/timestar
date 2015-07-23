@@ -1,23 +1,9 @@
 package com.superum.api.customer;
 
-import com.superum.config.ApplicationConfig;
-import com.superum.config.EmailConfig;
-import com.superum.config.PersistenceContext;
-import com.superum.config.SecurityConfig;
 import com.superum.db.customer.Customer;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.jooq.DSLContext;
-import org.junit.Before;
+import env.IntegrationTestEnvironment;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -29,14 +15,11 @@ import static com.superum.db.generated.timestar.Tables.CUSTOMER_LANG;
 import static com.superum.utils.TestUtils.*;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ApplicationConfig.class, EmailConfig.class, PersistenceContext.class, SecurityConfig.class})
-@TransactionConfiguration(defaultRollback = true)
-@ActiveProfiles("dev")
-public class FullCustomerControllerTests {
+public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void insertingCustomerWithoutId_shouldCreateNewCustomer() throws Exception {
@@ -63,20 +46,12 @@ public class FullCustomerControllerTests {
                 .build();
 
         MvcResult result = mockMvc.perform(post("/timestar/api/v2/customer/create")
-                .header("Authorization", TEST_AUTH_HEADER)
                 .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", authHeader())
                 .content(convertObjectToJsonBytes(customer)))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                /*.andExpect(jsonPath("$.paymentDay", is(paymentDay)))
-                .andExpect(jsonPath("$.startDate", is(startDate)))
-                .andExpect(jsonPath("$.paymentValue", is(paymentValue)))
-                .andExpect(jsonPath("$.name", is(name)))
-                .andExpect(jsonPath("$.phone", is(phone)))
-                .andExpect(jsonPath("$.website", is(website)))
-                .andExpect(jsonPath("$.languages", is(languages)))
-                .andExpect(jsonPath("$.pictureName", is(pictureName)))
-                .andExpect(jsonPath("$.comment", is(comment)))*/
                 .andReturn();
 
         byte[] content = result.getResponse().getContentAsByteArray();
@@ -89,25 +64,10 @@ public class FullCustomerControllerTests {
 
         FullCustomer customerFromDB = readCustomerFromDb(customerId);
 
-        assertEquals("The customer in the database should be equal to the returned customer", customerFromDB, returnedCustomer);
-    }
-
-    // INIT
-
-    @Before
-    public void init() {
-        mockMvc = MockMvcBuilders.standaloneSetup(fullCustomerController).build();
+        assertEquals("The customer in the database should be equal to the returned customer; ", customerFromDB, returnedCustomer);
     }
 
     // PRIVATE
-
-    private MockMvc mockMvc;
-
-    @Autowired
-    private FullCustomerController fullCustomerController;
-
-    @Autowired
-    private DSLContext sql;
 
     private FullCustomer readCustomerFromDb(int customerId) {
         Customer customer = sql.selectFrom(CUSTOMER)
@@ -128,7 +88,5 @@ public class FullCustomerControllerTests {
 
         return new FullCustomer(customer, languages);
     }
-
-    private static final String TEST_AUTH_HEADER = "Basic " + Base64.encodeBase64String("test:test".getBytes());
 
 }

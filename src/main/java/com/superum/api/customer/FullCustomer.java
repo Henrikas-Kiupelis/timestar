@@ -49,7 +49,7 @@ import static com.superum.utils.ValidationUtils.*;
  *     "id":"1",
  *     "paymentDay":"1",
  *     "startDate":"2015-07-22",
- *     "paymentValue":"23,33",
+ *     "paymentValue":"23.33",
  *     "name":"SUPERUM",
  *     "phone":"+37069900001",
  *     "website":"http://superum.eu",
@@ -229,7 +229,7 @@ public class FullCustomer {
 
 		return this.id == other.id
 				&& this.paymentDay == other.paymentDay
-				&& Objects.equals(this.startDate, other.startDate)
+				&& ObjectUtils.equalsJavaSqlDate(this.startDate, other.startDate)
 				&& Objects.equals(this.paymentValue, other.paymentValue)
 				&& Objects.equals(this.name, other.name)
 				&& Objects.equals(this.phone, other.phone)

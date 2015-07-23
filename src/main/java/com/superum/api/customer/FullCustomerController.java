@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
-import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
+import static com.superum.utils.ControllerUtils.APPLICATION_JSON_UTF8;
 
 /**
  * <pre>
@@ -24,7 +24,7 @@ import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
 @RequestMapping(value = "/timestar/api/v2/customer")
 public class FullCustomerController {
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/create", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public FullCustomer createCustomer(Principal user, @RequestBody FullCustomer customer) {
         if (user == null)
@@ -39,11 +39,11 @@ public class FullCustomerController {
         return createdCustomer;
 	}
 
-    @RequestMapping(value = "/{customerId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+    @RequestMapping(value = "/{customerId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
 	public FullCustomer readCustomer(Principal user, @PathVariable int customerId) {
         if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+            throw new UnauthorizedRequestException("Missing auth token for request to read a customer.");
 
         LOG.info("User {} is reading FullCustomer with id {}", user, customerId);
 
@@ -54,11 +54,11 @@ public class FullCustomerController {
         return customer;
 	}
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+    @RequestMapping(value = "/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FullCustomer updateCustomer(Principal user, @RequestBody FullCustomer customer) {
         if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+            throw new UnauthorizedRequestException("Missing auth token for request to update a customer.");
 
         LOG.info("User {} is updating FullCustomer {}", user, customer);
 
@@ -69,11 +69,11 @@ public class FullCustomerController {
         return updatedCustomer;
     }
 
-    @RequestMapping(value = "/delete/{customerId:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
+    @RequestMapping(value = "/delete/{customerId:[\\d]+}", method = RequestMethod.DELETE, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FullCustomer deleteCustomer(Principal user, @PathVariable int customerId) {
         if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+            throw new UnauthorizedRequestException("Missing auth token for request to delete a customer.");
 
         LOG.info("User {} is deleting FullCustomer with id {}", user, customerId);
 
@@ -84,13 +84,13 @@ public class FullCustomerController {
         return deletedCustomer;
     }
 
-    @RequestMapping(value = "/forTeacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+    @RequestMapping(value = "/forTeacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<FullCustomer> readCustomersForTeacher(Principal user, @PathVariable int teacherId,
                                                       @RequestParam(value="page", required=false) Integer page,
                                                       @RequestParam(value="per_page", required=false) Integer per_page) {
         if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+            throw new UnauthorizedRequestException("Missing auth token for request to read customers for teacher.");
 
         /**
          * Defaults are set up below rather than in annotation because otherwise
@@ -120,13 +120,13 @@ public class FullCustomerController {
         return customers;
     }
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+    @RequestMapping(value = "/all", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<FullCustomer> readCustomersAll(Principal user,
                                                @RequestParam(value="page", required=false) Integer page,
                                                @RequestParam(value="per_page", required=false) Integer per_page) {
         if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
+            throw new UnauthorizedRequestException("Missing auth token for request to read all customers.");
 
         /**
          * Defaults are set up below rather than in annotation because otherwise

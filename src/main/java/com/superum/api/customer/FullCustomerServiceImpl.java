@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class FullCustomerServiceImpl implements FullCustomerService{
+public class FullCustomerServiceImpl implements FullCustomerService {
 
     @Override
     public FullCustomer createCustomer(FullCustomer customer, int partitionId) {
