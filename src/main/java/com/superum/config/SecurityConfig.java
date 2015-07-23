@@ -18,32 +18,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private DataSource dataSource;
-	
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth
-			.jdbcAuthentication()
-			.dataSource(dataSource)
-			.passwordEncoder(passwordEncoder())
-			.usersByUsernameQuery(USERS_QUERY)
-			.authoritiesByUsernameQuery(AUTHORITIES_QUERY);
+				.jdbcAuthentication()
+				.dataSource(dataSource)
+				.passwordEncoder(passwordEncoder())
+				.usersByUsernameQuery(USERS_QUERY)
+				.authoritiesByUsernameQuery(AUTHORITIES_QUERY);
 	}
-	
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			.authorizeRequests()
+				.authorizeRequests()
 				.antMatchers(PERMISION_ALL).permitAll()
 				.antMatchers(HttpMethod.GET, "/**").hasRole(Role.TEACHER.name())
 				.antMatchers(PERMISION_TEACHER).hasRole(Role.TEACHER.name())
 				.anyRequest().hasRole(Role.ADMIN.name())
 				.and()
-			.httpBasic()
+				.httpBasic()
 				.and()
 			.csrf().disable();
 	}
@@ -56,13 +56,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	private static final String USERS_QUERY = "select username,password,enabled from account where username = ?";
 	private static final String AUTHORITIES_QUERY = "select username,role from roles where username = ?";
-	
+
 	private static final String[] PERMISION_ALL = {
-		//"/timestar/api/account/info"
+			//"/timestar/api/account/info"
 	};
 	private static final String[] PERMISION_TEACHER = {
-		"/timestar/api/account/update",
-		"/timestar/api/lesson/**"
+			"/timestar/api/account/update",
+			"/timestar/api/lesson/**"
 	};
 
 }

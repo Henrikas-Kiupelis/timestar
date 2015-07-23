@@ -30,7 +30,7 @@ public class LessonServiceImpl implements LessonService {
 
 	@Override
 	public Lesson findLesson(long id, int partitionId) {
-		LOG.debug("Reading Lesson by ID: {}");
+		LOG.debug("Reading Lesson by ID: {}", id);
 		
 		Lesson lesson = lessonDAO.read(id, partitionId);
 		LOG.debug("Lesson retrieved: {}", lesson);
@@ -40,7 +40,7 @@ public class LessonServiceImpl implements LessonService {
 
 	@Override
 	public Lesson updateLesson(Lesson lesson, int partitionId) {
-		LOG.debug("Updating lesson: {}");
+		LOG.debug("Updating lesson: {}", lesson);
 		
 		if (lessonDAO.isOverlapping(lesson, partitionId))
 			throw new DatabaseException("This lesson cannot be updated because it is overlapping with others!");
