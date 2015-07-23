@@ -1,17 +1,16 @@
 package com.superum.db.lesson;
 
-import java.sql.Date;
-import java.util.List;
-
+import com.superum.db.exception.DatabaseException;
+import com.superum.db.lesson.attendance.LessonAttendance;
+import com.superum.db.lesson.attendance.LessonAttendanceService;
+import com.superum.db.lesson.attendance.code.LessonCodeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.superum.db.exception.DatabaseException;
-import com.superum.db.lesson.attendance.LessonAttendance;
-import com.superum.db.lesson.attendance.LessonAttendanceService;
-import com.superum.db.lesson.attendance.code.LessonCodeService;
+import java.sql.Date;
+import java.util.List;
 
 @Service
 public class LessonServiceImpl implements LessonService {
@@ -31,7 +30,7 @@ public class LessonServiceImpl implements LessonService {
 
 	@Override
 	public Lesson findLesson(long id, int partitionId) {
-		LOG.debug("Reading Lesson by ID: {}");
+		LOG.debug("Reading Lesson by ID: {}", id);
 		
 		Lesson lesson = lessonDAO.read(id, partitionId);
 		LOG.debug("Lesson retrieved: {}", lesson);
@@ -41,7 +40,7 @@ public class LessonServiceImpl implements LessonService {
 
 	@Override
 	public Lesson updateLesson(Lesson lesson, int partitionId) {
-		LOG.debug("Updating lesson: {}");
+		LOG.debug("Updating lesson: {}", lesson);
 		
 		if (lessonDAO.isOverlapping(lesson, partitionId))
 			throw new DatabaseException("This lesson cannot be updated because it is overlapping with others!");
