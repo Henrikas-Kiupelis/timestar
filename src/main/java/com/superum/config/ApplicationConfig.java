@@ -26,7 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @Lazy
-@Profile("dev")
+@Profile("ignore")
 public class ApplicationConfig {
 
     @Bean
