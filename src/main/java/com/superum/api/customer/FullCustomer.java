@@ -327,7 +327,7 @@ public class FullCustomer {
      * <pre>
      * Creates a new builder which creates a FullCustomer that has all its mandatory fields set
      *
-     * Intended for inserting
+     * Intended for creating
      * </pre>
      */
     public static PaymentDayStep newRequiredBuilder() {
