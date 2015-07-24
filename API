@@ -57,6 +57,12 @@ This allows same username/email/etc to be used in separate partitions;
 This will be changed into a more secure scheme at a later date, when the basic functionality of the app has been
 realized and somewhat tested.
 
+Next, there will be a short description of the method, including:
+1) what the method does; if there's any special behaviour it is necessarily described here;
+2) when will the method fail, and what error response you can expect as a result;
+   obvious failures, such as breaking the limitations of parameters or failing to provide requires ones are omitted;
+3) the structure/meaning of the returned value; this can be described in 1) if it makes sense to do so;
+
 Customer API:
 
 1)
@@ -64,17 +70,109 @@ Customer API:
     BODY  com.superum.api.customer.FullCustomer
     RET   com.superum.api.customer.FullCustomer
 
-    This method creates a new customer;
+    Creates a new customer;
 
     It will fail if:
-    a) the id field was set;
-    b) a mandatory field was not set;
+    a) HTTP 400; the id field was set;
+    b) HTTP 400; a mandatory field was not set;
 
-    The returned FullCustomer will have its id field set;
+    Returned FullCustomer will have its id field set;
 
 2)
+    GET  /customer/{customerId}
+         customerId     int            0 < customerId <= MAX_INT
+    RET  com.superum.api.customer.FullCustomer
 
+    Reads and returns an existing customer;
 
+    It will fail if:
+    a) HTTP 404; no customer with provided id exists;
+
+3)
+    POST  /customer/update
+    BODY  com.superum.api.customer.FullCustomer
+    RET   com.superum.api.customer.FullCustomer
+
+    Updates an existing customer; only fields that are sent are updated;
+
+    It will fail if:
+    a) HTTP 400; the id field was not set;
+    b) HTTP 400; only the id field was set and no other fields were;
+    c) HTTP 404; no customer with provided id exists;
+
+    Returned FullCustomer contains all the fields as they were before updating;
+
+4)
+    DELETE  /customer/delete/{customerId}
+            customerId     int            0 < customerId <= MAX_INT
+    RET     com.superum.api.customer.FullCustomer
+
+    Deletes an existing customer;
+
+    It will fail if:
+    a) HTTP 404; no customer with provided id exists;
+
+    Returned FullCustomer contains all the fields as they were before deleting;
+
+5)
+    GET  customer/for/teacher/{teacherId}
+         teacherId      int            0 < teacherId <= MAX_INT
+    OPT  page           int            0 < page <= MAX_INT; DEF 1
+    OPT  per_page       int            0 < per_page <= 100; DEF 25
+    RET  List<com.superum.api.customer.FullCustomer>
+
+    Reads and returns a list of customers for a certain teacher;
+    To determine if a certain customer is tied to a teacher, the following examination is made:
+    1) customers have students;
+    2) students are in groups;
+    3) teachers are responsible for groups;
+    4) so, a customer is tied to a teacher if they have any students in any groups that the teacher is responsible for;
+
+    It will fail if:
+    a) HTTP 404; no teacher with provided id exists;
+
+    Returned List is paged; using DEF parameter values, only first 25 customers will be returned; to access the rest,
+    the page parameter must be incremented, or per_page value raised;
+    If a customer is deleted, the results of this query will no longer be consistent with the ones before the deletion;
+
+6)
+    GET  customer/all
+    OPT  page           int            0 < page <= MAX_INT; DEF 1
+    OPT  per_page       int            0 < per_page <= 100; DEF 25
+    RET  List<com.superum.api.customer.FullCustomer>
+
+    Reads and returns a list of all customers;
+
+    It shouldn't fail under normal circumstances;
+
+    Returned List is paged; using DEF parameter values, only first 25 customers will be returned; to access the rest,
+    the page parameter must be incremented, or per_page value raised;
+    If a customer is deleted, the results of this query will no longer be consistent with the ones before the deletion;
+
+7)
+    GET  customer/for/teacher/{teacherId}/count
+         teacherId      int            0 < teacherId <= MAX_INT
+    RET  int
+
+    Counts and returns the amount of all customers for a certain teacher;
+    To determine if a certain customer is tied to a teacher, the following examination is made:
+    1) customers have students;
+    2) students are in groups;
+    3) teachers are responsible for groups;
+    4) so, a customer is tied to a teacher if they have any students in any groups that the teacher is responsible for;
+
+    It will fail if:
+    a) HTTP 404; no teacher with provided id exists;
+
+8)
+    GET  customer/all/count
+    RET  int
+
+    Counts and returns the amount of all customers;
+
+    It shouldn't fail under normal circumstances;
+
+Teacher API:
 
 
 
