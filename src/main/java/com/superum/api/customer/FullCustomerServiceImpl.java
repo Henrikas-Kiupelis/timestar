@@ -1,5 +1,10 @@
 package com.superum.api.customer;
 
+import com.superum.api.exception.InvalidRequestException;
+import com.superum.db.customer.Customer;
+import com.superum.db.customer.CustomerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,8 +14,25 @@ import java.util.List;
 public class FullCustomerServiceImpl implements FullCustomerService {
 
     @Override
-    public FullCustomer createCustomer(FullCustomer customer, int partitionId) {
-        return customer.withId(1);
+    public FullCustomer createCustomer(FullCustomer fullCustomer, int partitionId) {
+        if (fullCustomer == null)
+            throw new InvalidRequestException("Customer cannot have null value");
+
+        if (fullCustomer.hasId())
+            throw new InvalidCustomerException("Provided customer has its id set; please unset it or use /update instead!");
+
+        if (!fullCustomer.canBeInserted())
+            throw new InvalidCustomerException("Provided customer does not have the following mandatory fields set: " + fullCustomer.missingMandatoryFieldNames());
+
+        LOG.debug("Creating new customer: {}", fullCustomer);
+
+        Customer customer = fullCustomer.toCustomer();
+        //customerService.
+
+
+
+
+        return fullCustomer.withId(1);
     }
 
     @Override
@@ -51,12 +73,16 @@ public class FullCustomerServiceImpl implements FullCustomerService {
     // CONSTRUCTORS
 
     @Autowired
-    public FullCustomerServiceImpl(FullCustomerQueries fullCustomerQueries) {
+    public FullCustomerServiceImpl(FullCustomerQueries fullCustomerQueries, CustomerService customerService) {
         this.fullCustomerQueries = fullCustomerQueries;
+        this.customerService = customerService;
     }
 
     // PRIVATE
 
     private final FullCustomerQueries fullCustomerQueries;
+    private final CustomerService customerService;
+
+    private static final Logger LOG = LoggerFactory.getLogger(FullCustomerService.class);
 
 }
