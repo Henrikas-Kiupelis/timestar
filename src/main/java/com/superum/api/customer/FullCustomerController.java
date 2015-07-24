@@ -156,16 +156,31 @@ public class FullCustomerController {
         return customers;
     }
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/for/teacher/{teacherId:[\\d]+}/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @ResponseBody
+    public int countCustomersForTeacher(Principal user, @PathVariable int teacherId) {
+        if (user == null)
+            throw new UnauthorizedRequestException("Missing auth token for request to count all customers for teacher.");
+
+        LOG.info("User {} is counting FullCustomers for teacher with id {}", user, teacherId);
+
+        int partitionId = PrincipalUtils.partitionId(user);
+        int count = fullCustomerService.countForTeacher(teacherId, partitionId);
+        LOG.info("Amount of FullCustomers: {}", count);
+
+        return count;
+    }
+
+    @RequestMapping(value = "/all/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public int countCustomers(Principal user) {
         if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to read all customers.");
+            throw new UnauthorizedRequestException("Missing auth token for request to count all customers.");
 
         LOG.info("User {} is counting FullCustomers", user);
 
         int partitionId = PrincipalUtils.partitionId(user);
-        int count = fullCustomerService.count(partitionId);
+        int count = fullCustomerService.countAll(partitionId);
         LOG.info("Amount of FullCustomers: {}", count);
 
         return count;

@@ -25,6 +25,11 @@ public class FullCustomerQueriesImpl implements FullCustomerQueries {
     }
 
     @Override
+    public int countForTeacher(int teacherId, int partitionId) {
+        return 0;
+    }
+
+    @Override
     public int count(int partitionId) {
         return 0;
     }

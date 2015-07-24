@@ -1,6 +1,7 @@
 package com.superum.api.customer;
 
 import com.superum.api.exception.InvalidRequestException;
+import com.superum.api.teacher.TeacherNotFoundException;
 import com.superum.exception.DatabaseException;
 import org.springframework.stereotype.Repository;
 
@@ -65,6 +66,25 @@ public interface FullCustomerQueries {
      * @throws DatabaseException if database error occurred
      */
     FullCustomer safeDelete(int customerId, int partitionId);
+
+    /**
+     * <pre>
+     * Returns the total amount of customers for a teacher with specified id right now;
+     *
+     * Customers are chosen in the following manner:
+     * 1) Customers have students;
+     * 2) Students belong to groups;
+     * 3) Teachers are responsible for groups;
+     * 4) Therefore, if a Customer has a student, which belongs to a group the specified teacher is responsible for,
+     *    this Customer is added to the list
+     *
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
+     * </pre>
+     *
+     * @throws TeacherNotFoundException if no teacher with this id exists
+     * @throws DatabaseException if database error occurred
+     */
+    int countForTeacher(int teacherId, int partitionId);
 
     /**
      * <pre>

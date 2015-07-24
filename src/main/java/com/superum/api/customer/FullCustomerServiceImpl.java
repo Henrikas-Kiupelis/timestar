@@ -39,7 +39,12 @@ public class FullCustomerServiceImpl implements FullCustomerService {
     }
 
     @Override
-    public int count(int partitionId) {
+    public int countForTeacher(int teacherId, int partitionId) {
+        return 0;
+    }
+
+    @Override
+    public int countAll(int partitionId) {
         return 0;
     }
 

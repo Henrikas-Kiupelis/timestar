@@ -84,7 +84,7 @@ public interface FullCustomerService {
      *
      * Pages start at 0, whereas the maximum amount is 100
      *
-     * Customers that are chosen in the following manner:
+     * Customers are chosen in the following manner:
      * 1) Customers have students;
      * 2) Students belong to groups;
      * 3) Teachers are responsible for groups;
@@ -120,6 +120,25 @@ public interface FullCustomerService {
 
     /**
      * <pre>
+     * Returns the total amount of customers for a teacher with specified id right now;
+     *
+     * Customers are chosen in the following manner:
+     * 1) Customers have students;
+     * 2) Students belong to groups;
+     * 3) Teachers are responsible for groups;
+     * 4) Therefore, if a Customer has a student, which belongs to a group the specified teacher is responsible for,
+     *    this Customer is added to the list
+     *
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
+     * </pre>
+     *
+     * @throws TeacherNotFoundException if no teacher with this id exists
+     * @throws DatabaseException if database error occurred
+     */
+    int countForTeacher(int teacherId, int partitionId);
+
+    /**
+     * <pre>
      * Returns the total amount of customers right now;
      *
      * This number MUST NOT be used to reason about customerId - it is entirely possible some ids are missing, i.e.
@@ -130,6 +149,7 @@ public interface FullCustomerService {
      *
      * @throws DatabaseException if database error occurred
      */
-    int count(int partitionId);
+    int countAll(int partitionId);
+
 
 }

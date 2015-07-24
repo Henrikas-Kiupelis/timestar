@@ -41,7 +41,7 @@ import static com.superum.utils.ValidationUtils.*;
  * When building JSON, use format
  *      for single objects:  "FIELD_NAME":"VALUE"
  *      for lists:           "FIELD_NAME":["VALUE1", "VALUE2", ...]
- * If you omit a field, it will assume default value (null for objects, 0 for primitive numbers, false for boolean),
+ * If you omit a field, it will assume default value (null for objects, 0/false for primitives),
  * all of which are assumed to be allowed unless stated otherwise (check FIELD_CONSTRAINTS)
  *
  * Example of JSON:
