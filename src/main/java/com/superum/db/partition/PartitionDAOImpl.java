@@ -1,12 +1,13 @@
 package com.superum.db.partition;
 
-import com.superum.exception.DatabaseException;
+import static com.superum.db.generated.timestar.Tables.PARTITIONS;
+
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.superum.db.generated.timestar.Tables.PARTITIONS;
+import com.superum.db.exception.DatabaseException;
 
 @Repository
 @Transactional
@@ -17,7 +18,7 @@ public class PartitionDAOImpl implements PartitionDAO {
 		int id = partition.getId();
 		String name = partition.getName();
 		
-		int createResult =  sql.insertInto(PARTITIONS)
+		int createResult = sql.insertInto(PARTITIONS)
 				.set(PARTITIONS.ID, id)
 				.set(PARTITIONS.NAME, name)
 				.execute();
