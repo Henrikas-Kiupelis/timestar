@@ -24,6 +24,11 @@ public class FullCustomerQueriesImpl implements FullCustomerQueries {
         return null;
     }
 
+    @Override
+    public int count(int partitionId) {
+        return 0;
+    }
+
     // CONSTRUCTORS
 
     @Autowired

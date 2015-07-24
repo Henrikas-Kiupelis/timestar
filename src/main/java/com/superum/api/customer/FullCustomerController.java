@@ -84,7 +84,7 @@ public class FullCustomerController {
         return deletedCustomer;
     }
 
-    @RequestMapping(value = "/forTeacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/for/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<FullCustomer> readCustomersForTeacher(Principal user, @PathVariable int teacherId,
                                                       @RequestParam(value="page", required=false) Integer page,
@@ -154,6 +154,21 @@ public class FullCustomerController {
         LOG.info("Successfully read FullCustomers: {}", customers);
 
         return customers;
+    }
+
+    @RequestMapping(value = "/all", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @ResponseBody
+    public int countCustomers(Principal user) {
+        if (user == null)
+            throw new UnauthorizedRequestException("Missing auth token for request to read all customers.");
+
+        LOG.info("User {} is counting FullCustomers", user);
+
+        int partitionId = PrincipalUtils.partitionId(user);
+        int count = fullCustomerService.count(partitionId);
+        LOG.info("Amount of FullCustomers: {}", count);
+
+        return count;
     }
 	
 	// CONSTRUCTORS

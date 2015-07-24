@@ -51,7 +51,7 @@ public interface FullCustomerService {
      *
      * The id fields must be set, and at least one more field must be set
      *
-     * Returns the updated customer with all missing fields now set
+     * Returns the customer data before update, as if read(customerId) was called before updating
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
@@ -117,5 +117,19 @@ public interface FullCustomerService {
      * @throws DatabaseException if database error occurred
      */
     List<FullCustomer> readCustomersAll(int page, int amount, int partitionId);
+
+    /**
+     * <pre>
+     * Returns the total amount of customers right now;
+     *
+     * This number MUST NOT be used to reason about customerId - it is entirely possible some ids are missing, i.e.
+     * due to deletion.
+     *
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
+     * </pre>
+     *
+     * @throws DatabaseException if database error occurred
+     */
+    int count(int partitionId);
 
 }

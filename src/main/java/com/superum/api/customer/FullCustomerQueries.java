@@ -66,4 +66,18 @@ public interface FullCustomerQueries {
      */
     FullCustomer safeDelete(int customerId, int partitionId);
 
+    /**
+     * <pre>
+     * Returns the total amount of Customers right now;
+     *
+     * This number MUST NOT be used to reason about customerId - it is entirely possible some ids are missing, i.e.
+     * due to deletion.
+     *
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
+     * </pre>
+     *
+     * @throws DatabaseException if database error occurred
+     */
+    int count(int partitionId);
+
 }
