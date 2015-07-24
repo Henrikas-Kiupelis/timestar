@@ -23,26 +23,16 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void insertingCustomerWithoutId_shouldCreateNewCustomer() throws Exception {
-        byte paymentDay = 1;
-        Date startDate = Date.valueOf("2015-07-21");
-        BigDecimal paymentValue = BigDecimal.valueOf(10);
-        String name = "SUPERUM";
-        String phone = "+37069900001";
-        String website = "http://superum.eu/";
-        List<String> languages = Arrays.asList("English: C1", "English: C2");
-        String pictureName = "pic.jpg";
-        String comment = "company test";
-
         FullCustomer customer = FullCustomer.newRequiredBuilder()
-                .withPaymentDay(paymentDay)
-                .withStartDate(startDate)
-                .withPaymentValue(paymentValue)
-                .withName(name)
-                .withPhone(phone)
-                .withWebsite(website)
-                .withLanguages(languages)
-                .withPictureName(pictureName)
-                .withComment(comment)
+                .withPaymentDay(1)
+                .withStartDate(Date.valueOf("2015-07-21"))
+                .withPaymentValue(BigDecimal.valueOf(10))
+                .withName("SUPERUM")
+                .withPhone("+37069900001")
+                .withWebsite("http://superum.eu/")
+                .withLanguages(Arrays.asList("English: C1", "English: C2"))
+                .withPictureName("pic.jpg")
+                .withComment("company test")
                 .build();
 
         MvcResult result = mockMvc.perform(post("/timestar/api/v2/customer/create")
