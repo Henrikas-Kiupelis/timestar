@@ -1,5 +1,6 @@
 package com.superum.api.customer;
 
+import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.exception.UnauthorizedRequestException;
 import com.superum.utils.PrincipalUtils;
 import org.slf4j.Logger;
@@ -30,6 +31,9 @@ public class FullCustomerController {
         if (user == null)
             throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
 
+        if (customer == null)
+            throw new InvalidRequestException("Customer cannot have null value");
+
         LOG.info("User {} is creating FullCustomer {}", user, customer);
 
 		int partitionId = PrincipalUtils.partitionId(user);
@@ -44,6 +48,9 @@ public class FullCustomerController {
 	public FullCustomer readCustomer(Principal user, @PathVariable int customerId) {
         if (user == null)
             throw new UnauthorizedRequestException("Missing auth token for request to read a customer.");
+
+        if (customerId <= 0)
+            throw new InvalidRequestException("Customers can only have positive ids, not " + customerId);
 
         LOG.info("User {} is reading FullCustomer with id {}", user, customerId);
 
@@ -60,6 +67,9 @@ public class FullCustomerController {
         if (user == null)
             throw new UnauthorizedRequestException("Missing auth token for request to update a customer.");
 
+        if (customer == null)
+            throw new InvalidRequestException("Customer cannot have null value");
+
         LOG.info("User {} is updating FullCustomer {}", user, customer);
 
         int partitionId = PrincipalUtils.partitionId(user);
@@ -74,6 +84,9 @@ public class FullCustomerController {
     public FullCustomer deleteCustomer(Principal user, @PathVariable int customerId) {
         if (user == null)
             throw new UnauthorizedRequestException("Missing auth token for request to delete a customer.");
+
+        if (customerId <= 0)
+            throw new InvalidRequestException("Customers can only have positive ids, not " + customerId);
 
         LOG.info("User {} is deleting FullCustomer with id {}", user, customerId);
 
@@ -109,6 +122,15 @@ public class FullCustomerController {
 
         if (per_page == null)
             per_page = DEFAULT_PER_PAGE;
+
+        if (teacherId <= 0)
+            throw new InvalidRequestException("Teachers can only have positive ids, not " + teacherId);
+
+        if (page < 0)
+            throw new InvalidRequestException("Pages can only be positive, not " + (page + 1));
+
+        if (per_page <= 0 || per_page > 100)
+            throw new InvalidRequestException("You can only request 1-100 items per page, not " + per_page);
 
         LOG.info("User {} is reading FullCustomers for teacher with id {}", user, teacherId);
         LOG.info("Reading page {}, with {} entries per page", page, per_page);
@@ -146,6 +168,12 @@ public class FullCustomerController {
         if (per_page == null)
             per_page = DEFAULT_PER_PAGE;
 
+        if (page < 0)
+            throw new InvalidRequestException("Pages can only be positive, not " + (page + 1));
+
+        if (per_page <= 0 || per_page > 100)
+            throw new InvalidRequestException("You can only request 1-100 items per page, not " + per_page);
+
         LOG.info("User {} is reading all FullCustomers", user);
         LOG.info("Reading page {}, with {} entries per page", page, per_page);
 
@@ -161,6 +189,9 @@ public class FullCustomerController {
     public int countCustomersForTeacher(Principal user, @PathVariable int teacherId) {
         if (user == null)
             throw new UnauthorizedRequestException("Missing auth token for request to count all customers for teacher.");
+
+        if (teacherId <= 0)
+            throw new InvalidRequestException("Teachers can only have positive ids, not " + teacherId);
 
         LOG.info("User {} is counting FullCustomers for teacher with id {}", user, teacherId);
 

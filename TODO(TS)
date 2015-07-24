@@ -6,6 +6,10 @@ This file should contain a rough list of ideas/things to be done in the future:
 
 A) Things to definitely do in the future
 
+    DOCUMENT AND TEST:
+    CustomerService
+    CustomerLanguagesService
+
 	Set up multiple groups per student
 	Set up groups which have their own contracts
 
