@@ -6,12 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.lang.CustomerLanguages;
-import com.superum.utils.ObjectUtils;
-import com.superum.utils.StringUtils;
+import com.superum.fields.*;
 
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.superum.api.customer.FullCustomer.RequiredBuilder.fullCustomer;
 import static com.superum.utils.ValidationUtils.*;
@@ -64,157 +65,167 @@ public class FullCustomer {
 
     // PUBLIC API
 
-	@JsonProperty("id")
+	@JsonProperty(ID_FIELD)
 	public int getId() {
-		return id;
+		return id.intValue();
 	}
 	@JsonIgnore
 	public boolean hasId() {
-		return id > 0;
+		return id.isSet();
 	}
     @JsonIgnore
     public FullCustomer withId(int id) {
-        return new FullCustomer(id, paymentDay, startDate, paymentValue, name, phone, website, pictureName, comment, languages);
+        return new FullCustomer(id, getPaymentDay(), getStartDate(), getPaymentValue(), getName(), getPhone(), getWebsite(), getPictureName(), getComment(), getLanguages());
     }
 	
-	@JsonProperty("paymentDay")
+	@JsonProperty(PAYMENT_DAY_FIELD)
 	public byte getPaymentDay() {
-		return paymentDay;
+		return paymentDay.byteValue();
 	}
     @JsonIgnore
     public boolean hasPaymentDay() {
-        return paymentDay > 0;
+        return paymentDay.isSet();
     }
 	
-	@JsonProperty("startDate")
+	@JsonProperty(START_DATE_FIELD)
 	public Date getStartDate() {
-		return startDate;
+		return startDate.getValue();
 	}
     @JsonIgnore
     public boolean hasStartDate() {
-        return startDate != null;
+        return startDate.isSet();
     }
 	
-	@JsonProperty("paymentValue")
+	@JsonProperty(PAYMENT_VALUE_FIELD)
 	public BigDecimal getPaymentValue() {
-		return paymentValue;
+		return paymentValue.getValue();
 	}
     @JsonIgnore
     public boolean hasPaymentValue() {
-        return paymentValue != null;
+        return paymentValue.isSet();
     }
 	
-	@JsonProperty("name")
+	@JsonProperty(NAME_FIELD)
 	public String getName() {
-		return name;
+		return name.getValue();
 	}
     @JsonIgnore
     public boolean hasName() {
-        return name != null;
+        return name.isSet();
     }
 	
-	@JsonProperty("phone")
+	@JsonProperty(PHONE_FIELD)
 	public String getPhone() {
-		return phone;
+		return phone.getValue();
 	}
     @JsonIgnore
     public boolean hasPhone() {
-        return phone != null;
+        return phone.isSet();
     }
 	
-	@JsonProperty("website")
+	@JsonProperty(WEBSITE_FIELD)
 	public String getWebsite() {
-		return website;
+		return website.getValue();
 	}
     @JsonIgnore
     public boolean hasWebsite() {
-        return website != null;
+        return website.isSet();
     }
 	
-	@JsonProperty("pictureName")
+	@JsonProperty(PICTURE_NAME_FIELD)
 	public String getPictureName() {
-		return pictureName;
+		return pictureName.getValue();
 	}
     @JsonIgnore
     public boolean hasPictureName() {
-        return pictureName != null;
+        return pictureName.isSet();
     }
 	
-	@JsonProperty("comment")
+	@JsonProperty(COMMENT_FIELD)
 	public String getComment() {
-		return comment;
+		return comment.getValue();
 	}
     @JsonIgnore
     public boolean hasComment() {
-        return comment != null;
+        return comment.isSet();
     }
 
-    @JsonProperty("languages")
+    @JsonProperty(LANGUAGES_FIELD)
     public List<String> getLanguages() {
-        return languages;
+        return languages.getValue();
     }
     @JsonIgnore
     public boolean hasLanguages() {
-        return languages != null;
+        return languages.isSet();
     }
 
     /**
      * <pre>
-     * Returns true if all the mandatory fields are set, and the id field is NOT set; false otherwise
+     * Returns true if all the mandatory fields are set; false otherwise
      * </pre>
      */
     @JsonIgnore
     public boolean canBeInserted() {
-        return !hasId() && hasPaymentDay() && hasStartDate() && hasPaymentValue() && hasName() && hasPhone() && hasWebsite() && hasLanguages();
+        return mandatoryFields().allMatch(Field::isSet);
     }
 
     /**
      * <pre>
-     * Returns true if the id field is set, and at least one more Customer field is set; false otherwise
+     * Returns true if at least one field, other than id or languages, is set; false otherwise
+     *
+     * Languages is not a Customer field, but a field of CustomerLanguages
      * </pre>
      */
     @JsonIgnore
     public boolean canUpdateCustomer() {
-        return hasId() && (hasPaymentDay() || hasStartDate() || hasPaymentValue() || hasName() || hasPhone() || hasWebsite() || hasPictureName() || hasComment());
+        return allFields.stream()
+                .filter(field -> field != id)
+                .filter(field -> field != languages)
+                .anyMatch(Field::isSet);
     }
 
     /**
      * <pre>
-     * Returns true if the id field is set, and languages field is set; false otherwise;
+     * Returns true if languages field is set; false otherwise;
      *
-     * Languages is the only other field in CustomerLanguages
+     * Languages is the only field in CustomerLanguages
      * </pre>
      */
     @JsonIgnore
     public boolean canUpdateCustomerLanguages() {
-        return hasId() && hasLanguages();
+        return hasLanguages();
+    }
+
+    /**
+     * <pre>
+     * Returns a list of names of mandatory fields that are not set
+     * </pre>
+     */
+    @JsonIgnore
+    public List<String> missingMandatoryFieldNames() {
+        return mandatoryFields()
+                .filter(field -> !field.isSet())
+                .map(NamedField::getFieldName)
+                .collect(Collectors.toList());
     }
 
     @JsonIgnore
     public Customer toCustomer() {
-        return new Customer(id, paymentDay, startDate, paymentValue, name, phone, website, pictureName, comment);
+        return new Customer(getId(), getPaymentDay(), getStartDate(), getPaymentValue(), getName(), getPhone(), getWebsite(), getPictureName(), getComment());
     }
 
     @JsonIgnore
     public CustomerLanguages toCustomerLanguages() {
-        return new CustomerLanguages(id, languages);
+        return new CustomerLanguages(getId(), getLanguages());
     }
-	
+
 	// OBJECT OVERRIDES
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
-				"Customer ID: " + id,
-				"Payment day: " + paymentDay,
-				"Contract started: " + startDate,
-				"Payment value: " + paymentValue, 
-				"Name: " + name,
-				"Phone: " + phone,
-				"Website: " + website,
-				"Picture: " + pictureName,
-				"Comment: " + comment,
-                "Languages: " + languages);
+		return allFields.stream()
+                .map(Field::toString)
+                .collect(Collectors.joining(", "));
 	}
 
 	@Override
@@ -227,79 +238,91 @@ public class FullCustomer {
 
 		FullCustomer other = (FullCustomer) o;
 
-		return this.id == other.id
-				&& this.paymentDay == other.paymentDay
-				&& ObjectUtils.equalsJavaSqlDate(this.startDate, other.startDate)
-				&& Objects.equals(this.paymentValue, other.paymentValue)
-				&& Objects.equals(this.name, other.name)
-				&& Objects.equals(this.phone, other.phone)
-				&& Objects.equals(this.website, other.website)
-				&& Objects.equals(this.pictureName, other.pictureName)
-				&& Objects.equals(this.comment, other.comment)
-                && Objects.equals(this.languages, other.languages);
+		return Objects.equals(this.allFields, other.allFields);
 	}
 
 	@Override
 	public int hashCode() {
-        return ObjectUtils.hash(id, paymentDay, startDate, paymentValue, name, phone, website, pictureName, comment, languages);
+        return allFields.hashCode();
 	}
 
 	// CONSTRUCTORS
 
 	@JsonCreator
-	public FullCustomer(@JsonProperty("id") int id,
-                        @JsonProperty("paymentDay") byte paymentDay,
-                        @JsonProperty("startDate") Date startDate,
-                        @JsonProperty("paymentValue") BigDecimal paymentValue,
-                        @JsonProperty("name") String name,
-                        @JsonProperty("phone") String phone,
-                        @JsonProperty("website") String website,
-                        @JsonProperty("pictureName") String pictureName,
-                        @JsonProperty("comment") String comment,
-                        @JsonProperty("languages") List<String> languages) {
+	public FullCustomer(@JsonProperty(ID_FIELD) int id,
+                        @JsonProperty(PAYMENT_DAY_FIELD) byte paymentDay,
+                        @JsonProperty(START_DATE_FIELD) Date startDate,
+                        @JsonProperty(PAYMENT_VALUE_FIELD) BigDecimal paymentValue,
+                        @JsonProperty(NAME_FIELD) String name,
+                        @JsonProperty(PHONE_FIELD) String phone,
+                        @JsonProperty(WEBSITE_FIELD) String website,
+                        @JsonProperty(PICTURE_NAME_FIELD) String pictureName,
+                        @JsonProperty(COMMENT_FIELD) String comment,
+                        @JsonProperty(LANGUAGES_FIELD) List<String> languages) {
         // Equivalent to (id != 0 && id <= 0); when id == 0, it simply was not set, so the state is valid, while id is not
         if (id < 0)
             throw new InvalidCustomerException("Customer id must be positive.");
-		this.id = id;
+
+        this.id = new IntField(ID_FIELD, id, Mandatory.YES);
 
         if (paymentDay != 0 && !isDayOfMonth(paymentDay))
             throw new InvalidCustomerException("Payment day for customer doesn't exist: " + paymentDay);
-		this.paymentDay = paymentDay;
+
+		this.paymentDay = new ByteField(PAYMENT_DAY_FIELD, paymentDay, Mandatory.YES);
 
         if (isNegativeNotNull(paymentValue))
             throw new InvalidCustomerException("Payment value for customer must be non-negative: " + paymentValue);
-		this.paymentValue = paymentValue;
+
+		this.paymentValue = new SimpleField<>(PAYMENT_VALUE_FIELD, paymentValue, Mandatory.YES);
 
         if (!fitsOrNull(NAME_SIZE_LIMIT, name))
             throw new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars");
-		this.name = name;
+
+		this.name = new SimpleField<>(NAME_FIELD, name, Mandatory.YES);
 
         if (!fitsOrNull(PHONE_SIZE_LIMIT, phone))
             throw new InvalidCustomerException("Customer phone must not exceed " + PHONE_SIZE_LIMIT + " chars");
-		this.phone = phone;
+
+		this.phone = new SimpleField<>(PHONE_FIELD, phone, Mandatory.YES);
 
         if (!fitsOrNull(WEBSITE_SIZE_LIMIT, website))
             throw new InvalidCustomerException("Customer website must not exceed " + WEBSITE_SIZE_LIMIT + " chars");
-		this.website = website;
+
+		this.website = new SimpleField<>(WEBSITE_FIELD, website, Mandatory.YES);
 
         if (!fitsOrNull(PICTURE_NAME_SIZE_LIMIT, pictureName))
             throw new InvalidCustomerException("Customer picture name must not exceed " + PICTURE_NAME_SIZE_LIMIT + " chars");
-		this.pictureName = pictureName;
+
+		this.pictureName = new SimpleField<>(PICTURE_NAME_FIELD, pictureName, Mandatory.NO);
 
         if (!fitsOrNull(COMMENT_SIZE_LIMIT, comment))
             throw new InvalidCustomerException("Customer comment must not exceed " + COMMENT_SIZE_LIMIT + " chars");
-		this.comment = comment;
+
+		this.comment = new SimpleField<>(COMMENT_FIELD, comment, Mandatory.NO);
 
         if (languages == null)
-            this.languages = null;
+            this.languages = SimpleField.empty(LANGUAGES_FIELD, Mandatory.YES);
         else {
-            if (!languages.stream().allMatch(languageString -> fitsNotNull(LANGUAGE_SIZE_LIMIT, languageString)))
-                throw new InvalidCustomerException("Customer languages must not be null or exceed " + LANGUAGE_SIZE_LIMIT + " chars");
+            if (!languages.stream().allMatch(languageString -> fitsNotNull(LANGUAGE_ELEMENT_SIZE_LIMIT, languageString)))
+                throw new InvalidCustomerException("Customer languages must not exceed " + LANGUAGE_ELEMENT_SIZE_LIMIT + " chars");
             // To ensure that this object is immutable, we wrap the list with an unmodifiable version
-            this.languages = Collections.unmodifiableList(languages);
+            this.languages = new SimpleField<>(LANGUAGES_FIELD, Collections.unmodifiableList(languages), Mandatory.YES);
         }
 
-        this.startDate = startDate;
+        this.startDate = new JavaSqlDateField(START_DATE_FIELD, startDate, Mandatory.YES);
+
+        List<NamedField> allFields = new ArrayList<>();
+        allFields.add(this.paymentDay);
+        allFields.add(this.paymentValue);
+        allFields.add(this.name);
+        allFields.add(this.phone);
+        allFields.add(this.website);
+        allFields.add(this.languages);
+        allFields.add(this.startDate);
+        allFields.add(this.id);
+        allFields.add(this.pictureName);
+        allFields.add(this.comment);
+        this.allFields = Collections.unmodifiableList(allFields);
     }
 
     public FullCustomer(Customer customer, CustomerLanguages languages) {
@@ -336,23 +359,42 @@ public class FullCustomer {
 
 	// PRIVATE
 	
-	private final int id;
-	private final byte paymentDay;
-	private final Date startDate;
-	private final BigDecimal paymentValue;
-	private final String name;
-	private final String phone;
-	private final String website;
-	private final String pictureName;
-	private final String comment;
-    private final List<String> languages;
+	private final IntField id;
+	private final ByteField paymentDay;
+	private final JavaSqlDateField startDate;
+	private final NamedField<BigDecimal> paymentValue;
+	private final NamedField<String> name;
+	private final NamedField<String> phone;
+	private final NamedField<String> website;
+	private final NamedField<String> pictureName;
+	private final NamedField<String> comment;
+    private final NamedField<List<String>> languages;
+
+    private final List<NamedField> allFields;
+
+    private Stream<NamedField> mandatoryFields() {
+        return allFields.stream().filter(MaybeField::isMandatory);
+    }
 
     private static final int NAME_SIZE_LIMIT = 30;
     private static final int PHONE_SIZE_LIMIT = 30;
     private static final int WEBSITE_SIZE_LIMIT = 30;
     private static final int PICTURE_NAME_SIZE_LIMIT = 100;
     private static final int COMMENT_SIZE_LIMIT = 500;
-    private static final int LANGUAGE_SIZE_LIMIT = 20;
+    private static final int LANGUAGE_ELEMENT_SIZE_LIMIT = 20;
+
+    // FIELD NAMES
+
+    private static final String ID_FIELD = "id";
+    private static final String PAYMENT_DAY_FIELD = "paymentDay";
+    private static final String START_DATE_FIELD = "startDate";
+    private static final String PAYMENT_VALUE_FIELD = "paymentValue";
+    private static final String NAME_FIELD = "name";
+    private static final String PHONE_FIELD = "phone";
+    private static final String WEBSITE_FIELD = "website";
+    private static final String PICTURE_NAME_FIELD = "pictureName";
+    private static final String COMMENT_FIELD = "comment";
+    private static final String LANGUAGES_FIELD = "languages";
 
     // GENERATED
 
