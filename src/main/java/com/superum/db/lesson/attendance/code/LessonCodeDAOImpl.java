@@ -1,17 +1,16 @@
 package com.superum.db.lesson.attendance.code;
 
-import static com.superum.db.generated.timestar.Tables.LESSON_CODE;
-
-import com.superum.db.exception.DatabaseException;
 import com.superum.db.generated.timestar.tables.records.LessonCodeRecord;
-
-import java.util.List;
-
+import com.superum.exception.DatabaseException;
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStep4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.superum.db.generated.timestar.Tables.LESSON_CODE;
 
 @Repository
 @Transactional

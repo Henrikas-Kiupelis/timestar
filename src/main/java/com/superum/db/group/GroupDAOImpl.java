@@ -1,6 +1,6 @@
 package com.superum.db.group;
 
-import com.superum.db.exception.DatabaseException;
+import com.superum.exception.DatabaseException;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

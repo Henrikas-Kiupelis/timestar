@@ -1,15 +1,14 @@
 package com.superum.db.group.student;
 
-import static com.superum.db.generated.timestar.Tables.STUDENT;
-
-import java.util.List;
-
+import com.superum.exception.DatabaseException;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.superum.db.exception.DatabaseException;
+import java.util.List;
+
+import static com.superum.db.generated.timestar.Tables.STUDENT;
 
 @Repository
 @Transactional

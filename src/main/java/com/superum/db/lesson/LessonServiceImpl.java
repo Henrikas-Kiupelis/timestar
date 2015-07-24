@@ -1,9 +1,9 @@
 package com.superum.db.lesson;
 
-import com.superum.db.exception.DatabaseException;
 import com.superum.db.lesson.attendance.LessonAttendance;
 import com.superum.db.lesson.attendance.LessonAttendanceService;
 import com.superum.db.lesson.attendance.code.LessonCodeService;
+import com.superum.exception.DatabaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
