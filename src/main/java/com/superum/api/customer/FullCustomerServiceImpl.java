@@ -3,6 +3,7 @@ package com.superum.api.customer;
 import com.superum.api.exception.InvalidRequestException;
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.CustomerService;
+import com.superum.db.customer.lang.CustomerLanguages;
 import com.superum.db.customer.lang.CustomerLanguagesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +42,22 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         if (customerId <= 0)
             throw new InvalidRequestException("Customers can only have positive ids, not " + customerId);
 
-        return null;
+        LOG.debug("Reading customer by id: {}", customerId);
+
+        Customer customer = customerService.findCustomer(customerId, partitionId);
+        CustomerLanguages customerLanguages = customerLanguagesService.getLanguagesForCustomerContract(customerId, partitionId);
+        FullCustomer fullCustomer = new FullCustomer(customer, customerLanguages);
+        LOG.debug("Customer retrieved: {}", fullCustomer);
+
+        return fullCustomer;
     }
 
     @Override
     public FullCustomer updateCustomer(FullCustomer customer, int partitionId) {
         if (customer == null)
             throw new InvalidRequestException("Customer cannot have null value");
+
+
 
         return null;
     }
