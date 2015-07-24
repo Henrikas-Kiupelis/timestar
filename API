@@ -60,22 +60,20 @@ realized and somewhat tested.
 Customer API:
 
 1)
-    POST  /customer/insert
+    POST  /customer/create
     BODY  com.superum.api.customer.FullCustomer
     RET   com.superum.api.customer.FullCustomer
 
-    This method does one of the following:
-    a) if id field of FullCustomer is set, it creates a new customer;
-    b) if id field of FullCustomer is not set, it updates an existing customer;
+    This method creates a new customer;
 
-    In case of a), all mandatory fields must be set, otherwise the creation will fail;
-    In case of b), at least one field, besides the id, must be set, otherwise the update will fail;
+    It will fail if:
+    a) the id field was set;
+    b) a mandatory field was not set;
 
-    In both cases, the returned FullCustomer is the inserted one;
-    In case of a), the id field will be set;
-    In case of b), all the missing fields will be set
+    The returned FullCustomer will have its id field set;
 
 2)
+
 
 
 
