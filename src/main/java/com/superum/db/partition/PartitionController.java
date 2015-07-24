@@ -1,12 +1,11 @@
 package com.superum.db.partition;
 
-import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
 
 @RestController
 @RequestMapping(value = "/timestar/api")
@@ -14,7 +13,7 @@ public class PartitionController {
 
 	@RequestMapping(value = "/partition/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
 	@ResponseBody
-	public Partition addPartition(Partition newPartition) {
+	public Partition addPartition(@RequestBody @Valid Partition newPartition) {
 		return partitionService.addPartition(newPartition);
 	}
 
