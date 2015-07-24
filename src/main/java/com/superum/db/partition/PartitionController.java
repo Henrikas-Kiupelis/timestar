@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
-
 import static com.superum.utils.ControllerUtils.APPLICATION_JSON_UTF8;
 
 @RestController
