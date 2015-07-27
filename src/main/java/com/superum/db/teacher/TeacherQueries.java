@@ -1,13 +1,13 @@
 package com.superum.db.teacher;
 
+import org.springframework.stereotype.Repository;
+
 import java.sql.Date;
 import java.util.List;
-
-import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TeacherQueries {
 
-	List<Teacher> readAllforLessons(Date start, Date end, int partitionId);
+	List<Teacher> readAllForLessons(Date start, Date end, int partitionId);
 	
 }

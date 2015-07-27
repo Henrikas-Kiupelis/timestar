@@ -19,28 +19,28 @@ import static com.superum.db.generated.timestar.Tables.CUSTOMER_LANG;
 @Transactional
 public class CustomerLanguagesDAOImpl implements CustomerLanguagesDAO {
 
-	@Override
-	public CustomerLanguages create(CustomerLanguages languages, int partitionId) {
-		Integer customerId = languages.getCustomerId();
-		List<String> languageList = languages.getLanguages();
-		
-		InsertValuesStep3<CustomerLangRecord, Integer, Integer, String> step = sql.insertInto(CUSTOMER_LANG, CUSTOMER_LANG.PARTITION_ID, CUSTOMER_LANG.CUSTOMER_ID, CUSTOMER_LANG.LANGUAGE_LEVEL);
-		for (String language : languageList)
-			step = step.values(partitionId, customerId, language);
+    @Override
+    public CustomerLanguages create(CustomerLanguages languages, int partitionId) {
+        try {
+            Integer customerId = languages.getCustomerId();
+            List<String> languageList = languages.getLanguages();
 
-		try {
+            InsertValuesStep3<CustomerLangRecord, Integer, Integer, String> step = sql.insertInto(CUSTOMER_LANG, CUSTOMER_LANG.PARTITION_ID, CUSTOMER_LANG.CUSTOMER_ID, CUSTOMER_LANG.LANGUAGE_LEVEL);
+            for (String language : languageList)
+                step = step.values(partitionId, customerId, language);
+
+
             step.execute();
+            return languages;
         } catch (DataAccessException e) {
-            throw new DatabaseException("Couldn't insert languages: " + languages + "; it's possible that" +
-                    "the customer with this id doesn't exist, or languages for this customer" +
+            throw new DatabaseException("Couldn't insert languages: " + languages + "; it's possible that " +
+                    "the customer with this id doesn't exist, or languages for this customer " +
                     "have already been inserted; please refer to the nested exception for more info.", e);
         }
+    }
 
-		return languages;
-	}
-
-	@Override
-	public CustomerLanguages read(Integer customerId, int partitionId) {
+    @Override
+    public CustomerLanguages read(Integer customerId, int partitionId) {
         try {
             List<String> languages = sql.select(CUSTOMER_LANG.LANGUAGE_LEVEL)
                     .from(CUSTOMER_LANG)
@@ -52,10 +52,10 @@ public class CustomerLanguagesDAOImpl implements CustomerLanguagesDAO {
         } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when trying to read customer languages with id " + customerId, e);
         }
-	}
+    }
 
-	@Override
-	public CustomerLanguages update(CustomerLanguages languages, int partitionId) {
+    @Override
+    public CustomerLanguages update(CustomerLanguages languages, int partitionId) {
         try {
             CustomerLanguages old = delete(languages.getCustomerId(), partitionId);
 
@@ -64,15 +64,19 @@ public class CustomerLanguagesDAOImpl implements CustomerLanguagesDAO {
         } catch (DatabaseException e) {
             throw new DatabaseException("An unexpected error occurred when trying to update customer languages " + languages, e);
         }
-	}
+    }
 
-	@Override
-	public CustomerLanguages delete(Integer customerId, int partitionId) {
-		return delete(new CustomerLanguages(customerId, Collections.emptyList()), partitionId);
-	}
+    @Override
+    public CustomerLanguages delete(Integer customerId, int partitionId) {
+        try {
+            return delete(new CustomerLanguages(customerId, Collections.emptyList()), partitionId);
+        } catch (DatabaseException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to delete customer languages with id " + customerId, e);
+        }
+    }
 
-	@Override
-	public CustomerLanguages delete(CustomerLanguages languages, int partitionId) {
+    @Override
+    public CustomerLanguages delete(CustomerLanguages languages, int partitionId) {
         try {
             Integer customerId = languages.getCustomerId();
 
@@ -91,17 +95,17 @@ public class CustomerLanguagesDAOImpl implements CustomerLanguagesDAO {
         } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when trying to delete customer languages " + languages, e);
         }
-	}
-	
-	// CONSTRUCTORS
+    }
 
-	@Autowired
-	public CustomerLanguagesDAOImpl(DSLContext sql) {
-		this.sql = sql;
-	}
+    // CONSTRUCTORS
 
-	// PRIVATE
-	
-	private final DSLContext sql;
+    @Autowired
+    public CustomerLanguagesDAOImpl(DSLContext sql) {
+        this.sql = sql;
+    }
+
+    // PRIVATE
+
+    private final DSLContext sql;
 
 }

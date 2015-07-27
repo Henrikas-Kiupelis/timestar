@@ -15,9 +15,9 @@ import static com.superum.db.generated.timestar.Tables.CUSTOMER;
 @Transactional
 public class CustomerDAOImpl implements CustomerDAO {
 
-	@Override
-	public Customer create(Customer customer, int partitionId) {
-		try {
+    @Override
+    public Customer create(Customer customer, int partitionId) {
+        try {
             return sql.insertInto(CUSTOMER)
                     .set(CUSTOMER.PARTITION_ID, partitionId)
                     .set(CUSTOMER.NAME, customer.getName())
@@ -33,13 +33,13 @@ public class CustomerDAOImpl implements CustomerDAO {
                     .findFirst()
                     .map(Customer::valueOf)
                     .orElseThrow(() -> new DatabaseException("Couldn't insert customer: " + customer));
-		} catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when inserting customer " + customer, e);
         }
-	}
+    }
 
-	@Override
-	public Customer read(Integer id, int partitionId) {
+    @Override
+    public Customer read(Integer id, int partitionId) {
         try {
             return sql.selectFrom(CUSTOMER)
                     .where(CUSTOMER.ID.eq(id)
@@ -51,10 +51,10 @@ public class CustomerDAOImpl implements CustomerDAO {
         } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when trying to read customer with id " + id, e);
         }
-	}
+    }
 
-	@Override
-	public Customer update(Customer customer, int partitionId) {
+    @Override
+    public Customer update(Customer customer, int partitionId) {
         try {
             int id = customer.getId();
 
@@ -77,10 +77,10 @@ public class CustomerDAOImpl implements CustomerDAO {
         } catch (DataAccessException|DatabaseException e) {
             throw new DatabaseException("An unexpected error occurred when trying to update customer " + customer, e);
         }
-	}
+    }
 
-	@Override
-	public Customer delete(Integer id, int partitionId) {
+    @Override
+    public Customer delete(Integer id, int partitionId) {
         try {
             Customer old = read(id, partitionId);
 
@@ -95,10 +95,10 @@ public class CustomerDAOImpl implements CustomerDAO {
         } catch (DataAccessException|DatabaseException e) {
             throw new DatabaseException("An unexpected error occurred when trying to delete customer with id " + id, e);
         }
-	}
-	
-	@Override
-	public List<Customer> readAll(int partitionId) {
+    }
+
+    @Override
+    public List<Customer> readAll(int partitionId) {
         try {
             return sql.selectFrom(CUSTOMER)
                     .where(CUSTOMER.PARTITION_ID.eq(partitionId))
@@ -108,17 +108,17 @@ public class CustomerDAOImpl implements CustomerDAO {
         } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when trying to read all customers", e);
         }
-	}
+    }
 
-	// CONSTRUCTORS
-	
-	@Autowired
-	public CustomerDAOImpl(DSLContext sql) {
-		this.sql = sql;
-	}
-	
-	// PRIVATE
-	
-	private final DSLContext sql;
+    // CONSTRUCTORS
+
+    @Autowired
+    public CustomerDAOImpl(DSLContext sql) {
+        this.sql = sql;
+    }
+
+    // PRIVATE
+
+    private final DSLContext sql;
 
 }
