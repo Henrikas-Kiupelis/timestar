@@ -26,8 +26,19 @@ public class UpdateBuilder<Entity, TableRecord extends Record> {
      * @param <T> the type of the table field and the object returned by getter
      *
      * @return this builder
+     *
+     * @throws IllegalArgumentException if any arguments are null
      */
     public <T> UpdateBuilder<Entity, TableRecord> setField(Predicate<Entity> hasField, TableField<TableRecord, T> tableField,  Function<Entity, T> getter) {
+        if (hasField == null)
+            throw new IllegalArgumentException("Predicate to check if field is set cannot be null");
+
+        if (tableField == null)
+            throw new IllegalArgumentException("Table field cannot be null");
+
+        if (getter == null)
+            throw new IllegalArgumentException("Value getter cannot be null");
+
         if (!hasField.test(entity))
             step = step.set(tableField, getter.apply(entity));
         return this;
@@ -48,6 +59,15 @@ public class UpdateBuilder<Entity, TableRecord extends Record> {
     // CONSTRUCTORS
 
     public UpdateBuilder(Entity entity, DSLContext sql, Table<TableRecord> table) {
+        if (entity == null)
+            throw new IllegalArgumentException("Entity cannot be null");
+
+        if (sql == null)
+            throw new IllegalArgumentException("DSLContext cannot be null");
+
+        if (table == null)
+            throw new IllegalArgumentException("Updated table cannot be null");
+
         this.entity = entity;
         this.step = sql.update(table);
     }

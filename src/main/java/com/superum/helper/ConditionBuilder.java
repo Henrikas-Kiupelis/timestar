@@ -28,10 +28,21 @@ public class ConditionBuilder<Entity, TableRecord extends Record> {
      * @param <T> the type of the table field and the object returned by getter
      *
      * @return this builder
+     *
+     * @throws IllegalArgumentException if any arguments are null
      */
     public <T> ConditionBuilder<Entity, TableRecord> fieldCheck(Predicate<Entity> hasField, TableField<TableRecord, T> tableField,  Function<Entity, T> getter) {
-        if (hasField.test(customer))
-            condition = condition.and(tableField.eq(getter.apply(customer)));
+        if (hasField == null)
+            throw new IllegalArgumentException("Predicate to check if field is set cannot be null");
+
+        if (tableField == null)
+            throw new IllegalArgumentException("Table field cannot be null");
+
+        if (getter == null)
+            throw new IllegalArgumentException("Value getter cannot be null");
+
+        if (hasField.test(entity))
+            condition = condition.and(tableField.eq(getter.apply(entity)));
         return this;
     }
 
@@ -44,14 +55,20 @@ public class ConditionBuilder<Entity, TableRecord extends Record> {
 
     // CONSTRUCTORS
 
-    public ConditionBuilder(Entity customer, TableField<TableRecord, Integer> partitionField, int partitionId) {
-        this.customer = customer;
+    public ConditionBuilder(Entity entity, TableField<TableRecord, Integer> partitionField, int partitionId) {
+        if (entity == null)
+            throw new IllegalArgumentException("Entity cannot be null");
+
+        if (partitionField == null)
+            throw new IllegalArgumentException("Partition id field cannot be null");
+
+        this.entity = entity;
         this.condition = partitionField.eq(partitionId);
     }
 
     // PRIVATE
 
-    private final Entity customer;
+    private final Entity entity;
     private Condition condition;
 
 }

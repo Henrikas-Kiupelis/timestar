@@ -15,14 +15,28 @@ public class QuickIdExistenceChecker<TableRecord extends Record, ID> {
 
     /**
      * @return true if a record with primary key value id exists in given partition; false otherwise
+     *
+     * @throws IllegalArgumentException if any arguments are null
      */
     public boolean check(ID id, int partitionId) {
+        if (id == null)
+            throw new IllegalArgumentException("Primary key value cannot be null");
+
         return sql.fetchExists(sql.selectOne().from(idField.getTable()).where(idAndPartition(id, partitionId)));
     }
 
     // CONSTRUCTORS
 
     public QuickIdExistenceChecker(DSLContext sql, TableField<TableRecord, ID> idField, TableField<TableRecord, Integer> partitionField) {
+        if (sql == null)
+            throw new IllegalArgumentException("DSLContext cannot be null");
+
+        if (idField == null)
+            throw new IllegalArgumentException("Primary key field cannot be null");
+
+        if (partitionField == null)
+            throw new IllegalArgumentException("Partition id field cannot be null");
+
         this.sql = sql;
         this.idField = idField;
         this.partitionField = partitionField;

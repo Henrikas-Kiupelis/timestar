@@ -16,8 +16,16 @@ public class SetFieldComparator<Entity> {
 
     /**
      * @return true if the partial entity set fields given by getter are equal to the given entity's fields
+     *
+     * @throws IllegalArgumentException if any arguments are null
      */
     public boolean compare(Entity other, Function<Entity, Stream<NamedField>> fieldGetter) {
+        if (other == null)
+            throw new IllegalArgumentException("The other entity cannot be null");
+
+        if (fieldGetter == null)
+            throw new IllegalArgumentException("Field getter cannot be null");
+
         return fieldGetter.apply(partial)
                 .filter(Field::isSet)
                 .allMatch(field -> fieldGetter.apply(other)
@@ -30,6 +38,9 @@ public class SetFieldComparator<Entity> {
     // CONSTRUCTORS
 
     public SetFieldComparator(Entity partial) {
+        if (partial == null)
+            throw new IllegalArgumentException("Partial entity cannot be null");
+
         this.partial = partial;
     }
 
