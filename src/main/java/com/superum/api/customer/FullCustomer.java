@@ -73,6 +73,12 @@ public class FullCustomer {
 	public boolean hasId() {
 		return id.isSet();
 	}
+    /**
+     * <pre>
+     * Intended to be used when the id field is not set yet, and is retrieved from the database
+     * </pre>
+     * @return a copy of this FullCustomer, with its id replaced by the provided one
+     */
     @JsonIgnore
     public FullCustomer withId(int id) {
         return new FullCustomer(id, getPaymentDay(), getStartDate(), getPaymentValue(), getName(), getPhone(), getWebsite(), getPictureName(), getComment(), getLanguages());
@@ -160,9 +166,37 @@ public class FullCustomer {
     }
 
     /**
+     * @return true if at least one field is set; false otherwise
+     */
+    @JsonIgnore
+    public boolean hasAnyFieldsSet() {
+        return allFields().anyMatch(Field::isSet);
+    }
+
+    /**
      * <pre>
-     * Returns true if all the mandatory fields are set; false otherwise
+     * Languages is not a Customer field, but a field of CustomerLanguages
      * </pre>
+     * @return true if at least one Customer field is set; false otherwise
+     */
+    @JsonIgnore
+    public boolean hasAnyCustomerFieldsSet() {
+        return customerFields().anyMatch(Field::isSet);
+    }
+
+    /**
+     * <pre>
+     * Languages is the only field in CustomerLanguages besides id
+     * </pre>
+     * @return true if at least one CustomerLanguages field is set; false otherwise
+     */
+    @JsonIgnore
+    public boolean hasAnyCustomerLanguagesFieldsSet() {
+        return hasId() || hasLanguages();
+    }
+
+    /**
+     * @return true if all the mandatory fields are set; false otherwise
      */
     @JsonIgnore
     public boolean canBeInserted() {
@@ -171,25 +205,22 @@ public class FullCustomer {
 
     /**
      * <pre>
-     * Returns true if at least one field, other than id or languages, is set; false otherwise
-     *
      * Languages is not a Customer field, but a field of CustomerLanguages
      * </pre>
+     * @return true if at least one field, other than id or languages, is set; false otherwise
      */
     @JsonIgnore
     public boolean canUpdateCustomer() {
-        return allFields.stream()
+        return customerFields()
                 .filter(field -> field != id)
-                .filter(field -> field != languages)
                 .anyMatch(Field::isSet);
     }
 
     /**
      * <pre>
-     * Returns true if languages field is set; false otherwise;
-     *
-     * Languages is the only field in CustomerLanguages
+     * Languages is the only field in CustomerLanguages besides id
      * </pre>
+     * @return true if languages field is set; false otherwise
      */
     @JsonIgnore
     public boolean canUpdateCustomerLanguages() {
@@ -198,8 +229,25 @@ public class FullCustomer {
 
     /**
      * <pre>
-     * Returns a list of names of mandatory fields that are not set
+     * Takes every Customer field that is set in this FullCustomer and checks, if they are equal to the appropriate
+     * fields of given FullCustomer
+     *
+     * Intended to be used during updating, to avoid making a DB query if the fields already have appropriate values
      * </pre>
+     * @return true if all the set Customer fields of this FullCustomer are equal to the given FullCustomer's; false otherwise
+     */
+    public boolean hasEqualSetCustomerFields(FullCustomer other) {
+        return customerFields()
+                .filter(Field::isSet)
+                .allMatch(field -> other.customerFields()
+                        .filter(otherField -> otherField.getFieldName().equals(field.getFieldName()))
+                        .findFirst()
+                        .orElseThrow(() -> new AssertionError("Two different FullCustomer objects should have the same fields!"))
+                        .equals(field));
+    }
+
+    /**
+     * @return a list of names of mandatory fields that are not set
      */
     @JsonIgnore
     public List<String> missingMandatoryFieldNames() {
@@ -209,11 +257,17 @@ public class FullCustomer {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @return Customer part of this FullCustomer
+     */
     @JsonIgnore
     public Customer toCustomer() {
         return new Customer(getId(), getPaymentDay(), getStartDate(), getPaymentValue(), getName(), getPhone(), getWebsite(), getPictureName(), getComment());
     }
 
+    /**
+     * @return CustomerLanguages part of this FullCustomer
+     */
     @JsonIgnore
     public CustomerLanguages toCustomerLanguages() {
         return new CustomerLanguages(getId(), getLanguages());
@@ -223,9 +277,7 @@ public class FullCustomer {
 
 	@Override
 	public String toString() {
-		return allFields.stream()
-                .map(Field::toString)
-                .collect(Collectors.joining(", "));
+		return string;
 	}
 
 	@Override
@@ -243,7 +295,7 @@ public class FullCustomer {
 
 	@Override
 	public int hashCode() {
-        return allFields.hashCode();
+        return hash;
 	}
 
 	// CONSTRUCTORS
@@ -311,18 +363,13 @@ public class FullCustomer {
 
         this.startDate = new JavaSqlDateField(START_DATE_FIELD, startDate, Mandatory.YES);
 
-        List<NamedField> allFields = new ArrayList<>();
-        allFields.add(this.paymentDay);
-        allFields.add(this.paymentValue);
-        allFields.add(this.name);
-        allFields.add(this.phone);
-        allFields.add(this.website);
-        allFields.add(this.languages);
-        allFields.add(this.startDate);
-        allFields.add(this.id);
-        allFields.add(this.pictureName);
-        allFields.add(this.comment);
-        this.allFields = Collections.unmodifiableList(allFields);
+        this.allFields = fieldList();
+        // This class is immutable, and it will almost always be turned into a string at least once (logs); it makes sense to cache the value
+        this.string = allFields()
+                .map(Field::toString)
+                .collect(Collectors.joining(", "));
+        // Caching for hashCode(), just like toString()
+        this.hash = allFields.hashCode();
     }
 
     public FullCustomer(Customer customer, CustomerLanguages languages) {
@@ -337,10 +384,9 @@ public class FullCustomer {
 
     /**
      * <pre>
-     * Creates a new builder which can be used to make any kind of FullCustomer
-     *
      * Intended for updating
      * </pre>
+     * @return a new builder which can be used to make any kind of FullCustomer
      */
     public static Builder newBuilder() {
         return new Builder();
@@ -348,10 +394,9 @@ public class FullCustomer {
 
     /**
      * <pre>
-     * Creates a new builder which creates a FullCustomer that has all its mandatory fields set
-     *
      * Intended for creating
      * </pre>
+     * @return a new builder which creates a FullCustomer that has all its mandatory fields set
      */
     public static PaymentDayStep newRequiredBuilder() {
         return fullCustomer();
@@ -371,9 +416,47 @@ public class FullCustomer {
     private final NamedField<List<String>> languages;
 
     private final List<NamedField> allFields;
+    private final String string;
+    private final int hash;
 
+    /**
+     * <pre>
+     * Probably best to cache this, i.e. use in constructor
+     * </pre>
+     * @return a list of all fields
+     */
+    private List<NamedField> fieldList() {
+        return Collections.unmodifiableList(Arrays.asList(id, paymentDay, startDate, paymentValue, name, phone, website, pictureName, comment, languages));
+    }
+
+    /**
+     * <pre>
+     * Intended to be used by other methods to reduce the call chain
+     * </pre>
+     * @return a stream of all fields
+     */
+    private Stream<NamedField> allFields() {
+        return allFields.stream();
+    }
+
+    /**
+     * <pre>
+     * Intended to be used by other methods to reduce the filtering chain
+     * </pre>
+     * @return a stream of all Customer fields
+     */
+    private Stream<NamedField> customerFields() {
+        return allFields().filter(field -> field != languages);
+    }
+
+    /**
+     * <pre>
+     * Intended to be used by other methods to reduce the filtering chain
+     * </pre>
+     * @return a stream of all mandatory fields
+     */
     private Stream<NamedField> mandatoryFields() {
-        return allFields.stream().filter(MaybeField::isMandatory);
+        return allFields().filter(MaybeField::isMandatory);
     }
 
     private static final int NAME_SIZE_LIMIT = 30;
