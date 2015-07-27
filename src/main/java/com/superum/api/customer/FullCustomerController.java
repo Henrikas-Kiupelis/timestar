@@ -32,7 +32,7 @@ public class FullCustomerController {
             throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
 
         if (customer == null)
-            throw new InvalidRequestException("Customer cannot have null value");
+            throw new InvalidRequestException("Customer cannot be null");
 
         LOG.info("User {} is creating FullCustomer {}", user, customer);
 
@@ -68,7 +68,7 @@ public class FullCustomerController {
             throw new UnauthorizedRequestException("Missing auth token for request to update a customer.");
 
         if (customer == null)
-            throw new InvalidRequestException("Customer cannot have null value");
+            throw new InvalidRequestException("Customer cannot be null");
 
         LOG.info("User {} is updating FullCustomer {}", user, customer);
 
@@ -105,29 +105,27 @@ public class FullCustomerController {
         if (user == null)
             throw new UnauthorizedRequestException("Missing auth token for request to read customers for teacher.");
 
+        if (teacherId <= 0)
+            throw new InvalidRequestException("Teachers can only have positive ids, not " + teacherId);
+
         /**
          * Defaults are set up below rather than in annotation because otherwise
          *
          *      ...?page=&per_page=
          *
-         * would cause an exception instead of using default values; this is fixed by:
+         * would cause a NumberFormatException instead of using default values; this is fixed by:
          * 1) setting the field to Integer rather than int, causing empty param to default to null rather than
          *    fail to parse an empty string;
          * 2) since null would now be a valid value, it would no longer be overridden by @RequestParam(defaultValue)
          *    and would instead propagate down;
          */
-        if (page == null)
-            page = DEFAULT_PAGE;
+        page = ensurePageNotNull(page);
         page--; //Pages start with 1 in the URL, but start with 0 in the app logic
-
-        if (per_page == null)
-            per_page = DEFAULT_PER_PAGE;
-
-        if (teacherId <= 0)
-            throw new InvalidRequestException("Teachers can only have positive ids, not " + teacherId);
 
         if (page < 0)
             throw new InvalidRequestException("Pages can only be positive, not " + (page + 1));
+
+        per_page = ensurePerPageNotNull(per_page);
 
         if (per_page <= 0 || per_page > 100)
             throw new InvalidRequestException("You can only request 1-100 items per page, not " + per_page);
@@ -155,21 +153,19 @@ public class FullCustomerController {
          *
          *      ...?page=&per_page=
          *
-         * would cause an exception instead of using default values; this is fixed by:
+         * would cause a NumberFormatException instead of using default values; this is fixed by:
          * 1) setting the field to Integer rather than int, causing empty param to default to null rather than
          *    fail to parse an empty string;
          * 2) since null would now be a valid value, it would no longer be overridden by @RequestParam(defaultValue)
          *    and would instead propagate down;
          */
-        if (page == null)
-            page = DEFAULT_PAGE;
+        page = ensurePageNotNull(page);
         page--; //Pages start with 1 in the URL, but start with 0 in the app logic
-
-        if (per_page == null)
-            per_page = DEFAULT_PER_PAGE;
 
         if (page < 0)
             throw new InvalidRequestException("Pages can only be positive, not " + (page + 1));
+
+        per_page = ensurePerPageNotNull(per_page);
 
         if (per_page <= 0 || per_page > 100)
             throw new InvalidRequestException("You can only request 1-100 items per page, not " + per_page);
@@ -227,6 +223,14 @@ public class FullCustomerController {
 	// PRIVATE
 	
 	private final FullCustomerService fullCustomerService;
+
+    private Integer ensurePageNotNull(Integer page) {
+        return (page == null ? DEFAULT_PAGE : page);
+    }
+
+    private Integer ensurePerPageNotNull(Integer per_page) {
+        return per_page == null ? DEFAULT_PER_PAGE : per_page;
+    }
 
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_PER_PAGE = 25;
