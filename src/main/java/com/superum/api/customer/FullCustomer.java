@@ -240,7 +240,7 @@ public class FullCustomer {
      * @return true if all the set Customer fields of this FullCustomer are equal to the given FullCustomer's; false otherwise
      */
     public boolean hasEqualSetCustomerFields(FullCustomer other) {
-        return new SetFieldComparator<>(FullCustomer::customerFields).compare(this, other);
+        return setFieldComparator.compare(other, FullCustomer::customerFields);
     }
 
     /**
@@ -253,7 +253,7 @@ public class FullCustomer {
      * @return true if all the set CustomerLanguages fields of this FullCustomer are equal to the given FullCustomer's; false otherwise
      */
     public boolean hasEqualSetCustomerLanguagesFields(FullCustomer other) {
-        return new SetFieldComparator<>(FullCustomer::customerLanguagesFields).compare(this, other);
+        return setFieldComparator.compare(other, FullCustomer::customerLanguagesFields);
     }
 
     /**
@@ -380,6 +380,8 @@ public class FullCustomer {
                 .collect(Collectors.joining(", "));
         // Caching for hashCode(), just like toString()
         this.hash = allFields.hashCode();
+
+        this.setFieldComparator = new SetFieldComparator<>(this);
     }
 
     public FullCustomer(Customer customer, CustomerLanguages languages) {
@@ -428,6 +430,8 @@ public class FullCustomer {
     private final List<NamedField> allFields;
     private final String string;
     private final int hash;
+
+    private final SetFieldComparator<FullCustomer> setFieldComparator;
 
     /**
      * <pre>
