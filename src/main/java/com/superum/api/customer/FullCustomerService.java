@@ -6,6 +6,7 @@ import com.superum.exception.DatabaseException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <pre>
@@ -21,10 +22,9 @@ public interface FullCustomerService {
      *
      * The id fields must not be set, but all the other mandatory fields must be set
      *
-     * Returns the created customer with id field now set
-     *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
+     * @return the created customer with id field now set
      *
      * @throws InvalidRequestException if customer is null
      * @throws InvalidCustomerException if id field was set or a mandatory field was not set
@@ -38,6 +38,7 @@ public interface FullCustomerService {
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
+     * @return customer that was read
      *
      * @throws InvalidRequestException if id is illegal (<=0)
      * @throws CustomerNotFoundException if no customer with this id exists
@@ -51,10 +52,9 @@ public interface FullCustomerService {
      *
      * The id fields must be set, and at least one more field must be set
      *
-     * Returns the customer data before update, as if read(customerId) was called before updating
-     *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
+     * @return the customer data before update, as if read(customerId) was called before updating
      *
      * @throws InvalidRequestException if customer is null
      * @throws InvalidCustomerException if id field was not set, or no other fields were set
@@ -67,10 +67,9 @@ public interface FullCustomerService {
      * <pre>
      * Deletes a customer with specified id
      *
-     * The deleted customer data is returned, as if read(customerId) was called before deleting
-     *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
+     * @return the deleted customer data, as if read(customerId) was called before deleting
      *
      * @throws InvalidRequestException if id is illegal (<=0)
      * @throws CustomerNotFoundException if no customer with this id exists
@@ -93,6 +92,7 @@ public interface FullCustomerService {
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
+     * @return customers that were read
      *
      * @throws InvalidRequestException if id is illegal (<=0)
      * @throws InvalidRequestException if page is illegal (<0)
@@ -110,6 +110,7 @@ public interface FullCustomerService {
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
+     * @return customers that were read
      *
      * @throws InvalidRequestException if id is illegal (<=0)
      * @throws InvalidRequestException if page is illegal (<0)
@@ -120,7 +121,7 @@ public interface FullCustomerService {
 
     /**
      * <pre>
-     * Returns the total amount of customers for a teacher with specified id right now;
+     * Counts the total amount of customers for a teacher with specified id right now;
      *
      * Customers are chosen in the following manner:
      * 1) Customers have students;
@@ -131,6 +132,7 @@ public interface FullCustomerService {
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
+     * @return count of customers for a teacher with specified id
      *
      * @throws TeacherNotFoundException if no teacher with this id exists
      * @throws DatabaseException if database error occurred
@@ -139,17 +141,34 @@ public interface FullCustomerService {
 
     /**
      * <pre>
-     * Returns the total amount of customers right now;
+     * Counts the total amount of customers right now;
      *
      * This number MUST NOT be used to reason about customerId - it is entirely possible some ids are missing, i.e.
      * due to deletion.
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
+     * @return total count of customers
      *
      * @throws DatabaseException if database error occurred
      */
     int countAll(int partitionId);
+
+    /**
+     * <pre>
+     * Checks if a Customer exists
+     *
+     * The check is made by using all the set fields (Languages field is ignored)
+     *
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
+     * </pre>
+     * @return customer, if it exists
+     *
+     * @throws InvalidRequestException if customer is null
+     * @throws InvalidCustomerException if customer has no fields set (ignoring languages)
+     * @throws DatabaseException if database error occurred
+     */
+    Optional<FullCustomer> exists(FullCustomer customer, int partitionId);
 
 
 }

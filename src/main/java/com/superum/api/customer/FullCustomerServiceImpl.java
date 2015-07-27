@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FullCustomerServiceImpl implements FullCustomerService {
@@ -18,7 +19,7 @@ public class FullCustomerServiceImpl implements FullCustomerService {
     @Override
     public FullCustomer createCustomer(FullCustomer fullCustomer, int partitionId) {
         if (fullCustomer == null)
-            throw new InvalidRequestException("Customer cannot have null value");
+            throw new InvalidRequestException("Customer cannot be null");
 
         if (fullCustomer.hasId())
             throw new InvalidCustomerException("Provided customer has its id set; please unset it or use /update instead!");
@@ -29,7 +30,6 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         LOG.debug("Creating new customer: {}", fullCustomer);
 
         Customer insertedCustomer = customerService.addCustomer(fullCustomer.toCustomer(), partitionId);
-
         FullCustomer insertedFullCustomer = fullCustomer.withId(insertedCustomer.getId());
         customerLanguagesService.addLanguagesToCustomerContract(insertedFullCustomer.toCustomerLanguages(), partitionId);
         LOG.debug("Customer created: {}", insertedFullCustomer);
@@ -42,7 +42,7 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         if (customerId <= 0)
             throw new InvalidRequestException("Customers can only have positive ids, not " + customerId);
 
-        LOG.debug("Reading customer by id: {}", customerId);
+        LOG.debug("Reading customer with id: {}", customerId);
 
         Customer customer = customerService.findCustomer(customerId, partitionId);
         CustomerLanguages customerLanguages = customerLanguagesService.getLanguagesForCustomerContract(customerId, partitionId);
@@ -55,11 +55,23 @@ public class FullCustomerServiceImpl implements FullCustomerService {
     @Override
     public FullCustomer updateCustomer(FullCustomer customer, int partitionId) {
         if (customer == null)
-            throw new InvalidRequestException("Customer cannot have null value");
+            throw new InvalidRequestException("Customer cannot be null");
 
+        if (!customer.hasId())
+            throw new InvalidCustomerException("Provided customer doesn't have its id set; please set it or use /create instead!");
 
+        if (!customer.canUpdateCustomerLanguages() && !customer.canUpdateCustomer())
+            throw new InvalidCustomerException("Provided customer only has its id set; to update this customer, set additional fields!");
 
-        return null;
+        LOG.debug("Updating customer: {}",  customer);
+
+        FullCustomer oldCustomer = readCustomer(customer.getId(), partitionId);
+        if (!customer.hasEqualSetCustomerFields(oldCustomer))
+            fullCustomerQueries.updatePartial(customer, partitionId);
+
+        LOG.debug("Customer has been updated; before update: {}", oldCustomer);
+
+        return oldCustomer;
     }
 
     @Override
@@ -67,7 +79,13 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         if (customerId <= 0)
             throw new InvalidRequestException("Customers can only have positive ids, not " + customerId);
 
-        return null;
+        LOG.debug("Deleting customer with id: {}", customerId);
+
+        FullCustomer deletedCustomer = readCustomer(customerId, partitionId);
+        fullCustomerQueries.safeDelete(customerId, partitionId);
+        LOG.debug("Customer has been deleted: {}", deletedCustomer);
+
+        return deletedCustomer;
     }
 
     @Override
@@ -81,7 +99,12 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         if (amount <= 0 || amount > 100)
             throw new InvalidRequestException("You can only request 1-100 items per page, not " + amount);
 
-        return null;
+        LOG.debug("Reading customers for teacher with id {}; page {}, amount {}", teacherId, page, amount);
+
+        List<FullCustomer> customers = fullCustomerQueries.readCustomersForTeacher(teacherId, page, amount, partitionId);
+        LOG.debug("Customers retrieved: {}", customers);
+
+        return customers;
     }
 
     @Override
@@ -92,7 +115,12 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         if (amount <= 0 || amount > 100)
             throw new InvalidRequestException("You can only request 1-100 items per page, not " + amount);
 
-        return null;
+        LOG.debug("Reading all customers; page {}, amount {}", page, amount);
+
+        List<FullCustomer> customers = fullCustomerQueries.readCustomersAll(page, amount, partitionId);
+        LOG.debug("Customers retrieved: {}", customers);
+
+        return customers;
     }
 
     @Override
@@ -100,12 +128,35 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         if (teacherId <= 0)
             throw new InvalidRequestException("Teachers can only have positive ids, not " + teacherId);
 
-        return 0;
+        int count = fullCustomerQueries.countForTeacher(teacherId, partitionId);
+        LOG.debug("Teacher with id {} has {} customers", teacherId, count);
+
+        return count;
     }
 
     @Override
     public int countAll(int partitionId) {
-        return 0;
+        int count = fullCustomerQueries.count(partitionId);
+        LOG.debug("There are a total of {} customers", count);
+
+        return count;
+    }
+
+    @Override
+    public Optional<FullCustomer> exists(FullCustomer customer, int partitionId) {
+        if (customer == null)
+            throw new InvalidRequestException("Customer cannot have null value");
+
+        if (!customer.hasAnyCustomerFieldsSet())
+            throw new InvalidCustomerException("Provided customer does not have any fields set, so checking if it exists is impossible");
+
+        LOG.debug("Checking if a customer exists: {}", customer);
+
+        Optional<FullCustomer> existingCustomer = fullCustomerQueries.exists(customer, partitionId)
+                .map(customerId -> readCustomer(customerId, partitionId));
+        LOG.debug("Found customer: {}", existingCustomer.orElse(null));
+
+        return existingCustomer;
     }
 
     // CONSTRUCTORS
