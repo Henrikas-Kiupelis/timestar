@@ -15,9 +15,9 @@ import java.util.stream.Stream;
 public class SetFieldComparator<Entity> {
 
     /**
-     * @return true if the
+     * @return true if the partial entity set fields given by getter are equal to the given entity's fields
      */
-    public boolean compare(Entity partial, Entity other) {
+    public boolean compare(Entity other, Function<Entity, Stream<NamedField>> fieldGetter) {
         return fieldGetter.apply(partial)
                 .filter(Field::isSet)
                 .allMatch(field -> fieldGetter.apply(other)
@@ -29,12 +29,12 @@ public class SetFieldComparator<Entity> {
 
     // CONSTRUCTORS
 
-    public SetFieldComparator(Function<Entity, Stream<NamedField>> fieldGetter) {
-        this.fieldGetter = fieldGetter;
+    public SetFieldComparator(Entity partial) {
+        this.partial = partial;
     }
 
     // PRIVATE
 
-    private final Function<Entity, Stream<NamedField>> fieldGetter;
+    private final Entity partial;
 
 }
