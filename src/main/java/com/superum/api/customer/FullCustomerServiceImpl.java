@@ -66,7 +66,7 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         LOG.debug("Updating customer: {}",  customer);
 
         FullCustomer oldCustomer = readCustomer(customer.getId(), partitionId);
-        if (!customer.hasEqualSetCustomerFields(oldCustomer))
+        if (!customer.hasEqualSetCustomerFields(oldCustomer) || !customer.hasEqualSetCustomerLanguagesFields(oldCustomer))
             fullCustomerQueries.updatePartial(customer, partitionId);
 
         LOG.debug("Customer has been updated; before update: {}", oldCustomer);
