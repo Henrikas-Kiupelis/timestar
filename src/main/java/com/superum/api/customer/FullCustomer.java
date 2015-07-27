@@ -75,6 +75,13 @@ public class FullCustomer {
 		return id.isSet();
 	}
     /**
+     * @return true if only id field is set; false otherwise
+     */
+    @JsonIgnore
+    public boolean hasOnlyId() {
+        return hasId() && allFields().filter(field -> field != id).noneMatch(Field::isSet);
+    }
+    /**
      * <pre>
      * Intended to be used when the id field is not set yet, and is retrieved from the database
      * </pre>
