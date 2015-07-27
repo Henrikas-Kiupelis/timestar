@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.lang.CustomerLanguages;
 import com.superum.fields.*;
+import com.superum.helper.SetFieldComparator;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -192,7 +193,7 @@ public class FullCustomer {
      */
     @JsonIgnore
     public boolean hasAnyCustomerLanguagesFieldsSet() {
-        return hasId() || hasLanguages();
+        return customerLanguagesFields().anyMatch(Field::isSet);
     }
 
     /**
@@ -224,7 +225,9 @@ public class FullCustomer {
      */
     @JsonIgnore
     public boolean canUpdateCustomerLanguages() {
-        return hasLanguages();
+        return customerLanguagesFields()
+                .filter(field -> field != id)
+                .anyMatch(Field::isSet);
     }
 
     /**
@@ -237,13 +240,20 @@ public class FullCustomer {
      * @return true if all the set Customer fields of this FullCustomer are equal to the given FullCustomer's; false otherwise
      */
     public boolean hasEqualSetCustomerFields(FullCustomer other) {
-        return customerFields()
-                .filter(Field::isSet)
-                .allMatch(field -> other.customerFields()
-                        .filter(otherField -> otherField.getFieldName().equals(field.getFieldName()))
-                        .findFirst()
-                        .orElseThrow(() -> new AssertionError("Two different FullCustomer objects should have the same fields!"))
-                        .equals(field));
+        return new SetFieldComparator<>(FullCustomer::customerFields).compare(this, other);
+    }
+
+    /**
+     * <pre>
+     * Takes every CustomerLanguages field that is set in this FullCustomer and checks, if they are equal to the appropriate
+     * fields of given FullCustomer
+     *
+     * Intended to be used during updating, to avoid making a DB query if the fields already have appropriate values
+     * </pre>
+     * @return true if all the set CustomerLanguages fields of this FullCustomer are equal to the given FullCustomer's; false otherwise
+     */
+    public boolean hasEqualSetCustomerLanguagesFields(FullCustomer other) {
+        return new SetFieldComparator<>(FullCustomer::customerLanguagesFields).compare(this, other);
     }
 
     /**
@@ -447,6 +457,16 @@ public class FullCustomer {
      */
     private Stream<NamedField> customerFields() {
         return allFields().filter(field -> field != languages);
+    }
+
+    /**
+     * <pre>
+     * Intended to be used by other methods to reduce the filtering chain
+     * </pre>
+     * @return a stream of all CustomerLanguages fields
+     */
+    private Stream<NamedField> customerLanguagesFields() {
+        return Arrays.<NamedField>asList(id, languages).stream();
     }
 
     /**

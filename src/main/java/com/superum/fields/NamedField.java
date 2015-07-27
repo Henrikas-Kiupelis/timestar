@@ -16,6 +16,10 @@ public abstract class NamedField<T> extends MaybeField<T> {
         return fieldName;
     }
 
+    public final boolean equalsName(NamedField other) {
+        return this.getFieldName().equals(other.getFieldName());
+    }
+
     @Override
     public final String toString() {
         return fieldName + ": " + getValue();
@@ -25,6 +29,8 @@ public abstract class NamedField<T> extends MaybeField<T> {
 
     public NamedField(String fieldName, Mandatory mandatory) {
         super(mandatory);
+        if (fieldName == null)
+            throw new IllegalArgumentException("Null not allowed for defining field name");
         this.fieldName = fieldName;
     }
 
