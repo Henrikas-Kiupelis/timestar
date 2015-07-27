@@ -5,6 +5,7 @@ import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.jooq.TableField;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,10 @@ public class QuickForeignKeyUsageChecker<ID> {
 
     // CONSTRUCTORS
 
+    public static <ID> DSLContextStep<ID> newRequiredBuilder(Class<ID> clazz) {
+        return new Builder<>();
+    }
+
     private QuickForeignKeyUsageChecker(DSLContext sql, Set<TableField<?, ID>> foreignKeys, Set<TableField<?, Integer>> partitionFields) {
         if (sql == null)
             throw new IllegalArgumentException("DSLContext cannot be null");
@@ -68,5 +73,45 @@ public class QuickForeignKeyUsageChecker<ID> {
     private final Set<Table<?>> tables;
     private final Set<TableField<?, ID>> foreignKeys;
     private final Set<TableField<?, Integer>> partitionFields;
+
+    // BUILDER
+
+    public interface DSLContextStep<ID> {
+        BuildStep<ID> withDSLContext(DSLContext sql);
+    }
+
+    public interface BuildStep<ID> {
+        BuildStep<ID> add(TableField<?, ID> foreignKey, TableField<?, Integer> partitionField);
+        QuickForeignKeyUsageChecker<ID> build();
+    }
+
+    public static final class Builder<ID> implements DSLContextStep<ID>, BuildStep<ID> {
+
+        @Override
+        public BuildStep<ID> withDSLContext(DSLContext sql) {
+            this.sql = sql;
+            return this;
+        }
+
+        @Override
+        public BuildStep<ID> add(TableField<?, ID> foreignKey, TableField<?, Integer> partitionField) {
+            foreignKeys.add(foreignKey);
+            partitionFields.add(partitionField);
+            return this;
+        }
+
+        @Override
+        public QuickForeignKeyUsageChecker<ID> build() {
+            return new QuickForeignKeyUsageChecker<>(sql, foreignKeys, partitionFields);
+        }
+
+        // PRIVATE
+
+        private DSLContext sql;
+        private final Set<TableField<?, ID>> foreignKeys = new HashSet<>();
+        private final Set<TableField<?, Integer>> partitionFields = new HashSet<>();
+
+
+    }
 
 }
