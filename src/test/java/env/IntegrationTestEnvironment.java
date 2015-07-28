@@ -47,7 +47,7 @@ public abstract class IntegrationTestEnvironment {
         return TOKEN_HEADER;
     }
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(IntegrationTestEnvironment.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(IntegrationTestEnvironment.class);
 
     // PRIVATE
 

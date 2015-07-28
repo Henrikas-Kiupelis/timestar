@@ -29,7 +29,6 @@ public class CustomerLanguagesDAOImpl implements CustomerLanguagesDAO {
             for (String language : languageList)
                 step = step.values(partitionId, customerId, language);
 
-
             step.execute();
             return languages;
         } catch (DataAccessException e) {

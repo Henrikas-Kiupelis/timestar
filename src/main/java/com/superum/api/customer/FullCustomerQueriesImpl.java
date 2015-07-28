@@ -251,7 +251,7 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
             return teacherQuickDAO.existsQuick(teacherId, partitionId);
         }
 
-        return false; // TODO - implement with a full teacher builder
+        return true; // TODO - implement with a full teacher builder
     }
 
     /**

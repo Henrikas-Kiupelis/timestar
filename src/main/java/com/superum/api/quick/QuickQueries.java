@@ -3,7 +3,11 @@ package com.superum.api.quick;
 import com.superum.helper.QuickForeignKeyUsageChecker;
 import com.superum.helper.QuickIdExistenceChecker;
 import org.jooq.Record;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+@Repository
+@Transactional
 public abstract class QuickQueries<TableRecord extends Record, ID> {
 
     /**

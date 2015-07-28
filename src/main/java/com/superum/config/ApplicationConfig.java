@@ -1,6 +1,8 @@
 package com.superum.config;
 
 import com.superum.api.customer.*;
+import com.superum.api.teacher.FullTeacherDAO;
+import com.superum.api.teacher.FullTeacherDAOImpl;
 import com.superum.db.account.*;
 import com.superum.db.account.roles.AccountRolesDAO;
 import com.superum.db.account.roles.AccountRolesDAOImpl;
@@ -38,12 +40,17 @@ public class ApplicationConfig {
 
     @Bean
     public FullCustomerService fullCustomerService() {
-        return new FullCustomerServiceImpl(fullCustomerQueries());
+        return new FullCustomerServiceImpl(fullCustomerQueries(), customerService(), customerLanguagesService());
     }
 
     @Bean
     public FullCustomerQueries fullCustomerQueries() {
-        return new FullCustomerQueriesImpl(persistenceContext.dsl());
+        return new FullCustomerQueriesImpl(persistenceContext.dsl(), customerLanguagesDAO(), fullTeacherDAO());
+    }
+
+    @Bean
+    public FullTeacherDAO fullTeacherDAO() {
+        return new FullTeacherDAOImpl(persistenceContext.dsl());
     }
 
     @Bean
