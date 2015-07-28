@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FullCustomerServiceImpl implements FullCustomerService {
@@ -143,7 +142,7 @@ public class FullCustomerServiceImpl implements FullCustomerService {
     }
 
     @Override
-    public Optional<FullCustomer> exists(FullCustomer customer, int partitionId) {
+    public FullCustomer exists(FullCustomer customer, int partitionId) {
         if (customer == null)
             throw new InvalidRequestException("Customer cannot have null value");
 
@@ -152,9 +151,9 @@ public class FullCustomerServiceImpl implements FullCustomerService {
 
         LOG.debug("Checking if a customer exists: {}", customer);
 
-        Optional<FullCustomer> existingCustomer = fullCustomerQueries.exists(customer, partitionId)
-                .map(customerId -> readCustomer(customerId, partitionId));
-        LOG.debug("Found customer: {}", existingCustomer.orElse(null));
+        int customerId = fullCustomerQueries.exists(customer, partitionId);
+        FullCustomer existingCustomer = readCustomer(customerId, partitionId);
+        LOG.debug("Found customer: {}", existingCustomer);
 
         return existingCustomer;
     }
