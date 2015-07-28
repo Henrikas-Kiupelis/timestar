@@ -23,16 +23,16 @@ role VARCHAR(60) NOT NULL,
 FOREIGN KEY(username) REFERENCES account(username));
 
 INSERT INTO partitions (id, name)
-VALUES (1, "COTEM");
+VALUES (1, 'COTEM');
 
 INSERT INTO account (username, password, account_type, id) 
-VALUES ("1.goodlike", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", "ADMIN", 0);
+VALUES ('1.goodlike', '$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.', 'ADMIN', 0);
 
 INSERT INTO roles (username, role) 
-VALUES ("1.goodlike", "ROLE_ADMIN");
+VALUES ('1.goodlike', 'ROLE_ADMIN');
 
 INSERT INTO roles (username, role) 
-VALUES ("1.goodlike", "ROLE_TEACHER");
+VALUES ('1.goodlike', 'ROLE_TEACHER');
 
 CREATE TABLE teacher ( 
 partition_id INT NOT NULL, 
