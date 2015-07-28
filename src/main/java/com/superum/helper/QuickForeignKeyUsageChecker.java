@@ -5,7 +5,8 @@ import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.jooq.TableField;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,13 +30,9 @@ public class QuickForeignKeyUsageChecker<ID> {
         return sql.fetchExists(
                 sql.selectOne()
                         .from(tables)
-                        .where(foreignKeys.stream()
-                                .map(field -> field.eq(id))
-                                .reduce(Condition::and)
-                                .orElseThrow(() -> new AssertionError("At least one field should have been provided to the checker!")))
-                        .and(partitionFields.stream()
-                                .map(field -> field.eq(partitionId))
-                                .reduce(Condition::and)
+                        .where(foreignKeysAndPartitions.entrySet().stream()
+                                .map(entry -> entry.getKey().eq(id).and(entry.getValue().eq(partitionId)))
+                                .reduce(Condition::or)
                                 .orElseThrow(() -> new AssertionError("At least one field should have been provided to the checker!"))));
     }
 
@@ -45,34 +42,32 @@ public class QuickForeignKeyUsageChecker<ID> {
         return new Builder<>();
     }
 
-    private QuickForeignKeyUsageChecker(DSLContext sql, Set<TableField<?, ID>> foreignKeys, Set<TableField<?, Integer>> partitionFields) {
+    private QuickForeignKeyUsageChecker(DSLContext sql, Map<TableField<?, ID>, TableField<?, Integer>> foreignKeysAndPartitions) {
         if (sql == null)
             throw new IllegalArgumentException("DSLContext cannot be null");
 
-        if (foreignKeys == null || partitionFields == null || foreignKeys.size() < 1)
+        if (foreignKeysAndPartitions == null || foreignKeysAndPartitions.values().size() < 1)
             throw new IllegalArgumentException("You must provide at least a single field to the checker!");
 
-        this.tables = foreignKeys.stream()
+        this.tables = foreignKeysAndPartitions.keySet().stream()
                 .map(TableField::getTable)
                 .collect(Collectors.toSet());
 
-        if (!partitionFields.stream()
+        if (!foreignKeysAndPartitions.values().stream()
                 .map(TableField::getTable)
                 .collect(Collectors.toSet())
                 .equals(tables))
             throw new IllegalArgumentException("For every table containing a foreign key, a partition id field must be provided");
 
         this.sql = sql;
-        this.foreignKeys = foreignKeys;
-        this.partitionFields = partitionFields;
+        this.foreignKeysAndPartitions = foreignKeysAndPartitions;
     }
 
     // PRIVATE
 
     private final DSLContext sql;
     private final Set<Table<?>> tables;
-    private final Set<TableField<?, ID>> foreignKeys;
-    private final Set<TableField<?, Integer>> partitionFields;
+    private final Map<TableField<?, ID>, TableField<?, Integer>> foreignKeysAndPartitions;
 
     // BUILDER
 
@@ -95,22 +90,19 @@ public class QuickForeignKeyUsageChecker<ID> {
 
         @Override
         public BuildStep<ID> add(TableField<?, ID> foreignKey, TableField<?, Integer> partitionField) {
-            foreignKeys.add(foreignKey);
-            partitionFields.add(partitionField);
+            foreignKeysAndPartitions.put(foreignKey, partitionField);
             return this;
         }
 
         @Override
         public QuickForeignKeyUsageChecker<ID> build() {
-            return new QuickForeignKeyUsageChecker<>(sql, foreignKeys, partitionFields);
+            return new QuickForeignKeyUsageChecker<>(sql, foreignKeysAndPartitions);
         }
 
         // PRIVATE
 
         private DSLContext sql;
-        private final Set<TableField<?, ID>> foreignKeys = new HashSet<>();
-        private final Set<TableField<?, Integer>> partitionFields = new HashSet<>();
-
+        private final Map<TableField<?, ID>, TableField<?, Integer>> foreignKeysAndPartitions = new HashMap<>();
 
     }
 
