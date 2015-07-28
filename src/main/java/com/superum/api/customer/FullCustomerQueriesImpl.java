@@ -1,6 +1,7 @@
 package com.superum.api.customer;
 
 import com.superum.api.exception.InvalidRequestException;
+import com.superum.db.customer.Customer;
 import com.superum.db.customer.lang.CustomerLanguagesDAO;
 import com.superum.db.generated.timestar.tables.records.CustomerRecord;
 import com.superum.exception.DatabaseException;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.superum.db.generated.timestar.Keys.STUDENT_IBFK_1;
+import static com.superum.db.generated.timestar.Keys.STUDENT_IBFK_2;
 import static com.superum.db.generated.timestar.Tables.*;
 
 @Repository
@@ -98,7 +101,17 @@ public class FullCustomerQueriesImpl implements FullCustomerQueries {
             throw new UnsafeCustomerDeleteException("Cannot delete customer with " + customerId +
                     " while it still has entries in other tables");
 
+        try {
+            sql.delete(CUSTOMER_LANG)
+                    .where(idAndPartition(customerId, partitionId))
+                    .execute();
 
+            sql.delete(CUSTOMER)
+                    .where(idAndPartition(customerId, partitionId))
+                    .execute();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to delete customer with id " + customerId, e);
+        }
     }
 
     @Override
@@ -112,8 +125,22 @@ public class FullCustomerQueriesImpl implements FullCustomerQueries {
         if (amount <= 0 || amount > 100)
             throw new InvalidRequestException("You can only request 1-100 items per page, not " + amount);
 
+        try {
+            List<Customer> customerList = sql.select(CUSTOMER.fields())
+                    .from(CUSTOMER)
+                    .join(STUDENT).onKey(STUDENT_IBFK_2)
+                    .join(STUDENT_GROUP).onKey(STUDENT_IBFK_1)
+                    .where(STUDENT_GROUP.TEACHER_ID.eq(teacherId)
+                            .and(CUSTOMER.PARTITION_ID.eq(partitionId)))
+                    .groupBy(CUSTOMER.ID)
+                    .orderBy(CUSTOMER.ID)
+                    .fetch()
+                    .map(Customer::valueOf);
 
-        return null;
+
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to read all customers for teacher with id " + teacherId, e);
+        }
     }
 
     @Override
@@ -153,7 +180,6 @@ public class FullCustomerQueriesImpl implements FullCustomerQueries {
         existenceChecker = new QuickIdExistenceChecker<>(sql, CUSTOMER.ID, CUSTOMER.PARTITION_ID);
         foreignKeyUsageChecker = QuickForeignKeyUsageChecker.newRequiredBuilder(Integer.class)
                 .withDSLContext(sql)
-                .add(CUSTOMER_LANG.CUSTOMER_ID, CUSTOMER_LANG.PARTITION_ID)
                 .add(STUDENT.CUSTOMER_ID, STUDENT.PARTITION_ID)
                 .build();
     }
