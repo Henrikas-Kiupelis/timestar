@@ -8,6 +8,7 @@ import com.superum.db.customer.Customer;
 import com.superum.db.customer.lang.CustomerLanguages;
 import com.superum.fields.*;
 import com.superum.helper.SetFieldComparator;
+import org.jooq.Record;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.superum.api.customer.FullCustomer.RequiredBuilder.fullCustomer;
+import static com.superum.db.generated.timestar.Tables.CUSTOMER;
+import static com.superum.db.generated.timestar.Tables.CUSTOMER_LANG;
+import static com.superum.utils.MySQLUtils.MYSQL_GROUP_CONCAT_SEPARATOR;
 import static com.superum.utils.ValidationUtils.*;
 
 /**
@@ -399,6 +403,24 @@ public class FullCustomer {
         this(customer.getId(), customer.getPaymentDay(), customer.getStartDate(), customer.getPaymentValue(),
                 customer.getName(), customer.getPhone(), customer.getWebsite(), customer.getPictureName(),
                 customer.getComment(), languages);
+    }
+
+    public static FullCustomer valueOf(Record record) {
+        if (record == null)
+            return null;
+
+        return newRequiredBuilder()
+                .withPaymentDay(record.getValue(CUSTOMER.PAYMENT_DAY))
+                .withStartDate(record.getValue(CUSTOMER.START_DATE))
+                .withPaymentValue(record.getValue(CUSTOMER.PAYMENT_VALUE))
+                .withName(record.getValue(CUSTOMER.NAME))
+                .withPhone(record.getValue(CUSTOMER.PHONE))
+                .withWebsite(record.getValue(CUSTOMER.WEBSITE))
+                .withLanguages(record.getValue(CUSTOMER_LANG.LANGUAGE_LEVEL).split(MYSQL_GROUP_CONCAT_SEPARATOR))
+                .withId(record.getValue(CUSTOMER.ID))
+                .withComment(record.getValue(CUSTOMER.COMMENT_ABOUT))
+                .withPictureName(record.getValue(CUSTOMER.PICTURE_NAME))
+                .build();
     }
 
     /**

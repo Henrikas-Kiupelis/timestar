@@ -6,7 +6,6 @@ import com.superum.exception.DatabaseException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * <pre>
@@ -32,9 +31,10 @@ public interface FullCustomerQueries {
      *
      * @throws InvalidRequestException if customer is null
      * @throws InvalidCustomerException if customer has no fields set (ignoring languages)
+     * @throws CustomerNotFoundException if given customer cannot be found
      * @throws DatabaseException if database error occurred
      */
-    Optional<Integer> exists(FullCustomer customer, int partitionId);
+    int exists(FullCustomer customer, int partitionId);
 
     /**
      * <pre>
