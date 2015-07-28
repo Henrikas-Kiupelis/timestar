@@ -212,6 +212,21 @@ public class FullCustomerController {
 
         return count;
     }
+
+    @RequestMapping(value = "/exists", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
+    @ResponseBody
+    public FullCustomer customerExists(Principal user, @RequestBody FullCustomer customer) {
+        if (user == null)
+            throw new UnauthorizedRequestException("Missing auth token for request to check if customer exists.");
+
+        LOG.info("User {} is checking if customer {} exists", user, customer);
+
+        int partitionId = PrincipalUtils.partitionId(user);
+        FullCustomer existingCustomer = fullCustomerService.exists(customer, partitionId);
+        LOG.info("Customer retrieved: {}", existingCustomer);
+
+        return existingCustomer;
+    }
 	
 	// CONSTRUCTORS
 	

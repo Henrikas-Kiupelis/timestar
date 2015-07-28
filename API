@@ -172,6 +172,23 @@ Customer API:
 
     It shouldn't fail under normal circumstances;
 
+9)
+    POST  customer/exists
+    BODY  com.superum.api.customer.FullCustomer
+    RET   com.superum.api.customer.FullCustomer
+
+    Checks if a customer with specified bounds exists;
+    The simplest use case is to check if a user with a particular id exists, or checking if a certain user's
+    fields are set to some value;
+    The languages field is ignored in this method, so don't bother setting it
+
+    It will fail if:
+    a) HTTP 400; no fields were set;
+    b) HTTP 404; no customers for given fields were found;
+
+    Returned FullCustomer is any single customer that match all the criteria. The only scenario where uniqueness is
+    guaranteed is when the id field is set.
+
 Teacher API:
 
 
