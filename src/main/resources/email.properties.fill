@@ -1,4 +1,5 @@
 // ----------------------------------------------FILL USERNAME----------------------------------------------------
-email.username =
+// no need for @gmail.com or similar
+email.username = change.me
 // ----------------------------------------------FILL PASSWORD----------------------------------------------------
-email.password =
+email.password = password

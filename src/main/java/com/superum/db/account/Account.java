@@ -2,6 +2,7 @@ package com.superum.db.account;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -13,6 +14,7 @@ import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.ACCOUNT;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
 
 	// PUBLIC API

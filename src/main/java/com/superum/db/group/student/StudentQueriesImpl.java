@@ -1,15 +1,17 @@
 package com.superum.db.group.student;
 
-import static com.superum.db.generated.timestar.Tables.STUDENT;
-import static com.superum.db.generated.timestar.Tables.LESSON_ATTENDANCE;
-import static com.superum.db.generated.timestar.Keys.LESSON_ATTENDANCE_IBFK_2;
-
-import java.util.List;
-
+import com.superum.exception.DatabaseException;
 import org.jooq.DSLContext;
+import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.superum.db.generated.timestar.Keys.LESSON_ATTENDANCE_IBFK_2;
+import static com.superum.db.generated.timestar.Tables.LESSON_ATTENDANCE;
+import static com.superum.db.generated.timestar.Tables.STUDENT;
 
 @Repository
 @Transactional
@@ -17,15 +19,19 @@ public class StudentQueriesImpl implements StudentQueries {
 	
 	@Override
 	public List<Student> readAllForLesson(long lessonId, int partitionId) {
-		return sql.select(STUDENT.fields())
-				.from(STUDENT)
-				.join(LESSON_ATTENDANCE).onKey(LESSON_ATTENDANCE_IBFK_2)
-				.where(LESSON_ATTENDANCE.LESSON_ID.eq(lessonId)
-						.and(STUDENT.PARTITION_ID.eq(partitionId)))
-				.groupBy(STUDENT.ID)
-				.orderBy(STUDENT.ID)
-				.fetch()
-				.map(Student::valueOf);
+		try {
+            return sql.select(STUDENT.fields())
+                    .from(STUDENT)
+                    .join(LESSON_ATTENDANCE).onKey(LESSON_ATTENDANCE_IBFK_2)
+                    .where(LESSON_ATTENDANCE.LESSON_ID.eq(lessonId)
+                            .and(STUDENT.PARTITION_ID.eq(partitionId)))
+                    .groupBy(STUDENT.ID)
+                    .orderBy(STUDENT.ID)
+                    .fetch()
+                    .map(Student::valueOf);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to read all students for lesson with id " + lessonId, e);
+        }
 	}
 	
 	// CONSTRUCTORS

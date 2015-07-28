@@ -1,16 +1,17 @@
 package com.superum.db.partition;
 
-import static com.superum.db.generated.timestar.Tables.PARTITIONS;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jooq.Record;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.StringUtils;
+import java.util.Objects;
 
+import static com.superum.db.generated.timestar.Tables.PARTITIONS;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Partition {
 
 	// PUBLIC API
