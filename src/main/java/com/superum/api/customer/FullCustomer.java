@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.lang.CustomerLanguages;
 import com.superum.fields.*;
+import com.superum.fields.primitives.ByteField;
+import com.superum.fields.primitives.IntField;
 import com.superum.helper.SetFieldComparator;
 import org.jooq.Record;
 
@@ -336,7 +338,7 @@ public class FullCustomer {
         if (id < 0)
             throw new InvalidCustomerException("Customer id must be positive.");
 
-        this.id = new IntField(ID_FIELD, id, Mandatory.YES);
+        this.id = new IntField(ID_FIELD, id, Mandatory.NO);
 
         if (paymentDay != 0 && !isDayOfMonth(paymentDay))
             throw new InvalidCustomerException("Payment day for customer doesn't exist: " + paymentDay);
@@ -346,32 +348,32 @@ public class FullCustomer {
         if (isNegativeNotNull(paymentValue))
             throw new InvalidCustomerException("Payment value for customer must be non-negative: " + paymentValue);
 
-		this.paymentValue = new SimpleField<>(PAYMENT_VALUE_FIELD, paymentValue, Mandatory.YES);
+		this.paymentValue = SimpleField.valueOf(PAYMENT_VALUE_FIELD, paymentValue, Mandatory.YES);
 
         if (!fitsOrNull(NAME_SIZE_LIMIT, name))
             throw new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars");
 
-		this.name = new SimpleField<>(NAME_FIELD, name, Mandatory.YES);
+		this.name = SimpleField.valueOf(NAME_FIELD, name, Mandatory.YES);
 
         if (!fitsOrNull(PHONE_SIZE_LIMIT, phone))
             throw new InvalidCustomerException("Customer phone must not exceed " + PHONE_SIZE_LIMIT + " chars");
 
-		this.phone = new SimpleField<>(PHONE_FIELD, phone, Mandatory.YES);
+		this.phone = SimpleField.valueOf(PHONE_FIELD, phone, Mandatory.YES);
 
         if (!fitsOrNull(WEBSITE_SIZE_LIMIT, website))
             throw new InvalidCustomerException("Customer website must not exceed " + WEBSITE_SIZE_LIMIT + " chars");
 
-		this.website = new SimpleField<>(WEBSITE_FIELD, website, Mandatory.YES);
+		this.website = SimpleField.valueOf(WEBSITE_FIELD, website, Mandatory.YES);
 
         if (!fitsOrNull(PICTURE_NAME_SIZE_LIMIT, pictureName))
             throw new InvalidCustomerException("Customer picture name must not exceed " + PICTURE_NAME_SIZE_LIMIT + " chars");
 
-		this.pictureName = new SimpleField<>(PICTURE_NAME_FIELD, pictureName, Mandatory.NO);
+		this.pictureName = SimpleField.valueOf(PICTURE_NAME_FIELD, pictureName, Mandatory.NO);
 
         if (!fitsOrNull(COMMENT_SIZE_LIMIT, comment))
             throw new InvalidCustomerException("Customer comment must not exceed " + COMMENT_SIZE_LIMIT + " chars");
 
-		this.comment = new SimpleField<>(COMMENT_FIELD, comment, Mandatory.NO);
+		this.comment = SimpleField.valueOf(COMMENT_FIELD, comment, Mandatory.NO);
 
         if (languages == null)
             this.languages = SimpleField.empty(LANGUAGES_FIELD, Mandatory.YES);
@@ -379,10 +381,10 @@ public class FullCustomer {
             if (!languages.stream().allMatch(languageString -> fitsNotNull(LANGUAGE_ELEMENT_SIZE_LIMIT, languageString)))
                 throw new InvalidCustomerException("Customer languages must not exceed " + LANGUAGE_ELEMENT_SIZE_LIMIT + " chars");
             // To ensure that this object is immutable, we wrap the list with an unmodifiable version
-            this.languages = new SimpleField<>(LANGUAGES_FIELD, Collections.unmodifiableList(languages), Mandatory.YES);
+            this.languages = SimpleField.valueOf(LANGUAGES_FIELD, Collections.unmodifiableList(languages), Mandatory.YES);
         }
 
-        this.startDate = new JavaSqlDateField(START_DATE_FIELD, startDate, Mandatory.YES);
+        this.startDate = SimpleField.valueOf(START_DATE_FIELD, startDate, Mandatory.YES);
 
         this.allFields = fieldList();
         // This class is immutable, and it will almost always be turned into a string at least once (logs); it makes sense to cache the value
@@ -447,7 +449,7 @@ public class FullCustomer {
 	
 	private final IntField id;
 	private final ByteField paymentDay;
-	private final JavaSqlDateField startDate;
+	private final NamedField<Date> startDate;
 	private final NamedField<BigDecimal> paymentValue;
 	private final NamedField<String> name;
 	private final NamedField<String> phone;

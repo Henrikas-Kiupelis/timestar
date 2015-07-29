@@ -1,4 +1,7 @@
-package com.superum.fields;
+package com.superum.fields.primitives;
+
+import com.superum.fields.Mandatory;
+import com.superum.fields.NamedField;
 
 public class LongField extends NamedField<Long> {
 

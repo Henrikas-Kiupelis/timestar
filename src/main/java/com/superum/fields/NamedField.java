@@ -17,7 +17,7 @@ public abstract class NamedField<T> extends MaybeField<T> {
     }
 
     public final boolean equalsName(NamedField other) {
-        return this.getFieldName().equals(other.getFieldName());
+        return this.fieldName.equals(other.fieldName);
     }
 
     @Override
