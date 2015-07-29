@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.superum.api.customer.FullCustomer.RequiredBuilder.fullCustomer;
+import static com.superum.api.customer.FullCustomerQueriesImpl.CUSTOMER_LANG_FIELD_NAME;
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
-import static com.superum.db.generated.timestar.Tables.CUSTOMER_LANG;
 import static com.superum.utils.MySQLUtils.MYSQL_GROUP_CONCAT_SEPARATOR;
 import static com.superum.utils.ValidationUtils.*;
 
@@ -418,7 +418,7 @@ public class FullCustomer {
                 .withName(record.getValue(CUSTOMER.NAME))
                 .withPhone(record.getValue(CUSTOMER.PHONE))
                 .withWebsite(record.getValue(CUSTOMER.WEBSITE))
-                .withLanguages(record.getValue(CUSTOMER_LANG.LANGUAGE_LEVEL).split(MYSQL_GROUP_CONCAT_SEPARATOR))
+                .withLanguages(record.getValue(CUSTOMER_LANG_FIELD_NAME, String.class).split(MYSQL_GROUP_CONCAT_SEPARATOR))
                 .withId(record.getValue(CUSTOMER.ID))
                 .withComment(record.getValue(CUSTOMER.COMMENT_ABOUT))
                 .withPictureName(record.getValue(CUSTOMER.PICTURE_NAME))

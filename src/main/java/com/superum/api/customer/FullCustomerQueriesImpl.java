@@ -32,6 +32,9 @@ import static org.jooq.impl.DSL.groupConcat;
 @Transactional
 public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Integer> implements FullCustomerQueries {
 
+    // Allows to fetch the correct field when converting from Record to FullCustomer
+    public static final String CUSTOMER_LANG_FIELD_NAME = "Languages";
+
     @Override
     public int exists(FullCustomer customer, int partitionId) {
         if (customer == null)
@@ -287,6 +290,6 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
                 .finalStep();
     }
 
-    private static final Field<?>[] FULL_CUSTOMER_FIELDS = ArrayUtils.join(CUSTOMER.fields(), groupConcat(CUSTOMER_LANG.LANGUAGE_LEVEL));
+    private static final Field<?>[] FULL_CUSTOMER_FIELDS = ArrayUtils.join(CUSTOMER.fields(), groupConcat(CUSTOMER_LANG.LANGUAGE_LEVEL).as(CUSTOMER_LANG_FIELD_NAME));
 
 }
