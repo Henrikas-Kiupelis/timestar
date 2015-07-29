@@ -23,7 +23,19 @@ role VARCHAR(60) NOT NULL,
 FOREIGN KEY(username) REFERENCES account(username));
 
 INSERT INTO partitions (id, name)
-VALUES (1, 'COTEM');
+VALUES (0, 'TEST');
+
+INSERT INTO partitions (id, name)
+VALUES (1, 'DEV');
+
+INSERT INTO account (username, password, account_type, id)
+VALUES ('0.test', '$2a$10$ReQmCgAd1YqDMHNg5zg7hOj.uzJhAACGRkMSMV04h6iaTzxhfTC.6', 'ADMIN', 0);
+
+INSERT INTO roles (username, role)
+VALUES ('0.test', 'ROLE_ADMIN');
+
+INSERT INTO roles (username, role)
+VALUES ('0.test', 'ROLE_TEACHER');
 
 INSERT INTO account (username, password, account_type, id) 
 VALUES ('1.goodlike', '$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.', 'ADMIN', 0);

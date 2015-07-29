@@ -20,3 +20,5 @@ ORDER BY customer.id
 LIMIT 2;
 
 SELECT count(*) FROM customer WHERE customer.partition_id = 1;
+
+SELECT * FROM teacher;
