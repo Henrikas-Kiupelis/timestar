@@ -1,8 +1,6 @@
 package com.superum.api.customer;
 
 import com.superum.exception.DatabaseException;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * <pre>
@@ -10,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * does not refer to any Customers
  * </pre>
  */
-@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="Cannot find the specified Customer")
 public class CustomerNotFoundException extends DatabaseException {
 
 	public CustomerNotFoundException() {

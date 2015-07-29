@@ -1,8 +1,6 @@
 package com.superum.api.customer;
 
 import com.superum.exception.DatabaseException;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * <pre>
@@ -10,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * references in other database objects
  * </pre>
  */
-@ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Cannot delete the specified Customer because it is still being used")
 public class UnsafeCustomerDeleteException extends DatabaseException {
 
 	public UnsafeCustomerDeleteException() {
