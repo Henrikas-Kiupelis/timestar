@@ -3,6 +3,8 @@ package env;
 import com.superum.TimeStarBackEndApplication;
 import com.superum.config.PersistenceContext;
 import com.superum.config.SecurityConfig;
+import com.superum.helper.DatabaseHelper;
+import com.superum.helper.HelperConfiguration;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.jooq.DSLContext;
 import org.junit.Before;
@@ -24,9 +26,11 @@ import javax.naming.NamingException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {TimeStarBackEndApplication.class, PersistenceContext.class, SecurityConfig.class})
+@ContextConfiguration(classes = {TimeStarBackEndApplication.class, PersistenceContext.class, SecurityConfig.class, HelperConfiguration.class})
 @TransactionConfiguration(defaultRollback = true)
 public abstract class IntegrationTestEnvironment {
+
+    public static final int TEST_PARTITION = 0;
 
     @Before
     public void setupMockMvc() throws NamingException {
@@ -43,6 +47,9 @@ public abstract class IntegrationTestEnvironment {
     @Autowired
     protected DSLContext sql;
 
+    @Autowired
+    protected DatabaseHelper databaseHelper;
+
     protected String authHeader() {
         return TOKEN_HEADER;
     }
@@ -57,7 +64,7 @@ public abstract class IntegrationTestEnvironment {
     @Resource
     private FilterChainProxy springSecurityFilterChain;
 
-    private static final String USERNAME = "1.test";
+    private static final String USERNAME = TEST_PARTITION + ".test";
     private static final String PASSWORD = "test";
     private static final byte[] TOKEN = (USERNAME + ":" + PASSWORD).getBytes();
     private static final String TOKEN_HEADER = "Basic " + Base64.encodeBase64String(TOKEN);
