@@ -4,9 +4,9 @@ import com.superum.TimeStarBackEndApplication;
 import com.superum.config.Gmail;
 import com.superum.db.account.AccountDAO;
 import com.superum.db.account.roles.AccountRolesDAO;
-import com.superum.db.exception.DatabaseException;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
+import com.superum.exception.DatabaseException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +14,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.superum.utils.FakeUtils.makeFakeTeacher;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
+
+//import com.superum.db.exception.DatabaseException;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -44,13 +50,49 @@ public class TeacherServiceTests {
         teacherService = new TeacherServiceImpl(teacherDAO, encoder, mail, accountDAO, accountRolesDAO, teacherLanguagesService, partitionService);
     }
 
+    //+
     @Test
-    public void testCreatingAccount(){
+    public void testAddingTeacher(){
+        int id =1;
+        int partitionId = Integer.MAX_VALUE;
+        Teacher teacher = makeFakeTeacher(id, partitionId);
+        byte paymentDay = teacher.getPaymentDay();
+        String name = teacher.getName();
+        String surname = teacher.getSurname();
+        String phone = teacher.getPhone();
+        String city = teacher.getCity();
+        String pictureName = teacher.getPictureName();
+        String documentName = teacher.getDocumentName();
+        String comment = teacher.getComment();
+        String email = teacher.getEmail();
+
+        Teacher originalTeacher = new Teacher(id, paymentDay, name, surname, phone, city, email, pictureName, documentName, comment);
+
+        byte addedPaymentDay = Byte.MAX_VALUE;
+        String addedName = "Fake Name";
+        String addedSurname = "Fake Surname";
+        String addedPhone = "Too few numbers";
+        String addeedCity = "Non Existant City";
+        String addedPictureName = "None Picture Name";
+        String addedDocumentName = "None Document Name";
+        String addedComment = "None comment";
+        String addedEmail = "Not Existant Email";
+
+        Teacher addedTeacher = new Teacher(id, addedPaymentDay, addedName, addedSurname, addedPhone, addeedCity, addedEmail, addedPictureName, addedDocumentName, addedComment);
+
+        when(teacherDAO.create(addedTeacher, partitionId)).thenReturn(originalTeacher);
+
+        Teacher retrievedTeacher = teacherDAO.create(addedTeacher, partitionId);
+
+        assertEquals("Original teacher should be the same as retrieved one;",
+                originalTeacher, retrievedTeacher);
+
+        verify(teacherDAO, times(1)).create(addedTeacher, partitionId);
 
     }
 
 
-
+    //+
     @Test
     public void testFindingExistingTeacher() {
         int id = 1;
@@ -69,8 +111,25 @@ public class TeacherServiceTests {
         verify(teacherDAO, times(1)).read(id, partitionId);
     }
 
+    //+
+    @Test
+    public void testDeletingTeacher(){
+        int id = 1;
+        int partitionId = Integer.MAX_VALUE;
+        Teacher teacher = makeFakeTeacher(id, partitionId);
+        Teacher teacher1 = teacherDAO.delete(id, partitionId);
 
+        when(teacher1).thenReturn(teacher);
+        Teacher retrievedTeacher = teacherService.deleteTeacher(id, partitionId);
 
+        assertEquals("Original teacher should be the same as retrieved one;",
+                teacher, retrievedTeacher);
+
+        verify(teacherDAO, times(1)).delete(id, partitionId);
+
+    }
+
+    //+
     @Test
     public void testUpdatingExistingTeacherData() {
         int id = 1;
@@ -84,7 +143,7 @@ public class TeacherServiceTests {
         String pictureName = teacher.getPictureName();
         String documentName = teacher.getDocumentName();
         String comment = teacher.getComment();
-
+        String email = teacher.getEmail();
 
         Teacher originalTeacherData = new Teacher(id, paymentDay, name, surname, phone, city, email, pictureName, documentName, comment);
 
@@ -110,6 +169,7 @@ public class TeacherServiceTests {
         verify(teacherDAO, times(1)).update(updatedTeacherData, partitionId);
     }
 
+    //+
     @Test(expected = DatabaseException.class)
     public void testUpdatingNonExistingTeacher() {
         int id = 1;
@@ -124,17 +184,36 @@ public class TeacherServiceTests {
         String documentName = "Not Existant Document Name";
         String comment = "Not Existant Comment";
 
-        Teacher nonExistantTeacherData = new Teacher(id, paymentDay, name, surname, phone, city, email, pictureName, documentName, comment);
+        Teacher nonExistentTeacherData = new Teacher(id, paymentDay, name, surname, phone, city, email, pictureName, documentName, comment);
 
 
-        when(teacherDAO.update(nonExistantTeacherData, partitionId)).thenThrow(new DatabaseException());
+        when(teacherDAO.update(nonExistentTeacherData, partitionId)).thenThrow(new DatabaseException());
 
-        teacherService.updateTeacher(nonExistantTeacherData, partitionId);
+        teacherService.updateTeacher(nonExistentTeacherData, partitionId);
 
+
+    }
+
+    @Test
+    public void testGettingAllTeachers(){
+        int id = 1;
+        int partitionId = 0;
+        List<Teacher> allRandomTeachers = new ArrayList<>();
+        allRandomTeachers.add(makeFakeTeacher(id, partitionId));
+
+        when(teacherDAO.readAll(partitionId)).thenReturn(allRandomTeachers);
+        List<Teacher> retrievedTeacher = teacherService.getAllTeachers(partitionId);
+
+        assertEquals("Original teacher should be the same as retrieved one;",
+                allRandomTeachers, retrievedTeacher);
+
+        verify(teacherDAO, times(1)).readAll(partitionId);
 
 
 
     }
+
+
 
 
 
