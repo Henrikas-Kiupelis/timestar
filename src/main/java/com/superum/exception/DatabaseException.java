@@ -7,8 +7,6 @@ package com.superum.exception;
  */
 public class DatabaseException extends RuntimeException {
 
-	private static final long serialVersionUID = -6192053563692323344L;
-
 	public DatabaseException() {
 		super();
 	}
