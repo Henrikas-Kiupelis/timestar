@@ -1,0 +1,20 @@
+Detailed bug description:
+I tried to commit some new changes with git, Intellij Idea to be more specific;
+this failed spectacularly with error:
+“Commit failed with error: pathspec … did not match any file(s)”
+After running 'git status', it was revealed that git thought the file had a lowercase letter;
+It appears this happened:
+1) I created a class called "Somethingtests";
+2) I added it to git
+3) I changed the name later to "SomethingTests";
+This caused git to fail to recognize the file exists, and still look for "Somethingtests" instead
+
+Solutions:
+1) run 'git config core.ignorecase false' - seems to have fixed the issue, but running 'git status' still shows buggyness
+2) run 'git mv -f File file', first and second file differing only in the case; this will completely resolve the issue
+
+Additional comments:
+N/A
+
+Additional files:
+N/A

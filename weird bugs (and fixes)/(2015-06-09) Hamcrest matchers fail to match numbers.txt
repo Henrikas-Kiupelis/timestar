@@ -1,0 +1,15 @@
+Detailed bug description:
+After writing a couple of assertions using MockMvc, Hamcrest would fail to recognize that long values would be equal to int values. I.e.
+Expected: is <1L>
+but: was <1>
+
+Solutions:
+1) Manually cast numbers to int;
+
+2) Manually create a matcher which would test if a long matches an int;
+
+Additional comments:
+N/A
+
+Additional files:
+N/A

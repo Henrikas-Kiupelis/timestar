@@ -1,0 +1,18 @@
+Detailed bug description:
+I tried to launch tests, however, they failed completely at the context loading step in all cases;
+The exception that caused this was NoClassDefFoundError, which seemed to not be able to find a class that
+is just a normal class, in a folder somewhere;
+It was annotated, so was its service, and any changes to the class made no difference;
+
+Solutions:
+1) Run the application instead of running tests; this revealed, that the actual problem was an
+ArrayIndexOutOfBoundsException in an utility class, which happened during static initialization of the Java class;
+
+Additional comments:
+If nothing else, this shows that you must be extremely careful when using anything static, and try to avoid it
+if at all possible. I encountered a similar bug where a static initializer would crash an entire Thread silently
+when working on a different project.
+
+Additional files:
+Stack trace 1 - the exception thrown when running tests
+Stack trace 2 - the exception thrown when running the app normally

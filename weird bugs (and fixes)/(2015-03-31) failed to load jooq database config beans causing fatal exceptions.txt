@@ -1,0 +1,27 @@
+Detailed bug description:
+Seemingly without a reason, the application failed to run, throwing exceptions.
+The cited reason was "circular reference" while loading one of the beans specified in PersistenceContext configuration file,
+specifically "lazyConnectionDataSource" AKA 'LazyConnectionDataSourceProxy'.
+None of the beans, including the ones at top level (REST controllers/repositories for access to database), however, contained any
+references to each other in a circular pattern.
+Upon further inspection, it appears that the bean "dataSourceInitializer" in PersistenceContext was replaced with a default bean,
+which seemed to be the source of the exception. //See stack trace 1, line 5
+I have found no trivial way to prevent this behaviour (it is perhaps possible to use some sort of configuration files to do this).
+
+Solutions:
+1) I annotated every bean in PersistenceContext, except "dataSource", with @DependsOn("dataSource").
+This appears to have an effect on the order in which the beans are loaded by Spring. This seems to have resolved the issue by forcing
+all the beans to load after "dataSource" bean, instead of trying to load before it, which was causing them to fail to load somehow.
+
+2) It is possible some manner of splitting the beans into separate files would also fix this issue (unconfirmed as of 2015-03-31)
+
+Additional comments:
+The last commit this bug did not happen in is e0a5a1ef949b4ab3bcd16611cb3f511b609cc9f2 (Updated logging utils (2)),
+despite no functional changes to the config files!
+The only change between this and the next version was inclusion of additional beans (@RestController, @Repository) which depended on
+the DSLContext, however, removing them in the final version still produced the error.
+
+Additional files:
+Stack trace 1 - an example stack trace of the problem.
+Stack trace 2 - an example stack trace before the problem.
+Stack trace 3 - an example stack trace after the problem.
