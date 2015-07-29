@@ -1,0 +1,13 @@
+Detailed bug description:
+After creating the database on the VPS, the spring-boot jar file would throw exceptions trying to access it.
+They indicated that the tables did not exist, despite evidence to the contrary.
+It turns out that the database was queried lower case by JOOQ, while the database in VPS (which was running CentOS7 ~ Linux) was upper case/
+
+Solutions:
+1) Only use lower case for database names due to Linux-like systems being case sensitive. Field names seem fine.
+
+Additional comments:
+N/A
+
+Additional files:
+N/A

@@ -1,0 +1,15 @@
+Detailed bug description:
+Testing the new web service, "/timestar/api/lesson/table", which is supposed to return a JSON representation of the front end table,
+the GET request would return 404, the same kind you get when the mapping was not found.
+Oddly enough, ALL the code would execute, that is, logs would show that the DB was being accessed and table was made. It would
+simply stop at the last step of turning it into JSON and responding.
+After turning on debug logging for org.springframework.web, it appears it attempted to find a view for the method, but failed.
+
+Solutions:
+1) Annotate the method which causes trouble with "@ResponseBody" - this seems to fix the issue
+
+Additional comments:
+N/A
+
+Additional files:
+N/A

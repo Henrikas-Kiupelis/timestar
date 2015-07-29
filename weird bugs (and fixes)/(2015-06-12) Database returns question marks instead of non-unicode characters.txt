@@ -1,0 +1,40 @@
+Detailed bug description:
+After sending a request with String "Kiūpelis", the databases would return it:
+Home: "Kiūpelis"
+Laptop: "Ki?pelis"
+Server: "Ki?pelis"
+This seems to have been a database issue.
+
+Solutions:
+1) Completely re-do the database with utf8mb4 as charset everywhere using the following commands:
+
+ALTER DATABASE "database_name" CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+(similar commands for tables/columns, but I simply re-made them later, because they were empty)
+
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+Then, set up my.ini or my.cnf with following settings:
+[client]
+default-character-set = utf8mb4
+
+[mysql]
+default-character-set = utf8mb4
+
+[mysqld]
+character-set-client-handshake = FALSE
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+
+Then, restart the mysql service
+
+Finally, use 
+
+mysqlcheck -u root -p --auto-repair --optimize --all-databases
+
+To ensure commands work correctly
+
+Additional comments:
+N/A
+
+Additional files:
+N/A
