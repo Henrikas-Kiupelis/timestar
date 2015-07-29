@@ -39,7 +39,7 @@ public class UpdateBuilder<Entity, TableRecord extends Record> {
         if (getter == null)
             throw new IllegalArgumentException("Value getter cannot be null");
 
-        if (!hasField.test(entity))
+        if (hasField.test(entity))
             step = step.set(tableField, getter.apply(entity));
         return this;
     }
