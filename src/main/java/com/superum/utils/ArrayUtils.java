@@ -10,7 +10,7 @@ public class ArrayUtils {
 
     public static <T> T[] join(T[] first, T second) {
         T[] copy = Arrays.copyOf(first, first.length + 1);
-        copy[first.length + 1] = second;
+        copy[first.length] = second;
         return copy;
     }
 
@@ -24,7 +24,7 @@ public class ArrayUtils {
     }
 
     public static <T> T[] fromListOfArrays(List<T[]> listOfArrays, Class<T[]> clazz) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         for (T[] strings : listOfArrays)
             Collections.addAll(list, strings);
 
