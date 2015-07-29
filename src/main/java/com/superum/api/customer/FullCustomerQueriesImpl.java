@@ -78,11 +78,11 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
             throw new InvalidCustomerException("Provided customer only has its id set; to update this customer, set additional fields!");
 
         try {
-            Condition condition = idAndPartition(customer.getId(), partitionId);
+            int customerId = customer.getId();
 
             if (canUpdateCustomer) {
                 int updateResult = partialCustomerUpdateStatement(customer)
-                        .where(condition)
+                        .where(idAndPartition(customerId, partitionId))
                         .execute();
                 if (updateResult == 0)
                     throw new DatabaseException("Couldn't update customer: " + customer);
@@ -90,7 +90,7 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
 
             if (canUpdateCustomerLanguages) {
                 sql.delete(CUSTOMER_LANG)
-                        .where(condition)
+                        .where(idAndPartitionForLanguages(customerId, partitionId))
                         .execute();
 
                 customerLanguagesDAO.create(customer.toCustomerLanguages(), partitionId);
@@ -114,7 +114,7 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
 
         try {
             sql.delete(CUSTOMER_LANG)
-                    .where(idAndPartition(customerId, partitionId))
+                    .where(idAndPartitionForLanguages(customerId, partitionId))
                     .execute();
 
             sql.delete(CUSTOMER)
@@ -235,10 +235,17 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
     private final FullTeacherDAO fullTeacherDAO;
 
     /**
-     * @return Condition which checks for customer id and partition id
+     * @return Condition which checks for customer id and partition id in CUSTOMER table
      */
     private Condition idAndPartition(int customerId, int partitionId) {
         return CUSTOMER.ID.eq(customerId).and(CUSTOMER.PARTITION_ID.eq(partitionId));
+    }
+
+    /**
+     * @return Condition which checks for customer id and partition id in CUSTOMER_LANG table
+     */
+    private Condition idAndPartitionForLanguages(int customerId, int partitionId) {
+        return CUSTOMER_LANG.CUSTOMER_ID.eq(customerId).and(CUSTOMER_LANG.PARTITION_ID.eq(partitionId));
     }
 
     /**
