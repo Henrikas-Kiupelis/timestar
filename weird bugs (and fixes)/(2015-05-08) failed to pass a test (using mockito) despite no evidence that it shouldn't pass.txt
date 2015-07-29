@@ -1,0 +1,25 @@
+Detailed bug description:
+The following code was being tested:
+public int updateVisitedPageFilter(int historyId, int filterId) {
+	return historyDAO.updateLastFilter(historyId, filterId);
+}
+Using the following Mockito matchers:
+when(historyDAO.updateLastFilter(not(eq(historyId)), anyInt())).thenThrow(new HistoryAccessException());
+when(historyDAO.updateLastFilter(eq(historyId), anyInt())).thenReturn(filterId);
+And the following call:
+int oldFilterId = historyService.updateVisitedPageFilter(historyId, newFilterId);
+This resulted in the test failing with "HistoryAccessException" as the cause.
+
+Solutions:
+1) Change the order of the matchers:
+when(historyDAO.updateLastFilter(eq(historyId), anyInt())).thenReturn(filterId);
+when(historyDAO.updateLastFilter(not(eq(historyId)), anyInt())).thenThrow(new HistoryAccessException());
+The test will now pass, but I haven't confirmed any additional side effects (i.e. not failing despite having to) as of now (2015-05-08).
+
+2) Possibly solvable by changing anyInt() into something specific.
+
+Additional comments:
+N/A
+
+Additional files:
+N/A

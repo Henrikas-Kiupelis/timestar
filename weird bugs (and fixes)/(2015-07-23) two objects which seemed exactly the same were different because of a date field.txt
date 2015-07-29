@@ -1,0 +1,17 @@
+Detailed bug description:
+I tried to test a certain Controller, which for now returned an object constructed in exactly the same manner.
+Despite looking exactly the same, and the String values being identical, the test claimed they were not equal.
+Using debug I was able to find out that the two java.sql.Date objects inside failed the equality test, despite
+showing the same Date in String form.
+It appears internally Date objects are compared using long millisecond values they represent; however, the values
+were different on the Dates! One of them was initialised with an offset of 3 hours, using EEST timezone, whereas
+the other one was UTC. 
+
+Solutions:
+1) Compare Dates with String values; they are identical, and likely faster to compare than building a GregorianCalendar.
+
+Additional comments:
+N/A
+
+Additional files:
+N/A
