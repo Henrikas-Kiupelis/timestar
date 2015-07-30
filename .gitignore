@@ -37,4 +37,4 @@
 
 # SQL test statements
 
-Testing.sql
+src/main/resources/sql/Various statements.sql
