@@ -12,12 +12,45 @@ CREATE TABLE partitions (
 CREATE TABLE account (
   id INT NOT NULL,
   enabled BIT NOT NULL DEFAULT 1,
-  created_at BIGINT NOT NULL,
-  updated_at BIGINT NOT NULL,
+  created_at BIGINT,
+  updated_at BIGINT,
   password CHAR(60) NOT NULL,
   account_type VARCHAR(10) NOT NULL,
   username VARCHAR(60) NOT NULL UNIQUE,
   PRIMARY KEY(username));
+
+DELIMITER //
+CREATE TRIGGER automatic_roles
+AFTER INSERT ON account
+FOR EACH ROW
+  BEGIN
+    IF NEW.account_type = 'ADMIN'
+    THEN
+      INSERT roles (username, role)
+      VALUES (NEW.username, 'ROLE_ADMIN');
+    END IF;
+    INSERT roles (username, role)
+    VALUES (NEW.username, 'ROLE_TEACHER');
+  END; //
+
+CREATE TRIGGER create_timestamps_inserting_account
+BEFORE INSERT ON account
+FOR EACH ROW
+  BEGIN
+    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+  END; //
+
+CREATE TRIGGER update_timestamp_ensure_create_immutable_account
+BEFORE UPDATE ON account
+FOR EACH ROW
+  BEGIN
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    IF NEW.created_at != OLD.created_at THEN
+      SET NEW.created_at = OLD.created_at;
+    END IF;
+  END; //
+DELIMITER ;
 
 CREATE TABLE roles (
   username VARCHAR(60) NOT NULL,
@@ -25,22 +58,22 @@ CREATE TABLE roles (
   FOREIGN KEY(username) REFERENCES account(username));
 
 INSERT INTO partitions (id, name)
-VALUES (1, 'COTEM');
+VALUES (0, 'TEST');
 
-INSERT INTO account (username, password, account_type, id) 
+INSERT INTO partitions (id, name)
+VALUES (1, 'DEV');
+
+INSERT INTO account (username, password, account_type, id)
+VALUES ('0.test', '$2a$10$ReQmCgAd1YqDMHNg5zg7hOj.uzJhAACGRkMSMV04h6iaTzxhfTC.6', 'ADMIN', 0);
+
+INSERT INTO account (username, password, account_type, id)
 VALUES ('1.goodlike', '$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.', 'ADMIN', 0);
 
-INSERT INTO roles (username, role) 
-VALUES ('1.goodlike', 'ROLE_ADMIN');
-
-INSERT INTO roles (username, role) 
-VALUES ('1.goodlike', 'ROLE_TEACHER');
-
-CREATE TABLE teacher ( 
+CREATE TABLE teacher (
   partition_id INT NOT NULL,
   id INT NOT NULL AUTO_INCREMENT,
-  created_at BIGINT NOT NULL,
-  updated_at BIGINT NOT NULL,
+  created_at BIGINT,
+  updated_at BIGINT,
 
   payment_day INT NOT NULL,
   hourly_wage DECIMAL(19, 4) NOT NULL,
@@ -57,7 +90,27 @@ CREATE TABLE teacher (
   FOREIGN KEY(partition_id) REFERENCES partitions(id),
   UNIQUE KEY(partition_id, email));
 
-CREATE TABLE teacher_language ( 
+DELIMITER //
+CREATE TRIGGER create_timestamps_inserting_teacher
+BEFORE INSERT ON teacher
+FOR EACH ROW
+  BEGIN
+    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+  END; //
+
+CREATE TRIGGER update_timestamp_ensure_create_immutable_teacher
+BEFORE UPDATE ON teacher
+FOR EACH ROW
+  BEGIN
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    IF NEW.created_at != OLD.created_at THEN
+      SET NEW.created_at = OLD.created_at;
+    END IF;
+  END; //
+DELIMITER ;
+
+CREATE TABLE teacher_language (
   partition_id INT NOT NULL,
   teacher_id INT NOT NULL,
   code VARCHAR(3) NOT NULL,
@@ -65,13 +118,12 @@ CREATE TABLE teacher_language (
   FOREIGN KEY(partition_id) REFERENCES partitions(id),
   UNIQUE KEY (teacher_id, code));
 
-CREATE TABLE customer ( 
+CREATE TABLE customer (
   partition_id INT NOT NULL,
   id INT NOT NULL AUTO_INCREMENT,
-  created_at BIGINT NOT NULL,
-  updated_at BIGINT NOT NULL,
+  created_at BIGINT,
+  updated_at BIGINT,
 
-  payment_day INT NOT NULL,
   start_date DATE NOT NULL,
   name VARCHAR(30) NOT NULL,
   phone VARCHAR(30) NOT NULL,
@@ -81,11 +133,31 @@ CREATE TABLE customer (
   PRIMARY KEY(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id));
 
-CREATE TABLE 'group' (
+DELIMITER //
+CREATE TRIGGER create_timestamps_inserting_customer
+BEFORE INSERT ON customer
+FOR EACH ROW
+  BEGIN
+    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+  END; //
+
+CREATE TRIGGER update_timestamp_ensure_create_immutable_customer
+BEFORE UPDATE ON customer
+FOR EACH ROW
+  BEGIN
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    IF NEW.created_at != OLD.created_at THEN
+      SET NEW.created_at = OLD.created_at;
+    END IF;
+  END; //
+DELIMITER ;
+
+CREATE TABLE group_of_students (
   partition_id INT NOT NULL,
   id INT NOT NULL AUTO_INCREMENT,
-  created_at BIGINT NOT NULL,
-  updated_at BIGINT NOT NULL,
+  created_at BIGINT,
+  updated_at BIGINT,
 
   customer_id INT,
   teacher_id INT NOT NULL,
@@ -97,29 +169,69 @@ CREATE TABLE 'group' (
   FOREIGN KEY(teacher_id) REFERENCES teacher(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id));
 
-CREATE TABLE student ( 
+DELIMITER //
+CREATE TRIGGER create_timestamps_inserting_group
+BEFORE INSERT ON group_of_students
+FOR EACH ROW
+  BEGIN
+    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+  END; //
+
+CREATE TRIGGER update_timestamp_ensure_create_immutable_group
+BEFORE UPDATE ON group_of_students
+FOR EACH ROW
+  BEGIN
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    IF NEW.created_at != OLD.created_at THEN
+      SET NEW.created_at = OLD.created_at;
+    END IF;
+  END; //
+DELIMITER ;
+
+CREATE TABLE student (
   partition_id INT NOT NULL,
   id INT NOT NULL AUTO_INCREMENT,
-  created_at BIGINT NOT NULL,
-  updated_at BIGINT NOT NULL,
+  created_at BIGINT,
+  updated_at BIGINT,
 
+  code INT NOT NULL,
   customer_id INT,
   group_id INT NOT NULL,
-  payment_day INT NOT NULL,
   start_date DATE NOT NULL,
   email VARCHAR(60) NOT NULL,
   name VARCHAR(60) NOT NULL,
   PRIMARY KEY(id),
-  FOREIGN KEY(group_id) REFERENCES student_group(id),
+  FOREIGN KEY(group_id) REFERENCES group_of_students(id),
   FOREIGN KEY(customer_id) REFERENCES customer(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id),
   UNIQUE KEY(partition_id, email));
 
-CREATE TABLE lesson ( 
+DELIMITER //
+CREATE TRIGGER create_timestamps_inserting_student
+BEFORE INSERT ON student
+FOR EACH ROW
+  BEGIN
+    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+  END; //
+
+CREATE TRIGGER update_timestamp_ensure_create_immutable_student
+BEFORE UPDATE ON student
+FOR EACH ROW
+  BEGIN
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    IF NEW.created_at != OLD.created_at THEN
+      SET NEW.created_at = OLD.created_at;
+    END IF;
+  END; //
+DELIMITER ;
+
+CREATE TABLE lesson (
   partition_id INT NOT NULL,
   id BIGINT NOT NULL AUTO_INCREMENT,
-  created_at BIGINT NOT NULL,
-  updated_at BIGINT NOT NULL,
+  created_at BIGINT,
+  updated_at BIGINT,
 
   group_id INT NOT NULL,
   date_of_lesson DATE NOT NULL,
@@ -127,14 +239,33 @@ CREATE TABLE lesson (
   duration_in_minutes INT NOT NULL,
   comment VARCHAR(500) NOT NULL,
   PRIMARY KEY(id),
-  FOREIGN KEY(group_id) REFERENCES student_group(id),
+  FOREIGN KEY(group_id) REFERENCES group_of_students(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id));
 
-CREATE TABLE lesson_attendance ( 
+DELIMITER //
+CREATE TRIGGER create_timestamps_inserting_lesson
+BEFORE INSERT ON lesson
+FOR EACH ROW
+  BEGIN
+    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+  END; //
+
+CREATE TRIGGER update_timestamp_ensure_create_immutable_lesson
+BEFORE UPDATE ON lesson
+FOR EACH ROW
+  BEGIN
+    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    IF NEW.created_at != OLD.created_at THEN
+      SET NEW.created_at = OLD.created_at;
+    END IF;
+  END; //
+DELIMITER ;
+
+CREATE TABLE lesson_attendance (
   partition_id INT NOT NULL,
   lesson_id BIGINT NOT NULL,
   student_id INT NOT NULL,
-  code INT NOT NULL,
   FOREIGN KEY(lesson_id) REFERENCES lesson(id),
   FOREIGN KEY(student_id) REFERENCES student(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id),

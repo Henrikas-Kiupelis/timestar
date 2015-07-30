@@ -8,3 +8,5 @@ SELECT customer.id, group_concat(language_level) FROM customer
 JOIN customer_lang
 ON customer.id = customer_lang.customer_id
 GROUP BY customer.id;
+
+SELECT UNIX_TIMESTAMP() * 1000;

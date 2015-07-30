@@ -17,6 +17,7 @@ import static com.superum.db.generated.timestar.Tables.ROLES;
 
 @Repository
 @Transactional
+@Deprecated // Roles are automatically inserted in the database
 public class AccountRolesDAOImpl implements AccountRolesDAO {
 
 	@Override

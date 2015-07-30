@@ -9,7 +9,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.jooq.Record;
 
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.ACCOUNT;
@@ -33,6 +35,16 @@ public class Account {
 	public String getAccountType() {
 		return accountType == null ? null : accountType.name();
 	}
+
+	@JsonProperty("created_at")
+    public Date getCreatedAt() {
+        return created_at;
+    }
+
+    @JsonProperty("updated_at")
+    public Date getUpdatedAt() {
+        return updated_at;
+    }
 	
 	@JsonIgnore
 	public String getPassword() {
@@ -89,11 +101,17 @@ public class Account {
 				   @JsonProperty("username") String username,
 				   @JsonProperty("accountType") String accountType,
 				   @JsonProperty("password") char[] password) {
-		this.id = id;
-		this.username = username;
-		this.accountType = accountType == null ? null : AccountType.valueOf(accountType);
-		this.password = password;
+		this(id, username, accountType, password, null, null);
 	}
+
+    public Account(int id, String username, String accountType, char[] password, Date created_at, Date updated_at) {
+        this.id = id;
+        this.username = username;
+        this.accountType = accountType == null ? null : AccountType.valueOf(accountType);
+        this.password = password;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
 	
 	public static Account valueOf(Record accountRecord) {
 		if (accountRecord == null)
@@ -103,7 +121,12 @@ public class Account {
 		String username = accountRecord.getValue(ACCOUNT.USERNAME);
 		String accountType = accountRecord.getValue(ACCOUNT.ACCOUNT_TYPE);
 		char[] password = accountRecord.getValue(ACCOUNT.PASSWORD).toCharArray();
-		return new Account(id, username, accountType, password);
+
+        long createdTimestamp = accountRecord.getValue(ACCOUNT.CREATED_AT);
+        Date created_at = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        long updatedTimestamp = accountRecord.getValue(ACCOUNT.UPDATED_AT);
+        Date updated_at = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		return new Account(id, username, accountType, password, created_at, updated_at);
 	}
 
 	// PRIVATE
@@ -117,5 +140,8 @@ public class Account {
 	
 	@NotEmpty
 	private char[] password;
+
+    private final Date created_at;
+    private final Date updated_at;
 	
 }

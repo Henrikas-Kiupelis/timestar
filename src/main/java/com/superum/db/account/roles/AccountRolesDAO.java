@@ -3,6 +3,7 @@ package com.superum.db.account.roles;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@Deprecated // Roles are automatically inserted in the database
 public interface AccountRolesDAO {
 
 	AccountRoles create(AccountRoles roles);

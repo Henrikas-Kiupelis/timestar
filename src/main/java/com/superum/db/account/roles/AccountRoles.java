@@ -1,10 +1,11 @@
 package com.superum.db.account.roles;
 
+import com.superum.utils.StringUtils;
+
 import java.util.List;
 import java.util.Objects;
 
-import com.superum.utils.StringUtils;
-
+@Deprecated // Roles are automatically inserted in the database
 public class AccountRoles {
 
 	// PUBLIC API
