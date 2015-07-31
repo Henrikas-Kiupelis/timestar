@@ -4,8 +4,6 @@ import com.superum.config.Gmail;
 import com.superum.db.account.Account;
 import com.superum.db.account.AccountDAO;
 import com.superum.db.account.AccountType;
-import com.superum.db.account.roles.AccountRoles;
-import com.superum.db.account.roles.AccountRolesDAO;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguages;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
@@ -67,9 +65,6 @@ public class TeacherServiceImpl implements TeacherService {
 		LOG.debug("Deleted Teacher: {}", deletedTeacher);
 		
 		String username = PrincipalUtils.makeName(deletedTeacher.getEmail(), partitionId);
-		AccountRoles deletedAccountRoles = accountRolesDAO.delete(username);
-		LOG.debug("Deleted AccountRoles: {}", deletedAccountRoles);
-		
 		Account deletedAccount = accountDAO.delete(username);
 		LOG.debug("Deleted Account: {}", deletedAccount);
 		
@@ -89,13 +84,12 @@ public class TeacherServiceImpl implements TeacherService {
 	// CONSTRUCTORS
 	
 	@Autowired
-	public TeacherServiceImpl(TeacherDAO teacherDAO, PasswordEncoder encoder, Gmail mail, AccountDAO accountDAO, AccountRolesDAO accountRolesDAO, 
+	public TeacherServiceImpl(TeacherDAO teacherDAO, PasswordEncoder encoder, Gmail mail, AccountDAO accountDAO,
 			TeacherLanguagesService teacherLanguagesService, PartitionService partitionService) {
 		this.teacherDAO = teacherDAO;
 		this.encoder = encoder;
 		this.mail = mail;
 		this.accountDAO = accountDAO;
-		this.accountRolesDAO = accountRolesDAO;
 		this.teacherLanguagesService = teacherLanguagesService;
 		this.partitionService = partitionService;
 	}
@@ -106,12 +100,11 @@ public class TeacherServiceImpl implements TeacherService {
 	private final PasswordEncoder encoder;
 	private final Gmail mail;
 	private final AccountDAO accountDAO;
-	private final AccountRolesDAO accountRolesDAO;
 	private final TeacherLanguagesService teacherLanguagesService;
 	private final PartitionService partitionService;
 
     private void createAccount(Teacher newTeacher, int partitionId) {
-        // To avoid long pauses when sending e-mails, accounts are created on a separate thread
+        // To avoid long pauses when sending e-mails/generating passwords, accounts are created on a separate thread
         new Thread(() -> {
             String name = partitionService.findPartition(partitionId).getName();
 
@@ -138,10 +131,7 @@ public class TeacherServiceImpl implements TeacherService {
             String accountName = PrincipalUtils.makeName(newTeacher.getEmail(), partitionId);
             Account teacherAccount = accountDAO.create(new Account(newTeacher.getId(), accountName, AccountType.TEACHER.name(), securePassword.toCharArray()));
             LOG.debug("New Teacher Account created: {}", teacherAccount);
-
-            AccountRoles teacherRoles = accountRolesDAO.create(new AccountRoles(accountName, AccountType.TEACHER.roleNames()));
-            LOG.debug("Roles added to Account: {}", teacherRoles);
-        }).start();
+		}).start();
     }
 	
 	private static final int PASSWORD_LENGTH = 7;

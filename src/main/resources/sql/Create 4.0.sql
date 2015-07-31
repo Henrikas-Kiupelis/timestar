@@ -33,6 +33,12 @@ FOR EACH ROW
     VALUES (NEW.username, 'ROLE_TEACHER');
   END; //
 
+CREATE TRIGGER automatic_roles_deletion
+BEFORE DELETE ON account
+FOR EACH ROW
+  DELETE FROM roles
+  WHERE roles.username = OLD.username;
+
 CREATE TRIGGER create_timestamps_inserting_account
 BEFORE INSERT ON account
 FOR EACH ROW
