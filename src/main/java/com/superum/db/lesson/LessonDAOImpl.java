@@ -25,7 +25,7 @@ public class LessonDAOImpl implements LessonDAO {
                     .set(LESSON.PARTITION_ID, partitionId)
                     .set(LESSON.TEACHER_ID, lesson.getTeacherId())
                     .set(LESSON.GROUP_ID, lesson.getGroupId())
-                    .set(LESSON.DATE_OF_LESSON, lesson.getDate())
+                    .set(LESSON.DATE_OF_LESSON, lesson.getStartDate())
                     .set(LESSON.TIME_OF_START, lesson.getStartTime())
                     .set(LESSON.TIME_OF_END, lesson.getEndTime())
                     .set(LESSON.LENGTH_IN_MINUTES, lesson.getLength())
@@ -66,7 +66,7 @@ public class LessonDAOImpl implements LessonDAO {
             sql.update(LESSON)
                     .set(LESSON.TEACHER_ID, lesson.getTeacherId())
                     .set(LESSON.GROUP_ID, lesson.getGroupId())
-                    .set(LESSON.DATE_OF_LESSON, lesson.getDate())
+                    .set(LESSON.DATE_OF_LESSON, lesson.getStartDate())
                     .set(LESSON.TIME_OF_START, lesson.getStartTime())
                     .set(LESSON.TIME_OF_END, lesson.getEndTime())
                     .set(LESSON.LENGTH_IN_MINUTES, lesson.getLength())
@@ -143,7 +143,7 @@ public class LessonDAOImpl implements LessonDAO {
 	public boolean isOverlapping(Lesson lesson, int partitionId) {
         try {
             int teacherId = lesson.getTeacherId();
-            Date date = lesson.getDate();
+            Date date = lesson.getStartDate();
             short startTime = lesson.getStartTime();
             short endTime = lesson.getEndTime();
 

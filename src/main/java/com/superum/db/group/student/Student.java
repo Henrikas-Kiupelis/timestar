@@ -1,20 +1,23 @@
 package com.superum.db.group.student;
 
-import static com.superum.db.generated.timestar.Tables.STUDENT;
-
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.superum.utils.ObjectUtils;
+import com.superum.utils.RandomUtils;
+import com.superum.utils.StringUtils;
+import org.hibernate.validator.constraints.Email;
+import org.jooq.Record;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Objects;
 
-import org.hibernate.validator.constraints.Email;
-import org.jooq.Record;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.StringUtils;
+import static com.superum.db.generated.timestar.Tables.STUDENT;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Student {
@@ -28,16 +31,22 @@ public class Student {
 	public boolean hasId() {
 		return id > 0;
 	}
-	
-	@JsonProperty("groupId")
-	public int getGroupId() {
-		return groupId;
-	}
-	
+
+    @JsonProperty("code")
+    public Integer getCode() {
+        return code;
+    }
+
 	@JsonProperty("customerId")
-	public int getCustomerId() {
+	public Integer getCustomerId() {
 		return customerId;
 	}
+
+    @JsonProperty("startDate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
+    public Date getStartDate() {
+        return startDate;
+    }
 	
 	@JsonProperty("email")
 	public String getEmail() {
@@ -48,6 +57,20 @@ public class Student {
 	public String getName() {
 		return name;
 	}
+
+    @JsonProperty("createdAt")
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @JsonProperty("updatedAt")
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public static int generateCode() {
+        return RandomUtils.randomNumber(900000) + 100000;
+    }
 	
 	// OBJECT OVERRIDES
 
@@ -55,10 +78,13 @@ public class Student {
 	public String toString() {
 		return StringUtils.toString(
 				"Student ID: " + id,
-				"Group ID: " + groupId,
-				"Customer ID: " + customerId, 
+                "Student code: " + code,
+				"Customer ID: " + customerId,
+                "Start date: " + startDate,
 				"Email: " + email,
-				"Name: " + name);
+				"Name: " + name,
+                "Created at: " + createdAt,
+                "Updated at: " + updatedAt);
 	}
 
 	@Override
@@ -72,60 +98,69 @@ public class Student {
 		Student other = (Student) o;
 
 		return this.id == other.id
-				&& this.groupId == other.groupId
-				&& this.customerId == other.customerId
+                && Objects.equals(this.code, other.code)
+				&& Objects.equals(this.customerId, other.customerId)
+                && ObjectUtils.equalsJavaUtilDate(this.startDate, other.startDate)
 				&& Objects.equals(this.email, other.email)
 				&& Objects.equals(this.name, other.name);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result = (result << 5) - result + id;
-		result = (result << 5) - result + groupId;
-		result = (result << 5) - result + customerId;
-		result = (result << 5) - result + (email == null ? 0 : email.hashCode());
-		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
-		return result;
+        return ObjectUtils.hash(id, code, customerId, startDate, email, name);
 	}
 
 	// CONSTRUCTORS
 
 	@JsonCreator
-	public Student(@JsonProperty("id") int id, 
-					@JsonProperty("groupId") int groupId, 
-					@JsonProperty("customerId") int customerId, 
-					@JsonProperty("email") String email, 
-					@JsonProperty("name") String name) {
-		this.id = id;
-		this.groupId = groupId;
-		this.customerId = customerId;
-		this.email = email;
-		this.name = name;
+	public Student(@JsonProperty("id") int id,
+                   @JsonProperty("customerId") Integer customerId,
+                   @JsonProperty("startDate")  Date startDate,
+                   @JsonProperty("email") String email,
+                   @JsonProperty("name") String name) {
+		this(id, null, customerId, startDate, email, name, null, null);
 	}
+
+    public Student(int id, Integer code, Integer customerId, Date startDate, String email, String name, Date createdAt, Date updatedAt) {
+        this.id = id;
+        this.code = code;
+        this.customerId = customerId;
+        this.startDate = startDate;
+        this.email = email;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 	
 	public static Student valueOf(Record studentRecord) {
 		if (studentRecord == null)
 			return null;
 		
 		int id = studentRecord.getValue(STUDENT.ID);
-		int groupId = studentRecord.getValue(STUDENT.GROUP_ID);
-		int customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
+        int code = studentRecord.getValue(STUDENT.CODE);
+        Integer customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
+        Date startDate = studentRecord.getValue(STUDENT.START_DATE);
 		String email = studentRecord.getValue(STUDENT.EMAIL);
 		String name = studentRecord.getValue(STUDENT.NAME);
-		return new Student(id, groupId, customerId, email, name);
+
+        long createdTimestamp = studentRecord.getValue(STUDENT.CREATED_AT);
+        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        long updatedTimestamp = studentRecord.getValue(STUDENT.UPDATED_AT);
+        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
 	}
 
 	// PRIVATE
 
 	@Min(value = 0, message = "Negative student ids not allowed")
 	private final int id;
+
+	private final Integer code;
 	
-	@Min(value = 1, message = "The group id must be set")
-	private final int groupId;
-	
-	@Min(value = 1, message = "The customer id must be set")
-	private final int customerId;
+	private final Integer customerId;
+
+    @NotNull(message = "There must be a start date")
+    private final Date startDate;
 	
 	@NotNull(message = "The student must have an email")
 	@Size(max = 60, message = "Email size must not exceed 60 characters")
@@ -135,5 +170,8 @@ public class Student {
 	@NotNull(message = "The student must have a name")
 	@Size(max = 60, message = "Name size must not exceed 60 characters")
 	private final String name;
+
+    private final Date createdAt;
+    private final Date updatedAt;
 	
 }

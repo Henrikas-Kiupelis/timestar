@@ -78,11 +78,11 @@ CREATE TABLE teacher (
   payment_day INT NOT NULL,
   hourly_wage DECIMAL(19, 4) NOT NULL,
   academic_wage DECIMAL(19, 4) NOT NULL,
-  email VARCHAR(60) NOT NULL,
   name VARCHAR(30) NOT NULL,
   surname VARCHAR(30) NOT NULL,
   phone VARCHAR(30) NOT NULL,
   city VARCHAR(30) NOT NULL,
+  email VARCHAR(60) NOT NULL,
   picture VARCHAR(100) NOT NULL,
   document VARCHAR(100) NOT NULL,
   comment VARCHAR(500) NOT NULL,
@@ -197,12 +197,11 @@ CREATE TABLE student (
 
   code INT NOT NULL,
   customer_id INT,
-  group_id INT NOT NULL,
   start_date DATE NOT NULL,
   email VARCHAR(60) NOT NULL,
   name VARCHAR(60) NOT NULL,
   PRIMARY KEY(id),
-  FOREIGN KEY(group_id) REFERENCES group_of_students(id),
+
   FOREIGN KEY(customer_id) REFERENCES customer(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id),
   UNIQUE KEY(partition_id, email));
@@ -227,6 +226,14 @@ FOR EACH ROW
   END; //
 DELIMITER ;
 
+CREATE TABLE student_groups (
+  partition_id INT NOT NULL,
+  student_id INT NOT NULL,
+  group_id INT NOT NULL,
+  FOREIGN KEY(student_id) REFERENCES student(id),
+  FOREIGN KEY(group_id) REFERENCES group_of_students(id),
+  UNIQUE KEY (student_id, group_id));
+
 CREATE TABLE lesson (
   partition_id INT NOT NULL,
   id BIGINT NOT NULL AUTO_INCREMENT,
@@ -234,8 +241,8 @@ CREATE TABLE lesson (
   updated_at BIGINT,
 
   group_id INT NOT NULL,
-  date_of_lesson DATE NOT NULL,
   time_of_start BIGINT NOT NULL,
+  time_of_end BIGINT,
   duration_in_minutes INT NOT NULL,
   comment VARCHAR(500) NOT NULL,
   PRIMARY KEY(id),
@@ -249,6 +256,7 @@ FOR EACH ROW
   BEGIN
     SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
     SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.time_of_end = NEW.time_of_start + (NEW.duration_in_minutes * 60000);
   END; //
 
 CREATE TRIGGER update_timestamp_ensure_create_immutable_lesson

@@ -1,29 +1,22 @@
 package com.superum.db.teacher;
 
-import static com.superum.utils.ControllerUtils.RETURN_CONTENT_TYPE;
-
-import java.security.Principal;
-import java.util.List;
-
-import javax.validation.Valid;
-
+import com.superum.utils.PrincipalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.superum.utils.PrincipalUtils;
+import javax.validation.Valid;
+import java.security.Principal;
+import java.util.List;
+
+import static com.superum.utils.ControllerUtils.APPLICATION_JSON_UTF8;
 
 @RestController
 @RequestMapping(value = "/timestar/api")
 public class TeacherController {
 
-	@RequestMapping(value = "/teacher/add", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/add", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public Teacher addTeacher(Principal user, @RequestBody @Valid Teacher teacher) {
 		int partitionId = PrincipalUtils.partitionId(user);
@@ -35,7 +28,7 @@ public class TeacherController {
 		return addedTeacher;
 	}
 	
-	@RequestMapping(value = "/teacher/{id:[\\d]+}", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public Teacher findTeacher(Principal user, @PathVariable int id) {
 		int partitionId = PrincipalUtils.partitionId(user);
@@ -47,7 +40,7 @@ public class TeacherController {
 		return teacher;
 	}
 	
-	@RequestMapping(value = "/teacher/update", method = RequestMethod.POST, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public Teacher updateTeacher(Principal user, @RequestBody @Valid Teacher teacher) {
 		int partitionId = PrincipalUtils.partitionId(user);
@@ -59,7 +52,7 @@ public class TeacherController {
 		return outdatedTeacher;
 	}
 	
-	@RequestMapping(value = "/teacher/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public Teacher deleteTeacher(Principal user, @PathVariable int id) {
 		int partitionId = PrincipalUtils.partitionId(user);
@@ -71,7 +64,7 @@ public class TeacherController {
 		return teacher;
 	}
 	
-	@RequestMapping(value = "/teacher/all", method = RequestMethod.GET, produces = RETURN_CONTENT_TYPE)
+	@RequestMapping(value = "/teacher/all", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public List<Teacher> getAllTeachers(Principal user) {
 		int partitionId = PrincipalUtils.partitionId(user);

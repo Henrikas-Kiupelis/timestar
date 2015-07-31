@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jooq.Record;
@@ -36,14 +37,14 @@ public class Account {
 		return accountType == null ? null : accountType.name();
 	}
 
-	@JsonProperty("created_at")
+	@JsonProperty("createdAt")
     public Date getCreatedAt() {
-        return created_at;
+        return createdAt;
     }
 
-    @JsonProperty("updated_at")
+    @JsonProperty("updatedAt")
     public Date getUpdatedAt() {
-        return updated_at;
+        return updatedAt;
     }
 	
 	@JsonIgnore
@@ -65,7 +66,9 @@ public class Account {
 				"Account ID: " + id,
 				"Username: " + username,
 				"Account Type: " + accountType,
-				"Password: [PROTECTED]");
+				"Password: [PROTECTED]",
+                "Created at: " + createdAt,
+                "Updated at: " + updatedAt);
 	}
 
 	@Override
@@ -86,12 +89,7 @@ public class Account {
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result = (result << 5) - result + id;
-		result = (result << 5) - result + (username == null ? 0 : username.hashCode());
-		result = (result << 5) - result + (accountType == null ? 0 : accountType.hashCode());
-		result = (result << 5) - result + (password == null ? 0 : Arrays.hashCode(password));
-		return result;
+        return ObjectUtils.hash(id, username, accountType, password);
 	}
 
 	// CONSTRUCTORS
@@ -104,13 +102,13 @@ public class Account {
 		this(id, username, accountType, password, null, null);
 	}
 
-    public Account(int id, String username, String accountType, char[] password, Date created_at, Date updated_at) {
+    public Account(int id, String username, String accountType, char[] password, Date createdAt, Date updatedAt) {
         this.id = id;
         this.username = username;
         this.accountType = accountType == null ? null : AccountType.valueOf(accountType);
         this.password = password;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 	
 	public static Account valueOf(Record accountRecord) {
@@ -123,10 +121,10 @@ public class Account {
 		char[] password = accountRecord.getValue(ACCOUNT.PASSWORD).toCharArray();
 
         long createdTimestamp = accountRecord.getValue(ACCOUNT.CREATED_AT);
-        Date created_at = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
         long updatedTimestamp = accountRecord.getValue(ACCOUNT.UPDATED_AT);
-        Date updated_at = Date.from(Instant.ofEpochMilli(updatedTimestamp));
-		return new Account(id, username, accountType, password, created_at, updated_at);
+        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		return new Account(id, username, accountType, password, createdAt, updatedAt);
 	}
 
 	// PRIVATE
@@ -141,7 +139,7 @@ public class Account {
 	@NotEmpty
 	private char[] password;
 
-    private final Date created_at;
-    private final Date updated_at;
+    private final Date createdAt;
+    private final Date updatedAt;
 	
 }

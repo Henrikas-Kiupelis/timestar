@@ -1,22 +1,24 @@
 package com.superum.db.teacher;
 
-import static com.superum.db.generated.timestar.Tables.TEACHER;
-
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.superum.utils.ObjectUtils;
+import com.superum.utils.StringUtils;
+import org.hibernate.validator.constraints.Email;
+import org.jooq.Record;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Objects;
 
-import org.hibernate.validator.constraints.Email;
-import org.jooq.Record;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.StringUtils;
+import static com.superum.db.generated.timestar.Tables.TEACHER;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Teacher {
@@ -33,10 +35,20 @@ public class Teacher {
 	}
 	
 	@JsonProperty("paymentDay")
-	public byte getPaymentDay() {
+	public int getPaymentDay() {
 		return paymentDay;
 	}
-	
+
+    @JsonProperty("hourlyWage")
+    public BigDecimal getHourlyWage() {
+        return hourlyWage;
+    }
+
+    @JsonProperty("academicWage")
+    public BigDecimal getAcademicWage() {
+        return academicWage;
+    }
+
 	@JsonProperty("name")
 	public String getName() {
 		return name;
@@ -62,20 +74,30 @@ public class Teacher {
 		return email;
 	}
 	
-	@JsonProperty("pictureName")
-	public String getPictureName() {
-		return pictureName;
+	@JsonProperty("picture")
+	public String getPicture() {
+		return picture;
 	}
 	
-	@JsonProperty("documentName")
-	public String getDocumentName() {
-		return documentName;
+	@JsonProperty("document")
+	public String getDocument() {
+		return document;
 	}
 	
 	@JsonProperty("comment")
 	public String getComment() {
 		return comment;
 	}
+
+    @JsonProperty("createdAt")
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @JsonProperty("updatedAt")
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 	
 	// OBJECT OVERRIDES
 
@@ -83,15 +105,19 @@ public class Teacher {
 	public String toString() {
 		return StringUtils.toString(
 				"Teacher ID: " + id,
-				"Payment day: " + paymentDay, 
+				"Payment day: " + paymentDay,
+                "Hourly wage: " + hourlyWage,
+                "Academic wage: " + academicWage,
 				"Name: " + name,
 				"Surname: " + surname,
 				"Phone: " + phone,
 				"City: " + city,
 				"Email: " + email, 
-				"Picture: " + pictureName, 
-				"Document: " + documentName, 
-				"Comment: " + comment);
+				"Picture: " + picture,
+				"Document: " + document,
+				"Comment: " + comment,
+                "Created at: " + createdAt,
+                "Updated at: " + updatedAt);
 	}
 
 	@Override
@@ -106,72 +132,81 @@ public class Teacher {
 
 		return this.id == other.id
 				&& this.paymentDay == other.paymentDay
+                && Objects.equals(this.hourlyWage, other.hourlyWage)
+                && Objects.equals(this.academicWage, other.academicWage)
 				&& Objects.equals(this.name, other.name)
 				&& Objects.equals(this.surname, other.surname)
 				&& Objects.equals(this.phone, other.phone)
 				&& Objects.equals(this.city, other.city)
 				&& Objects.equals(this.email, other.email)
-				&& Objects.equals(this.pictureName, other.pictureName)
-				&& Objects.equals(this.documentName, other.documentName)
+				&& Objects.equals(this.picture, other.picture)
+				&& Objects.equals(this.document, other.document)
 				&& Objects.equals(this.comment, other.comment);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result = (result << 5) - result + id;
-		result = (result << 5) - result + paymentDay;
-		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
-		result = (result << 5) - result + (surname == null ? 0 : surname.hashCode());
-		result = (result << 5) - result + (phone == null ? 0 : phone.hashCode());
-		result = (result << 5) - result + (city == null ? 0 : city.hashCode());
-		result = (result << 5) - result + (email == null ? 0 : email.hashCode());
-		result = (result << 5) - result + pictureName.hashCode();
-		result = (result << 5) - result + documentName.hashCode();
-		result = (result << 5) - result + comment.hashCode();
-		return result;
+        return ObjectUtils.hash(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture, document, comment);
 	}
 
 	// CONSTRUCTORS
 
 	@JsonCreator
-	public Teacher(@JsonProperty("id") int id, 
-					@JsonProperty("paymentDay") byte paymentDay, 
-					@JsonProperty("name") String name, 
-					@JsonProperty("surname") String surname, 
-					@JsonProperty("phone") String phone, 
-					@JsonProperty("city") String city,
-					@JsonProperty("email") String email,
-					@JsonProperty("pictureName") String pictureName,
-					@JsonProperty("documentName") String documentName,
-					@JsonProperty("comment") String comment) {
-		this.id = id;
-		this.paymentDay = paymentDay;
-		this.name = name;
-		this.surname = surname;
-		this.phone = phone;
-		this.city = city;
-		this.email = email;
-		this.pictureName = pictureName != null ? pictureName : "";
-		this.documentName = documentName != null ? documentName : "";
-		this.comment = comment != null ? comment : "";
+	public Teacher(@JsonProperty("id") int id,
+                   @JsonProperty("paymentDay") int paymentDay,
+                   @JsonProperty("hourlyWage") BigDecimal hourlyWage,
+                   @JsonProperty("academicWage") BigDecimal academicWage,
+                   @JsonProperty("name") String name,
+                   @JsonProperty("surname") String surname,
+                   @JsonProperty("phone") String phone,
+                   @JsonProperty("city") String city,
+                   @JsonProperty("email") String email,
+                   @JsonProperty("picture") String picture,
+                   @JsonProperty("document") String document,
+                   @JsonProperty("comment") String comment) {
+		this(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture, document, comment, null, null);
 	}
+
+    public Teacher(int id, int paymentDay, BigDecimal hourlyWage, BigDecimal academicWage, String name, String surname,
+                   String phone, String city, String email, String picture, String document, String comment, Date createdAt, Date updatedAt) {
+        this.id = id;
+        this.paymentDay = paymentDay;
+        this.hourlyWage = hourlyWage;
+        this.academicWage = academicWage;
+        this.name = name;
+        this.surname = surname;
+        this.phone = phone;
+        this.city = city;
+        this.email = email;
+        this.picture = picture != null ? picture : "";
+        this.document = document != null ? document : "";
+        this.comment = comment != null ? comment : "";
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 	
 	public static Teacher valueOf(Record teacherRecord) {
 		if (teacherRecord == null)
 			return null;
 		
 		int id = teacherRecord.getValue(TEACHER.ID);
-		byte paymentDay = teacherRecord.getValue(TEACHER.PAYMENT_DAY);
+        int paymentDay = teacherRecord.getValue(TEACHER.PAYMENT_DAY);
+        BigDecimal hourlyWage = teacherRecord.getValue(TEACHER.HOURLY_WAGE);
+        BigDecimal academicWage = teacherRecord.getValue(TEACHER.ACADEMIC_WAGE);
 		String name = teacherRecord.getValue(TEACHER.NAME);
 		String surname = teacherRecord.getValue(TEACHER.SURNAME);
 		String phone = teacherRecord.getValue(TEACHER.PHONE);
 		String city = teacherRecord.getValue(TEACHER.CITY);
 		String email = teacherRecord.getValue(TEACHER.EMAIL);
-		String pictureName = teacherRecord.getValue(TEACHER.PICTURE_NAME);
-		String documentName = teacherRecord.getValue(TEACHER.DOCUMENT_NAME);
-		String comment = teacherRecord.getValue(TEACHER.COMMENT_ABOUT);
-		return new Teacher(id, paymentDay, name, surname, phone, city, email, pictureName, documentName, comment);
+		String pictureName = teacherRecord.getValue(TEACHER.PICTURE);
+		String documentName = teacherRecord.getValue(TEACHER.DOCUMENT);
+		String comment = teacherRecord.getValue(TEACHER.COMMENT);
+
+        long createdTimestamp = teacherRecord.getValue(TEACHER.CREATED_AT);
+        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        long updatedTimestamp = teacherRecord.getValue(TEACHER.UPDATED_AT);
+        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, pictureName, documentName, comment, createdAt, updatedAt);
 	}
 
 	// PRIVATE
@@ -181,7 +216,13 @@ public class Teacher {
 	
 	@Min(value = 1, message = "The payment day must be at least the first day of the month")
 	@Max(value = 31, message = "The payment day must be at most the last day of the month")
-	private final byte paymentDay;
+	private final int paymentDay;
+
+    @NotNull
+    private final BigDecimal hourlyWage;
+
+    @NotNull
+    private final BigDecimal academicWage;
 	
 	@NotNull(message = "The teacher must have a name")
 	@Size(max = 30, message = "Name size must not exceed 30 characters")
@@ -206,14 +247,17 @@ public class Teacher {
 	
 	@NotNull(message = "The teacher must have a picture name")
 	@Size(max = 100, message = "Picture name size must not exceed 100 characters")
-	private final String pictureName;
+	private final String picture;
 	
 	@NotNull(message = "The teacher must have a document name")
 	@Size(max = 100, message = "Document name size must not exceed 100 characters")
-	private final String documentName;
+	private final String document;
 	
 	@NotNull(message = "The teacher must have a comment, even if empty")
 	@Size(max = 500, message = "The comment must not exceed 500 characters")
 	private final String comment;
+
+	private final Date createdAt;
+    private final Date updatedAt;
 
 }

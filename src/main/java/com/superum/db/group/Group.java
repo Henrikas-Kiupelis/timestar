@@ -1,19 +1,21 @@
 package com.superum.db.group;
 
-import static com.superum.db.generated.timestar.Tables.STUDENT_GROUP;
-
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.superum.db.teacher.WageType;
+import com.superum.utils.ObjectUtils;
+import com.superum.utils.StringUtils;
+import org.jooq.Record;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Objects;
 
-import org.jooq.Record;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.StringUtils;
+import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Group {
@@ -28,15 +30,40 @@ public class Group {
 		return id > 0;
 	}
 	
-	@JsonProperty("teacherId")
-	public Integer getTeacherId() {
-		return teacherId;
+	@JsonProperty("customerId")
+	public Integer getCustomerId() {
+		return customerId;
 	}
+
+    @JsonProperty("teacherId")
+    public int getTeacherId() {
+        return teacherId;
+    }
+
+    @JsonProperty("usesHourlyWage")
+    public boolean getUsesHourlyWage() {
+        return wage == WageType.HOURLY;
+    }
+
+    @JsonProperty("languageLevel")
+    public String getLanguageLevel() {
+        return languageLevel;
+    }
 	
 	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
+
+    @JsonProperty("createdAt")
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @JsonProperty("updatedAt")
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 	
 	// OBJECT OVERRIDES
 
@@ -44,8 +71,13 @@ public class Group {
 	public String toString() {
 		return StringUtils.toString(
 				"Group ID: " + id,
+                "Customer ID: " + customerId,
 				"Teacher ID: " + teacherId,
-				"Name: " + name);
+                "WageType: " + wage,
+                "Language level: " + languageLevel,
+				"Name: " + name,
+                "Created at: " + createdAt,
+                "Updated at: " + updatedAt);
 	}
 
 	@Override
@@ -59,38 +91,57 @@ public class Group {
 		Group other = (Group) o;
 
 		return this.id == other.id
-				&& Objects.equals(this.teacherId, other.teacherId)
-				&& Objects.equals(this.name, other.name);
+                && this.teacherId == other.teacherId
+				&& Objects.equals(this.customerId, other.customerId)
+                && Objects.equals(this.wage, other.wage)
+                && Objects.equals(this.languageLevel, other.languageLevel)
+                && Objects.equals(this.name, other.name);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result = (result << 5) - result + id;
-		result = (result << 5) - result + (teacherId == null ? 0 : teacherId);
-		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
-		return result;
+        return ObjectUtils.hash(id, customerId, teacherId, wage, languageLevel, name);
 	}
 
 	// CONSTRUCTORS
 
 	@JsonCreator
 	public Group(@JsonProperty("id") int id,
-				@JsonProperty("teacherId") Integer teacherId,
-				@JsonProperty("name") String name) {
-		this.id = id;
-		this.teacherId = teacherId;
-		this.name = name;
+                 @JsonProperty("customerId") Integer customerId,
+                 @JsonProperty("teacherId") int teacherId,
+                 @JsonProperty("usesHourlyWage") boolean usesHourlyWage,
+                 @JsonProperty("languageLevel") String languageLevel,
+                 @JsonProperty("name") String name) {
+		this(id, customerId, teacherId, usesHourlyWage, languageLevel, name, null, null);
 	}
+
+    public Group(int id, Integer customerId, int teacherId, boolean usesHourlyWage, String languageLevel, String name, Date createdAt, Date updatedAt) {
+        this.id = id;
+        this.customerId = customerId;
+        this.teacherId = teacherId;
+        this.wage = usesHourlyWage ? WageType.HOURLY : WageType.ACADEMIC;
+        this.languageLevel = languageLevel;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 	
 	public static Group valueOf(Record groupRecord) {
 		if (groupRecord == null)
 			return null;
 		
-		int id = groupRecord.getValue(STUDENT_GROUP.ID);
-		Integer teacherId = groupRecord.getValue(STUDENT_GROUP.TEACHER_ID);
-		String name = groupRecord.getValue(STUDENT_GROUP.NAME);
-		return new Group(id, teacherId, name);
+		int id = groupRecord.getValue(GROUP_OF_STUDENTS.ID);
+        Integer customerId = groupRecord.getValue(GROUP_OF_STUDENTS.CUSTOMER_ID);
+		int teacherId = groupRecord.getValue(GROUP_OF_STUDENTS.TEACHER_ID);
+        boolean usesHourlyWage = groupRecord.getValue(GROUP_OF_STUDENTS.USE_HOURLY_WAGE);
+        String languageLevel = groupRecord.getValue(GROUP_OF_STUDENTS.LANGUAGE_LEVEL);
+		String name = groupRecord.getValue(GROUP_OF_STUDENTS.NAME);
+
+        long createdTimestamp = groupRecord.getValue(GROUP_OF_STUDENTS.CREATED_AT);
+        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        long updatedTimestamp = groupRecord.getValue(GROUP_OF_STUDENTS.UPDATED_AT);
+        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		return new Group(id, customerId, teacherId, usesHourlyWage, languageLevel, name, createdAt, updatedAt);
 	}
 
 	// PRIVATE
@@ -98,10 +149,23 @@ public class Group {
 	@Min(value = 0, message = "Negative group ids not allowed")
 	private final int id;
 	
-	private final Integer teacherId;
+	private final Integer customerId;
+
+    @Min(value = 1, message = "Teacher id must be set")
+    private final int teacherId;
+
+    @NotNull(message = "The group must have a wage setting")
+    private final WageType wage;
+
+    @NotNull(message = "The group must have a language")
+    @Size(max = 20, message = "Language size must not exceed 20 characters")
+    private final String languageLevel;
 	
 	@NotNull(message = "The group must have a name")
 	@Size(max = 30, message = "Name size must not exceed 30 characters")
 	private final String name;
+
+	private final Date createdAt;
+	private final Date updatedAt;
 	
 }

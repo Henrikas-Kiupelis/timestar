@@ -25,5 +25,24 @@ public class StringUtils {
 		for (int i = 0; i < chars.length; i++)
 			chars[i] = '?';
 	}
-	
+
+	public static String fieldStrings(Object... objects) {
+        if ((objects.length & 1) != 0)
+            throw new IllegalArgumentException("Only field name/value pairs are allowed.");
+
+		StringBuilder fieldBuilder = new StringBuilder().append('{');
+
+        boolean first = true;
+        for (int i = 0; i < objects.length; i += 2) {
+            if (first)
+                first = false;
+            else
+                fieldBuilder.append(", ");
+
+            fieldBuilder.append(objects[i])
+                    .append(": ")
+                    .append(objects[i + 1]);
+        }
+        return fieldBuilder.append('}').toString();
+	}
 }
