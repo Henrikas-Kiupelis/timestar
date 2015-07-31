@@ -1,22 +1,25 @@
 package com.superum.db.lesson.attendance;
 
-import java.util.List;
-import java.util.Objects;
-
-import javax.validation.constraints.Min;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.utils.StringUtils;
 
+import javax.validation.constraints.Min;
+import java.util.List;
+import java.util.Objects;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LessonAttendance {
 
 	// PUBLIC API
-	
+
+    @JsonProperty("id")
 	public long getLessonId() {
 		return lessonId;
 	}
-	
+
+    @JsonProperty("studentIds")
 	public List<Integer> getStudentIds() {
 		return studentIds;
 	}
@@ -25,7 +28,7 @@ public class LessonAttendance {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "LessonAttendance" + StringUtils.toString(
 				"Lesson ID: " + lessonId,
 				"Students: " + studentIds);
 	}

@@ -86,7 +86,7 @@ public class Student {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "Student" + StringUtils.toString(
 				"Student ID: " + id,
                 "Student code: " + code,
 				"Customer ID: " + customerId,

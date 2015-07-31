@@ -103,7 +103,7 @@ public class Teacher {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "Teacher" + StringUtils.toString(
 				"Teacher ID: " + id,
 				"Payment day: " + paymentDay,
                 "Hourly wage: " + hourlyWage,

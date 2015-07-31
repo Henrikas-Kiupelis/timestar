@@ -3,6 +3,7 @@ package com.superum.db.partition;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jooq.Record;
@@ -30,7 +31,7 @@ public class Partition {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "Partition" + StringUtils.toString(
 				"Partition ID: " + id,
 				"Name: " + name);
 	}
@@ -51,10 +52,7 @@ public class Partition {
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result = (result << 5) - result + id;
-		result = (result << 5) - result + (name == null ? 0 : name.hashCode());
-		return result;
+		return ObjectUtils.hash(id, name);
 	}
 
 	// CONSTRUCTORS

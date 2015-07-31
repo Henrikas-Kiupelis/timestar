@@ -207,7 +207,6 @@ CREATE TABLE student (
   email VARCHAR(60) NOT NULL,
   name VARCHAR(60) NOT NULL,
   PRIMARY KEY(id),
-
   FOREIGN KEY(customer_id) REFERENCES customer(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id),
   UNIQUE KEY(partition_id, email));
@@ -253,6 +252,7 @@ CREATE TABLE lesson (
   duration_in_minutes INT NOT NULL,
   comment VARCHAR(500) NOT NULL,
   PRIMARY KEY(id),
+  FOREIGN KEY(teacher_id) REFERENCES teacher(id),
   FOREIGN KEY(group_id) REFERENCES group_of_students(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id));
 

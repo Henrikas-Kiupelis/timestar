@@ -78,7 +78,7 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "Customer" + StringUtils.toString(
 				"Customer ID: " + id,
 				"Contract started: " + startDate,
 				"Name: " + name,

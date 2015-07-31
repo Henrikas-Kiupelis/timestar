@@ -2,8 +2,10 @@ package com.superum.db.partition;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class PartitionServiceImpl implements PartitionService {
 
 	@Override

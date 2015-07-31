@@ -1,6 +1,5 @@
 package com.superum.db.lesson;
 
-import com.superum.db.generated.timestar.Keys;
 import com.superum.exception.DatabaseException;
 import com.superum.utils.ConditionUtils;
 import org.jooq.Condition;
@@ -13,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
+import static com.superum.db.generated.timestar.Keys.LESSON_IBFK_2;
 import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
 import static com.superum.db.generated.timestar.Tables.LESSON;
 
@@ -31,7 +31,7 @@ public class LessonQueriesImpl implements LessonQueries {
 
             return sql.select(LESSON.fields())
                     .from(LESSON)
-                    .join(GROUP_OF_STUDENTS).onKey(Keys.LESSON_IBFK_1)
+                    .join(GROUP_OF_STUDENTS).onKey(LESSON_IBFK_2)
                     .where(condition)
                     .groupBy(LESSON.ID)
                     .orderBy(LESSON.ID)

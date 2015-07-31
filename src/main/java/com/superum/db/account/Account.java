@@ -62,7 +62,7 @@ public class Account {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "Account" + StringUtils.toString(
 				"Account ID: " + id,
 				"Username: " + username,
 				"Account Type: " + accountType,

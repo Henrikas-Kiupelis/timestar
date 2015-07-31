@@ -112,7 +112,7 @@ public class Lesson {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "Lesson" + StringUtils.toString(
 				"Lesson ID: " + id,
 				"Group ID: " + groupId,
                 "Teacher ID: " + teacherId,

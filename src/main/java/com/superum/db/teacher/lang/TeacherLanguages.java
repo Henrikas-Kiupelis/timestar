@@ -1,15 +1,15 @@
 package com.superum.db.teacher.lang;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-import javax.validation.constraints.Min;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
+
+import javax.validation.constraints.Min;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TeacherLanguages {
@@ -30,7 +30,7 @@ public class TeacherLanguages {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "TeacherLanguages" + StringUtils.toString(
 				"Teacher ID: " + teacherId,
 				"Languages: " + languages);
 	}
@@ -51,10 +51,7 @@ public class TeacherLanguages {
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result = (result << 5) - result + teacherId;
-		result = (result << 5) - result + languages.hashCode();
-		return result;
+		return ObjectUtils.hash(teacherId, languages);
 	}
 
 	// CONSTRUCTORS

@@ -69,7 +69,7 @@ public class Group {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "Group" + StringUtils.toString(
 				"Group ID: " + id,
                 "Customer ID: " + customerId,
 				"Teacher ID: " + teacherId,
