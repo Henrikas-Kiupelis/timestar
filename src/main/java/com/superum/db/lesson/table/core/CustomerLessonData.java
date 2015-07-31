@@ -1,16 +1,15 @@
 package com.superum.db.lesson.table.core;
 
-import java.util.List;
-import java.util.Objects;
-
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.customer.Customer;
-import com.superum.db.customer.lang.CustomerLanguages;
+import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomerLessonData {
@@ -46,7 +45,7 @@ public class CustomerLessonData {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "CustomerLessonData" + StringUtils.toString(
 				"Customer: " + customer,
 				"Customer contract languages: " + customerContractLanguages,
 				"Lesson data: " + teacherLessonData,
@@ -73,13 +72,7 @@ public class CustomerLessonData {
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result = (result << 5) - result + (customer == null ? 0 : customer.hashCode());
-		result = (result << 5) - result + (customerContractLanguages == null ? 0 : customerContractLanguages.hashCode());
-		result = (result << 5) - result + (teacherLessonData == null ? 0 : teacherLessonData.hashCode());
-		result = (result << 5) - result + (totalData == null ? 0 : totalData.hashCode());
-		result = (result << 5) - result + (paymentData == null ? 0 : paymentData.hashCode());
-		return result;
+		return ObjectUtils.hash(customer, customerContractLanguages, teacherLessonData, totalData, paymentData);
 	}
 
 	// CONSTRUCTORS

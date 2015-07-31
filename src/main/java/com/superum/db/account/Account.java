@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jooq.Record;
 
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.ACCOUNT;
@@ -33,6 +36,16 @@ public class Account {
 	public String getAccountType() {
 		return accountType == null ? null : accountType.name();
 	}
+
+	@JsonProperty("createdAt")
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @JsonProperty("updatedAt")
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 	
 	@JsonIgnore
 	public String getPassword() {
@@ -49,11 +62,13 @@ public class Account {
 
 	@Override
 	public String toString() {
-		return StringUtils.toString(
+		return "Account" + StringUtils.toString(
 				"Account ID: " + id,
 				"Username: " + username,
 				"Account Type: " + accountType,
-				"Password: [PROTECTED]");
+				"Password: [PROTECTED]",
+                "Created at: " + createdAt,
+                "Updated at: " + updatedAt);
 	}
 
 	@Override
@@ -74,12 +89,7 @@ public class Account {
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result = (result << 5) - result + id;
-		result = (result << 5) - result + (username == null ? 0 : username.hashCode());
-		result = (result << 5) - result + (accountType == null ? 0 : accountType.hashCode());
-		result = (result << 5) - result + (password == null ? 0 : Arrays.hashCode(password));
-		return result;
+        return ObjectUtils.hash(id, username, accountType, password);
 	}
 
 	// CONSTRUCTORS
@@ -89,11 +99,17 @@ public class Account {
 				   @JsonProperty("username") String username,
 				   @JsonProperty("accountType") String accountType,
 				   @JsonProperty("password") char[] password) {
-		this.id = id;
-		this.username = username;
-		this.accountType = accountType == null ? null : AccountType.valueOf(accountType);
-		this.password = password;
+		this(id, username, accountType, password, null, null);
 	}
+
+    public Account(int id, String username, String accountType, char[] password, Date createdAt, Date updatedAt) {
+        this.id = id;
+        this.username = username;
+        this.accountType = accountType == null ? null : AccountType.valueOf(accountType);
+        this.password = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 	
 	public static Account valueOf(Record accountRecord) {
 		if (accountRecord == null)
@@ -103,7 +119,12 @@ public class Account {
 		String username = accountRecord.getValue(ACCOUNT.USERNAME);
 		String accountType = accountRecord.getValue(ACCOUNT.ACCOUNT_TYPE);
 		char[] password = accountRecord.getValue(ACCOUNT.PASSWORD).toCharArray();
-		return new Account(id, username, accountType, password);
+
+        long createdTimestamp = accountRecord.getValue(ACCOUNT.CREATED_AT);
+        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        long updatedTimestamp = accountRecord.getValue(ACCOUNT.UPDATED_AT);
+        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		return new Account(id, username, accountType, password, createdAt, updatedAt);
 	}
 
 	// PRIVATE
@@ -117,5 +138,8 @@ public class Account {
 	
 	@NotEmpty
 	private char[] password;
+
+    private final Date createdAt;
+    private final Date updatedAt;
 	
 }

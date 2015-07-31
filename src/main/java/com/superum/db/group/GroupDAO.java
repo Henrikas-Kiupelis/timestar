@@ -10,6 +10,10 @@ public interface GroupDAO extends SimplePartitionedDAO<Group, Integer> {
 	
 	List<Group> readAllForTeacher(int teacherId, int partitionId);
 
+	List<Group> readAllForCustomer(int customerId, int partitionId);
+
+    List<Group> readAllForCustomerAndTeacher(int customerId, int teacherId, int partitionId);
+
 	List<Group> all(int partitionId);
 	
 }

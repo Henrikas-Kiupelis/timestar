@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Keys.LESSON_ATTENDANCE_IBFK_2;
-import static com.superum.db.generated.timestar.Tables.LESSON_ATTENDANCE;
-import static com.superum.db.generated.timestar.Tables.STUDENT;
+import static com.superum.db.generated.timestar.Keys.STUDENTS_IN_GROUPS_IBFK_1;
+import static com.superum.db.generated.timestar.Tables.*;
 
 @Repository
 @Transactional
@@ -33,6 +33,23 @@ public class StudentQueriesImpl implements StudentQueries {
             throw new DatabaseException("An unexpected error occurred when trying to read all students for lesson with id " + lessonId, e);
         }
 	}
+
+    @Override
+    public List<Student> readAllForGroup(int groupId, int partitionId) {
+        try {
+            return sql.select(STUDENT.fields())
+                    .from(STUDENT)
+                    .join(STUDENTS_IN_GROUPS).onKey(STUDENTS_IN_GROUPS_IBFK_1)
+                    .where(STUDENTS_IN_GROUPS.GROUP_ID.eq(groupId)
+                            .and(STUDENT.PARTITION_ID.eq(partitionId)))
+                    .groupBy(STUDENT.ID)
+                    .orderBy(STUDENT.ID)
+                    .fetch()
+                    .map(Student::valueOf);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to read all students for group with id " + groupId, e);
+        }
+    }
 	
 	// CONSTRUCTORS
 

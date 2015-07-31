@@ -20,8 +20,8 @@ public class StudentDAOImpl implements StudentDAO {
 		try {
             return sql.insertInto(STUDENT)
                     .set(STUDENT.PARTITION_ID, partitionId)
-                    .set(STUDENT.GROUP_ID, student.getGroupId())
                     .set(STUDENT.CUSTOMER_ID, student.getCustomerId())
+                    .set(STUDENT.START_DATE, student.getStartDateSql())
                     .set(STUDENT.EMAIL, student.getEmail())
                     .set(STUDENT.NAME, student.getName())
                     .returning()
@@ -58,8 +58,8 @@ public class StudentDAOImpl implements StudentDAO {
             Student old = read(id, partitionId);
 
             sql.update(STUDENT)
-                    .set(STUDENT.GROUP_ID, student.getGroupId())
                     .set(STUDENT.CUSTOMER_ID, student.getCustomerId())
+                    .set(STUDENT.START_DATE, student.getStartDateSql())
                     .set(STUDENT.EMAIL, student.getEmail())
                     .set(STUDENT.NAME, student.getName())
                     .where(STUDENT.ID.eq(id)
@@ -90,20 +90,6 @@ public class StudentDAOImpl implements StudentDAO {
         }
 	}
 
-	@Override
-	public List<Student> readAllForGroup(int groupId, int partitionId) {
-        try {
-            return sql.selectFrom(STUDENT)
-                    .where(STUDENT.GROUP_ID.eq(groupId)
-                            .and(STUDENT.PARTITION_ID.eq(partitionId)))
-                    .orderBy(STUDENT.ID)
-                    .fetch()
-                    .map(Student::valueOf);
-        } catch (DataAccessException e) {
-            throw new DatabaseException("An unexpected error occurred when trying to read all students for group with id " + groupId, e);
-        }
-	}
-	
 	@Override
 	public List<Student> readAllForCustomer(int customerId, int partitionId) {
         try {

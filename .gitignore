@@ -34,3 +34,7 @@
 
 /pictures/
 /documents/
+
+# SQL test statements
+
+src/main/resources/sql/Testing.sql

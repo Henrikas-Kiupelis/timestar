@@ -1,35 +1,45 @@
 package com.superum.utils;
 
-import java.sql.Date;
-
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.TableField;
 
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
 public class ConditionUtils {
 
-	public static <R extends Record> Condition betweenDates(TableField<R, Date> field, Date start, Date end) {
-		if (start == null)
-			return beforeDate(field, end);
+	public static <R extends Record> Condition betweenDates(TableField<R, Long> field, Date startDate, Date endDate) {
+		if (startDate == null)
+			return beforeDate(field, endDate);
 		
-		if (end == null)
-			return afterDate(field, start);
+		if (endDate == null)
+			return afterDate(field, startDate);
 		
-		return field.ge(start).and(field.le(end));
+		return field.greaterOrEqual(start(startDate))
+                .and(field.lessThan(end(endDate)));
 	}
 	
-	public static <R extends Record> Condition beforeDate(TableField<R, Date> field, Date end) {
-		if (end == null)
+	public static <R extends Record> Condition beforeDate(TableField<R, Long> field, Date endDate) {
+		if (endDate == null)
 			return null;
 		
-		return field.le(end);
+		return field.lessThan(end(endDate));
 	}
 	
-	public static <R extends Record> Condition afterDate(TableField<R, Date> field, Date start) {
-		if (start == null)
+	public static <R extends Record> Condition afterDate(TableField<R, Long> field, Date startDate) {
+		if (startDate == null)
 			return null;
 		
-		return field.ge(start);
+		return field.greaterOrEqual(start(startDate));
 	}
+
+    private static long start(Date startDate) {
+        return startDate.toInstant().truncatedTo(ChronoUnit.DAYS).toEpochMilli();
+    }
+
+    private static long end(Date endDate) {
+        return endDate.toInstant().truncatedTo(ChronoUnit.DAYS).plus(1, ChronoUnit.DAYS).toEpochMilli();
+    }
 
 }

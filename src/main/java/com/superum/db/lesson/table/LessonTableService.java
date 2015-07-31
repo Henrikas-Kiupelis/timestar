@@ -1,14 +1,13 @@
 package com.superum.db.lesson.table;
 
-import java.sql.Date;
-
+import com.superum.db.lesson.table.core.LessonTable;
 import org.springframework.stereotype.Service;
 
-import com.superum.db.lesson.table.core.LessonTable;
+import java.sql.Date;
 
 @Service
 public interface LessonTableService {
 
-	public LessonTable lessonData(int amount, int offset, Date start, Date end, int partitionId);
+	LessonTable lessonData(int amount, int offset, Date start, Date end, int partitionId);
 	
 }

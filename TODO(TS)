@@ -6,15 +6,7 @@ This file should contain a rough list of ideas/things to be done in the future:
 
 A) Things to definitely do in the future
 
-	Groups need a new field, language field; they will only have one language
-	Customers no longer have explicit languages, rather, they have languages which their groups have instead
-	    therefore, customers need explicit groups (more specifically, groups need a customerId field again)
-	Groups can have separate contracts, without any customer, therefore customerId should be optional
-	Students should be able to be in multiple groups, and not necessarily belong to a customer
-
-	Move the monetary value of contracts from customers to teachers (who should have 2 different rates,
-	specifically 'per hour' and 'per academic hour' which don't depend on each other, that is
-	'per hour' != 3/4 * 'per academic hour'
+	Students should be able to be in multiple groups!
 
 B) Ideas
 

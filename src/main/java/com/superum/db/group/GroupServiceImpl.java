@@ -8,10 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class GroupServiceImpl implements GroupService {
 
 	@Override
@@ -64,7 +66,7 @@ public class GroupServiceImpl implements GroupService {
 	public List<Group> findGroupsForCustomer(int customerId, int partitionId) {
 		LOG.debug("Reading Groups for Customer with ID: {}", customerId);
 		
-		List<Group> groupsForCustomer = groupQueries.readAllForCustomer(customerId, partitionId);
+		List<Group> groupsForCustomer = groupDAO.readAllForCustomer(customerId, partitionId);
 		LOG.debug("Groups retrieved: {}", groupsForCustomer);
 		
 		return groupsForCustomer;
@@ -84,7 +86,7 @@ public class GroupServiceImpl implements GroupService {
 	public List<Group> findGroupsForCustomerAndTeacher(int customerId, int teacherId, int partitionId) {
 		LOG.debug("Reading Groups for Customer with ID '{}' and Teacher with ID '{}'", customerId, teacherId);
 		
-		List<Group> groupsForCustomerAndTeacher = groupQueries.readAllForCustomerAndTeacher(customerId, teacherId, partitionId);
+		List<Group> groupsForCustomerAndTeacher = groupDAO.readAllForCustomerAndTeacher(customerId, teacherId, partitionId);
 		LOG.debug("Groups retrieved: {}", groupsForCustomerAndTeacher);
 		
 		return groupsForCustomerAndTeacher;
@@ -103,9 +105,8 @@ public class GroupServiceImpl implements GroupService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public GroupServiceImpl(GroupDAO groupDAO, GroupQueries groupQueries, StudentService studentService, LessonService lessonService) {
+	public GroupServiceImpl(GroupDAO groupDAO, StudentService studentService, LessonService lessonService) {
 		this.groupDAO = groupDAO;
-		this.groupQueries = groupQueries;
 		this.studentService = studentService;
 		this.lessonService = lessonService;
 	}
@@ -113,7 +114,6 @@ public class GroupServiceImpl implements GroupService {
 	// PRIVATE
 	
 	private final GroupDAO groupDAO;
-	private final GroupQueries groupQueries;
 	private final StudentService studentService;
 	private final LessonService lessonService;
 	

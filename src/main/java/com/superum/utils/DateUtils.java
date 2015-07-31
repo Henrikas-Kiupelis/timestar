@@ -9,7 +9,7 @@ public class DateUtils {
 		return new java.sql.Date(new java.util.Date().getTime());
 	}
 	
-	public static Calendar initialDay(byte paymentDay) {
+	public static Calendar initialDay(int paymentDay) {
 		Calendar calendar = new GregorianCalendar();
 		int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
 		if (currentDay <= paymentDay)
@@ -18,17 +18,18 @@ public class DateUtils {
 		return ensureActualDay(calendar, paymentDay);
 	}
 	
-	public static Calendar finalDay(Calendar calendar, byte paymentDay) {
+	public static Calendar finalDay(Calendar calendar, int paymentDay) {
 		calendar.add(Calendar.MONTH, 1);
 		return ensureActualDay(calendar, paymentDay);
 	}
 	
 	public static Calendar ensureActualDay(Calendar calendar, int paymentDay) {
 		int maximum = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-		if (maximum < paymentDay)
-			paymentDay = maximum;
-		
-		calendar.set(Calendar.DAY_OF_MONTH, paymentDay);
+		if (maximum < paymentDay) {
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.add(Calendar.MONTH, 1);
+		} else
+            calendar.set(Calendar.DAY_OF_MONTH, paymentDay);
 		return calendar;
 	}
 	

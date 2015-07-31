@@ -1,18 +1,17 @@
 package com.superum.db.customer;
 
-import java.util.List;
-
+import com.superum.db.group.student.Student;
+import com.superum.db.group.student.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.superum.db.customer.lang.CustomerLanguages;
-import com.superum.db.customer.lang.CustomerLanguagesService;
-import com.superum.db.group.student.Student;
-import com.superum.db.group.student.StudentService;
+import java.util.List;
 
 @Service
+@Transactional
 public class CustomerServiceImpl implements CustomerService {
 
 	@Override
@@ -48,10 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer deleteCustomer(int id, int partitionId) {
 		LOG.debug("Deleting Customer by ID: {}", id);
-		
-		CustomerLanguages deletedLanguages = customerLanguagesService.deleteLanguagesForCustomerContract(id, partitionId);
-		LOG.debug("Deleted CustomerContractLanguages for this Customer: {}", deletedLanguages);
-		
+
 		List<Student> deletedStudents = studentService.deleteForCustomer(id, partitionId);
 		LOG.debug("Deleted Students for this Customer: {}", deletedStudents);
 		
@@ -84,10 +80,9 @@ public class CustomerServiceImpl implements CustomerService {
 	// CONSTRUCTORS
 	
 	@Autowired
-	public CustomerServiceImpl(CustomerDAO customerDAO, CustomerQueries customerQueries, CustomerLanguagesService customerLanguagesService, StudentService studentService) {
+	public CustomerServiceImpl(CustomerDAO customerDAO, CustomerQueries customerQueries, StudentService studentService) {
 		this.customerDAO = customerDAO;
 		this.customerQueries = customerQueries;
-		this.customerLanguagesService = customerLanguagesService;
 		this.studentService = studentService;
 	}
 	
@@ -95,7 +90,6 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	private final CustomerDAO customerDAO;
 	private final CustomerQueries customerQueries;
-	private final CustomerLanguagesService customerLanguagesService;
 	private final StudentService studentService;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(CustomerService.class);

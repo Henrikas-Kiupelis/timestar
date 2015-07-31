@@ -2,6 +2,7 @@ package com.superum.utils;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.temporal.ChronoUnit;
 
 public class ObjectUtils {
 
@@ -18,6 +19,10 @@ public class ObjectUtils {
 
     public static boolean equalsJavaSqlDate(Date date1, Date date2) {
         return date1 == null ? date2 == null : date1.toString().equals(date2.toString());
+    }
+
+    public static boolean equalsJavaUtilDate(java.util.Date date1, java.util.Date date2) {
+        return date1 == null ? date2 == null : date1.toInstant().truncatedTo(ChronoUnit.DAYS).equals(date2.toInstant().truncatedTo(ChronoUnit.DAYS));
     }
 
     public static boolean equalsJavaMathBigDecimal(BigDecimal bigDecimal1, BigDecimal bigDecimal2) {

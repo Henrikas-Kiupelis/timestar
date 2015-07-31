@@ -23,19 +23,7 @@ role VARCHAR(60) NOT NULL,
 FOREIGN KEY(username) REFERENCES account(username));
 
 INSERT INTO partitions (id, name)
-VALUES (0, 'TEST');
-
-INSERT INTO partitions (id, name)
-VALUES (1, 'DEV');
-
-INSERT INTO account (username, password, account_type, id)
-VALUES ('0.test', '$2a$10$ReQmCgAd1YqDMHNg5zg7hOj.uzJhAACGRkMSMV04h6iaTzxhfTC.6', 'ADMIN', 0);
-
-INSERT INTO roles (username, role)
-VALUES ('0.test', 'ROLE_ADMIN');
-
-INSERT INTO roles (username, role)
-VALUES ('0.test', 'ROLE_TEACHER');
+VALUES (1, 'COTEM');
 
 INSERT INTO account (username, password, account_type, id) 
 VALUES ('1.goodlike', '$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.', 'ADMIN', 0);
@@ -55,9 +43,9 @@ name VARCHAR(30) NOT NULL,
 surname VARCHAR(30) NOT NULL, 
 phone VARCHAR(30) NOT NULL, 
 city VARCHAR(30) NOT NULL, 
-picture_name VARCHAR(100) NOT NULL,
-document_name VARCHAR(100) NOT NULL,
-comment_about VARCHAR(500) NOT NULL,
+picture_name VARCHAR(100) NOT NULL, 
+document_name VARCHAR(100) NOT NULL, 
+comment_about VARCHAR(500) NOT NULL, 
 PRIMARY KEY(id), 
 FOREIGN KEY(partition_id) REFERENCES partitions(id), 
 UNIQUE KEY(partition_id, email));
@@ -79,8 +67,8 @@ payment_value DECIMAL(19, 4) NOT NULL,
 name VARCHAR(30) NOT NULL, 
 phone VARCHAR(30) NOT NULL, 
 website VARCHAR(30) NOT NULL, 
-picture_name VARCHAR(100) NOT NULL,
-comment_about VARCHAR(500) NOT NULL,
+picture_name VARCHAR(100) NOT NULL, 
+comment_about VARCHAR(500) NOT NULL, 
 PRIMARY KEY(id), 
 FOREIGN KEY(partition_id) REFERENCES partitions(id));
 
@@ -122,7 +110,7 @@ date_of_lesson DATE NOT NULL,
 time_of_start SMALLINT NOT NULL, 
 time_of_end SMALLINT NOT NULL, 
 length_in_minutes SMALLINT NOT NULL, 
-comment_about VARCHAR(500) NOT NULL,
+comment_about VARCHAR(500) NOT NULL, 
 PRIMARY KEY(id), 
 FOREIGN KEY(teacher_id) REFERENCES teacher(id), 
 FOREIGN KEY(group_id) REFERENCES student_group(id), 
