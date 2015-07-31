@@ -33,6 +33,14 @@ public class Teacher {
 	public boolean hasId() {
 		return id > 0;
 	}
+    @JsonIgnore
+    public Teacher withId(int id) {
+        return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture, document, comment, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Teacher withoutId() {
+        return new Teacher(0, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture, document, comment, createdAt, updatedAt);
+    }
 	
 	@JsonProperty("paymentDay")
 	public int getPaymentDay() {
