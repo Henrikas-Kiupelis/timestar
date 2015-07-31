@@ -200,10 +200,10 @@ public class TeacherServiceTests {
 
         when(teacherDAO.update(updatedTeacher, partitionId)).thenReturn(originalTeacher);
 
-        Teacher retrievedTeacherData = teacherService.updateTeacher(updatedTeacher, partitionId);
+        Teacher retrievedTeacher = teacherService.updateTeacher(updatedTeacher, partitionId);
 
         assertEquals("Original teacher data should be the same as retrieved one;",
-                originalTeacher, retrievedTeacherData);
+                originalTeacher, retrievedTeacher);
 
         // This was incorrect - updatedTeacher is the not the original one :)
         /*
