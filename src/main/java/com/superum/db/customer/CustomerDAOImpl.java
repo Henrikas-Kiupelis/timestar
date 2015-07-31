@@ -21,7 +21,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             return sql.insertInto(CUSTOMER)
                     .set(CUSTOMER.PARTITION_ID, partitionId)
                     .set(CUSTOMER.NAME, customer.getName())
-                    .set(CUSTOMER.START_DATE, customer.getStartDate())
+                    .set(CUSTOMER.START_DATE, customer.getStartDateSql())
                     .set(CUSTOMER.PHONE, customer.getPhone())
                     .set(CUSTOMER.WEBSITE, customer.getWebsite())
                     .set(CUSTOMER.PICTURE, customer.getPicture())
@@ -60,7 +60,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 
             sql.update(CUSTOMER)
                     .set(CUSTOMER.NAME, customer.getName())
-                    .set(CUSTOMER.START_DATE, customer.getStartDate())
+                    .set(CUSTOMER.START_DATE, customer.getStartDateSql())
                     .set(CUSTOMER.PHONE, customer.getPhone())
                     .set(CUSTOMER.WEBSITE, customer.getWebsite())
                     .set(CUSTOMER.PICTURE, customer.getPicture())

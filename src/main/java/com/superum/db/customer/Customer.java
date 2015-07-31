@@ -34,6 +34,11 @@ public class Customer {
 		return startDate;
 	}
 
+    @JsonIgnore
+    public java.sql.Date getStartDateSql() {
+        return new java.sql.Date(startDate.getTime());
+    }
+
 	@JsonProperty("name")
 	public String getName() {
 		return name;
