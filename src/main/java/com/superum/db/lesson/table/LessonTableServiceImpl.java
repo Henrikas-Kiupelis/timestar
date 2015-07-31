@@ -1,31 +1,26 @@
 package com.superum.db.lesson.table;
 
+import com.superum.db.customer.Customer;
+import com.superum.db.customer.CustomerDAO;
+import com.superum.db.lesson.table.core.*;
+import com.superum.db.teacher.Teacher;
+import com.superum.db.teacher.TeacherDAO;
+import com.superum.db.teacher.lang.TeacherLanguages;
+import com.superum.db.teacher.lang.TeacherLanguagesDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.superum.db.customer.Customer;
-import com.superum.db.customer.CustomerDAO;
-import com.superum.db.customer.lang.CustomerLanguages;
-import com.superum.db.customer.lang.CustomerLanguagesDAO;
-import com.superum.db.lesson.table.core.CustomerLessonData;
-import com.superum.db.lesson.table.core.LessonTable;
-import com.superum.db.lesson.table.core.PaymentData;
-import com.superum.db.lesson.table.core.TeacherLessonData;
-import com.superum.db.lesson.table.core.TotalLessonData;
-import com.superum.db.teacher.Teacher;
-import com.superum.db.teacher.TeacherDAO;
-import com.superum.db.teacher.lang.TeacherLanguages;
-import com.superum.db.teacher.lang.TeacherLanguagesDAO;
-
 @Service
+@Transactional
 public class LessonTableServiceImpl implements LessonTableService {
 
 	@Override
@@ -79,12 +74,10 @@ public class LessonTableServiceImpl implements LessonTableService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public LessonTableServiceImpl(TeacherDAO teacherDAO, TeacherLanguagesDAO languagesDAO, CustomerDAO customerDAO,
-			CustomerLanguagesDAO customerContractLanguagesDAO, LessonTableQueries lessonTableQueries) {
+	public LessonTableServiceImpl(TeacherDAO teacherDAO, TeacherLanguagesDAO languagesDAO, CustomerDAO customerDAO, LessonTableQueries lessonTableQueries) {
 		this.teacherDAO = teacherDAO;
 		this.languagesDAO = languagesDAO;
 		this.customerDAO = customerDAO;
-		this.customerContractLanguagesDAO = customerContractLanguagesDAO;
 		this.lessonTableQueries = lessonTableQueries;
 	}
 
@@ -93,11 +86,10 @@ public class LessonTableServiceImpl implements LessonTableService {
 	private final TeacherDAO teacherDAO;
 	private final TeacherLanguagesDAO languagesDAO;
 	private final CustomerDAO customerDAO;
-	private final CustomerLanguagesDAO customerContractLanguagesDAO;
 	private final LessonTableQueries lessonTableQueries;
 	
 	private CustomerLessonData customerData(Customer customer, List<Teacher> teachers, Date start, Date end, int partitionId) {
-		CustomerLanguages contractLanguages = customerContractLanguagesDAO.read(customer.getId(), partitionId);
+		CustomerLanguages contractLanguages = lessonTableQueries.getCustomerLanguages(customer.getId(), partitionId);
 		
 		List<TeacherLessonData> lessonData = teachers.stream()
 				.map(teacher -> teacherData(teacher, customer, start, end, partitionId))
