@@ -54,6 +54,7 @@ public class TeacherServiceTests {
 
         // Instead of manually doing the same thing multiple times, let's create a method Teacher::withoutId
         // and while we're at it, Teacher::withId, which will save a lot of time :)
+        // Delete the commented parts after you check them, and commit/push back to github :)
         /*
         int paymentDay = addedTeacher.getPaymentDay();
         BigDecimal hourlyWage = addedTeacher.getHourlyWage();
@@ -71,7 +72,6 @@ public class TeacherServiceTests {
         */
 
         // There are too many teachers here, the fake one is just fine :)
-        // Delete the commented parts after you check them
         /*
         int addedPaymentDay = 1;
         String addedName = "Fake Name";
