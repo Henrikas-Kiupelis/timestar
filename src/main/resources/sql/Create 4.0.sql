@@ -226,7 +226,7 @@ FOR EACH ROW
   END; //
 DELIMITER ;
 
-CREATE TABLE student_groups (
+CREATE TABLE group_students (
   partition_id INT NOT NULL,
   student_id INT NOT NULL,
   group_id INT NOT NULL,

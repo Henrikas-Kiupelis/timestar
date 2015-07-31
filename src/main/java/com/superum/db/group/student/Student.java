@@ -1,9 +1,6 @@
 package com.superum.db.group.student;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.RandomUtils;
 import com.superum.utils.StringUtils;
@@ -37,6 +34,14 @@ public class Student {
         return code;
     }
 
+    public Student withCode(int code) {
+        return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
+
+    public Student withGeneratedCode() {
+        return withCode(generateCode());
+    }
+
 	@JsonProperty("customerId")
 	public Integer getCustomerId() {
 		return customerId;
@@ -46,6 +51,11 @@ public class Student {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
     public Date getStartDate() {
         return startDate;
+    }
+
+    @JsonIgnore
+    public java.sql.Date getStartDateSql() {
+        return new java.sql.Date(startDate.getTime());
     }
 	
 	@JsonProperty("email")

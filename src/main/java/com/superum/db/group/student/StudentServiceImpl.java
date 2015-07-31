@@ -1,14 +1,15 @@
 package com.superum.db.group.student;
 
-import java.util.List;
-
+import com.superum.config.Gmail;
+import com.superum.db.lesson.attendance.LessonAttendanceService;
+import com.superum.db.partition.PartitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.superum.db.lesson.attendance.LessonAttendanceService;
-import com.superum.db.lesson.attendance.code.LessonCodeService;
+import javax.mail.MessagingException;
+import java.util.List;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -19,6 +20,8 @@ public class StudentServiceImpl implements StudentService {
 		
 		Student newStudent = studentDAO.create(student, partitionId);
 		LOG.debug("New Student created: {}", newStudent);
+
+        generateCode(newStudent, partitionId);
 		
 		return newStudent;
 	}
@@ -50,9 +53,6 @@ public class StudentServiceImpl implements StudentService {
 		int deletedAttendanceCount = attendanceService.deleteAttendanceForStudent(id, partitionId);
 		LOG.debug("Deleted {} Student attendance records", deletedAttendanceCount);
 		
-		int deletedCodeCount = lessonCodeService.deleteCodesForStudent(id, partitionId);		
-		LOG.debug("Deleted {} Student lesson codes", deletedCodeCount);
-		
 		Student deletedStudent = studentDAO.delete(id, partitionId);
 		LOG.debug("Deleted Student: {}", deletedStudent);
 		
@@ -73,7 +73,7 @@ public class StudentServiceImpl implements StudentService {
 	public List<Student> findStudentsForGroup(int groupId, int partitionId) {
 		LOG.debug("Reading Students for Group with ID: {}", groupId);
 		
-		List<Student> studentsForGroup = studentDAO.readAllForGroup(groupId, partitionId);
+		List<Student> studentsForGroup = studentQueries.readAllForGroup(groupId, partitionId);
 		LOG.debug("Students retrieved: {}", studentsForGroup);
 		
 		return studentsForGroup;
@@ -120,11 +120,12 @@ public class StudentServiceImpl implements StudentService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public StudentServiceImpl(StudentDAO studentDAO, StudentQueries studentQueries, LessonAttendanceService attendanceService, LessonCodeService lessonCodeService) {
+	public StudentServiceImpl(StudentDAO studentDAO, StudentQueries studentQueries, LessonAttendanceService attendanceService, Gmail mail, PartitionService partitionService) {
 		this.studentDAO = studentDAO;
 		this.studentQueries = studentQueries;
 		this.attendanceService = attendanceService;
-		this.lessonCodeService = lessonCodeService;
+        this.mail = mail;
+        this.partitionService = partitionService;
 	}
 
 	// PRIVATE
@@ -132,8 +133,32 @@ public class StudentServiceImpl implements StudentService {
 	private final StudentDAO studentDAO;
 	private final StudentQueries studentQueries;
 	private final LessonAttendanceService attendanceService;
-	private final LessonCodeService lessonCodeService;
-	
-	private static final Logger LOG = LoggerFactory.getLogger(StudentService.class);
+	private final Gmail mail;
+	private final PartitionService partitionService;
+
+    private void generateCode(Student student, int partitionId) {
+        // To avoid long pauses when sending e-mails/generating numbers, a separate thread is used
+        new Thread(() -> {
+            String name = partitionService.findPartition(partitionId).getName();
+
+            Student studentWithCode = student.withGeneratedCode();
+            LOG.debug("Code for student generated: {}", studentWithCode);
+
+            updateStudent(studentWithCode, partitionId);
+            try {
+                String fullTitle = EMAIL_TITLE + name;
+                String fullBody = EMAIL_BODY + studentWithCode.getCode();
+                mail.send(student.getEmail(), fullTitle, fullBody);
+                LOG.debug("Sent email to student '{}': title - '{}'; body - '{}'", student, fullTitle, fullBody);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private static final String EMAIL_TITLE = "Your lesson code for ";
+    private static final String EMAIL_BODY = "Code: ";
+
+    private static final Logger LOG = LoggerFactory.getLogger(StudentService.class);
 
 }
