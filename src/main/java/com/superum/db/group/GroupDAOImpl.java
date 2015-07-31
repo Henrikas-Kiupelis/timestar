@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.superum.db.generated.timestar.Tables.STUDENT_GROUP;
+import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
 
 @Repository
 @Transactional
@@ -18,10 +18,13 @@ public class GroupDAOImpl implements GroupDAO {
 	@Override
 	public Group create(Group group, int partitionId) {
 		try {
-            return sql.insertInto(STUDENT_GROUP)
-                    .set(STUDENT_GROUP.PARTITION_ID, partitionId)
-                    .set(STUDENT_GROUP.TEACHER_ID, group.getTeacherId())
-                    .set(STUDENT_GROUP.NAME, group.getName())
+            return sql.insertInto(GROUP_OF_STUDENTS)
+                    .set(GROUP_OF_STUDENTS.PARTITION_ID, partitionId)
+                    .set(GROUP_OF_STUDENTS.CUSTOMER_ID, group.getCustomerId())
+                    .set(GROUP_OF_STUDENTS.TEACHER_ID, group.getTeacherId())
+                    .set(GROUP_OF_STUDENTS.USE_HOURLY_WAGE, group.getUsesHourlyWage())
+                    .set(GROUP_OF_STUDENTS.LANGUAGE_LEVEL, group.getLanguageLevel())
+                    .set(GROUP_OF_STUDENTS.NAME, group.getName())
                     .returning()
                     .fetch().stream()
                     .findFirst()
@@ -36,9 +39,9 @@ public class GroupDAOImpl implements GroupDAO {
 	@Override
 	public Group read(Integer id, int partitionId) {
         try {
-            return sql.selectFrom(STUDENT_GROUP)
-                    .where(STUDENT_GROUP.ID.eq(id)
-                            .and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
+            return sql.selectFrom(GROUP_OF_STUDENTS)
+                    .where(GROUP_OF_STUDENTS.ID.eq(id)
+                            .and(GROUP_OF_STUDENTS.PARTITION_ID.eq(partitionId)))
                     .fetch().stream()
                     .findFirst()
                     .map(Group::valueOf)
@@ -55,11 +58,14 @@ public class GroupDAOImpl implements GroupDAO {
 
             Group old = read(id, partitionId);
 
-            sql.update(STUDENT_GROUP)
-                    .set(STUDENT_GROUP.TEACHER_ID, group.getTeacherId())
-                    .set(STUDENT_GROUP.NAME, group.getName())
-                    .where(STUDENT_GROUP.ID.eq(id)
-                            .and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
+            sql.update(GROUP_OF_STUDENTS)
+                    .set(GROUP_OF_STUDENTS.CUSTOMER_ID, group.getCustomerId())
+                    .set(GROUP_OF_STUDENTS.TEACHER_ID, group.getTeacherId())
+                    .set(GROUP_OF_STUDENTS.USE_HOURLY_WAGE, group.getUsesHourlyWage())
+                    .set(GROUP_OF_STUDENTS.LANGUAGE_LEVEL, group.getLanguageLevel())
+                    .set(GROUP_OF_STUDENTS.NAME, group.getName())
+                    .where(GROUP_OF_STUDENTS.ID.eq(id)
+                            .and(GROUP_OF_STUDENTS.PARTITION_ID.eq(partitionId)))
                     .execute();
 
             return old;
@@ -73,9 +79,9 @@ public class GroupDAOImpl implements GroupDAO {
         try {
             Group old = read(id, partitionId);
 
-            int result = sql.delete(STUDENT_GROUP)
-                    .where(STUDENT_GROUP.ID.eq(id)
-                            .and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
+            int result = sql.delete(GROUP_OF_STUDENTS)
+                    .where(GROUP_OF_STUDENTS.ID.eq(id)
+                            .and(GROUP_OF_STUDENTS.PARTITION_ID.eq(partitionId)))
                     .execute();
             if (result == 0)
                 throw new DatabaseException("Couldn't delete group with ID: " + id);
@@ -89,10 +95,10 @@ public class GroupDAOImpl implements GroupDAO {
 	@Override
 	public List<Group> readAllForTeacher(int teacherId, int partitionId) {
         try {
-            return sql.selectFrom(STUDENT_GROUP)
-                    .where(STUDENT_GROUP.TEACHER_ID.eq(teacherId)
-                            .and(STUDENT_GROUP.PARTITION_ID.eq(partitionId)))
-                    .orderBy(STUDENT_GROUP.ID)
+            return sql.selectFrom(GROUP_OF_STUDENTS)
+                    .where(GROUP_OF_STUDENTS.TEACHER_ID.eq(teacherId)
+                            .and(GROUP_OF_STUDENTS.PARTITION_ID.eq(partitionId)))
+                    .orderBy(GROUP_OF_STUDENTS.ID)
                     .fetch()
                     .map(Group::valueOf);
         } catch (DataAccessException e) {
@@ -100,12 +106,42 @@ public class GroupDAOImpl implements GroupDAO {
         }
 	}
 
+    @Override
+    public List<Group> readAllForCustomer(int customerId, int partitionId) {
+        try {
+            return sql.selectFrom(GROUP_OF_STUDENTS)
+                    .where(GROUP_OF_STUDENTS.CUSTOMER_ID.eq(customerId)
+                            .and(GROUP_OF_STUDENTS.PARTITION_ID.eq(partitionId)))
+                    .orderBy(GROUP_OF_STUDENTS.ID)
+                    .fetch()
+                    .map(Group::valueOf);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to read groups for customer with id " + customerId, e);
+        }
+    }
+
+    @Override
+    public List<Group> readAllForCustomerAndTeacher(int customerId, int teacherId, int partitionId) {
+        try {
+            return sql.selectFrom(GROUP_OF_STUDENTS)
+                    .where(GROUP_OF_STUDENTS.CUSTOMER_ID.eq(customerId)
+                            .and(GROUP_OF_STUDENTS.TEACHER_ID.eq(teacherId))
+                            .and(GROUP_OF_STUDENTS.PARTITION_ID.eq(partitionId)))
+                    .orderBy(GROUP_OF_STUDENTS.ID)
+                    .fetch()
+                    .map(Group::valueOf);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to read groups for teacher with id " + teacherId +
+                    " and customer with id " + customerId, e);
+        }
+    }
+
 	@Override
 	public List<Group> all(int partitionId) {
         try {
-            return sql.selectFrom(STUDENT_GROUP)
-                    .where(STUDENT_GROUP.PARTITION_ID.eq(partitionId))
-                    .orderBy(STUDENT_GROUP.ID)
+            return sql.selectFrom(GROUP_OF_STUDENTS)
+                    .where(GROUP_OF_STUDENTS.PARTITION_ID.eq(partitionId))
+                    .orderBy(GROUP_OF_STUDENTS.ID)
                     .fetch()
                     .map(Group::valueOf);
         } catch (DataAccessException e) {

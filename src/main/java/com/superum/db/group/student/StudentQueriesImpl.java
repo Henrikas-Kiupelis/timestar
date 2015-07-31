@@ -42,6 +42,7 @@ public class StudentQueriesImpl implements StudentQueries {
                     .join(STUDENTS_IN_GROUPS).onKey(STUDENTS_IN_GROUPS_IBFK_1)
                     .where(STUDENTS_IN_GROUPS.GROUP_ID.eq(groupId)
                             .and(STUDENT.PARTITION_ID.eq(partitionId)))
+                    .groupBy(STUDENT.ID)
                     .orderBy(STUDENT.ID)
                     .fetch()
                     .map(Student::valueOf);
