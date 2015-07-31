@@ -7,8 +7,12 @@ import java.util.Date;
 
 public class TimeConverter {
 
+    public Instant dateInstant() {
+        return instant.truncatedTo(ChronoUnit.DAYS);
+    }
+
     public Date date() {
-        return Date.from(instant.truncatedTo(ChronoUnit.DAYS));
+        return Date.from(dateInstant());
     }
 
     public int hour() {
@@ -20,13 +24,21 @@ public class TimeConverter {
     }
 
     public static long time(Date date, int hour, int minute) {
-        return date.getTime() + (hour * 60 + minute) * 60000;
+        return time(new TimeConverter(date).dateInstant(), hour, minute);
+    }
+
+    public static long time(Instant time, int hour, int minute) {
+        return time.plus(hour, ChronoUnit.HOURS).plus(minute, ChronoUnit.MINUTES).toEpochMilli();
     }
 
     // CONSTRUCTORS
 
     public TimeConverter(long millis) {
         this.instant = Instant.ofEpochMilli(millis);
+    }
+
+    public TimeConverter(Date date) {
+        this(date.getTime());
     }
 
     // PRIVATE

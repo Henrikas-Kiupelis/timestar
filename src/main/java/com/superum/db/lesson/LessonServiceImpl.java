@@ -2,14 +2,13 @@ package com.superum.db.lesson;
 
 import com.superum.db.lesson.attendance.LessonAttendance;
 import com.superum.db.lesson.attendance.LessonAttendanceService;
-import com.superum.db.lesson.attendance.code.LessonCodeService;
 import com.superum.exception.DatabaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -57,9 +56,6 @@ public class LessonServiceImpl implements LessonService {
 		
 		LessonAttendance deletedAttendance = lessonAttendanceService.deleteAttendanceForLesson(id, partitionId);
 		LOG.debug("Deleted LessonAttendance: {}", deletedAttendance);
-		
-		int deletedCodeCount = lessonCodeService.deleteCodesForLesson(id, partitionId);
-		LOG.debug("Deleted {} LessonCodes", deletedCodeCount);
 		
 		Lesson deletedLesson = lessonDAO.delete(id, partitionId);
 		LOG.debug("Deleted Lesson: {}", deletedLesson);
@@ -128,11 +124,10 @@ public class LessonServiceImpl implements LessonService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public LessonServiceImpl(LessonDAO lessonDAO, LessonQueries lessonQueries, LessonAttendanceService lessonAttendanceService, LessonCodeService lessonCodeService) {
+	public LessonServiceImpl(LessonDAO lessonDAO, LessonQueries lessonQueries, LessonAttendanceService lessonAttendanceService) {
 		this.lessonDAO = lessonDAO;
 		this.lessonQueries = lessonQueries;
 		this.lessonAttendanceService = lessonAttendanceService;
-		this.lessonCodeService = lessonCodeService;
 	}
 
 	// PRIVATE
@@ -140,7 +135,6 @@ public class LessonServiceImpl implements LessonService {
 	private final LessonDAO lessonDAO;
 	private final LessonQueries lessonQueries;
 	private final LessonAttendanceService lessonAttendanceService;
-	private final LessonCodeService lessonCodeService;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(LessonService.class);
 

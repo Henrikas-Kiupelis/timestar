@@ -201,7 +201,7 @@ CREATE TABLE student (
   created_at BIGINT,
   updated_at BIGINT,
 
-  code INT NOT NULL,
+  code INT,
   customer_id INT,
   start_date DATE NOT NULL,
   email VARCHAR(60) NOT NULL,
@@ -232,7 +232,7 @@ FOR EACH ROW
   END; //
 DELIMITER ;
 
-CREATE TABLE group_students (
+CREATE TABLE students_in_groups (
   partition_id INT NOT NULL,
   student_id INT NOT NULL,
   group_id INT NOT NULL,
@@ -246,6 +246,7 @@ CREATE TABLE lesson (
   created_at BIGINT,
   updated_at BIGINT,
 
+  teacher_id INT,
   group_id INT NOT NULL,
   time_of_start BIGINT NOT NULL,
   time_of_end BIGINT,
@@ -263,6 +264,8 @@ FOR EACH ROW
     SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
     SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
     SET NEW.time_of_end = NEW.time_of_start + (NEW.duration_in_minutes * 60000);
+    SET NEW.teacher_id = (SELECT group_of_students.teacher_id FROM group_of_students
+    WHERE group_of_students.id = NEW.group_id LIMIT 1);
   END; //
 
 CREATE TRIGGER update_timestamp_ensure_create_immutable_lesson
@@ -272,6 +275,10 @@ FOR EACH ROW
     SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
     IF NEW.created_at != OLD.created_at THEN
       SET NEW.created_at = OLD.created_at;
+    END IF;
+    IF NEW.group_id != OLD.group_id THEN
+      SET NEW.teacher_id = (SELECT group_of_students.teacher_id FROM group_of_students
+      WHERE group_of_students.id = NEW.group_id LIMIT 1);
     END IF;
   END; //
 DELIMITER ;

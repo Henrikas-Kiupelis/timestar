@@ -36,6 +36,11 @@ public class Lesson {
 	public int getGroupId() {
 		return groupId;
 	}
+
+    @JsonProperty("teacherId")
+    public Integer getTeacherId() {
+        return teacherId;
+    }
 	
 	@JsonProperty("startDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
@@ -75,6 +80,14 @@ public class Lesson {
 		return endMinute;
 	}
 
+    @JsonIgnore
+    public long getEndTime() {
+        if (endDate != null && endHour != null && endMinute != null)
+            return TimeConverter.time(endDate, endHour, endMinute);
+
+        return TimeConverter.time(startDate, startHour, startMinute + length);
+    }
+
 	@JsonProperty("length")
 	public int getLength() {
 		return length;
@@ -102,6 +115,7 @@ public class Lesson {
 		return StringUtils.toString(
 				"Lesson ID: " + id,
 				"Group ID: " + groupId,
+                "Teacher ID: " + teacherId,
 				"Start date: " + startDate,
 				"Start time: " + startHour + ":" + startMinute,
                 "End date: " + endDate,
@@ -145,13 +159,14 @@ public class Lesson {
 				@JsonProperty("startMinute") int startMinute,
 				@JsonProperty("length") int length,
 				@JsonProperty("comment") String comment) {
-		this(id, groupId, date, startHour, startMinute, null, null, null, length, comment, null, null);
+		this(id, groupId, null, date, startHour, startMinute, null, null, null, length, comment, null, null);
 	}
 
-    public Lesson(long id, int groupId, Date startDate, int startHour, int startMinute, Date endDate,
+    public Lesson(long id, int groupId, Integer teacherId, Date startDate, int startHour, int startMinute, Date endDate,
                   Integer endHour, Integer endMinute, int length, String comment, Date createdAt, Date updatedAt) {
         this.id = id;
         this.groupId = groupId;
+        this.teacherId = teacherId;
         this.startDate = startDate;
         this.startHour = startHour;
         this.startMinute = startMinute;
@@ -170,6 +185,7 @@ public class Lesson {
 		
 		long id = lessonRecord.getValue(LESSON.ID);
 		int groupId = lessonRecord.getValue(LESSON.GROUP_ID);
+        int teacherId = lessonRecord.getValue(LESSON.TEACHER_ID);
 
         long startTimestamp = lessonRecord.getValue(LESSON.TIME_OF_START);
         TimeConverter startConverter = new TimeConverter(startTimestamp);
@@ -190,7 +206,7 @@ public class Lesson {
         Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
         long updatedTimestamp = lessonRecord.getValue(LESSON.UPDATED_AT);
         Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
-		return new Lesson(id, groupId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
+		return new Lesson(id, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
 	}
 
 	// PRIVATE
@@ -200,6 +216,8 @@ public class Lesson {
 
 	@Min(value = 1, message = "The group id must be set")
 	private final int groupId;
+
+    private final Integer teacherId;
 	
 	@NotNull(message = "The date must be set")
 	private final Date startDate;

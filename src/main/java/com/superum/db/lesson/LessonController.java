@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 import static com.superum.utils.ControllerUtils.APPLICATION_JSON_UTF8;

@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
+import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
 import static com.superum.db.generated.timestar.Tables.LESSON;
 
 @Repository
@@ -23,13 +24,10 @@ public class LessonDAOImpl implements LessonDAO {
 		try {
             return sql.insertInto(LESSON)
                     .set(LESSON.PARTITION_ID, partitionId)
-                    .set(LESSON.TEACHER_ID, lesson.getTeacherId())
                     .set(LESSON.GROUP_ID, lesson.getGroupId())
-                    .set(LESSON.DATE_OF_LESSON, lesson.getStartDate())
                     .set(LESSON.TIME_OF_START, lesson.getStartTime())
-                    .set(LESSON.TIME_OF_END, lesson.getEndTime())
-                    .set(LESSON.LENGTH_IN_MINUTES, lesson.getLength())
-                    .set(LESSON.COMMENT_ABOUT, lesson.getComment())
+                    .set(LESSON.DURATION_IN_MINUTES, lesson.getLength())
+                    .set(LESSON.COMMENT, lesson.getComment())
                     .returning()
                     .fetch().stream()
                     .findFirst()
@@ -64,13 +62,10 @@ public class LessonDAOImpl implements LessonDAO {
             Lesson old = read(id, partitionId);
 
             sql.update(LESSON)
-                    .set(LESSON.TEACHER_ID, lesson.getTeacherId())
                     .set(LESSON.GROUP_ID, lesson.getGroupId())
-                    .set(LESSON.DATE_OF_LESSON, lesson.getStartDate())
                     .set(LESSON.TIME_OF_START, lesson.getStartTime())
-                    .set(LESSON.TIME_OF_END, lesson.getEndTime())
-                    .set(LESSON.LENGTH_IN_MINUTES, lesson.getLength())
-                    .set(LESSON.COMMENT_ABOUT, lesson.getComment())
+                    .set(LESSON.DURATION_IN_MINUTES, lesson.getLength())
+                    .set(LESSON.COMMENT, lesson.getComment())
                     .where(LESSON.ID.eq(id)
                             .and(LESSON.PARTITION_ID.eq(partitionId)))
                     .execute();
@@ -100,31 +95,11 @@ public class LessonDAOImpl implements LessonDAO {
 	}
 
 	@Override
-	public List<Lesson> readAllForTeacher(int teacherId, Date start, Date end, int partitionId) {
-        try {
-            Condition condition = LESSON.TEACHER_ID.eq(teacherId)
-                    .and(LESSON.PARTITION_ID.eq(partitionId));
-            Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
-            if (dateCondition != null)
-                condition = condition.and(dateCondition);
-
-            return sql.selectFrom(LESSON)
-                    .where(condition)
-                    .orderBy(LESSON.ID)
-                    .fetch()
-                    .map(Lesson::valueOf);
-        } catch (DataAccessException e) {
-            throw new DatabaseException("An unexpected error occurred when trying to read lessons for teacher with id " + teacherId +
-                    " between dates " + start + " and " + end, e);
-        }
-	}
-	
-	@Override
 	public List<Lesson> readAllForGroup(int groupId, Date start, Date end, int partitionId) {
         try {
             Condition condition = LESSON.GROUP_ID.eq(groupId)
                     .and(LESSON.PARTITION_ID.eq(partitionId));
-            Condition dateCondition = ConditionUtils.betweenDates(LESSON.DATE_OF_LESSON, start, end);
+            Condition dateCondition = ConditionUtils.betweenDates(LESSON.TIME_OF_START, start, end);
             if (dateCondition != null)
                 condition = condition.and(dateCondition);
 
@@ -139,32 +114,56 @@ public class LessonDAOImpl implements LessonDAO {
         }
 	}
 
+    @Override
+    public List<Lesson> readAllForTeacher(int teacherId, Date start, Date end, int partitionId) {
+        try {
+            Condition condition = LESSON.TEACHER_ID.eq(teacherId)
+                    .and(LESSON.PARTITION_ID.eq(partitionId));
+            Condition dateCondition = ConditionUtils.betweenDates(LESSON.TIME_OF_START, start, end);
+            if (dateCondition != null)
+                condition = condition.and(dateCondition);
+
+            return sql.selectFrom(LESSON)
+                    .where(condition)
+                    .orderBy(LESSON.ID)
+                    .fetch()
+                    .map(Lesson::valueOf);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to read lessons for teacher with id " + teacherId +
+                    " between dates " + start + " and " + end, e);
+        }
+    }
+
 	@Override
 	public boolean isOverlapping(Lesson lesson, int partitionId) {
         try {
-            int teacherId = lesson.getTeacherId();
-            Date date = lesson.getStartDate();
-            short startTime = lesson.getStartTime();
-            short endTime = lesson.getEndTime();
+            Integer teacherId = lesson.getTeacherId();
+            if (teacherId == null)
+                teacherId = sql.select(GROUP_OF_STUDENTS.TEACHER_ID)
+                        .from(GROUP_OF_STUDENTS)
+                        .where(GROUP_OF_STUDENTS.ID.eq(lesson.getGroupId()))
+                        .fetch().stream()
+                        .findFirst()
+                        .map(record -> record.getValue(GROUP_OF_STUDENTS.TEACHER_ID))
+                        .orElseThrow(() -> new DatabaseException("Problem retrieving teacher for specified group: " + lesson.getGroupId()));
+
+            long startTime = lesson.getStartTime();
+            long endTime = lesson.getEndTime();
 
             Condition aLessonForSameTeacher = LESSON.TEACHER_ID.eq(teacherId)
                     .and(LESSON.PARTITION_ID.eq(partitionId));
-            Condition aLessonOnTheSameDay = LESSON.DATE_OF_LESSON.eq(date);
 
             Condition aLessonStartsBetweenThisLesson = LESSON.TIME_OF_START.between(startTime, endTime);
             Condition aLessonEndsBetweenThisLesson = LESSON.TIME_OF_END.between(startTime, endTime);
             Condition thisLessonStartsBetweenALesson = LESSON.TIME_OF_START.le(startTime).and(LESSON.TIME_OF_END.ge(startTime));
             // No need to check for end time, because it is automatically caught by the first two conditions as well
 
-            Condition lessonIsOverlapping = aLessonForSameTeacher.and(aLessonOnTheSameDay).and(
-                    aLessonStartsBetweenThisLesson.or(aLessonEndsBetweenThisLesson).or(thisLessonStartsBetweenALesson));
+            Condition lessonIsOverlapping = aLessonForSameTeacher.and(aLessonStartsBetweenThisLesson.or(aLessonEndsBetweenThisLesson).or(thisLessonStartsBetweenALesson));
 
             if (lesson.hasId())
                 lessonIsOverlapping = LESSON.ID.ne(lesson.getId()).and(lessonIsOverlapping);
 
-            int count = sql.fetchCount(LESSON, lessonIsOverlapping);
-
-            return count > 0;
+            return sql.fetchExists(LESSON, lessonIsOverlapping);
         } catch (DataAccessException|DatabaseException e) {
             throw new DatabaseException("An unexpected error occurred when trying to find out if a lesson overlaps with existing lessons: " + lesson, e);
         }
