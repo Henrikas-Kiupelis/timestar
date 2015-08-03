@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
+import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.superum.helper.JodaLocalDate;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.RandomUtils;
@@ -66,6 +71,7 @@ public class Student {
 	}
 
     @JsonProperty("startDate")
+    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -90,11 +96,13 @@ public class Student {
 	}
 
     @JsonProperty("createdAt")
+    @JsonSerialize(using = InstantSerializer.class)
     public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
+    @JsonSerialize(using = InstantSerializer.class)
     public Instant getUpdatedAt() {
         return updatedAt;
     }
@@ -146,7 +154,7 @@ public class Student {
 	@JsonCreator
 	public Student(@JsonProperty("id") int id,
                    @JsonProperty("customerId") Integer customerId,
-                   @JsonProperty("startDate") LocalDate startDate,
+                   @JsonProperty("startDate") @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate startDate,
                    @JsonProperty("email") String email,
                    @JsonProperty("name") String name) {
 		this(id, null, customerId, startDate, email, name, null, null);

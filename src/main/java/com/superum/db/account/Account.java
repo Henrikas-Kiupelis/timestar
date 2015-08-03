@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -37,11 +39,13 @@ public class Account {
 	}
 
 	@JsonProperty("createdAt")
+	@JsonSerialize(using = InstantSerializer.class)
     public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
+    @JsonSerialize(using = InstantSerializer.class)
     public Instant getUpdatedAt() {
         return updatedAt;
     }
