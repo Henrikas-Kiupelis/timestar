@@ -6,6 +6,11 @@ This file should contain a rough list of ideas/things to be done in the future:
 
 A) Things to definitely do in the future
 
+    Implement code checking again!
+        Use:
+            List of Student ids to check against;
+            a code
+
 B) Ideas
 
 	Add deleted timestamp to all tables
