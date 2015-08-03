@@ -3,6 +3,11 @@ package com.superum.db.lesson;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
+import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.superum.helper.JodaTimeConverter;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
@@ -51,6 +56,7 @@ public class Lesson {
     }
 	
 	@JsonProperty("startDate")
+    @JsonSerialize(using = LocalDateSerializer.class)
 	public LocalDate getStartDate() {
 		return startDate;
 	}
@@ -71,6 +77,7 @@ public class Lesson {
 	}
 
     @JsonProperty("endDate")
+    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getEndDate() {
         return endDate;
     }
@@ -103,11 +110,13 @@ public class Lesson {
 	}
 
     @JsonProperty("createdAt")
+    @JsonSerialize(using = InstantSerializer.class)
     public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
+    @JsonSerialize(using = InstantSerializer.class)
     public Instant getUpdatedAt() {
         return updatedAt;
     }
@@ -158,7 +167,7 @@ public class Lesson {
 
 	public Lesson(@JsonProperty("id") long id,
 				@JsonProperty("groupId") int groupId, 
-				@JsonProperty("startDate") LocalDate date,
+				@JsonProperty("startDate") @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate date,
 				@JsonProperty("startHour") int startHour,
 				@JsonProperty("startMinute") int startMinute,
 				@JsonProperty("length") int length,

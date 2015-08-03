@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
+import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.superum.helper.JodaLocalDate;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
@@ -42,6 +47,7 @@ public class Customer {
     }
 
 	@JsonProperty("startDate")
+	@JsonSerialize(using = LocalDateSerializer.class)
 	public LocalDate getStartDate() {
 		return startDate;
 	}
@@ -81,11 +87,13 @@ public class Customer {
 	}
 
     @JsonProperty("createdAt")
+	@JsonSerialize(using = InstantSerializer.class)
     public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
+	@JsonSerialize(using = InstantSerializer.class)
     public Instant getUpdatedAt() {
         return updatedAt;
     }
@@ -134,7 +142,7 @@ public class Customer {
 
 	@JsonCreator
 	public Customer(@JsonProperty("id") int id,
-					@JsonProperty("startDate") LocalDate startDate,
+					@JsonProperty("startDate") @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate startDate,
 					@JsonProperty("name") String name, 
 					@JsonProperty("phone") String phone,
 					@JsonProperty("website") String website,
