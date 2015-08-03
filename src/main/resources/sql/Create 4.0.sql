@@ -268,7 +268,7 @@ FOR EACH ROW
     WHERE group_of_students.id = NEW.group_id LIMIT 1);
   END; //
 
-CREATE TRIGGER update_timestamp_ensure_create_immutable_lesson
+CREATE TRIGGER update_teacher_id_and_timestamp_ensure_create_immutable_lesson
 BEFORE UPDATE ON lesson
 FOR EACH ROW
   BEGIN
