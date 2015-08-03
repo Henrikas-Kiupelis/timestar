@@ -12,10 +12,10 @@ import com.superum.db.lesson.attendance.LessonAttendance;
 import com.superum.db.partition.Partition;
 import com.superum.db.teacher.Teacher;
 import com.superum.db.teacher.lang.TeacherLanguages;
+import org.joda.time.LocalDate;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.function.IntFunction;
 import java.util.function.LongFunction;
@@ -59,7 +59,7 @@ public class FakeUtils {
     }
 
     public static Customer makeFakeCustomer(int id) {
-        return makeFakeCustomer(id, fakeDate(id), fakeName(id), fakePhone(id), fakeWebsite(id), fakePicture(id), fakeComment(id));
+        return makeFakeCustomer(id, fakeLocalDate(id), fakeName(id), fakePhone(id), fakeWebsite(id), fakePicture(id), fakeComment(id));
     }
 
     public static Group makeFakeGroup(int id) {
@@ -67,11 +67,11 @@ public class FakeUtils {
     }
 
     public static Student makeFakeStudent(int id) {
-        return makeFakeStudent(id, id, fakeDate(id), fakeEmail(id), fakeName(id));
+        return makeFakeStudent(id, id, fakeLocalDate(id), fakeEmail(id), fakeName(id));
     }
 
     public static Lesson makeFakeLesson(long id) {
-        return makeFakeLesson(id, fakeId(id), fakeDate(id), fakeHour(id), fakeMinute(id), fakeId(id), fakeComment(id));
+        return makeFakeLesson(id, fakeId(id), fakeLocalDate(id), fakeHour(id), fakeMinute(id), fakeId(id), fakeComment(id));
     }
 
     public static Partition makeFakePartition(int id) {
@@ -102,7 +102,7 @@ public class FakeUtils {
         return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, pictureName, documentName, comment);
     }
 
-    public static Customer makeFakeCustomer(int id, Date startDate, String name, String phone, String website, String picture, String comment) {
+    public static Customer makeFakeCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
         return new Customer(id, startDate, name, phone, website, picture, comment);
     }
 
@@ -110,11 +110,11 @@ public class FakeUtils {
         return new Group(id, customerId, teacherId, usesHourlyWage, languageLevel, name);
     }
 
-    public static Student makeFakeStudent(int id, Integer customerId, Date startDate, String email, String name) {
+    public static Student makeFakeStudent(int id, Integer customerId, LocalDate startDate, String email, String name) {
         return new Student(id, customerId, startDate, email, name);
     }
 
-    public static Lesson makeFakeLesson(long id, int groupId, Date date, int startHour, int startMinute, int length, String comment) {
+    public static Lesson makeFakeLesson(long id, int groupId, LocalDate date, int startHour, int startMinute, int length, String comment) {
         return new Lesson(id, groupId, date, startHour, startMinute, length, comment);
     }
 
