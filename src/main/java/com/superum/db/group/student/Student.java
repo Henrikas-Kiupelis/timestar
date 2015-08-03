@@ -25,17 +25,30 @@ public class Student {
 	public int getId() {
 		return id;
 	}
+	@JsonIgnore
 	public boolean hasId() {
 		return id > 0;
 	}
+    @JsonIgnore
+    public Student withId(int id) {
+        return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Student withoutId() {
+        return new Student(0, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
 
     @JsonProperty("code")
     public Integer getCode() {
         return code;
     }
-
+	@JsonIgnore
     public Student withCode(int code) {
         return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Student withoutCode() {
+        return new Student(id, null, customerId, startDate, email, name, createdAt, updatedAt);
     }
 
     public Student withGeneratedCode() {

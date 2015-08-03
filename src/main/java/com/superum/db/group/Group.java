@@ -1,6 +1,7 @@
 package com.superum.db.group;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.teacher.WageType;
@@ -26,9 +27,18 @@ public class Group {
 	public int getId() {
 		return id;
 	}
+    @JsonIgnore
 	public boolean hasId() {
 		return id > 0;
 	}
+    @JsonIgnore
+    public Group withId(int id) {
+        return new Group(id, customerId, teacherId, getUsesHourlyWage(), languageLevel, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Group withoutId() {
+        return new Group(0, customerId, teacherId, getUsesHourlyWage(), languageLevel, name, createdAt, updatedAt);
+    }
 	
 	@JsonProperty("customerId")
 	public Integer getCustomerId() {

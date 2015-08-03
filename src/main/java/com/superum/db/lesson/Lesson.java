@@ -28,9 +28,18 @@ public class Lesson {
 	public long getId() {
 		return id;
 	}
+    @JsonIgnore
 	public boolean hasId() {
 		return id > 0;
 	}
+	@JsonIgnore
+	public Lesson withId(long id) {
+		return new Lesson(id, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
+	}
+    @JsonIgnore
+    public Lesson without() {
+        return new Lesson(0, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
+    }
 
 	@JsonProperty("groupId")
 	public int getGroupId() {

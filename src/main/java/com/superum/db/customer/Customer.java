@@ -27,6 +27,14 @@ public class Customer {
 	public boolean hasId() {
 		return id > 0;
 	}
+    @JsonIgnore
+    public Customer withId(int id) {
+        return new Customer(id, startDate, name, phone, website, picture, comment, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Customer withoutId() {
+        return new Customer(0, startDate, name, phone, website, picture, comment, createdAt, updatedAt);
+    }
 
 	@JsonProperty("startDate")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
