@@ -4,10 +4,10 @@ import com.superum.api.exception.InvalidRequestException;
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.CustomerService;
 import com.superum.exception.DatabaseException;
-import org.jooq.exception.DataAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
