@@ -151,7 +151,8 @@ public class Customer {
 			return null;
 		
 		int id = customerRecord.getValue(CUSTOMER.ID);
-		Date startDate = customerRecord.getValue(CUSTOMER.START_DATE);
+        java.sql.Date startDateSql = customerRecord.getValue(CUSTOMER.START_DATE);
+		Date startDate = new Date(startDateSql.getTime());
 		String name = customerRecord.getValue(CUSTOMER.NAME);
 		String phone = customerRecord.getValue(CUSTOMER.PHONE);
 		String website = customerRecord.getValue(CUSTOMER.WEBSITE);
