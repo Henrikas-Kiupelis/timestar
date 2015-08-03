@@ -247,6 +247,13 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
         FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
 
+        System.out.println("Before JSON: " + insertedCustomer);
+        byte[] json = convertObjectToJsonBytes(insertedCustomer);
+        String jsonStr1 = convertBytesToObject(json, FullCustomer.class).toString();
+        System.out.println("Byte JSON: " + jsonStr1);
+        String jsonStr2 = convertObjectToString(insertedCustomer);
+        System.out.println("String JSON: " + jsonStr2);
+
         MvcResult result = mockMvc.perform(post("/timestar/api/v2/customer/exists")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", authHeader())

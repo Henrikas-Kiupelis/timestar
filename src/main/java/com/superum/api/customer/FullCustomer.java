@@ -7,6 +7,8 @@ import com.superum.fields.primitives.IntField;
 import com.superum.helper.SetFieldComparator;
 import org.jooq.Record;
 
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -95,6 +97,9 @@ public class FullCustomer {
 	@JsonProperty(START_DATE_FIELD)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
 	public Date getStartDate() {
+        System.out.println("Pre-serialization test: " + startDate);
+        System.out.println("Mock serialization: " + Date.from(new Date(startDate.getValue().getTime()).toInstant().truncatedTo(ChronoUnit.DAYS)));
+        System.out.println("Mock serialization2: " + startDate.getValue().toInstant().atZone(ZoneId.of("GMT")));
 		return startDate.getValue();
 	}
     @JsonIgnore
@@ -293,9 +298,9 @@ public class FullCustomer {
 
         this.allFields = fieldList();
         // This class is immutable, and it will almost always be turned into a string at least once (logs); it makes sense to cache the value
-        this.string = allFields()
+        this.string = "FullCustomer{" + allFields()
                 .map(Field::toString)
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.joining(", ")) + "}";
         // Caching for hashCode(), just like toString()
         this.hash = allFields.hashCode();
 
