@@ -442,6 +442,7 @@ public class FullCustomer {
 
     public interface StartDateStep {
         NameStep withStartDate(Date startDate);
+        NameStep withStartDate(java.sql.Date startDate);
     }
 
     public interface NameStep {
@@ -482,6 +483,12 @@ public class FullCustomer {
         @Override
         public NameStep withStartDate(Date startDate) {
             this.startDate = startDate;
+            return this;
+        }
+
+        @Override
+        public NameStep withStartDate(java.sql.Date startDate) {
+            this.startDate = new Date(startDate.getTime());
             return this;
         }
 
@@ -570,6 +577,11 @@ public class FullCustomer {
 
         public Builder withStartDate(Date startDate) {
             this.startDate = startDate;
+            return this;
+        }
+
+        public Builder withStartDate(java.sql.Date startDate) {
+            this.startDate = new Date(startDate.getTime());
             return this;
         }
 

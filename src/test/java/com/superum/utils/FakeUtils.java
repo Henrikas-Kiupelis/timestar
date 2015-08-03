@@ -1,5 +1,6 @@
 package com.superum.utils;
 
+import com.superum.api.customer.FullCustomer;
 import com.superum.db.account.Account;
 import com.superum.db.account.AccountType;
 import com.superum.db.customer.Customer;
@@ -9,12 +10,12 @@ import com.superum.db.group.studentsgroup.StudentsInGroup;
 import com.superum.db.lesson.Lesson;
 import com.superum.db.lesson.attendance.LessonAttendance;
 import com.superum.db.partition.Partition;
-import com.superum.api.customer.FullCustomer;
 import com.superum.db.teacher.Teacher;
 import com.superum.db.teacher.lang.TeacherLanguages;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.function.IntFunction;
 import java.util.function.LongFunction;
@@ -25,24 +26,6 @@ import java.util.stream.LongStream;
 import static com.superum.utils.FakeFieldUtils.*;
 
 public class FakeUtils {
-
-    public static FullCustomer defaultFullCustomer() {
-        return FullCustomer.newRequiredBuilder()
-                .withPaymentDay(1)
-                .withStartDate(Date.valueOf("2015-07-21"))
-                .withPaymentValue(BigDecimal.valueOf(10))
-                .withName("SUPERUM")
-                .withPhone("+37069900001")
-                .withWebsite("http://superum.eu/")
-                .withLanguages(Arrays.asList("English: C1", "English: C2"))
-                .withPictureName("pic.jpg")
-                .withComment("company test")
-                .build();
-    }
-
-    public static FullCustomer makeFakeFullCustomer(int id) {
-        return new FullCustomer(makeFakeCustomer(id));
-    }
 
     public static <T> List<T> makeSomeFakes(int amount, IntFunction<T> fakeCreationMethod) {
         return IntStream.rangeClosed(1, amount)
@@ -55,6 +38,20 @@ public class FakeUtils {
                 .mapToObj(fakeCreationMethodForObjectsWithLongId)
                 .collect(Collectors.toList());
     }
+
+    // API V2
+
+    public static FullCustomer makeFakeFullCustomer(int id) {
+        return new FullCustomer(makeFakeCustomer(id));
+    }
+
+    // FULL FAKES
+
+    public static FullCustomer makeFakeFullCustomer(int id, Date startDate, String name, String phone, String website, String picture, String comment) {
+        return new FullCustomer(makeFakeCustomer(id, startDate, name, phone, website, picture, comment));
+    }
+
+    // API V1
 
     public static Teacher makeFakeTeacher(int id) {
         return makeFakeTeacher(id, fakeDay(id), fakeWage(id), fakeWage(id), fakeName(id), fakeSurname(id),

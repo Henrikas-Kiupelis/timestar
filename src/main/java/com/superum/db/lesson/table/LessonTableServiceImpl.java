@@ -1,25 +1,8 @@
 package com.superum.db.lesson.table;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.CustomerDAO;
-import com.superum.db.customer.lang.CustomerLanguages;
-import com.superum.db.customer.lang.CustomerLanguagesDAO;
-import com.superum.db.lesson.table.core.CustomerLessonData;
-import com.superum.db.lesson.table.core.LessonTable;
-import com.superum.db.lesson.table.core.PaymentData;
-import com.superum.db.lesson.table.core.TeacherLessonData;
-import com.superum.db.lesson.table.core.TotalLessonData;
+import com.superum.db.lesson.table.core.*;
 import com.superum.db.teacher.Teacher;
 import com.superum.db.teacher.TeacherDAO;
 import com.superum.db.teacher.lang.TeacherLanguages;

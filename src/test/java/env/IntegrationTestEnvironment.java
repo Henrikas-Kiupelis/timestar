@@ -19,6 +19,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
@@ -28,6 +29,7 @@ import javax.naming.NamingException;
 @WebAppConfiguration
 @ContextConfiguration(classes = {TimeStarBackEndApplication.class, PersistenceContext.class, SecurityConfig.class, HelperConfiguration.class})
 @TransactionConfiguration(defaultRollback = true)
+@Transactional
 public abstract class IntegrationTestEnvironment {
 
     public static final int TEST_PARTITION = 0;

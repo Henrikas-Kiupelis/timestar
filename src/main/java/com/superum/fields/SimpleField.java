@@ -3,7 +3,7 @@ package com.superum.fields;
 import com.superum.utils.ObjectUtils;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -60,12 +60,8 @@ public class SimpleField<T> extends NamedField<T> {
         if (value == null)
             return empty(fieldName, mandatory);
 
-        return new JavaSqlDateField(fieldName, value, mandatory);
-    }
-
-    public static SimpleField<java.util.Date> valueOf(String fieldName, java.util.Date value, Mandatory mandatory) {
-        if (value == null)
-            return empty(fieldName, mandatory);
+        if (value instanceof java.sql.Date)
+            value = new Date(value.getTime());
 
         return new JavaUtilDateField(fieldName, value, mandatory);
     }
@@ -130,10 +126,14 @@ public class SimpleField<T> extends NamedField<T> {
      * This Field will check for String equality between java.sql.Date instances;
      * normal equality can fail due to timezone differences
      * </pre>
+     * @deprecated java.sql.Date should not be used with Spring/Jackson according to their documentation,
+     * therefore this class is now marked as deprecated. AVOID!
      */
-    private static class JavaSqlDateField extends SimpleField<Date> {
+    @Deprecated
+    private static class JavaSqlDateField extends SimpleField<java.sql.Date> {
 
         @Override
+        @SuppressWarnings("deprecation")
         public boolean equals(Object o) {
             if (this == o)
                 return true;
@@ -153,7 +153,7 @@ public class SimpleField<T> extends NamedField<T> {
 
         // CONSTRUCTORS
 
-        protected JavaSqlDateField(String fieldName, Date value, Mandatory mandatory) {
+        protected JavaSqlDateField(String fieldName, java.sql.Date value, Mandatory mandatory) {
             super(fieldName, value, mandatory);
         }
 
@@ -166,7 +166,7 @@ public class SimpleField<T> extends NamedField<T> {
      * This Field will check for day equality, rather than comparing the entire Date (i.e. hours, minutes, etc)
      * </pre>
      */
-    private static class JavaUtilDateField extends SimpleField<java.util.Date> {
+    private static class JavaUtilDateField extends SimpleField<Date> {
 
         @Override
         public boolean equals(Object o) {

@@ -1,18 +1,13 @@
 package com.superum.helper;
 
 import com.superum.api.customer.FullCustomer;
-import com.superum.db.customer.Customer;
-import com.superum.db.generated.timestar.tables.records.CustomerLangRecord;
 import com.superum.db.group.Group;
 import com.superum.db.group.student.Student;
 import com.superum.db.teacher.Teacher;
 import org.jooq.DSLContext;
-import org.jooq.InsertValuesStep3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.*;
 import static env.IntegrationTestEnvironment.TEST_PARTITION;
@@ -22,65 +17,46 @@ import static env.IntegrationTestEnvironment.TEST_PARTITION;
 public class DatabaseHelper {
 
     public FullCustomer insertCustomerIntoDb(FullCustomer fullCustomer) {
-        Customer customer = sql.insertInto(CUSTOMER)
+        FullCustomer customer = sql.insertInto(CUSTOMER)
                 .set(CUSTOMER.PARTITION_ID, TEST_PARTITION)
                 .set(CUSTOMER.NAME, fullCustomer.getName())
-                .set(CUSTOMER.PAYMENT_DAY, fullCustomer.getPaymentDay())
-                .set(CUSTOMER.START_DATE, fullCustomer.getStartDate())
-                .set(CUSTOMER.PAYMENT_VALUE, fullCustomer.getPaymentValue())
+                .set(CUSTOMER.START_DATE, fullCustomer.getStartDateSQL())
                 .set(CUSTOMER.PHONE, fullCustomer.getPhone())
                 .set(CUSTOMER.WEBSITE, fullCustomer.getWebsite())
-                .set(CUSTOMER.PICTURE_NAME, fullCustomer.getPictureName())
-                .set(CUSTOMER.COMMENT_ABOUT, fullCustomer.getComment())
-                .returning(CUSTOMER.fields())
+                .set(CUSTOMER.PICTURE, fullCustomer.getPictureName())
+                .set(CUSTOMER.COMMENT, fullCustomer.getComment())
+                .returning()
                 .fetchOne()
-                .map(Customer::valueOf);
+                .map(FullCustomer::valueOf);
 
         assert customer != null; //if this assert fails, database is broken/offline
 
-        int id = customer.getId();
-
-        InsertValuesStep3<CustomerLangRecord, Integer, Integer, String> step = sql.insertInto(CUSTOMER_LANG, CUSTOMER_LANG.PARTITION_ID, CUSTOMER_LANG.CUSTOMER_ID, CUSTOMER_LANG.LANGUAGE_LEVEL);
-        for (String language : fullCustomer.getLanguages())
-            step = step.values(TEST_PARTITION, id, language);
-
-        step.execute();
-
-        return fullCustomer.withId(id);
+        return customer;
     }
 
     public FullCustomer readCustomerFromDb(int customerId) {
-        Customer customer = sql.selectFrom(CUSTOMER)
+        return sql.selectFrom(CUSTOMER)
                 .where(CUSTOMER.ID.eq(customerId))
                 .fetch().stream()
                 .findFirst()
-                .map(Customer::valueOf)
+                .map(FullCustomer::valueOf)
                 .orElse(null);
-
-        if (customer == null)
-            return null;
-
-        List<String> languages = sql.select(CUSTOMER_LANG.LANGUAGE_LEVEL)
-                .from(CUSTOMER_LANG)
-                .where(CUSTOMER_LANG.CUSTOMER_ID.eq(customerId))
-                .fetch()
-                .map(record -> record.getValue(CUSTOMER_LANG.LANGUAGE_LEVEL));
-
-        return new FullCustomer(customer, languages);
     }
 
     public Teacher insertTeacherIntoDb(Teacher teacher) {
         Teacher insertedTeacher = sql.insertInto(TEACHER)
                 .set(TEACHER.PARTITION_ID, TEST_PARTITION)
                 .set(TEACHER.PAYMENT_DAY, teacher.getPaymentDay())
+                .set(TEACHER.HOURLY_WAGE, teacher.getHourlyWage())
+                .set(TEACHER.ACADEMIC_WAGE, teacher.getAcademicWage())
                 .set(TEACHER.NAME, teacher.getName())
                 .set(TEACHER.SURNAME, teacher.getSurname())
                 .set(TEACHER.PHONE, teacher.getPhone())
                 .set(TEACHER.CITY, teacher.getCity())
                 .set(TEACHER.EMAIL, teacher.getEmail())
-                .set(TEACHER.PICTURE_NAME, teacher.getPictureName())
-                .set(TEACHER.DOCUMENT_NAME, teacher.getDocumentName())
-                .set(TEACHER.COMMENT_ABOUT, teacher.getComment())
+                .set(TEACHER.PICTURE, teacher.getPicture())
+                .set(TEACHER.DOCUMENT, teacher.getDocument())
+                .set(TEACHER.COMMENT, teacher.getComment())
                 .returning()
                 .fetchOne()
                 .map(Teacher::valueOf);
@@ -91,10 +67,13 @@ public class DatabaseHelper {
     }
 
     public Group insertGroupIntoDb(Group group) {
-        Group insertedGroup = sql.insertInto(STUDENT_GROUP)
-                .set(STUDENT_GROUP.PARTITION_ID, TEST_PARTITION)
-                .set(STUDENT_GROUP.TEACHER_ID, group.getTeacherId())
-                .set(STUDENT_GROUP.NAME, group.getName())
+        Group insertedGroup = sql.insertInto(GROUP_OF_STUDENTS)
+                .set(GROUP_OF_STUDENTS.PARTITION_ID, TEST_PARTITION)
+                .set(GROUP_OF_STUDENTS.CUSTOMER_ID, group.getCustomerId())
+                .set(GROUP_OF_STUDENTS.TEACHER_ID, group.getTeacherId())
+                .set(GROUP_OF_STUDENTS.USE_HOURLY_WAGE, group.getUsesHourlyWage())
+                .set(GROUP_OF_STUDENTS.LANGUAGE_LEVEL, group.getLanguageLevel())
+                .set(GROUP_OF_STUDENTS.NAME, group.getName())
                 .returning()
                 .fetchOne()
                 .map(Group::valueOf);
@@ -107,8 +86,8 @@ public class DatabaseHelper {
     public Student insertStudentIntoDb(Student student) {
         Student insertedStudent = sql.insertInto(STUDENT)
                 .set(STUDENT.PARTITION_ID, TEST_PARTITION)
-                .set(STUDENT.GROUP_ID, student.getGroupId())
                 .set(STUDENT.CUSTOMER_ID, student.getCustomerId())
+                .set(STUDENT.START_DATE, student.getStartDateSql())
                 .set(STUDENT.EMAIL, student.getEmail())
                 .set(STUDENT.NAME, student.getName())
                 .returning()
