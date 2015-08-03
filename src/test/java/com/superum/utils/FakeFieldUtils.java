@@ -61,4 +61,20 @@ public class FakeFieldUtils {
         return (id & 1) == 1;
     }
 
+    public static String fakeLanguageLevel(long id) {
+        return "English: C" + id;
+    }
+
+    public static int fakeHour(long id) {
+        return (int)(id % 24);
+    }
+
+    public static int fakeMinute(long id) {
+        return (int)(id % 60);
+    }
+
+    public static int fakeId(long id) {
+        return (int)id;
+    }
+
 }
