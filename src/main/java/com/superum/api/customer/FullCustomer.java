@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
+import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.superum.db.customer.Customer;
 import com.superum.fields.*;
 import com.superum.fields.primitives.IntField;
@@ -103,6 +108,7 @@ public class FullCustomer {
     }
 
 	@JsonProperty(START_DATE_FIELD)
+    @JsonSerialize(using = LocalDateSerializer.class)
 	public LocalDate getStartDate() {
 		return startDate.getValue();
 	}
@@ -165,10 +171,12 @@ public class FullCustomer {
     }
 
     @JsonProperty(CREATED_AT_FIELD)
+    @JsonSerialize(using = InstantSerializer.class)
     public Instant getCreatedAt() {
         return createdAt;
     }
     @JsonProperty(UPDATED_AT_FIELD)
+    @JsonSerialize(using = InstantSerializer.class)
     public Instant getUpdatedAt() {
         return updatedAt;
     }
@@ -260,7 +268,7 @@ public class FullCustomer {
 
     @JsonCreator
     public FullCustomer(@JsonProperty(ID_FIELD) int id,
-                        @JsonProperty(START_DATE_FIELD) LocalDate startDate,
+                        @JsonProperty(START_DATE_FIELD) @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate startDate,
                         @JsonProperty(NAME_FIELD) String name,
                         @JsonProperty(PHONE_FIELD) String phone,
                         @JsonProperty(WEBSITE_FIELD) String website,

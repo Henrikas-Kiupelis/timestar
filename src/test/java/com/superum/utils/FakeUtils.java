@@ -47,7 +47,7 @@ public class FakeUtils {
 
     // FULL FAKES
 
-    public static FullCustomer makeFakeFullCustomer(int id, Date startDate, String name, String phone, String website, String picture, String comment) {
+    public static FullCustomer makeFakeFullCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
         return new FullCustomer(makeFakeCustomer(id, startDate, name, phone, website, picture, comment));
     }
 
