@@ -1,5 +1,7 @@
 package com.superum.utils;
 
+import org.joda.time.LocalDate;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
@@ -46,11 +48,12 @@ public class FakeFieldUtils {
         return (int)(id % 31) + 1;
     }
 
+    /**
+     * @deprecated Date fields should not be used any longer, use Instant/LocalDate instead
+     */
+    @Deprecated
     public static Date fakeDate(long id) {
-        String dayString = String.valueOf(fakeDay(id));
-        if (dayString.length() == 1)
-            dayString = 0 + dayString;
-        return Date.from(Instant.parse("2015-01-" + dayString + "T00:00:00.00Z"));
+        return Date.from(Instant.parse("2015-01-" + dayString(id) + "T00:00:00.00Z"));
     }
 
     public static String fakeWebsite(long id) {
@@ -75,6 +78,17 @@ public class FakeFieldUtils {
 
     public static int fakeId(long id) {
         return (int)id;
+    }
+
+    public static LocalDate fakeLocalDate(long id) {
+        return LocalDate.parse("2015-01-" + dayString(id));
+    }
+
+    public static String dayString(long id) {
+        String dayString = String.valueOf(fakeDay(id));
+        if (dayString.length() == 1)
+            dayString = 0 + dayString;
+        return dayString;
     }
 
 }

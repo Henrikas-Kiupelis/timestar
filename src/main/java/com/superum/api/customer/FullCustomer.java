@@ -1,15 +1,23 @@
 package com.superum.api.customer;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.customer.Customer;
 import com.superum.fields.*;
 import com.superum.fields.primitives.IntField;
+import com.superum.helper.JodaLocalDate;
 import com.superum.helper.SetFieldComparator;
+import org.joda.time.Instant;
+import org.joda.time.LocalDate;
 import org.jooq.Record;
 
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,7 +31,7 @@ import static com.superum.utils.ValidationUtils.fitsOrNull;
  * When creating an instance of FullCustomer with JSON, these fields are required:
  *     FIELD_NAME    : FIELD_DESCRIPTION                                          FIELD_CONSTRAINTS
  *
- *     startDate     : date when a contract was signed;                           any java.sql.Date
+ *     startDate     : date when a contract was signed;                           date String, "yyyy-MM-dd"
  *     name          : name                                                       any String, max 30 chars
  *     phone         : phone number                                               any String, max 30 chars
  *     website       : website                                                    any String, max 30 chars
@@ -95,11 +103,7 @@ public class FullCustomer {
     }
 
 	@JsonProperty(START_DATE_FIELD)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
-	public Date getStartDate() {
-        System.out.println("Pre-serialization test: " + startDate);
-        System.out.println("Mock serialization: " + Date.from(new Date(startDate.getValue().getTime()).toInstant().truncatedTo(ChronoUnit.DAYS)));
-        System.out.println("Mock serialization2: " + startDate.getValue().toInstant().atZone(ZoneId.of("GMT")));
+	public LocalDate getStartDate() {
 		return startDate.getValue();
 	}
     @JsonIgnore
@@ -108,7 +112,11 @@ public class FullCustomer {
     }
     @JsonIgnore
     public java.sql.Date getStartDateSQL() {
-        return new java.sql.Date(getStartDate().getTime());
+        try {
+            return JodaLocalDate.from(getStartDate()).toJavaSqlDate();
+        } catch (ParseException e) {
+            throw new IllegalStateException("Error occurred when parsing date while writing Customer to database: " + startDate, e);
+        }
     }
 
 	@JsonProperty(NAME_FIELD)
@@ -157,11 +165,11 @@ public class FullCustomer {
     }
 
     @JsonProperty(CREATED_AT_FIELD)
-    public Date getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
     @JsonProperty(UPDATED_AT_FIELD)
-    public Date getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
@@ -252,7 +260,7 @@ public class FullCustomer {
 
     @JsonCreator
     public FullCustomer(@JsonProperty(ID_FIELD) int id,
-                        @JsonProperty(START_DATE_FIELD) Date startDate,
+                        @JsonProperty(START_DATE_FIELD) LocalDate startDate,
                         @JsonProperty(NAME_FIELD) String name,
                         @JsonProperty(PHONE_FIELD) String phone,
                         @JsonProperty(WEBSITE_FIELD) String website,
@@ -261,8 +269,8 @@ public class FullCustomer {
         this(id, startDate, name, phone, website, picture, comment, null, null);
     }
 
-	public FullCustomer(int id, Date startDate, String name, String phone, String website, String pictureName,
-                        String comment, Date createdAt, Date updatedAt) {
+	public FullCustomer(int id, LocalDate startDate, String name, String phone, String website, String pictureName,
+                        String comment, Instant createdAt, Instant updatedAt) {
         // Equivalent to (id != 0 && id <= 0); when id == 0, it simply was not set, so the state is valid, while id is not
         if (id < 0)
             throw new InvalidCustomerException("Customer id must be positive.");
@@ -326,12 +334,12 @@ public class FullCustomer {
             return null;
 
         long createdTimestamp = record.getValue(CUSTOMER.CREATED_AT);
-        Date createdAt = new Date(createdTimestamp);
+        Instant createdAt = new Instant(createdTimestamp);
         long updatedTimestamp = record.getValue(CUSTOMER.UPDATED_AT);
-        Date updatedAt = new Date(updatedTimestamp);
+        Instant updatedAt = new Instant(updatedTimestamp);
 
         return stepBuilder()
-                .withStartDate(record.getValue(CUSTOMER.START_DATE))
+                .withStartDate(from(record.getValue(CUSTOMER.START_DATE)))
                 .withName(record.getValue(CUSTOMER.NAME))
                 .withPhone(record.getValue(CUSTOMER.PHONE))
                 .withWebsite(record.getValue(CUSTOMER.WEBSITE))
@@ -366,15 +374,15 @@ public class FullCustomer {
 	// PRIVATE
 	
 	private final IntField id;
-	private final NamedField<Date> startDate;
+	private final NamedField<LocalDate> startDate;
 	private final NamedField<String> name;
 	private final NamedField<String> phone;
 	private final NamedField<String> website;
 	private final NamedField<String> pictureName;
 	private final NamedField<String> comment;
 
-    private final Date createdAt;
-    private final Date updatedAt;
+    private final Instant createdAt;
+    private final Instant updatedAt;
 
     private final List<NamedField> allFields;
     private final String string;
@@ -424,6 +432,14 @@ public class FullCustomer {
         return allFields().filter(MaybeField::isMandatory);
     }
 
+    private static LocalDate from(java.sql.Date sqlDate) {
+        try {
+            return JodaLocalDate.from(sqlDate).toOrgJodaTimeLocalDate();
+        } catch (ParseException e) {
+            throw new IllegalStateException("Error occurred when parsing date while reading Customer from database: " + sqlDate, e);
+        }
+    }
+
     private static final int NAME_SIZE_LIMIT = 30;
     private static final int PHONE_SIZE_LIMIT = 30;
     private static final int WEBSITE_SIZE_LIMIT = 30;
@@ -446,8 +462,7 @@ public class FullCustomer {
     // GENERATED
 
     public interface StartDateStep {
-        NameStep withStartDate(Date startDate);
-        NameStep withStartDate(java.sql.Date startDate);
+        NameStep withStartDate(LocalDate startDate);
     }
 
     public interface NameStep {
@@ -466,34 +481,28 @@ public class FullCustomer {
         BuildStep withId(int id);
         BuildStep withPictureName(String pictureName);
         BuildStep withComment(String comment);
-        BuildStep withCreatedAt(Date createdAt);
-        BuildStep withUpdatedAt(Date updatedAt);
+        BuildStep withCreatedAt(Instant createdAt);
+        BuildStep withUpdatedAt(Instant updatedAt);
         FullCustomer build();
     }
 
     public static class StepBuilder implements StartDateStep, NameStep, PhoneStep, WebsiteStep, BuildStep {
         private int id;
-        private Date startDate;
+        private LocalDate startDate;
         private String name;
         private String phone;
         private String website;
         private String pictureName;
         private String comment;
 
-        private Date createdAt;
-        private Date updatedAt;
+        private Instant createdAt;
+        private Instant updatedAt;
 
         private StepBuilder() {}
 
         @Override
-        public NameStep withStartDate(Date startDate) {
+        public NameStep withStartDate(LocalDate startDate) {
             this.startDate = startDate;
-            return this;
-        }
-
-        @Override
-        public NameStep withStartDate(java.sql.Date startDate) {
-            this.startDate = new Date(startDate.getTime());
             return this;
         }
 
@@ -534,13 +543,13 @@ public class FullCustomer {
         }
 
         @Override
-        public BuildStep withCreatedAt(Date createdAt) {
+        public BuildStep withCreatedAt(Instant createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
         @Override
-        public BuildStep withUpdatedAt(Date updatedAt) {
+        public BuildStep withUpdatedAt(Instant updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
@@ -563,15 +572,15 @@ public class FullCustomer {
 
     public static final class Builder {
         private int id;
-        private Date startDate;
+        private LocalDate startDate;
         private String name;
         private String phone;
         private String website;
         private String pictureName;
         private String comment;
 
-        private Date createdAt;
-        private Date updatedAt;
+        private Instant createdAt;
+        private Instant updatedAt;
 
         private Builder() {}
 
@@ -580,13 +589,8 @@ public class FullCustomer {
             return this;
         }
 
-        public Builder withStartDate(Date startDate) {
+        public Builder withStartDate(LocalDate startDate) {
             this.startDate = startDate;
-            return this;
-        }
-
-        public Builder withStartDate(java.sql.Date startDate) {
-            this.startDate = new Date(startDate.getTime());
             return this;
         }
 
@@ -615,12 +619,12 @@ public class FullCustomer {
             return this;
         }
 
-        public Builder withCreatedAt(Date createdAt) {
+        public Builder withCreatedAt(Instant createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public Builder withUpdatedAt(Date updatedAt) {
+        public Builder withUpdatedAt(Instant updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
