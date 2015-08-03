@@ -13,7 +13,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 
@@ -212,9 +211,9 @@ public class Lesson {
 		String comment = lessonRecord.getValue(LESSON.COMMENT);
 
         long createdTimestamp = lessonRecord.getValue(LESSON.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        Date createdAt = new Date(createdTimestamp);
         long updatedTimestamp = lessonRecord.getValue(LESSON.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+        Date updatedAt = new Date(updatedTimestamp);
 		return new Lesson(id, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
 	}
 

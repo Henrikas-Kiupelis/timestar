@@ -10,7 +10,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.jooq.Record;
 
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -120,10 +119,10 @@ public class Account {
 		String accountType = accountRecord.getValue(ACCOUNT.ACCOUNT_TYPE);
 		char[] password = accountRecord.getValue(ACCOUNT.PASSWORD).toCharArray();
 
-        long createdTimestamp = accountRecord.getValue(ACCOUNT.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
-        long updatedTimestamp = accountRecord.getValue(ACCOUNT.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		long createdTimestamp = accountRecord.getValue(ACCOUNT.CREATED_AT);
+		Date createdAt = new Date(createdTimestamp);
+		long updatedTimestamp = accountRecord.getValue(ACCOUNT.UPDATED_AT);
+		Date updatedAt = new Date(updatedTimestamp);
 		return new Account(id, username, accountType, password, createdAt, updatedAt);
 	}
 

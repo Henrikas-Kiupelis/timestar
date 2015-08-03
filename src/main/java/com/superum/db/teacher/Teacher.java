@@ -14,7 +14,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 
@@ -210,10 +209,10 @@ public class Teacher {
 		String documentName = teacherRecord.getValue(TEACHER.DOCUMENT);
 		String comment = teacherRecord.getValue(TEACHER.COMMENT);
 
-        long createdTimestamp = teacherRecord.getValue(TEACHER.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
-        long updatedTimestamp = teacherRecord.getValue(TEACHER.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		long createdTimestamp = teacherRecord.getValue(TEACHER.CREATED_AT);
+		Date createdAt = new Date(createdTimestamp);
+		long updatedTimestamp = teacherRecord.getValue(TEACHER.UPDATED_AT);
+		Date updatedAt = new Date(updatedTimestamp);
 		return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, pictureName, documentName, comment, createdAt, updatedAt);
 	}
 

@@ -12,7 +12,6 @@ import org.jooq.Record;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 
@@ -148,9 +147,9 @@ public class Group {
 		String name = groupRecord.getValue(GROUP_OF_STUDENTS.NAME);
 
         long createdTimestamp = groupRecord.getValue(GROUP_OF_STUDENTS.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        Date createdAt = new Date(createdTimestamp);
         long updatedTimestamp = groupRecord.getValue(GROUP_OF_STUDENTS.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+        Date updatedAt = new Date(updatedTimestamp);
 		return new Group(id, customerId, teacherId, usesHourlyWage, languageLevel, name, createdAt, updatedAt);
 	}
 

@@ -10,7 +10,6 @@ import org.jooq.Record;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 
@@ -167,9 +166,9 @@ public class Student {
 		String name = studentRecord.getValue(STUDENT.NAME);
 
         long createdTimestamp = studentRecord.getValue(STUDENT.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        Date createdAt = new Date(createdTimestamp);
         long updatedTimestamp = studentRecord.getValue(STUDENT.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+        Date updatedAt = new Date(updatedTimestamp);
 		return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
 	}
 
