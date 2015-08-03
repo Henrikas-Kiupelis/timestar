@@ -161,7 +161,8 @@ public class Student {
 		int id = studentRecord.getValue(STUDENT.ID);
         int code = studentRecord.getValue(STUDENT.CODE);
         Integer customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
-        Date startDate = studentRecord.getValue(STUDENT.START_DATE);
+        java.sql.Date startDateSql = studentRecord.getValue(STUDENT.START_DATE);
+        Date startDate = new Date(startDateSql.getTime());
 		String email = studentRecord.getValue(STUDENT.EMAIL);
 		String name = studentRecord.getValue(STUDENT.NAME);
 
