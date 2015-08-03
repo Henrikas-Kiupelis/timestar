@@ -25,6 +25,10 @@ public class FakeUtils {
                 .build();
     }
 
+    public static FullCustomer makeFakeFullCustomer(int id) {
+        return new FullCustomer(makeFakeCustomer(id));
+    }
+
     public static List<Teacher> makeSomeFakeTeachers(int amount) {
         List<Teacher> fakeTeachers = new ArrayList<>(amount);
         for (int i = 1; i <= amount; i++)

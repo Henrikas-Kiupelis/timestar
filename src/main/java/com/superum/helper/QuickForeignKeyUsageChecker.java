@@ -38,7 +38,7 @@ public class QuickForeignKeyUsageChecker<ID> {
 
     // CONSTRUCTORS
 
-    public static <ID> DSLContextStep<ID> newRequiredBuilder(Class<ID> clazz) {
+    public static <ID> DSLContextStep<ID> stepBuilder(Class<ID> clazz) {
         return new Builder<>();
     }
 

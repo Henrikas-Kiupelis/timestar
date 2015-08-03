@@ -4,20 +4,15 @@ import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.quick.QuickQueries;
 import com.superum.api.teacher.FullTeacherDAO;
 import com.superum.api.teacher.TeacherNotFoundException;
-import com.superum.db.customer.lang.CustomerLanguagesDAO;
 import com.superum.db.generated.timestar.tables.records.CustomerRecord;
 import com.superum.db.generated.timestar.tables.records.TeacherRecord;
-import com.superum.exception.DatabaseException;
 import com.superum.helper.ConditionBuilder;
 import com.superum.helper.QuickForeignKeyUsageChecker;
 import com.superum.helper.QuickIdExistenceChecker;
 import com.superum.helper.UpdateBuilder;
-import com.superum.utils.ArrayUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.UpdateSetMoreStep;
-import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,82 +21,56 @@ import java.util.List;
 
 import static com.superum.db.generated.timestar.Keys.*;
 import static com.superum.db.generated.timestar.Tables.*;
-import static org.jooq.impl.DSL.groupConcat;
 
 @Repository
 @Transactional
 public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Integer> implements FullCustomerQueries {
-
-    // Allows to fetch the correct field when converting from Record to FullCustomer
-    public static final String CUSTOMER_LANG_FIELD_NAME = "Languages";
 
     @Override
     public int exists(FullCustomer customer, int partitionId) {
         if (customer == null)
             throw new InvalidRequestException("Customer cannot have null value");
 
-        if (!customer.hasAnyCustomerFieldsSet())
-            throw new InvalidCustomerException("Provided customer does not have any customer fields set, so checking if it exists is impossible");
+        if (!customer.hasAnyFieldsSet())
+            throw new InvalidCustomerException("Provided customer does not have any fields set, so checking if it exists is impossible");
 
-        try {
-            if (customer.hasOnlyId()) {
-                int customerId = customer.getId();
-                if (!existsQuick(customerId, partitionId))
-                    throw new CustomerNotFoundException("Couldn't find customer with id " + customerId);
+        if (customer.hasOnlyId()) {
+            int customerId = customer.getId();
+            if (!existsQuick(customerId, partitionId))
+                throw new CustomerNotFoundException("Couldn't find customer with id " + customerId);
 
-                return customerId;
-            }
-
-            return sql.select(CUSTOMER.ID)
-                    .from(CUSTOMER)
-                    .where(partialCustomerCondition(customer, partitionId))
-                    .fetch().stream()
-                    .findFirst()
-                    .map(record -> record.getValue(CUSTOMER.ID))
-                    .orElseThrow(() -> new CustomerNotFoundException("Couldn't find this customer: " + customer));
-        } catch (DataAccessException e) {
-            throw new DatabaseException("An unexpected error occurred when trying to check if this customer exists: " + customer, e);
+            return customerId;
         }
+
+        return sql.select(CUSTOMER.ID)
+                .from(CUSTOMER)
+                .where(partialCustomerCondition(customer, partitionId))
+                .fetch().stream()
+                .findFirst()
+                .map(record -> record.getValue(CUSTOMER.ID))
+                .orElseThrow(() -> new CustomerNotFoundException("Couldn't find this customer: " + customer));
     }
 
     @Override
-    public void updatePartial(FullCustomer customer, int partitionId) {
+    public int updatePartial(FullCustomer customer, int partitionId) {
         if (customer == null)
             throw new InvalidRequestException("Customer cannot have null value");
 
         if (!customer.hasId())
             throw new InvalidCustomerException("Provided customer doesn't have its id set; please set it or use /create instead!");
 
-        boolean canUpdateCustomerLanguages = customer.canUpdateCustomerLanguages();
-        boolean canUpdateCustomer = customer.canUpdateCustomer();
-        if (!canUpdateCustomerLanguages && !canUpdateCustomer)
+        if (!customer.canUpdateCustomer())
             throw new InvalidCustomerException("Provided customer only has its id set; to update this customer, set additional fields!");
 
-        try {
-            int customerId = customer.getId();
+        int customerId = customer.getId();
 
-            if (canUpdateCustomer) {
-                int updateResult = partialCustomerUpdateStatement(customer)
-                        .where(idAndPartition(customerId, partitionId))
-                        .execute();
-                if (updateResult == 0)
-                    throw new DatabaseException("Couldn't update customer: " + customer);
-            }
-
-            if (canUpdateCustomerLanguages) {
-                sql.delete(CUSTOMER_LANG)
-                        .where(idAndPartitionForLanguages(customerId, partitionId))
-                        .execute();
-
-                customerLanguagesDAO.create(customer.toCustomerLanguages(), partitionId);
-            }
-        } catch (DataAccessException e) {
-            throw new DatabaseException("An unexpected error occurred when trying to update customer: " + customer, e);
-        }
+        return partialCustomerUpdateStatement(customer)
+                .where(idAndPartition(customerId, partitionId))
+                .execute();
     }
 
     @Override
-    public void safeDelete(int customerId, int partitionId) {
+    public int safeDelete(int customerId, int partitionId) {
         if (customerId <= 0)
             throw new InvalidRequestException("Customers can only have positive ids, not " + customerId);
 
@@ -112,17 +81,9 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
             throw new UnsafeCustomerDeleteException("Cannot delete customer with " + customerId +
                     " while it still has entries in other tables");
 
-        try {
-            sql.delete(CUSTOMER_LANG)
-                    .where(idAndPartitionForLanguages(customerId, partitionId))
-                    .execute();
-
-            sql.delete(CUSTOMER)
-                    .where(idAndPartition(customerId, partitionId))
-                    .execute();
-        } catch (DataAccessException e) {
-            throw new DatabaseException("An unexpected error occurred when trying to delete customer with id " + customerId, e);
-        }
+        return sql.delete(CUSTOMER)
+                .where(idAndPartition(customerId, partitionId))
+                .execute();
     }
 
     @Override
@@ -139,23 +100,19 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
         if (!teacherExists(teacherId, partitionId))
             throw new TeacherNotFoundException("Couldn't find teacher with id " + teacherId);
 
-        try {
-            return sql.select(FULL_CUSTOMER_FIELDS)
-                    .from(CUSTOMER)
-                    .join(CUSTOMER_LANG).onKey(CUSTOMER_LANG_IBFK_1)
-                    .join(STUDENT).onKey(STUDENT_IBFK_2)
-                    .join(STUDENT_GROUP).onKey(STUDENT_IBFK_1)
-                    .where(STUDENT_GROUP.TEACHER_ID.eq(teacherId)
-                            .and(CUSTOMER.PARTITION_ID.eq(partitionId)))
-                    .groupBy(CUSTOMER.ID)
-                    .orderBy(CUSTOMER.ID)
-                    .limit(amount)
-                    .offset(page * amount)
-                    .fetch()
-                    .map(FullCustomer::valueOf);
-        } catch (DataAccessException e) {
-            throw new DatabaseException("An unexpected error occurred when trying to read all customers for teacher with id " + teacherId, e);
-        }
+        return sql.select(CUSTOMER.fields())
+                .from(CUSTOMER)
+                .join(STUDENT).onKey(STUDENT_IBFK_1)
+                .join(STUDENTS_IN_GROUPS).onKey(STUDENTS_IN_GROUPS_IBFK_1)
+                .join(GROUP_OF_STUDENTS).onKey(STUDENTS_IN_GROUPS_IBFK_2)
+                .where(GROUP_OF_STUDENTS.TEACHER_ID.eq(teacherId)
+                        .and(CUSTOMER.PARTITION_ID.eq(partitionId)))
+                .groupBy(CUSTOMER.ID)
+                .orderBy(CUSTOMER.ID)
+                .limit(amount)
+                .offset(page * amount)
+                .fetch()
+                .map(FullCustomer::valueOf);
     }
 
     @Override
@@ -166,20 +123,15 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
         if (amount <= 0 || amount > 100)
             throw new InvalidRequestException("You can only request 1-100 items per page, not " + amount);
 
-        try {
-            return sql.select(FULL_CUSTOMER_FIELDS)
-                    .from(CUSTOMER)
-                    .join(CUSTOMER_LANG).onKey(CUSTOMER_LANG_IBFK_1)
-                    .where(CUSTOMER.PARTITION_ID.eq(partitionId))
-                    .groupBy(CUSTOMER.ID)
-                    .orderBy(CUSTOMER.ID)
-                    .limit(amount)
-                    .offset(page * amount)
-                    .fetch()
-                    .map(FullCustomer::valueOf);
-        } catch (DataAccessException e) {
-            throw new DatabaseException("An unexpected error occurred when trying to read all customers", e);
-        }
+        return sql.select(CUSTOMER.fields())
+                .from(CUSTOMER)
+                .where(CUSTOMER.PARTITION_ID.eq(partitionId))
+                .groupBy(CUSTOMER.ID)
+                .orderBy(CUSTOMER.ID)
+                .limit(amount)
+                .offset(page * amount)
+                .fetch()
+                .map(FullCustomer::valueOf);
     }
 
     @Override
@@ -190,48 +142,39 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
         if (!teacherExists(teacherId, partitionId))
             throw new TeacherNotFoundException("Couldn't find teacher with id " + teacherId);
 
-        try {
-            return sql.fetchCount(
-                    sql.selectOne()
-                        .from(CUSTOMER)
-                        .join(STUDENT).onKey(STUDENT_IBFK_2)
-                        .join(STUDENT_GROUP).onKey(STUDENT_IBFK_1)
-                        .where(STUDENT_GROUP.TEACHER_ID.eq(teacherId)
-                                .and(CUSTOMER.PARTITION_ID.eq(partitionId)))
-                        .groupBy(CUSTOMER.ID));
-        } catch (DataAccessException e) {
-            throw new DatabaseException("An unexpected error occurred when trying to count all customers for teacher with id " + teacherId, e);
-        }
+        return sql.fetchCount(sql.selectOne()
+                .from(CUSTOMER)
+                .join(STUDENT).onKey(STUDENT_IBFK_1)
+                .join(STUDENTS_IN_GROUPS).onKey(STUDENTS_IN_GROUPS_IBFK_1)
+                .join(GROUP_OF_STUDENTS).onKey(STUDENTS_IN_GROUPS_IBFK_2)
+                .where(GROUP_OF_STUDENTS.TEACHER_ID.eq(teacherId)
+                        .and(CUSTOMER.PARTITION_ID.eq(partitionId)))
+                .groupBy(CUSTOMER.ID));
     }
 
     @Override
     public int count(int partitionId) {
-        try {
-            return sql.fetchCount(CUSTOMER, CUSTOMER.PARTITION_ID.eq(partitionId));
-        } catch (DataAccessException e) {
-            throw new DatabaseException("An unexpected error occurred when trying to count all customers", e);
-        }
+        return sql.fetchCount(CUSTOMER, CUSTOMER.PARTITION_ID.eq(partitionId));
     }
 
     // CONSTRUCTORS
 
     @Autowired
-    public FullCustomerQueriesImpl(DSLContext sql, CustomerLanguagesDAO customerLanguagesDAO, FullTeacherDAO fullTeacherDAO) {
+    public FullCustomerQueriesImpl(DSLContext sql, FullTeacherDAO fullTeacherDAO) {
         super(new QuickIdExistenceChecker<>(sql, CUSTOMER.ID, CUSTOMER.PARTITION_ID),
-                QuickForeignKeyUsageChecker.newRequiredBuilder(Integer.class)
+                QuickForeignKeyUsageChecker.stepBuilder(Integer.class)
                         .withDSLContext(sql)
                         .add(STUDENT.CUSTOMER_ID, STUDENT.PARTITION_ID)
+                        .add(GROUP_OF_STUDENTS.CUSTOMER_ID, GROUP_OF_STUDENTS.PARTITION_ID)
                         .build());
 
         this.sql = sql;
-        this.customerLanguagesDAO = customerLanguagesDAO;
         this.fullTeacherDAO = fullTeacherDAO;
     }
 
     // PRIVATE
 
     private final DSLContext sql;
-    private final CustomerLanguagesDAO customerLanguagesDAO;
     private final FullTeacherDAO fullTeacherDAO;
 
     /**
@@ -239,13 +182,6 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
      */
     private Condition idAndPartition(int customerId, int partitionId) {
         return CUSTOMER.ID.eq(customerId).and(CUSTOMER.PARTITION_ID.eq(partitionId));
-    }
-
-    /**
-     * @return Condition which checks for customer id and partition id in CUSTOMER_LANG table
-     */
-    private Condition idAndPartitionForLanguages(int customerId, int partitionId) {
-        return CUSTOMER_LANG.CUSTOMER_ID.eq(customerId).and(CUSTOMER_LANG.PARTITION_ID.eq(partitionId));
     }
 
     /**
@@ -270,14 +206,12 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
     private Condition partialCustomerCondition(FullCustomer customer, int partitionId) {
         return new ConditionBuilder<>(customer, CUSTOMER.PARTITION_ID, partitionId)
                 .fieldCheck(FullCustomer::hasId, CUSTOMER.ID, FullCustomer::getId)
-                .fieldCheck(FullCustomer::hasPaymentDay, CUSTOMER.PAYMENT_DAY, FullCustomer::getPaymentDay)
-                .fieldCheck(FullCustomer::hasStartDate, CUSTOMER.START_DATE, FullCustomer::getStartDate)
-                .fieldCheck(FullCustomer::hasPaymentValue, CUSTOMER.PAYMENT_VALUE, FullCustomer::getPaymentValue)
+                .fieldCheck(FullCustomer::hasStartDate, CUSTOMER.START_DATE, FullCustomer::getStartDateSQL)
                 .fieldCheck(FullCustomer::hasName, CUSTOMER.NAME, FullCustomer::getName)
                 .fieldCheck(FullCustomer::hasPhone, CUSTOMER.PHONE, FullCustomer::getPhone)
                 .fieldCheck(FullCustomer::hasWebsite, CUSTOMER.WEBSITE, FullCustomer::getWebsite)
-                .fieldCheck(FullCustomer::hasPictureName, CUSTOMER.PICTURE_NAME, FullCustomer::getPictureName)
-                .fieldCheck(FullCustomer::hasComment, CUSTOMER.COMMENT_ABOUT, FullCustomer::getComment)
+                .fieldCheck(FullCustomer::hasPictureName, CUSTOMER.PICTURE, FullCustomer::getPictureName)
+                .fieldCheck(FullCustomer::hasComment, CUSTOMER.COMMENT, FullCustomer::getComment)
                 .finalCondition();
     }
 
@@ -286,17 +220,13 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
      */
     private UpdateSetMoreStep partialCustomerUpdateStatement(FullCustomer customer) {
         return new UpdateBuilder<>(customer, sql, CUSTOMER)
-                .setField(FullCustomer::hasPaymentDay, CUSTOMER.PAYMENT_DAY, FullCustomer::getPaymentDay)
-                .setField(FullCustomer::hasStartDate, CUSTOMER.START_DATE, FullCustomer::getStartDate)
-                .setField(FullCustomer::hasPaymentValue, CUSTOMER.PAYMENT_VALUE, FullCustomer::getPaymentValue)
+                .setField(FullCustomer::hasStartDate, CUSTOMER.START_DATE, FullCustomer::getStartDateSQL)
                 .setField(FullCustomer::hasName, CUSTOMER.NAME, FullCustomer::getName)
                 .setField(FullCustomer::hasPhone, CUSTOMER.PHONE, FullCustomer::getPhone)
                 .setField(FullCustomer::hasWebsite, CUSTOMER.WEBSITE, FullCustomer::getWebsite)
-                .setField(FullCustomer::hasPictureName, CUSTOMER.PICTURE_NAME, FullCustomer::getPictureName)
-                .setField(FullCustomer::hasComment, CUSTOMER.COMMENT_ABOUT, FullCustomer::getComment)
+                .setField(FullCustomer::hasPictureName, CUSTOMER.PICTURE, FullCustomer::getPictureName)
+                .setField(FullCustomer::hasComment, CUSTOMER.COMMENT, FullCustomer::getComment)
                 .finalStep();
     }
-
-    private static final Field<?>[] FULL_CUSTOMER_FIELDS = ArrayUtils.join(CUSTOMER.fields(), groupConcat(CUSTOMER_LANG.LANGUAGE_LEVEL).as(CUSTOMER_LANG_FIELD_NAME));
 
 }

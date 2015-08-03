@@ -10,9 +10,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static com.superum.utils.FakeUtils.defaultFullCustomer;
@@ -42,7 +42,6 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         FullCustomer returnedCustomer = fromResponse(result, FullCustomer.class);
         int customerId = returnedCustomer.getId();
-
         customer = customer.withId(customerId);
 
         assertEquals("The returned customer should be equal to original customer, except for id field; ", returnedCustomer, customer);
@@ -79,10 +78,11 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
         FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(defaultFullCustomer());
         int customerId = insertedCustomer.getId();
 
-        FullCustomer updatedCustomer = FullCustomer.newBuilder()
+        FullCustomer updatedCustomer = FullCustomer.stepBuilder()
+                .withStartDate(Date.valueOf("2015-07-29"))
                 .withId(customerId)
                 .withPaymentDay(2)
-                .withStartDate(Date.valueOf("2015-07-29"))
+                .withStartDate()
                 .withPaymentValue(BigDecimal.valueOf(20))
                 .withName("SUPERUMZ")
                 .withPhone("+37069900002")

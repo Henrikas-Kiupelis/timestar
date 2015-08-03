@@ -63,6 +63,13 @@ public class SimpleField<T> extends NamedField<T> {
         return new JavaSqlDateField(fieldName, value, mandatory);
     }
 
+    public static SimpleField<java.util.Date> valueOf(String fieldName, java.util.Date value, Mandatory mandatory) {
+        if (value == null)
+            return empty(fieldName, mandatory);
+
+        return new JavaUtilDateField(fieldName, value, mandatory);
+    }
+
     public static <T> SimpleField<T> valueOf(String fieldName, T value, Mandatory mandatory) {
         if (value == null)
             return empty(fieldName, mandatory);
@@ -147,6 +154,41 @@ public class SimpleField<T> extends NamedField<T> {
         // CONSTRUCTORS
 
         protected JavaSqlDateField(String fieldName, Date value, Mandatory mandatory) {
+            super(fieldName, value, mandatory);
+        }
+
+    }
+
+    /**
+     * <pre>
+     * Specialized NamedField, intended to be used with java.util.Date
+     *
+     * This Field will check for day equality, rather than comparing the entire Date (i.e. hours, minutes, etc)
+     * </pre>
+     */
+    private static class JavaUtilDateField extends SimpleField<java.util.Date> {
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+
+            if (!(o instanceof JavaUtilDateField))
+                return false;
+
+            JavaUtilDateField other = (JavaUtilDateField) o;
+
+            return ObjectUtils.equalsJavaUtilDate(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value == null ? 0 : value.toString().hashCode();
+        }
+
+        // CONSTRUCTORS
+
+        protected JavaUtilDateField(String fieldName, java.util.Date value, Mandatory mandatory) {
             super(fieldName, value, mandatory);
         }
 

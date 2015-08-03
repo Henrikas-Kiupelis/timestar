@@ -157,7 +157,7 @@ public interface FullCustomerService {
      * <pre>
      * Checks if a Customer exists
      *
-     * The check is made by using all the set fields (Languages field is ignored)
+     * The check is made by using all the set fields
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>

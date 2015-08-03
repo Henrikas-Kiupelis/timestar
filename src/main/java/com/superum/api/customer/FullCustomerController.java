@@ -219,6 +219,9 @@ public class FullCustomerController {
         if (user == null)
             throw new UnauthorizedRequestException("Missing auth token for request to check if customer exists.");
 
+        if (customer == null)
+            throw new InvalidRequestException("Customer cannot be null");
+
         LOG.info("User {} is checking if customer {} exists", user, customer);
 
         int partitionId = PrincipalUtils.partitionId(user);

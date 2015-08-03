@@ -2,7 +2,7 @@ package com.superum.api.customer;
 
 import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.teacher.TeacherNotFoundException;
-import com.superum.exception.DatabaseException;
+import org.jooq.exception.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,7 +11,6 @@ import java.util.List;
  * <pre>
  * Responsible for various queries to these database tables:
  * customer
- * customer_lang
  *
  * These queries complement or replace the queries from API v1
  * </pre>
@@ -23,7 +22,7 @@ public interface FullCustomerQueries {
      * <pre>
      * Checks if a Customer exists
      *
-     * The check is made by using all the set fields (Languages field is ignored)
+     * The check is made by using all the set fields
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
@@ -32,7 +31,7 @@ public interface FullCustomerQueries {
      * @throws InvalidRequestException if customer is null
      * @throws InvalidCustomerException if customer has no fields set (ignoring languages)
      * @throws CustomerNotFoundException if given customer cannot be found
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if database error occurred
      */
     int exists(FullCustomer customer, int partitionId);
 
@@ -47,9 +46,9 @@ public interface FullCustomerQueries {
      * @throws InvalidRequestException if customer is null
      * @throws InvalidCustomerException if id field was not set, or no other fields were set
      * @throws CustomerNotFoundException if id is set, but no customer with given id exists
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if database error occurred
      */
-    void updatePartial(FullCustomer customer, int partitionId);
+    int updatePartial(FullCustomer customer, int partitionId);
 
     /**
      * <pre>
@@ -60,9 +59,9 @@ public interface FullCustomerQueries {
      * @throws InvalidRequestException if id is illegal (<=0)
      * @throws CustomerNotFoundException if no customer with this id exists
      * @throws UnsafeCustomerDeleteException if attempt to delete a Customer was made, but this customer still has valid data
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if database error occurred
      */
-    void safeDelete(int customerId, int partitionId);
+    int safeDelete(int customerId, int partitionId);
 
     /**
      * <pre>
@@ -85,7 +84,7 @@ public interface FullCustomerQueries {
      * @throws InvalidRequestException if page is illegal (<0)
      * @throws InvalidRequestException if amount is illegal (<=0 || >100)
      * @throws TeacherNotFoundException if no teacher with this id exists
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if database error occurred
      */
     List<FullCustomer> readCustomersForTeacher(int teacherId, int page, int amount, int partitionId);
 
@@ -102,7 +101,7 @@ public interface FullCustomerQueries {
      * @throws InvalidRequestException if id is illegal (<=0)
      * @throws InvalidRequestException if page is illegal (<0)
      * @throws InvalidRequestException if amount is illegal (<=0 || >100)
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if database error occurred
      */
     List<FullCustomer> readCustomersAll(int page, int amount, int partitionId);
 
@@ -122,7 +121,7 @@ public interface FullCustomerQueries {
      * @return count of customers for a teacher with specified id
      *
      * @throws TeacherNotFoundException if no teacher with this id exists
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if database error occurred
      */
     int countForTeacher(int teacherId, int partitionId);
 
@@ -137,7 +136,7 @@ public interface FullCustomerQueries {
      * </pre>
      * @return total count of customers
      *
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if database error occurred
      */
     int count(int partitionId);
 

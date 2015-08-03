@@ -3,8 +3,8 @@ package com.superum.api.customer;
 import com.superum.api.exception.InvalidRequestException;
 import com.superum.db.customer.Customer;
 import com.superum.db.customer.CustomerService;
-import com.superum.db.customer.lang.CustomerLanguages;
-import com.superum.db.customer.lang.CustomerLanguagesService;
+import com.superum.exception.DatabaseException;
+import org.jooq.exception.DataAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,6 @@ public class FullCustomerServiceImpl implements FullCustomerService {
 
         Customer insertedCustomer = customerService.addCustomer(fullCustomer.toCustomer(), partitionId);
         FullCustomer insertedFullCustomer = fullCustomer.withId(insertedCustomer.getId());
-        customerLanguagesService.addLanguagesToCustomerContract(insertedFullCustomer.toCustomerLanguages(), partitionId);
         LOG.debug("Customer created: {}", insertedFullCustomer);
 
         return insertedFullCustomer;
@@ -44,8 +43,7 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         LOG.debug("Reading customer with id: {}", customerId);
 
         Customer customer = customerService.findCustomer(customerId, partitionId);
-        CustomerLanguages customerLanguages = customerLanguagesService.getLanguagesForCustomerContract(customerId, partitionId);
-        FullCustomer fullCustomer = new FullCustomer(customer, customerLanguages);
+        FullCustomer fullCustomer = new FullCustomer(customer);
         LOG.debug("Customer retrieved: {}", fullCustomer);
 
         return fullCustomer;
@@ -59,15 +57,19 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         if (!customer.hasId())
             throw new InvalidCustomerException("Provided customer doesn't have its id set; please set it or use /create instead!");
 
-        if (!customer.canUpdateCustomerLanguages() && !customer.canUpdateCustomer())
+        if (!customer.canUpdateCustomer())
             throw new InvalidCustomerException("Provided customer only has its id set; to update this customer, set additional fields!");
 
         LOG.debug("Updating customer: {}",  customer);
 
         FullCustomer oldCustomer = readCustomer(customer.getId(), partitionId);
-        if (!customer.hasEqualSetCustomerFields(oldCustomer) || !customer.hasEqualSetCustomerLanguagesFields(oldCustomer))
-            fullCustomerQueries.updatePartial(customer, partitionId);
-
+        if (!customer.hasEqualSetCustomerFields(oldCustomer))
+            try {
+                if (fullCustomerQueries.updatePartial(customer, partitionId) == 0)
+                    throw new DatabaseException("Couldn't update customer: " + customer);
+            } catch (DataAccessException e) {
+                throw new DatabaseException("An unexpected error occurred when trying to update customer: " + customer, e);
+            }
         LOG.debug("Customer has been updated; before update: {}", oldCustomer);
 
         return oldCustomer;
@@ -81,7 +83,12 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         LOG.debug("Deleting customer with id: {}", customerId);
 
         FullCustomer deletedCustomer = readCustomer(customerId, partitionId);
-        fullCustomerQueries.safeDelete(customerId, partitionId);
+        try {
+            if (fullCustomerQueries.safeDelete(customerId, partitionId) == 0)
+                throw new DatabaseException("Couldn't delete customer with id: " + customerId);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to delete customer with id " + customerId, e);
+        }
         LOG.debug("Customer has been deleted: {}", deletedCustomer);
 
         return deletedCustomer;
@@ -100,7 +107,12 @@ public class FullCustomerServiceImpl implements FullCustomerService {
 
         LOG.debug("Reading customers for teacher with id {}; page {}, amount {}", teacherId, page, amount);
 
-        List<FullCustomer> customers = fullCustomerQueries.readCustomersForTeacher(teacherId, page, amount, partitionId);
+        List<FullCustomer> customers;
+        try {
+            customers = fullCustomerQueries.readCustomersForTeacher(teacherId, page, amount, partitionId);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to read all customers for teacher with id " + teacherId, e);
+        }
         LOG.debug("Customers retrieved: {}", customers);
 
         return customers;
@@ -116,7 +128,12 @@ public class FullCustomerServiceImpl implements FullCustomerService {
 
         LOG.debug("Reading all customers; page {}, amount {}", page, amount);
 
-        List<FullCustomer> customers = fullCustomerQueries.readCustomersAll(page, amount, partitionId);
+        List<FullCustomer> customers;
+        try {
+            customers = fullCustomerQueries.readCustomersAll(page, amount, partitionId);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to read all customers", e);
+        }
         LOG.debug("Customers retrieved: {}", customers);
 
         return customers;
@@ -127,7 +144,12 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         if (teacherId <= 0)
             throw new InvalidRequestException("Teachers can only have positive ids, not " + teacherId);
 
-        int count = fullCustomerQueries.countForTeacher(teacherId, partitionId);
+        int count;
+        try {
+            count = fullCustomerQueries.countForTeacher(teacherId, partitionId);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to count all customers for teacher with id " + teacherId, e);
+        }
         LOG.debug("Teacher with id {} has {} customers", teacherId, count);
 
         return count;
@@ -135,7 +157,12 @@ public class FullCustomerServiceImpl implements FullCustomerService {
 
     @Override
     public int countAll(int partitionId) {
-        int count = fullCustomerQueries.count(partitionId);
+        int count;
+        try {
+            count = fullCustomerQueries.count(partitionId);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to count all customers", e);
+        }
         LOG.debug("There are a total of {} customers", count);
 
         return count;
@@ -144,14 +171,19 @@ public class FullCustomerServiceImpl implements FullCustomerService {
     @Override
     public FullCustomer exists(FullCustomer customer, int partitionId) {
         if (customer == null)
-            throw new InvalidRequestException("Customer cannot have null value");
+            throw new InvalidRequestException("Customer cannot be null");
 
-        if (!customer.hasAnyCustomerFieldsSet())
+        if (!customer.hasAnyFieldsSet())
             throw new InvalidCustomerException("Provided customer does not have any fields set, so checking if it exists is impossible");
 
         LOG.debug("Checking if a customer exists: {}", customer);
 
-        int customerId = fullCustomerQueries.exists(customer, partitionId);
+        int customerId;
+        try {
+            customerId = fullCustomerQueries.exists(customer, partitionId);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to check if this customer exists: " + customer, e);
+        }
         FullCustomer existingCustomer = readCustomer(customerId, partitionId);
         LOG.debug("Found customer: {}", existingCustomer);
 
@@ -161,17 +193,15 @@ public class FullCustomerServiceImpl implements FullCustomerService {
     // CONSTRUCTORS
 
     @Autowired
-    public FullCustomerServiceImpl(FullCustomerQueries fullCustomerQueries, CustomerService customerService, CustomerLanguagesService customerLanguagesService) {
+    public FullCustomerServiceImpl(FullCustomerQueries fullCustomerQueries, CustomerService customerService) {
         this.fullCustomerQueries = fullCustomerQueries;
         this.customerService = customerService;
-        this.customerLanguagesService = customerLanguagesService;
     }
 
     // PRIVATE
 
     private final FullCustomerQueries fullCustomerQueries;
     private final CustomerService customerService;
-    private final CustomerLanguagesService customerLanguagesService;
 
     private static final Logger LOG = LoggerFactory.getLogger(FullCustomerService.class);
 

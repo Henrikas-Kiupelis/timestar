@@ -1,28 +1,18 @@
 package com.superum.api.customer;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.superum.db.customer.Customer;
-import com.superum.db.customer.lang.CustomerLanguages;
 import com.superum.fields.*;
-import com.superum.fields.primitives.ByteField;
 import com.superum.fields.primitives.IntField;
 import com.superum.helper.SetFieldComparator;
 import org.jooq.Record;
 
-import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.superum.api.customer.FullCustomer.RequiredBuilder.fullCustomer;
-import static com.superum.api.customer.FullCustomerQueriesImpl.CUSTOMER_LANG_FIELD_NAME;
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
-import static com.superum.utils.MySQLUtils.MYSQL_GROUP_CONCAT_SEPARATOR;
-import static com.superum.utils.ValidationUtils.*;
+import static com.superum.utils.ValidationUtils.fitsOrNull;
 
 /**
  * <pre>
@@ -31,16 +21,13 @@ import static com.superum.utils.ValidationUtils.*;
  * When creating an instance of FullCustomer with JSON, these fields are required:
  *     FIELD_NAME    : FIELD_DESCRIPTION                                          FIELD_CONSTRAINTS
  *
- *     paymentDay    : day of the month that the customer must pay money before;  1 <= paymentDay <= 31
  *     startDate     : date when a contract was signed;                           any java.sql.Date
- *     paymentValue  : hourly rate for services, in euros;                        0 <= paymentValue; BigDecimal
  *     name          : name                                                       any String, max 30 chars
  *     phone         : phone number                                               any String, max 30 chars
  *     website       : website                                                    any String, max 30 chars
- *     languages     : list of languages and levels the customer is paying for    any List of Strings, max 20 chars
  *
  * These fields are optional:
- *     pictureName   : name of the picture of the customer, stored somewhere      any String, max 100 chars
+ *     picture       : name of the picture of the customer, stored somewhere      any String, max 100 chars
  *     comment       : comment, made by the app client                            any String, max 500 chars
  *
  * These fields should only be specified if they are known:
@@ -55,14 +42,11 @@ import static com.superum.utils.ValidationUtils.*;
  * Example of JSON:
  * {
  *     "id":"1",
- *     "paymentDay":"1",
  *     "startDate":"2015-07-22",
- *     "paymentValue":"23.33",
  *     "name":"SUPERUM",
  *     "phone":"+37069900001",
  *     "website":"http://superum.eu",
- *     "languages":["English: C1", "English: C2"],
- *     "pictureName":"superum.jpg",
+ *     "picture":"superum.jpg",
  *     "comment":"What a company"
  * }
  * </pre>
@@ -95,19 +79,21 @@ public class FullCustomer {
      */
     @JsonIgnore
     public FullCustomer withId(int id) {
-        return new FullCustomer(id, getPaymentDay(), getStartDate(), getPaymentValue(), getName(), getPhone(), getWebsite(), getPictureName(), getComment(), getLanguages());
+        return new FullCustomer(id, getStartDate(), getName(), getPhone(), getWebsite(), getPictureName(), getComment(), getCreatedAt(), getUpdatedAt());
     }
-	
-	@JsonProperty(PAYMENT_DAY_FIELD)
-	public byte getPaymentDay() {
-		return paymentDay.byteValue();
-	}
+    /**
+     * <pre>
+     * Intended to be used for unit/integration testing, to help emulate database behaviour
+     * </pre>
+     * @return a copy of this FullCustomer, with its id no longer set
+     */
     @JsonIgnore
-    public boolean hasPaymentDay() {
-        return paymentDay.isSet();
+    public FullCustomer withoutId() {
+        return new FullCustomer(0, getStartDate(), getName(), getPhone(), getWebsite(), getPictureName(), getComment(), getCreatedAt(), getUpdatedAt());
     }
-	
+
 	@JsonProperty(START_DATE_FIELD)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
 	public Date getStartDate() {
 		return startDate.getValue();
 	}
@@ -115,16 +101,11 @@ public class FullCustomer {
     public boolean hasStartDate() {
         return startDate.isSet();
     }
-	
-	@JsonProperty(PAYMENT_VALUE_FIELD)
-	public BigDecimal getPaymentValue() {
-		return paymentValue.getValue();
-	}
     @JsonIgnore
-    public boolean hasPaymentValue() {
-        return paymentValue.isSet();
+    public java.sql.Date getStartDateSQL() {
+        return new java.sql.Date(getStartDate().getTime());
     }
-	
+
 	@JsonProperty(NAME_FIELD)
 	public String getName() {
 		return name.getValue();
@@ -152,7 +133,7 @@ public class FullCustomer {
         return website.isSet();
     }
 	
-	@JsonProperty(PICTURE_NAME_FIELD)
+	@JsonProperty(PICTURE_FIELD)
 	public String getPictureName() {
 		return pictureName.getValue();
 	}
@@ -170,13 +151,13 @@ public class FullCustomer {
         return comment.isSet();
     }
 
-    @JsonProperty(LANGUAGES_FIELD)
-    public List<String> getLanguages() {
-        return languages.getValue();
+    @JsonProperty(CREATED_AT_FIELD)
+    public Date getCreatedAt() {
+        return createdAt;
     }
-    @JsonIgnore
-    public boolean hasLanguages() {
-        return languages.isSet();
+    @JsonProperty(UPDATED_AT_FIELD)
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
     /**
@@ -188,28 +169,6 @@ public class FullCustomer {
     }
 
     /**
-     * <pre>
-     * Languages is not a Customer field, but a field of CustomerLanguages
-     * </pre>
-     * @return true if at least one Customer field is set; false otherwise
-     */
-    @JsonIgnore
-    public boolean hasAnyCustomerFieldsSet() {
-        return customerFields().anyMatch(Field::isSet);
-    }
-
-    /**
-     * <pre>
-     * Languages is the only field in CustomerLanguages besides id
-     * </pre>
-     * @return true if at least one CustomerLanguages field is set; false otherwise
-     */
-    @JsonIgnore
-    public boolean hasAnyCustomerLanguagesFieldsSet() {
-        return customerLanguagesFields().anyMatch(Field::isSet);
-    }
-
-    /**
      * @return true if all the mandatory fields are set; false otherwise
      */
     @JsonIgnore
@@ -218,27 +177,11 @@ public class FullCustomer {
     }
 
     /**
-     * <pre>
-     * Languages is not a Customer field, but a field of CustomerLanguages
-     * </pre>
-     * @return true if at least one field, other than id or languages, is set; false otherwise
+     * @return true if at least one field, other than id is set; false otherwise
      */
     @JsonIgnore
     public boolean canUpdateCustomer() {
         return customerFields()
-                .filter(field -> field != id)
-                .anyMatch(Field::isSet);
-    }
-
-    /**
-     * <pre>
-     * Languages is the only field in CustomerLanguages besides id
-     * </pre>
-     * @return true if languages field is set; false otherwise
-     */
-    @JsonIgnore
-    public boolean canUpdateCustomerLanguages() {
-        return customerLanguagesFields()
                 .filter(field -> field != id)
                 .anyMatch(Field::isSet);
     }
@@ -257,19 +200,6 @@ public class FullCustomer {
     }
 
     /**
-     * <pre>
-     * Takes every CustomerLanguages field that is set in this FullCustomer and checks, if they are equal to the appropriate
-     * fields of given FullCustomer
-     *
-     * Intended to be used during updating, to avoid making a DB query if the fields already have appropriate values
-     * </pre>
-     * @return true if all the set CustomerLanguages fields of this FullCustomer are equal to the given FullCustomer's; false otherwise
-     */
-    public boolean hasEqualSetCustomerLanguagesFields(FullCustomer other) {
-        return setFieldComparator.compare(other, FullCustomer::customerLanguagesFields);
-    }
-
-    /**
      * @return a list of names of mandatory fields that are not set
      */
     @JsonIgnore
@@ -281,19 +211,11 @@ public class FullCustomer {
     }
 
     /**
-     * @return Customer part of this FullCustomer
+     * @return Customer value of this FullCustomer
      */
     @JsonIgnore
     public Customer toCustomer() {
-        return new Customer(getId(), getPaymentDay(), getStartDate(), getPaymentValue(), getName(), getPhone(), getWebsite(), getPictureName(), getComment());
-    }
-
-    /**
-     * @return CustomerLanguages part of this FullCustomer
-     */
-    @JsonIgnore
-    public CustomerLanguages toCustomerLanguages() {
-        return new CustomerLanguages(getId(), getLanguages());
+        return new Customer(getId(), getStartDate(), getName(), getPhone(), getWebsite(), getPictureName(), getComment(), getCreatedAt(), getUpdatedAt());
     }
 
 	// OBJECT OVERRIDES
@@ -323,32 +245,24 @@ public class FullCustomer {
 
 	// CONSTRUCTORS
 
-	@JsonCreator
-	public FullCustomer(@JsonProperty(ID_FIELD) int id,
-                        @JsonProperty(PAYMENT_DAY_FIELD) byte paymentDay,
+    @JsonCreator
+    public FullCustomer(@JsonProperty(ID_FIELD) int id,
                         @JsonProperty(START_DATE_FIELD) Date startDate,
-                        @JsonProperty(PAYMENT_VALUE_FIELD) BigDecimal paymentValue,
                         @JsonProperty(NAME_FIELD) String name,
                         @JsonProperty(PHONE_FIELD) String phone,
                         @JsonProperty(WEBSITE_FIELD) String website,
-                        @JsonProperty(PICTURE_NAME_FIELD) String pictureName,
-                        @JsonProperty(COMMENT_FIELD) String comment,
-                        @JsonProperty(LANGUAGES_FIELD) List<String> languages) {
+                        @JsonProperty(PICTURE_FIELD) String picture,
+                        @JsonProperty(COMMENT_FIELD) String comment) {
+        this(id, startDate, name, phone, website, picture, comment, null, null);
+    }
+
+	public FullCustomer(int id, Date startDate, String name, String phone, String website, String pictureName,
+                        String comment, Date createdAt, Date updatedAt) {
         // Equivalent to (id != 0 && id <= 0); when id == 0, it simply was not set, so the state is valid, while id is not
         if (id < 0)
             throw new InvalidCustomerException("Customer id must be positive.");
 
         this.id = new IntField(ID_FIELD, id, Mandatory.NO);
-
-        if (paymentDay != 0 && !isDayOfMonth(paymentDay))
-            throw new InvalidCustomerException("Payment day for customer doesn't exist: " + paymentDay);
-
-		this.paymentDay = new ByteField(PAYMENT_DAY_FIELD, paymentDay, Mandatory.YES);
-
-        if (isNegativeNotNull(paymentValue))
-            throw new InvalidCustomerException("Payment value for customer must be non-negative: " + paymentValue);
-
-		this.paymentValue = SimpleField.valueOf(PAYMENT_VALUE_FIELD, paymentValue, Mandatory.YES);
 
         if (!fitsOrNull(NAME_SIZE_LIMIT, name))
             throw new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars");
@@ -365,24 +279,15 @@ public class FullCustomer {
 
 		this.website = SimpleField.valueOf(WEBSITE_FIELD, website, Mandatory.YES);
 
-        if (!fitsOrNull(PICTURE_NAME_SIZE_LIMIT, pictureName))
-            throw new InvalidCustomerException("Customer picture name must not exceed " + PICTURE_NAME_SIZE_LIMIT + " chars");
+        if (!fitsOrNull(PICTURE_SIZE_LIMIT, pictureName))
+            throw new InvalidCustomerException("Customer picture name must not exceed " + PICTURE_SIZE_LIMIT + " chars");
 
-		this.pictureName = SimpleField.valueOf(PICTURE_NAME_FIELD, pictureName, Mandatory.NO);
+		this.pictureName = SimpleField.valueOf(PICTURE_FIELD, pictureName, Mandatory.NO);
 
         if (!fitsOrNull(COMMENT_SIZE_LIMIT, comment))
             throw new InvalidCustomerException("Customer comment must not exceed " + COMMENT_SIZE_LIMIT + " chars");
 
 		this.comment = SimpleField.valueOf(COMMENT_FIELD, comment, Mandatory.NO);
-
-        if (languages == null)
-            this.languages = SimpleField.empty(LANGUAGES_FIELD, Mandatory.YES);
-        else {
-            if (!languages.stream().allMatch(languageString -> fitsNotNull(LANGUAGE_ELEMENT_SIZE_LIMIT, languageString)))
-                throw new InvalidCustomerException("Customer languages must not exceed " + LANGUAGE_ELEMENT_SIZE_LIMIT + " chars");
-            // To ensure that this object is immutable, we wrap the list with an unmodifiable version
-            this.languages = SimpleField.valueOf(LANGUAGES_FIELD, Collections.unmodifiableList(languages), Mandatory.YES);
-        }
 
         this.startDate = SimpleField.valueOf(START_DATE_FIELD, startDate, Mandatory.YES);
 
@@ -395,33 +300,41 @@ public class FullCustomer {
         this.hash = allFields.hashCode();
 
         this.setFieldComparator = new SetFieldComparator<>(this);
+
+        // The following fields are not significant, i.e. they are not to be used when comparing for equality
+        // Intended for JSON conversion purposes only
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    public FullCustomer(Customer customer, CustomerLanguages languages) {
-        this(customer, languages.getLanguages());
+    public FullCustomer(Customer customer) {
+        this(customer.getId(), customer.getStartDate(), customer.getName(), customer.getPhone(), customer.getWebsite(),
+                customer.getPicture(), customer.getComment(), customer.getCreatedAt(), customer.getUpdatedAt());
     }
 
-    public FullCustomer(Customer customer, List<String> languages) {
-        this(customer.getId(), customer.getPaymentDay(), customer.getStartDate(), customer.getPaymentValue(),
-                customer.getName(), customer.getPhone(), customer.getWebsite(), customer.getPictureName(),
-                customer.getComment(), languages);
+    public static FullCustomer valueOf(Customer customer) {
+        return new FullCustomer(customer);
     }
 
     public static FullCustomer valueOf(Record record) {
         if (record == null)
             return null;
 
-        return newRequiredBuilder()
-                .withPaymentDay(record.getValue(CUSTOMER.PAYMENT_DAY))
+        long createdTimestamp = record.getValue(CUSTOMER.CREATED_AT);
+        Date createdAt = new Date(createdTimestamp);
+        long updatedTimestamp = record.getValue(CUSTOMER.UPDATED_AT);
+        Date updatedAt = new Date(updatedTimestamp);
+
+        return stepBuilder()
                 .withStartDate(record.getValue(CUSTOMER.START_DATE))
-                .withPaymentValue(record.getValue(CUSTOMER.PAYMENT_VALUE))
                 .withName(record.getValue(CUSTOMER.NAME))
                 .withPhone(record.getValue(CUSTOMER.PHONE))
                 .withWebsite(record.getValue(CUSTOMER.WEBSITE))
-                .withLanguages(record.getValue(CUSTOMER_LANG_FIELD_NAME, String.class).split(MYSQL_GROUP_CONCAT_SEPARATOR))
                 .withId(record.getValue(CUSTOMER.ID))
-                .withComment(record.getValue(CUSTOMER.COMMENT_ABOUT))
-                .withPictureName(record.getValue(CUSTOMER.PICTURE_NAME))
+                .withPictureName(record.getValue(CUSTOMER.PICTURE))
+                .withComment(record.getValue(CUSTOMER.COMMENT))
+                .withCreatedAt(createdAt)
+                .withUpdatedAt(updatedAt)
                 .build();
     }
 
@@ -441,22 +354,22 @@ public class FullCustomer {
      * </pre>
      * @return a new builder which creates a FullCustomer that has all its mandatory fields set
      */
-    public static PaymentDayStep newRequiredBuilder() {
-        return fullCustomer();
+    public static StartDateStep stepBuilder() {
+        return new StepBuilder();
     }
 
 	// PRIVATE
 	
 	private final IntField id;
-	private final ByteField paymentDay;
 	private final NamedField<Date> startDate;
-	private final NamedField<BigDecimal> paymentValue;
 	private final NamedField<String> name;
 	private final NamedField<String> phone;
 	private final NamedField<String> website;
 	private final NamedField<String> pictureName;
 	private final NamedField<String> comment;
-    private final NamedField<List<String>> languages;
+
+    private final Date createdAt;
+    private final Date updatedAt;
 
     private final List<NamedField> allFields;
     private final String string;
@@ -467,11 +380,13 @@ public class FullCustomer {
     /**
      * <pre>
      * Probably best to cache this, i.e. use in constructor
+     *
+     * The fields that are returned are the significant ones, i.e. the ones that should be used for equality tests
      * </pre>
      * @return a list of all fields
      */
     private List<NamedField> fieldList() {
-        return Collections.unmodifiableList(Arrays.asList(id, paymentDay, startDate, paymentValue, name, phone, website, pictureName, comment, languages));
+        return Collections.unmodifiableList(Arrays.asList(id, startDate, name, phone, website, pictureName, comment));
     }
 
     /**
@@ -491,17 +406,7 @@ public class FullCustomer {
      * @return a stream of all Customer fields
      */
     private Stream<NamedField> customerFields() {
-        return allFields().filter(field -> field != languages);
-    }
-
-    /**
-     * <pre>
-     * Intended to be used by other methods to reduce the filtering chain
-     * </pre>
-     * @return a stream of all CustomerLanguages fields
-     */
-    private Stream<NamedField> customerLanguagesFields() {
-        return Arrays.<NamedField>asList(id, languages).stream();
+        return allFields();
     }
 
     /**
@@ -517,36 +422,26 @@ public class FullCustomer {
     private static final int NAME_SIZE_LIMIT = 30;
     private static final int PHONE_SIZE_LIMIT = 30;
     private static final int WEBSITE_SIZE_LIMIT = 30;
-    private static final int PICTURE_NAME_SIZE_LIMIT = 100;
+    private static final int PICTURE_SIZE_LIMIT = 100;
     private static final int COMMENT_SIZE_LIMIT = 500;
-    private static final int LANGUAGE_ELEMENT_SIZE_LIMIT = 20;
 
     // FIELD NAMES
 
     private static final String ID_FIELD = "id";
-    private static final String PAYMENT_DAY_FIELD = "paymentDay";
     private static final String START_DATE_FIELD = "startDate";
-    private static final String PAYMENT_VALUE_FIELD = "paymentValue";
     private static final String NAME_FIELD = "name";
     private static final String PHONE_FIELD = "phone";
     private static final String WEBSITE_FIELD = "website";
-    private static final String PICTURE_NAME_FIELD = "pictureName";
+    private static final String PICTURE_FIELD = "picture";
     private static final String COMMENT_FIELD = "comment";
-    private static final String LANGUAGES_FIELD = "languages";
+
+    private static final String CREATED_AT_FIELD = "createdAt";
+    private static final String UPDATED_AT_FIELD = "updatedAt";
 
     // GENERATED
 
-    public interface PaymentDayStep {
-        StartDateStep withPaymentDay(byte paymentDay);
-        StartDateStep withPaymentDay(int paymentDay);
-    }
-
     public interface StartDateStep {
-        PaymentValueStep withStartDate(Date startDate);
-    }
-
-    public interface PaymentValueStep {
-        NameStep withPaymentValue(BigDecimal paymentValue);
+        NameStep withStartDate(Date startDate);
     }
 
     public interface NameStep {
@@ -558,62 +453,35 @@ public class FullCustomer {
     }
 
     public interface WebsiteStep {
-        LanguagesStep withWebsite(String website);
-    }
-
-    public interface LanguagesStep {
-        BuildStep withLanguages(String... languages);
-        BuildStep withLanguages(Collection<String> languages);
-        BuildStep withLanguages(List<String> languages);
-        BuildStep noLanguages();
+        BuildStep withWebsite(String website);
     }
 
     public interface BuildStep {
         BuildStep withId(int id);
         BuildStep withPictureName(String pictureName);
         BuildStep withComment(String comment);
+        BuildStep withCreatedAt(Date createdAt);
+        BuildStep withUpdatedAt(Date updatedAt);
         FullCustomer build();
     }
 
-    public static class RequiredBuilder implements PaymentDayStep, StartDateStep, PaymentValueStep, NameStep, PhoneStep, WebsiteStep, LanguagesStep, BuildStep {
+    public static class StepBuilder implements StartDateStep, NameStep, PhoneStep, WebsiteStep, BuildStep {
         private int id;
-        private byte paymentDay;
         private Date startDate;
-        private BigDecimal paymentValue;
         private String name;
         private String phone;
         private String website;
         private String pictureName;
         private String comment;
-        private List<String> languages;
 
-        private RequiredBuilder() {}
+        private Date createdAt;
+        private Date updatedAt;
 
-        public static PaymentDayStep fullCustomer() {
-            return new RequiredBuilder();
-        }
+        private StepBuilder() {}
 
         @Override
-        public StartDateStep withPaymentDay(byte paymentDay) {
-            this.paymentDay = paymentDay;
-            return this;
-        }
-
-        @Override
-        public StartDateStep withPaymentDay(int paymentDay) {
-            this.paymentDay = (byte)paymentDay;
-            return this;
-        }
-
-        @Override
-        public PaymentValueStep withStartDate(Date startDate) {
+        public NameStep withStartDate(Date startDate) {
             this.startDate = startDate;
-            return this;
-        }
-
-        @Override
-        public NameStep withPaymentValue(BigDecimal paymentValue) {
-            this.paymentValue = paymentValue;
             return this;
         }
 
@@ -630,32 +498,8 @@ public class FullCustomer {
         }
 
         @Override
-        public LanguagesStep withWebsite(String website) {
+        public BuildStep withWebsite(String website) {
             this.website = website;
-            return this;
-        }
-
-        @Override
-        public BuildStep withLanguages(String... languages) {
-            this.languages = Arrays.asList(languages);
-            return this;
-        }
-
-        @Override
-        public BuildStep withLanguages(Collection<String> languages) {
-            this.languages = new ArrayList<>(languages);
-            return this;
-        }
-
-        @Override
-        public BuildStep withLanguages(List<String> languages) {
-            this.languages = languages;
-            return this;
-        }
-
-        @Override
-        public BuildStep noLanguages() {
-            this.languages = Collections.emptyList();
             return this;
         }
 
@@ -678,33 +522,44 @@ public class FullCustomer {
         }
 
         @Override
+        public BuildStep withCreatedAt(Date createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        @Override
+        public BuildStep withUpdatedAt(Date updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        @Override
         public FullCustomer build() {
             return new FullCustomer(
                     this.id,
-                    this.paymentDay,
                     this.startDate,
-                    this.paymentValue,
                     this.name,
                     this.phone,
                     this.website,
                     this.pictureName,
                     this.comment,
-                    this.languages
+                    this.createdAt,
+                    this.updatedAt
             );
         }
     }
 
     public static final class Builder {
         private int id;
-        private byte paymentDay;
         private Date startDate;
-        private BigDecimal paymentValue;
         private String name;
         private String phone;
         private String website;
         private String pictureName;
         private String comment;
-        private List<String> languages;
+
+        private Date createdAt;
+        private Date updatedAt;
 
         private Builder() {}
 
@@ -713,18 +568,8 @@ public class FullCustomer {
             return this;
         }
 
-        public Builder withPaymentDay(int paymentDay) {
-            this.paymentDay = (byte)paymentDay;
-            return this;
-        }
-
         public Builder withStartDate(Date startDate) {
             this.startDate = startDate;
-            return this;
-        }
-
-        public Builder withPaymentValue(BigDecimal paymentValue) {
-            this.paymentValue = paymentValue;
             return this;
         }
 
@@ -753,23 +598,27 @@ public class FullCustomer {
             return this;
         }
 
-        public Builder withLanguages(List<String> languages) {
-            this.languages = languages;
+        public Builder withCreatedAt(Date createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder withUpdatedAt(Date updatedAt) {
+            this.updatedAt = updatedAt;
             return this;
         }
 
         public FullCustomer build() {
             return new FullCustomer(
                     this.id,
-                    this.paymentDay,
                     this.startDate,
-                    this.paymentValue,
                     this.name,
                     this.phone,
                     this.website,
                     this.pictureName,
                     this.comment,
-                    this.languages
+                    this.createdAt,
+                    this.updatedAt
             );
         }
     }
