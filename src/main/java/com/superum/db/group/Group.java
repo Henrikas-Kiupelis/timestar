@@ -7,12 +7,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.teacher.WageType;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
+import org.joda.time.Instant;
 import org.jooq.Record;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
@@ -65,12 +65,12 @@ public class Group {
 	}
 
     @JsonProperty("createdAt")
-    public Date getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
-    public Date getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 	
@@ -124,7 +124,7 @@ public class Group {
 		this(id, customerId, teacherId, usesHourlyWage, languageLevel, name, null, null);
 	}
 
-    public Group(int id, Integer customerId, int teacherId, boolean usesHourlyWage, String languageLevel, String name, Date createdAt, Date updatedAt) {
+    public Group(int id, Integer customerId, int teacherId, boolean usesHourlyWage, String languageLevel, String name, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.customerId = customerId;
         this.teacherId = teacherId;
@@ -147,9 +147,9 @@ public class Group {
 		String name = groupRecord.getValue(GROUP_OF_STUDENTS.NAME);
 
         long createdTimestamp = groupRecord.getValue(GROUP_OF_STUDENTS.CREATED_AT);
-        Date createdAt = new Date(createdTimestamp);
+        Instant createdAt = new Instant(createdTimestamp);
         long updatedTimestamp = groupRecord.getValue(GROUP_OF_STUDENTS.UPDATED_AT);
-        Date updatedAt = new Date(updatedTimestamp);
+        Instant updatedAt = new Instant(updatedTimestamp);
 		return new Group(id, customerId, teacherId, usesHourlyWage, languageLevel, name, createdAt, updatedAt);
 	}
 
@@ -174,7 +174,7 @@ public class Group {
 	@Size(max = 30, message = "Name size must not exceed 30 characters")
 	private final String name;
 
-	private final Date createdAt;
-	private final Date updatedAt;
+	private final Instant createdAt;
+	private final Instant updatedAt;
 	
 }

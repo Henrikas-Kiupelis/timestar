@@ -11,7 +11,7 @@ public class GenericErrorController implements ErrorController {
 
     @RequestMapping(value = PATH)
     public ResponseEntity<String> error() {
-        return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("{\"message\":\"An unexpected error occurred\"}", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
