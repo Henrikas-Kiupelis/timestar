@@ -42,8 +42,8 @@ public class FakeFieldUtils {
         return BigDecimal.valueOf(id);
     }
 
-    public static long fakeDay(long id) {
-        return (id % 31) + 1;
+    public static int fakeDay(long id) {
+        return (int)(id % 31) + 1;
     }
 
     public static Date fakeDate(long id) {
