@@ -120,6 +120,7 @@ public class Account {
 		char[] password = accountRecord.getValue(ACCOUNT.PASSWORD).toCharArray();
 
 		long createdTimestamp = accountRecord.getValue(ACCOUNT.CREATED_AT);
+
 		Date createdAt = new Date(createdTimestamp);
 		long updatedTimestamp = accountRecord.getValue(ACCOUNT.UPDATED_AT);
 		Date updatedAt = new Date(updatedTimestamp);

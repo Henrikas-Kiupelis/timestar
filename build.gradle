@@ -5,12 +5,13 @@ import static javax.xml.bind.JAXB.unmarshal
 
 buildscript {
 	ext {
-        springBootVersion = '1.2.2.RELEASE'
+        springBootVersion = '1.2.5.RELEASE'
         mysqlConnectorVersion = '5.1.34'
         jooqVersion = '3.6.1'
         hybernateValidatorVersion = '5.1.3.Final'
         jsonPathVersion = '2.0.0'
         javaMailVersion = '1.4.7'
+        jodaTimeVersion = '2.8.1';
     }
     repositories {
         mavenCentral()
@@ -22,6 +23,9 @@ buildscript {
         classpath "org.hibernate:hibernate-validator:${hybernateValidatorVersion}"
         classpath "com.jayway.jsonpath:json-path:${jsonPathVersion}"
         classpath "javax.mail:mail:${javaMailVersion}"
+        classpath "joda-time:joda-time:${jodaTimeVersion}"
+        classpath 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.5.4'
+
     }
 }
 
@@ -59,7 +63,11 @@ dependencies {
     compile "c3p0:c3p0:0.9.1.2"
     
     compile "javax.mail:mail:1.4.7"
-    
+
+    compile "joda-time:joda-time:2.8.1"
+
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.5.4'
+
     testCompile "junit:junit"
     testCompile "org.mockito:mockito-core:1.+"
     testCompile "org.springframework.boot:spring-boot-starter-test"
