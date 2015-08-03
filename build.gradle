@@ -12,6 +12,7 @@ buildscript {
         jsonPathVersion = '2.0.0'
         javaMailVersion = '1.4.7'
         jodaTimeVersion = '2.8.1';
+        jacksonVersion = '2.5.4';
     }
     repositories {
         mavenCentral()
@@ -24,8 +25,7 @@ buildscript {
         classpath "com.jayway.jsonpath:json-path:${jsonPathVersion}"
         classpath "javax.mail:mail:${javaMailVersion}"
         classpath "joda-time:joda-time:${jodaTimeVersion}"
-        classpath 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.5.4'
-
+        classpath "com.fasterxml.jackson.datatype:jackson-datatype-joda:${jacksonVersion}"
     }
 }
 
@@ -80,6 +80,11 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
 
+task showTestTaskClasspath << {
+    //noinspection GrUnresolvedAccess
+    test.classpath.each { println it }
+}
+
 task generate << {
 	//use like this: gradle generate -PschemaProp=NAME_OF_SCHEMA -PusrProp=USERNAME -PpwdProp=PASSWORD
 	
@@ -113,7 +118,8 @@ task generate << {
 	
 	// Run the code generator
 	// ----------------------
-	GenerationTool.main(
+    //noinspection GrDeprecatedAPIUsage
+    GenerationTool.main(
 		unmarshal(
 			new StringReader(writer.toString()),
 			org.jooq.util.jaxb.Configuration.class

@@ -43,15 +43,15 @@ CREATE TRIGGER create_timestamps_inserting_account
 BEFORE INSERT ON account
 FOR EACH ROW
   BEGIN
-    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.created_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
+    SET NEW.updated_at = NEW.created_at;
   END; //
 
 CREATE TRIGGER update_timestamp_ensure_create_immutable_account
 BEFORE UPDATE ON account
 FOR EACH ROW
   BEGIN
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
     IF NEW.created_at != OLD.created_at THEN
       SET NEW.created_at = OLD.created_at;
     END IF;
@@ -101,15 +101,15 @@ CREATE TRIGGER create_timestamps_inserting_teacher
 BEFORE INSERT ON teacher
 FOR EACH ROW
   BEGIN
-    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.created_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
+    SET NEW.updated_at = NEW.created_at;
   END; //
 
 CREATE TRIGGER update_timestamp_ensure_create_immutable_teacher
 BEFORE UPDATE ON teacher
 FOR EACH ROW
   BEGIN
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
     IF NEW.created_at != OLD.created_at THEN
       SET NEW.created_at = OLD.created_at;
     END IF;
@@ -144,15 +144,15 @@ CREATE TRIGGER create_timestamps_inserting_customer
 BEFORE INSERT ON customer
 FOR EACH ROW
   BEGIN
-    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.created_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
+    SET NEW.updated_at = NEW.created_at;
   END; //
 
 CREATE TRIGGER update_timestamp_ensure_create_immutable_customer
 BEFORE UPDATE ON customer
 FOR EACH ROW
   BEGIN
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
     IF NEW.created_at != OLD.created_at THEN
       SET NEW.created_at = OLD.created_at;
     END IF;
@@ -180,15 +180,15 @@ CREATE TRIGGER create_timestamps_inserting_group
 BEFORE INSERT ON group_of_students
 FOR EACH ROW
   BEGIN
-    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.created_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
+    SET NEW.updated_at = NEW.created_at;
   END; //
 
 CREATE TRIGGER update_timestamp_ensure_create_immutable_group
 BEFORE UPDATE ON group_of_students
 FOR EACH ROW
   BEGIN
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
     IF NEW.created_at != OLD.created_at THEN
       SET NEW.created_at = OLD.created_at;
     END IF;
@@ -216,15 +216,15 @@ CREATE TRIGGER create_timestamps_inserting_student
 BEFORE INSERT ON student
 FOR EACH ROW
   BEGIN
-    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.created_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
+    SET NEW.updated_at = NEW.created_at;
   END; //
 
 CREATE TRIGGER update_timestamp_ensure_create_immutable_student
 BEFORE UPDATE ON student
 FOR EACH ROW
   BEGIN
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
     IF NEW.created_at != OLD.created_at THEN
       SET NEW.created_at = OLD.created_at;
     END IF;
@@ -261,8 +261,8 @@ CREATE TRIGGER create_timestamps_inserting_lesson
 BEFORE INSERT ON lesson
 FOR EACH ROW
   BEGIN
-    SET NEW.created_at = UNIX_TIMESTAMP() * 1000;
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.created_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
+    SET NEW.updated_at = NEW.created_at;
     SET NEW.time_of_end = NEW.time_of_start + (NEW.duration_in_minutes * 60000);
     SET NEW.teacher_id = (SELECT group_of_students.teacher_id FROM group_of_students
     WHERE group_of_students.id = NEW.group_id LIMIT 1);
@@ -272,7 +272,7 @@ CREATE TRIGGER update_teacher_id_and_timestamp_ensure_create_immutable_lesson
 BEFORE UPDATE ON lesson
 FOR EACH ROW
   BEGIN
-    SET NEW.updated_at = UNIX_TIMESTAMP() * 1000;
+    SET NEW.updated_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
     IF NEW.created_at != OLD.created_at THEN
       SET NEW.created_at = OLD.created_at;
     END IF;
