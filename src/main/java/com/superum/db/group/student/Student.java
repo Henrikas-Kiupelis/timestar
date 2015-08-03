@@ -10,7 +10,6 @@ import org.jooq.Record;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 
@@ -25,17 +24,30 @@ public class Student {
 	public int getId() {
 		return id;
 	}
+	@JsonIgnore
 	public boolean hasId() {
 		return id > 0;
 	}
+    @JsonIgnore
+    public Student withId(int id) {
+        return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Student withoutId() {
+        return new Student(0, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
 
     @JsonProperty("code")
     public Integer getCode() {
         return code;
     }
-
+	@JsonIgnore
     public Student withCode(int code) {
         return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Student withoutCode() {
+        return new Student(id, null, customerId, startDate, email, name, createdAt, updatedAt);
     }
 
     public Student withGeneratedCode() {
@@ -154,9 +166,9 @@ public class Student {
 		String name = studentRecord.getValue(STUDENT.NAME);
 
         long createdTimestamp = studentRecord.getValue(STUDENT.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        Date createdAt = new Date(createdTimestamp);
         long updatedTimestamp = studentRecord.getValue(STUDENT.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+        Date updatedAt = new Date(updatedTimestamp);
 		return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
 	}
 

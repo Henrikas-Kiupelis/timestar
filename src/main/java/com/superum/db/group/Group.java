@@ -1,6 +1,7 @@
 package com.superum.db.group;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.teacher.WageType;
@@ -11,7 +12,6 @@ import org.jooq.Record;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
 
@@ -26,9 +26,18 @@ public class Group {
 	public int getId() {
 		return id;
 	}
+    @JsonIgnore
 	public boolean hasId() {
 		return id > 0;
 	}
+    @JsonIgnore
+    public Group withId(int id) {
+        return new Group(id, customerId, teacherId, getUsesHourlyWage(), languageLevel, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Group withoutId() {
+        return new Group(0, customerId, teacherId, getUsesHourlyWage(), languageLevel, name, createdAt, updatedAt);
+    }
 	
 	@JsonProperty("customerId")
 	public Integer getCustomerId() {
@@ -138,9 +147,9 @@ public class Group {
 		String name = groupRecord.getValue(GROUP_OF_STUDENTS.NAME);
 
         long createdTimestamp = groupRecord.getValue(GROUP_OF_STUDENTS.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        Date createdAt = new Date(createdTimestamp);
         long updatedTimestamp = groupRecord.getValue(GROUP_OF_STUDENTS.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+        Date updatedAt = new Date(updatedTimestamp);
 		return new Group(id, customerId, teacherId, usesHourlyWage, languageLevel, name, createdAt, updatedAt);
 	}
 

@@ -6,6 +6,7 @@ import com.superum.db.account.AccountDAO;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
 import com.superum.exception.DatabaseException;
+import com.superum.utils.FakeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 import static com.superum.utils.FakeUtils.makeFakeTeacher;
-import static com.superum.utils.FakeUtils.makeSomeFakeTeachers;
+import static com.superum.utils.FakeUtils.makeSomeFakes;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -129,11 +130,11 @@ public class TeacherServiceTests {
 
     @Test
     public void testGettingAllTeachers() {
-        int id = 1;
         int partitionId = 0;
-        List<Teacher> fakeTeachers = makeSomeFakeTeachers(2);
+        List<Teacher> fakeTeachers = makeSomeFakes(2, FakeUtils::makeFakeTeacher);
 
         // I made the method we talked about :)
+        // I also changed it to a JAVA 8 form now, just to show how nice it can be :)
         /*
         List<Teacher> allRandomTeachers = new ArrayList<>();
         allRandomTeachers.add(makeFakeTeacher(id, partitionId));

@@ -1,13 +1,28 @@
 package com.superum.utils;
 
+import com.superum.db.account.Account;
+import com.superum.db.account.AccountType;
+import com.superum.db.customer.Customer;
+import com.superum.db.group.Group;
+import com.superum.db.group.student.Student;
+import com.superum.db.group.studentsgroup.StudentsInGroup;
+import com.superum.db.lesson.Lesson;
+import com.superum.db.lesson.attendance.LessonAttendance;
+import com.superum.db.partition.Partition;
 import com.superum.api.customer.FullCustomer;
 import com.superum.db.teacher.Teacher;
+import com.superum.db.teacher.lang.TeacherLanguages;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.function.IntFunction;
+import java.util.function.LongFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+
+import static com.superum.utils.FakeFieldUtils.*;
 
 public class FakeUtils {
 
@@ -29,72 +44,87 @@ public class FakeUtils {
         return new FullCustomer(makeFakeCustomer(id));
     }
 
-    public static List<Teacher> makeSomeFakeTeachers(int amount) {
-        List<Teacher> fakeTeachers = new ArrayList<>(amount);
-        for (int i = 1; i <= amount; i++)
-            fakeTeachers.add(makeFakeTeacher(i));
-
-        return fakeTeachers;
+    public static <T> List<T> makeSomeFakes(int amount, IntFunction<T> fakeCreationMethod) {
+        return IntStream.rangeClosed(1, amount)
+                .mapToObj(fakeCreationMethod)
+                .collect(Collectors.toList());
     }
 
-	public static Teacher makeFakeTeacher(int id) {
-        int paymentDay = fakePaymentDay(id);
-        BigDecimal hourlyWage = fakeWage(id);
-        BigDecimal academicWage = fakeWage(id);
-        String name = fakeName(id);
-        String surname = fakeSurname(id);
-        String email = fakeEmail(id);
-        String city= fakeCity(id);
-        String phone = fakePhone(id);
-        String pictureName = fakePictureName(id);
-        String documentName  = fakeDocumentName(id);
-        String comment = fakeComment(id);
-
-        return makeFakeTeacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone,  city, email, pictureName, documentName, comment);
+    public static <T> List<T> makeSomeFakesLong(long amount, LongFunction<T> fakeCreationMethodForObjectsWithLongId) {
+        return LongStream.rangeClosed(1, amount)
+                .mapToObj(fakeCreationMethodForObjectsWithLongId)
+                .collect(Collectors.toList());
     }
+
+    public static Teacher makeFakeTeacher(int id) {
+        return makeFakeTeacher(id, fakeDay(id), fakeWage(id), fakeWage(id), fakeName(id), fakeSurname(id),
+                fakePhone(id), fakeCity(id), fakeEmail(id), fakePicture(id), fakeDocument(id), fakeComment(id));
+    }
+
+    public static Customer makeFakeCustomer(int id) {
+        return makeFakeCustomer(id, fakeDate(id), fakeName(id), fakePhone(id), fakeWebsite(id), fakePicture(id), fakeComment(id));
+    }
+
+    public static Group makeFakeGroup(int id) {
+        return makeFakeGroup(id, id, id, fakeBoolean(id), fakeLanguageLevel(id), fakeName(id));
+    }
+
+    public static Student makeFakeStudent(int id) {
+        return makeFakeStudent(id, id, fakeDate(id), fakeEmail(id), fakeName(id));
+    }
+
+    public static Lesson makeFakeLesson(long id) {
+        return makeFakeLesson(id, fakeId(id), fakeDate(id), fakeHour(id), fakeMinute(id), fakeId(id), fakeComment(id));
+    }
+
+    public static Partition makeFakePartition(int id) {
+        return makeFakePartition(-id, fakeName(id));
+    }
+
+    public static Account makeFakeAccount(int id, String username, AccountType accountType, String password) {
+        return new Account(id, username, accountType.name(), password.toCharArray());
+    }
+
+    public static StudentsInGroup makeFakeStudentsInGroup(int groupId, Integer... studentIds) {
+        return new StudentsInGroup(groupId, Arrays.asList(studentIds));
+    }
+
+    public static LessonAttendance makeFakeLessonAttendance(long lessonId, Integer... studentIds) {
+        return new LessonAttendance(lessonId, Arrays.asList(studentIds));
+    }
+
+    public static TeacherLanguages makeFakeTeacherLanguages(int teacherId, String... languages) {
+        return new TeacherLanguages(teacherId, Arrays.asList(languages));
+    }
+
+    // FULL FAKES
 
     public static Teacher makeFakeTeacher(int id, int paymentDay, BigDecimal hourlyWage,  BigDecimal academicWage,
-                                          String name, String surname, String phone, String city, String email, String pictureName, String documentName, String comment) {
-        return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone,  city, email, pictureName, documentName, comment);
+                                          String name, String surname, String phone, String city, String email,
+                                          String pictureName, String documentName, String comment) {
+        return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, pictureName, documentName, comment);
     }
 
-    public static BigDecimal fakeWage(int x) {
-        return BigDecimal.valueOf(x);
+    public static Customer makeFakeCustomer(int id, Date startDate, String name, String phone, String website, String picture, String comment) {
+        return new Customer(id, startDate, name, phone, website, picture, comment);
     }
 
-    public static String fakeName(int x){
-        return "Name" + x;
+    public static Group makeFakeGroup(int id, Integer customerId, int teacherId, boolean usesHourlyWage, String languageLevel, String name) {
+        return new Group(id, customerId, teacherId, usesHourlyWage, languageLevel, name);
     }
 
-    public static String fakeSurname(int x){
-        return "Surname" + x;
+    public static Student makeFakeStudent(int id, Integer customerId, Date startDate, String email, String name) {
+        return new Student(id, customerId, startDate, email, name);
     }
 
-    public static String fakeEmail(int x){
-        return "fake" + x + "@fake.lt";
+    public static Lesson makeFakeLesson(long id, int groupId, Date date, int startHour, int startMinute, int length, String comment) {
+        return new Lesson(id, groupId, date, startHour, startMinute, length, comment);
     }
 
-    public static String fakeCity(int x){
-        return "City" + x;
+    public static Partition makeFakePartition(int id, String name) {
+        if (id >= 0)
+            throw new IllegalArgumentException("While testing, only negative partition ids allowed for fake partitions!");
+        return new Partition(id, name);
     }
 
-    public static String fakePhone(int x){
-        return "860000000" + x;
-    }
-
-    public static String fakePictureName(int x){
-        return "untitled" + x + ".jpg";
-    }
-
-    public static String fakeDocumentName(int x){
-        return "folder" + x;
-    }
-
-    public static String fakeComment(int x){
-        return "Photo comment" + x;
-    }
-
-    public static int fakePaymentDay(int x){
-        return (x % 31) + 1;
-    }
 }
