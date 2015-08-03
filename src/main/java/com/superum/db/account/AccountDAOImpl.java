@@ -16,21 +16,18 @@ public class AccountDAOImpl implements AccountDAO {
 	@Override
 	public Account create(Account account) {
 		try {
-            int id = account.getId();
-            String username = account.getUsername();
-            String accountType = account.getAccountType();
-            String password = account.getPassword();
-
             int createResult = sql.insertInto(ACCOUNT)
-                    .set(ACCOUNT.ID, id)
-                    .set(ACCOUNT.USERNAME, username)
-                    .set(ACCOUNT.ACCOUNT_TYPE, accountType)
-                    .set(ACCOUNT.PASSWORD, password)
+                    .set(ACCOUNT.ID, account.getId())
+                    .set(ACCOUNT.USERNAME, account.getUsername())
+                    .set(ACCOUNT.ACCOUNT_TYPE, account.getAccountType())
+                    .set(ACCOUNT.PASSWORD, account.getPassword())
                     .execute();
             if (createResult == 0)
                 throw new DatabaseException("Couldn't insert account: " + account);
 
-            return new Account(id, username, accountType, password.toCharArray());
+            account.erasePassword();
+
+            return account;
 		} catch (DataAccessException e) {
             throw new DatabaseException("Couldn't insert account: " + account +
                     "; please refer to the nested exception for more info.", e);
