@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.superum.utils.FakeUtils.defaultFullCustomer;
-import static com.superum.utils.FakeUtils.defaultTeacher;
+import static com.superum.utils.FakeUtils.makeFakeTeacher;
 import static com.superum.utils.TestUtils.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -138,7 +138,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
         int customerId = insertedCustomer.getId();
         List<FullCustomer> validCustomers = Collections.singletonList(insertedCustomer);
 
-        Teacher insertedTeacher = databaseHelper.insertTeacherIntoDb(defaultTeacher());
+        Teacher insertedTeacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(0));
         int teacherId = insertedTeacher.getId();
 
         Group insertedGroup = databaseHelper.insertGroupIntoDb(new Group(0, teacherId, "GroupZ"));

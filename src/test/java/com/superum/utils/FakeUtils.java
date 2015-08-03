@@ -5,7 +5,9 @@ import com.superum.db.teacher.Teacher;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class FakeUtils {
 
@@ -23,20 +25,6 @@ public class FakeUtils {
                 .build();
     }
 
-    public static Teacher defaultTeacher() {
-        return new Teacher(
-                0,
-                (byte)1,
-                "Dude",
-                "Dudeling",
-                "+37069900011",
-                "Vilnius",
-                "asdbasydasbdu@bujasdbndnuasd.yuidaghsud",
-                "picT.jpg",
-                "doc.jpg",
-                "what a teacher");
-    }
-	
     public static List<Teacher> makeSomeFakeTeachers(int amount) {
         List<Teacher> fakeTeachers = new ArrayList<>(amount);
         for (int i = 1; i <= amount; i++)
