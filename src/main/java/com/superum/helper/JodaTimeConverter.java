@@ -4,7 +4,8 @@ import org.joda.time.*;
 
 import java.text.ParseException;
 
-import static com.superum.utils.TimeUtils.*;
+import static com.superum.utils.TimeUtils.getDefaultChronology;
+import static com.superum.utils.TimeUtils.getDefaultTimeZone;
 
 /**
  * <pre>
@@ -16,10 +17,13 @@ import static com.superum.utils.TimeUtils.*;
  * "2015-08-03"
  * INSTEAD, USE JodaLocalDate
  *
- * The resulting Instants/Dates/etc will assume UTC
+ * The resulting Instants/Dates/etc will assume UTC when converting
+ * the only exception is java.sql.Date which will use String valueOf LocalDate,
+ * thus preserving the date portion regardless of Default Timezone shenanigans
  *
  * The only implicit conversion is to org.joda.time.Instant, all other conversions are lazy and cached
- * The class is NOT thread safe and is intended for one time multiple transformations
+ * The class should be thread safe (worst case scenario - some recalculating is done)
+ * but it is intended for one time multiple transformations
  * </pre>
  */
 public class JodaTimeConverter {
@@ -78,14 +82,14 @@ public class JodaTimeConverter {
 
     public java.util.Date toJavaUtilDate() {
         if (javaDate == null)
-            javaDate = java.util.Date.from(toJavaTimeInstant());
+            javaDate = new java.util.Date(toEpochMillis());
 
         return javaDate;
     }
 
     public java.sql.Date toJavaSqlDate() {
         if (sqlDate == null)
-            sqlDate = new java.sql.Date(toJavaUtilDate().getTime());
+            sqlDate = java.sql.Date.valueOf(toOrgJodaTimeLocalDate().toString());
 
         return sqlDate;
     }
@@ -147,14 +151,13 @@ public class JodaTimeConverter {
         if (date instanceof java.sql.Date)
             return from((java.sql.Date) date);
 
-        java.time.Instant instant = date.toInstant();
-        return new JodaTimeConverter(new Instant(instant.toEpochMilli()), null, null, null, instant, date, null);
+        return new JodaTimeConverter(new Instant(date.getTime()), null, null, null, null, date, null);
     }
 
-    public static JodaTimeConverter from(java.sql.Date sqldate) throws ParseException {
-        java.util.Date date = fromString(sqldate.toString());
-        java.time.Instant instant = date.toInstant();
-        return new JodaTimeConverter(new Instant(instant.toEpochMilli()), null, null, null, instant, date, sqldate);
+    public static JodaTimeConverter from(java.sql.Date sqlDate) throws ParseException {
+        LocalDate localDate = LocalDate.parse(sqlDate.toString());
+        DateTime dateTime = localDate.toDateTimeAtStartOfDay(getDefaultTimeZone());
+        return new JodaTimeConverter(new Instant(dateTime.toInstant()), dateTime, localDate, null, null, null, sqlDate);
     }
 
     private JodaTimeConverter(Instant instant, DateTime dateTime, LocalDate localDate, LocalTime localTime, java.time.Instant javaInstant, java.util.Date javaDate, java.sql.Date sqlDate) {

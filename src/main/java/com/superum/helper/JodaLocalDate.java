@@ -6,7 +6,8 @@ import org.joda.time.LocalDate;
 
 import java.text.ParseException;
 
-import static com.superum.utils.TimeUtils.*;
+import static com.superum.utils.TimeUtils.getDefaultChronology;
+import static com.superum.utils.TimeUtils.getDefaultTimeZone;
 
 /**
  * <pre>
@@ -16,10 +17,13 @@ import static com.superum.utils.TimeUtils.*;
  * i.e. "2015-08-03"
  * TO CONVERT IT TO APPROPRIATE FORMAT
  *
- * The resulting Instants/Dates/etc will assume UTC, 00:00:00.000 time
+ * The resulting Instants/Dates/etc will assume UTC, 00:00:00.000 time when converting
+ * the only exception is java.sql.Date which will use String valueOf LocalDate,
+ * thus preserving the date portion regardless of Default Timezone shenanigans
  *
  * The only implicit conversion is to org.joda.time.LocalDate, all other conversions are lazy and cached
- * The class is NOT thread safe and is intended for one time multiple transformations
+ * The class should be thread safe (worst case scenario - some recalculating is done)
+ * but it is intended for one time transformations
  * </pre>
  */
 public class JodaLocalDate {
@@ -48,21 +52,21 @@ public class JodaLocalDate {
 
     public java.time.Instant toJavaTimeInstant() throws ParseException {
         if (javaInstant == null)
-            javaInstant = toJavaUtilDate().toInstant();
+            javaInstant = java.time.Instant.ofEpochMilli(toEpochMillis());
 
         return javaInstant;
     }
 
     public java.util.Date toJavaUtilDate() throws ParseException {
         if (javaDate == null)
-            javaDate = fromString(localDate.toString());
+            javaDate = new java.util.Date(toEpochMillis());
 
         return javaDate;
     }
 
     public java.sql.Date toJavaSqlDate() throws ParseException {
         if (sqlDate == null)
-            sqlDate = new java.sql.Date(toJavaUtilDate().getTime());
+            sqlDate = java.sql.Date.valueOf(localDate.toString());
 
         return sqlDate;
     }
@@ -83,36 +87,29 @@ public class JodaLocalDate {
     }
 
     public static JodaLocalDate from(long epochMillis) {
-        return from(new Instant(epochMillis));
+        return from(new DateTime(epochMillis, getDefaultChronology()));
     }
 
     public static JodaLocalDate from(java.time.Instant javaInstant) {
-        Instant instant = new Instant(javaInstant.toEpochMilli());
-        DateTime dateTime = instant.toDateTime(getDefaultChronology());
-        return new JodaLocalDate(dateTime.toLocalDate(), instant, dateTime, javaInstant, null, null);
+        DateTime dateTime = new DateTime(javaInstant.toEpochMilli(), getDefaultChronology());
+        return new JodaLocalDate(dateTime.toLocalDate(), null, dateTime, javaInstant, null, null);
     }
 
     public static JodaLocalDate from(java.util.Date date) throws ParseException {
         if (date instanceof java.sql.Date)
             return from((java.sql.Date) date);
 
-        java.time.Instant javaInstant = date.toInstant();
-        Instant instant = new Instant(javaInstant.toEpochMilli());
-        DateTime dateTime = instant.toDateTime(getDefaultChronology());
-        return new JodaLocalDate(dateTime.toLocalDate(), instant, dateTime, javaInstant, date, null);
+        DateTime dateTime = new DateTime(date.getTime(), getDefaultChronology());
+        return new JodaLocalDate(dateTime.toLocalDate(), null, dateTime, null, date, null);
     }
 
     // Assumes yyyy-MM-dd
     public static JodaLocalDate from(String string) throws ParseException {
-        return from(fromString(string));
+        return from(LocalDate.parse(string));
     }
 
     public static JodaLocalDate from(java.sql.Date sqlDate) throws ParseException {
-        java.util.Date date = fromString(sqlDate.toString());
-        java.time.Instant javaInstant = date.toInstant();
-        Instant instant = new Instant(javaInstant.toEpochMilli());
-        DateTime dateTime = instant.toDateTime(getDefaultChronology());
-        return new JodaLocalDate(dateTime.toLocalDate(), instant, dateTime, javaInstant, date, sqlDate);
+        return new JodaLocalDate(LocalDate.parse(sqlDate.toString()), null, null, null, null, sqlDate);
     }
 
     private JodaLocalDate(LocalDate localDate, Instant instant, DateTime dateTime, java.time.Instant javaInstant, java.util.Date javaDate, java.sql.Date sqlDate) {
