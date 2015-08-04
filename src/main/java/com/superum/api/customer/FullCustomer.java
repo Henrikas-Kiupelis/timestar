@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
+import com.google.common.collect.ImmutableList;
 import com.superum.db.customer.Customer;
 import com.superum.fields.Field;
 import com.superum.fields.Mandatory;
@@ -22,8 +23,6 @@ import org.joda.time.LocalDate;
 import org.jooq.Record;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -222,6 +221,7 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
      * </pre>
      * @return true if all the set Customer fields of this FullCustomer are equal to the given FullCustomer's; false otherwise
      */
+    @JsonIgnore
     public boolean hasEqualSetCustomerFields(FullCustomer other) {
         return setFieldComparator.compare(other, FullCustomer::customerFields);
     }
@@ -289,7 +289,7 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
 
         SimpleField<LocalDate> startDateField = SimpleField.valueOf(START_DATE_FIELD, startDate, Mandatory.YES);
 
-        List<NamedField> allFields = Collections.unmodifiableList(Arrays.asList(idField, startDateField, nameField, phoneField, websiteField, pictureField, commentField));
+        List<NamedField> allFields = ImmutableList.of(idField, startDateField, nameField, phoneField, websiteField, pictureField, commentField);
         return new FullCustomer(allFields, createdAt, updatedAt, idField, startDateField, nameField, phoneField, websiteField, pictureField, commentField);
     }
 
@@ -303,15 +303,15 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
             return null;
 
         return stepBuilder()
-                .withStartDate(from(record.getValue(CUSTOMER.START_DATE)))
-                .withName(record.getValue(CUSTOMER.NAME))
-                .withPhone(record.getValue(CUSTOMER.PHONE))
-                .withWebsite(record.getValue(CUSTOMER.WEBSITE))
-                .withId(record.getValue(CUSTOMER.ID))
-                .withPictureName(record.getValue(CUSTOMER.PICTURE))
-                .withComment(record.getValue(CUSTOMER.COMMENT))
-                .withCreatedAt(record.getValue(CUSTOMER.CREATED_AT))
-                .withUpdatedAt(record.getValue(CUSTOMER.UPDATED_AT))
+                .startDate(from(record.getValue(CUSTOMER.START_DATE)))
+                .name(record.getValue(CUSTOMER.NAME))
+                .phone(record.getValue(CUSTOMER.PHONE))
+                .website(record.getValue(CUSTOMER.WEBSITE))
+                .id(record.getValue(CUSTOMER.ID))
+                .picture(record.getValue(CUSTOMER.PICTURE))
+                .comment(record.getValue(CUSTOMER.COMMENT))
+                .createdAt(record.getValue(CUSTOMER.CREATED_AT))
+                .updatedAt(record.getValue(CUSTOMER.UPDATED_AT))
                 .build();
     }
 
@@ -321,7 +321,7 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
      * </pre>
      * @return a new builder which can be used to make any kind of FullCustomer
      */
-    public static Builder newBuilder() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -332,7 +332,7 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
      * @return a new builder which creates a FullCustomer that has all its mandatory fields set
      */
     public static StartDateStep stepBuilder() {
-        return new StepBuilder();
+        return new Builder();
     }
 
     private FullCustomer(List<NamedField> allFields, Instant createdAt, Instant updatedAt, IntField id,
@@ -369,6 +369,7 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
      * </pre>
      * @return a stream of all Customer fields
      */
+    @JsonIgnore
     private Stream<NamedField> customerFields() {
         return allFields();
     }
@@ -400,142 +401,40 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
     // GENERATED
 
     public interface StartDateStep {
-        NameStep withStartDate(LocalDate startDate);
-        NameStep withStartDate(String startDate);
+        NameStep startDate(LocalDate startDate);
+        NameStep startDate(String startDate);
     }
 
     public interface NameStep {
-        PhoneStep withName(String name);
+        PhoneStep name(String name);
     }
 
     public interface PhoneStep {
-        WebsiteStep withPhone(String phone);
+        WebsiteStep phone(String phone);
     }
 
     public interface WebsiteStep {
-        BuildStep withWebsite(String website);
+        BuildStep website(String website);
     }
 
     public interface BuildStep {
-        BuildStep withId(int id);
-        BuildStep withPictureName(String pictureName);
-        BuildStep withComment(String comment);
-        BuildStep withCreatedAt(Instant createdAt);
-        BuildStep withCreatedAt(long createdAt);
-        BuildStep withUpdatedAt(Instant updatedAt);
-        BuildStep withUpdatedAt(long updatedAt);
+        BuildStep id(int id);
+        BuildStep picture(String pictureName);
+        BuildStep comment(String comment);
+        BuildStep createdAt(Instant createdAt);
+        BuildStep createdAt(long createdAt);
+        BuildStep updatedAt(Instant updatedAt);
+        BuildStep updatedAt(long updatedAt);
         FullCustomer build();
     }
 
-    public static class StepBuilder implements StartDateStep, NameStep, PhoneStep, WebsiteStep, BuildStep {
+    public static class Builder implements StartDateStep, NameStep, PhoneStep, WebsiteStep, BuildStep {
         private int id;
         private LocalDate startDate;
         private String name;
         private String phone;
         private String website;
-        private String pictureName;
-        private String comment;
-
-        private Instant createdAt;
-        private Instant updatedAt;
-
-        private StepBuilder() {}
-
-        @Override
-        public NameStep withStartDate(LocalDate startDate) {
-            this.startDate = startDate;
-            return this;
-        }
-
-        @Override
-        public NameStep withStartDate(String startDate) {
-            this.startDate = LocalDate.parse(startDate);
-            return this;
-        }
-
-        @Override
-        public PhoneStep withName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        @Override
-        public WebsiteStep withPhone(String phone) {
-            this.phone = phone;
-            return this;
-        }
-
-        @Override
-        public BuildStep withWebsite(String website) {
-            this.website = website;
-            return this;
-        }
-
-        @Override
-        public BuildStep withId(int id) {
-            this.id = id;
-            return this;
-        }
-
-        @Override
-        public BuildStep withPictureName(String pictureName) {
-            this.pictureName = pictureName;
-            return this;
-        }
-
-        @Override
-        public BuildStep withComment(String comment) {
-            this.comment = comment;
-            return this;
-        }
-
-        @Override
-        public BuildStep withCreatedAt(Instant createdAt) {
-            this.createdAt = createdAt;
-            return this;
-        }
-
-        @Override
-        public BuildStep withCreatedAt(long createdAt) {
-            this.createdAt = new Instant(createdAt);
-            return this;
-        }
-
-        @Override
-        public BuildStep withUpdatedAt(Instant updatedAt) {
-            this.updatedAt = updatedAt;
-            return this;
-        }
-
-        @Override
-        public BuildStep withUpdatedAt(long updatedAt) {
-            this.updatedAt = new Instant(updatedAt);
-            return this;
-        }
-
-        @Override
-        public FullCustomer build() {
-            return valueOf(
-                    this.id,
-                    this.startDate,
-                    this.name,
-                    this.phone,
-                    this.website,
-                    this.pictureName,
-                    this.comment,
-                    this.createdAt,
-                    this.updatedAt
-            );
-        }
-    }
-
-    public static final class Builder {
-        private int id;
-        private LocalDate startDate;
-        private String name;
-        private String phone;
-        private String website;
-        private String pictureName;
+        private String picture;
         private String comment;
 
         private Instant createdAt;
@@ -543,78 +442,81 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
 
         private Builder() {}
 
-        public Builder withId(int id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder withStartDate(LocalDate startDate) {
+        @Override
+        public Builder startDate(LocalDate startDate) {
             this.startDate = startDate;
             return this;
         }
 
-        public Builder withStartDate(String startDate) {
+        @Override
+        public Builder startDate(String startDate) {
             this.startDate = LocalDate.parse(startDate);
             return this;
         }
 
-        public Builder withName(String name) {
+        @Override
+        public Builder name(String name) {
             this.name = name;
             return this;
         }
 
-        public Builder withPhone(String phone) {
+        @Override
+        public Builder phone(String phone) {
             this.phone = phone;
             return this;
         }
 
-        public Builder withWebsite(String website) {
+        @Override
+        public Builder website(String website) {
             this.website = website;
             return this;
         }
 
-        public Builder withPictureName(String pictureName) {
-            this.pictureName = pictureName;
+        @Override
+        public Builder id(int id) {
+            this.id = id;
             return this;
         }
 
-        public Builder withComment(String comment) {
+        @Override
+        public Builder picture(String picture) {
+            this.picture = picture;
+            return this;
+        }
+
+        @Override
+        public Builder comment(String comment) {
             this.comment = comment;
             return this;
         }
 
-        public Builder withCreatedAt(Instant createdAt) {
+        @Override
+        public Builder createdAt(Instant createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public Builder withCreatedAt(long createdAt) {
+        @Override
+        public Builder createdAt(long createdAt) {
             this.createdAt = new Instant(createdAt);
             return this;
         }
 
-        public Builder withUpdatedAt(Instant updatedAt) {
+        @Override
+        public Builder updatedAt(Instant updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
 
-        public Builder withUpdatedAt(long updatedAt) {
+        @Override
+        public Builder updatedAt(long updatedAt) {
             this.updatedAt = new Instant(updatedAt);
             return this;
         }
 
+        @Override
         public FullCustomer build() {
-            return valueOf(
-                    this.id,
-                    this.startDate,
-                    this.name,
-                    this.phone,
-                    this.website,
-                    this.pictureName,
-                    this.comment,
-                    this.createdAt,
-                    this.updatedAt
-            );
+            return valueOf(id, startDate, name, phone, website, picture, comment, createdAt, updatedAt);
         }
     }
 
