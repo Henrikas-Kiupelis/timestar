@@ -222,6 +222,14 @@ public class Lesson {
 		return new Lesson(id, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
 	}
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static GroupIdStep stepBuilder() {
+        return new Builder();
+    }
+
 	// PRIVATE
 
 	@Min(value = 0, message = "Negative lesson ids not allowed")
@@ -256,5 +264,161 @@ public class Lesson {
 
 	private final Instant createdAt;
     private final Instant updatedAt;
-	
+
+    // GENERATED
+
+	public interface GroupIdStep {
+        StartDateStep groupIdWithTeacher(int groupId);
+        StartDateStep groupIdWithTeacher(int groupId, Integer teacherId);
+	}
+
+	public interface StartDateStep {
+		StartHourStep startDate(LocalDate startDate);
+        StartHourStep startDate(String startDate);
+	}
+
+	public interface StartHourStep {
+		StartMinuteStep startHour(int startHour);
+	}
+
+	public interface StartMinuteStep {
+        LengthStep startMinute(int startMinute);
+	}
+
+	public interface LengthStep {
+        EndTimeStep length(int length);
+	}
+
+    public interface EndTimeStep {
+        BuildStep withEndTime();
+        BuildStep withoutEndTime();
+    }
+
+	public interface BuildStep {
+        BuildStep id(long id);
+        BuildStep comment(String comment);
+        BuildStep createdAt(Instant createdAt);
+        BuildStep createdAt(long createdAt);
+        BuildStep updatedAt(Instant updatedAt);
+        BuildStep updatedAt(long updatedAt);
+		Lesson build();
+	}
+
+
+	public static class Builder implements GroupIdStep, StartDateStep, StartHourStep, StartMinuteStep, LengthStep, EndTimeStep, BuildStep {
+		private long id;
+		private int groupId;
+		private Integer teacherId;
+		private LocalDate startDate;
+		private int startHour;
+		private int startMinute;
+		private LocalDate endDate;
+		private Integer endHour;
+		private Integer endMinute;
+		private int length;
+		private String comment;
+		private Instant createdAt;
+		private Instant updatedAt;
+
+		private Builder() {}
+
+		@Override
+		public Builder id(long id) {
+			this.id = id;
+			return this;
+		}
+
+		@Override
+		public Builder groupIdWithTeacher(int groupId) {
+			this.groupId = groupId;
+			return this;
+		}
+
+        @Override
+        public Builder groupIdWithTeacher(int groupId, Integer teacherId) {
+            this.groupId = groupId;
+            this.teacherId = teacherId;
+            return this;
+        }
+
+		@Override
+		public Builder startDate(LocalDate startDate) {
+			this.startDate = startDate;
+			return this;
+		}
+
+        @Override
+        public Builder startDate(String startDate) {
+            this.startDate = LocalDate.parse(startDate);
+            return this;
+        }
+
+        @Override
+		public Builder startHour(int startHour) {
+			this.startHour = startHour;
+			return this;
+		}
+
+		@Override
+		public Builder startMinute(int startMinute) {
+			this.startMinute = startMinute;
+			return this;
+		}
+
+		@Override
+		public Builder length(int length) {
+			this.length = length;
+			return this;
+		}
+
+        @Override
+        public Builder withEndTime() {
+            JodaTimeConverter end = JodaTimeConverter.from(startDate, startHour, startMinute + length);
+            endDate = end.toOrgJodaTimeLocalDate();
+            endHour = end.toHours();
+            endMinute = end.toMinutes();
+            return this;
+        }
+
+        @Override
+        public Builder withoutEndTime() {
+            return this;
+        }
+
+		@Override
+		public Builder comment(String comment) {
+			this.comment = comment;
+			return this;
+		}
+
+		@Override
+		public Builder createdAt(Instant createdAt) {
+			this.createdAt = createdAt;
+			return this;
+		}
+
+        @Override
+        public Builder createdAt(long createdAt) {
+            this.createdAt = new Instant(createdAt);
+            return this;
+        }
+
+        @Override
+		public Builder updatedAt(Instant updatedAt) {
+			this.updatedAt = updatedAt;
+			return this;
+		}
+
+        @Override
+        public Builder updatedAt(long updatedAt) {
+            this.updatedAt = new Instant(updatedAt);
+            return this;
+        }
+
+        @Override
+		public Lesson build() {
+			return new Lesson(id, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour,
+                    endMinute, length, comment, createdAt, updatedAt);
+		}
+	}
 }

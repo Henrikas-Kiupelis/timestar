@@ -182,6 +182,14 @@ public class Customer {
 		return new Customer(id, startDate, name, phone, website, pictureName, comment, createdAt, updatedAt);
 	}
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static StartDateStep stepBuilder() {
+        return new Builder();
+    }
+
 	// PRIVATE
 	
 	@Min(value = 0, message = "Negative customer ids not allowed")
@@ -221,4 +229,124 @@ public class Customer {
 		}
 	}
 
+    // GENERATED
+
+    public interface StartDateStep {
+        NameStep startDate(LocalDate startDate);
+        NameStep startDate(String startDate);
+    }
+
+    public interface NameStep {
+        PhoneStep name(String name);
+    }
+
+    public interface PhoneStep {
+        WebsiteStep phone(String phone);
+    }
+
+    public interface WebsiteStep {
+        BuildStep website(String website);
+    }
+
+    public interface BuildStep {
+        BuildStep id(int id);
+        BuildStep picture(String picture);
+        BuildStep comment(String comment);
+        BuildStep createdAt(Instant createdAt);
+        BuildStep createdAt(long createdAt);
+        BuildStep updatedAt(Instant updatedAt);
+        BuildStep updatedAt(long updatedAt);
+        Customer build();
+    }
+
+    public static class Builder implements StartDateStep, NameStep, PhoneStep, WebsiteStep, BuildStep {
+        private int id;
+        private LocalDate startDate;
+        private String name;
+        private String phone;
+        private String website;
+        private String picture;
+        private String comment;
+        private Instant createdAt;
+        private Instant updatedAt;
+
+        private Builder() {}
+
+        @Override
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
+
+        @Override
+        public Builder startDate(LocalDate startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        @Override
+        public Builder startDate(String startDate) {
+            this.startDate = LocalDate.parse(startDate);
+            return this;
+        }
+
+        @Override
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public Builder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        @Override
+        public Builder website(String website) {
+            this.website = website;
+            return this;
+        }
+
+        @Override
+        public Builder picture(String picture) {
+            this.picture = picture;
+            return this;
+        }
+
+        @Override
+        public Builder comment(String comment) {
+            this.comment = comment;
+            return this;
+        }
+
+        @Override
+        public Builder createdAt(Instant createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        @Override
+        public Builder createdAt(long createdAt) {
+            this.createdAt = new Instant(createdAt);
+            return this;
+        }
+
+        @Override
+        public Builder updatedAt(Instant updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        @Override
+        public Builder updatedAt(long updatedAt) {
+            this.updatedAt = new Instant(updatedAt);
+            return this;
+        }
+
+        @Override
+        public Customer build() {
+            return new Customer(id, startDate, name, phone, website, picture, comment, createdAt, updatedAt);
+        }
+    }
 }

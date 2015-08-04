@@ -189,7 +189,7 @@ public class Student {
 		return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
 	}
 
-	// PRIVATE
+    // PRIVATE
 
 	@Min(value = 0, message = "Negative student ids not allowed")
 	private final int id;
@@ -220,5 +220,5 @@ public class Student {
             throw new IllegalStateException("Error occurred when parsing date while reading Student from database: " + sqlDate, e);
         }
     }
-	
+
 }

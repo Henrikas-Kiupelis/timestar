@@ -220,6 +220,14 @@ public class Teacher {
 		return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, pictureName, documentName, comment, createdAt, updatedAt);
 	}
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static PaymentDayStep stepBuilder() {
+        return new Builder();
+    }
+
 	// PRIVATE
 	
 	@Min(value = 0, message = "Negative teacher ids not allowed")
@@ -271,4 +279,184 @@ public class Teacher {
 	private final Instant createdAt;
     private final Instant updatedAt;
 
+    // GENERATED
+
+	public interface PaymentDayStep {
+		HourlyWageStep paymentDay(int paymentDay);
+	}
+
+	public interface HourlyWageStep {
+		AcademicWageStep hourlyWage(BigDecimal hourlyWage);
+        AcademicWageStep hourlyWage(double hourlyWage);
+	}
+
+	public interface AcademicWageStep {
+		NameStep academicWage(BigDecimal academicWage);
+        NameStep academicWage(double academicWage);
+	}
+
+	public interface NameStep {
+		SurnameStep name(String name);
+	}
+
+	public interface SurnameStep {
+		PhoneStep surname(String surname);
+	}
+
+	public interface PhoneStep {
+		CityStep phone(String phone);
+	}
+
+	public interface CityStep {
+		EmailStep city(String city);
+	}
+
+	public interface EmailStep {
+        BuildStep email(String email);
+	}
+
+	public interface BuildStep {
+        BuildStep id(int id);
+        BuildStep picture(String picture);
+        BuildStep document(String document);
+        BuildStep comment(String comment);
+        BuildStep createdAt(Instant createdAt);
+        BuildStep createdAt(long createdAt);
+        BuildStep updatedAt(Instant updatedAt);
+        BuildStep updatedAt(long updatedAt);
+		Teacher build();
+	}
+
+
+	public static class Builder implements PaymentDayStep, HourlyWageStep, AcademicWageStep, NameStep, SurnameStep, PhoneStep, CityStep, EmailStep, BuildStep {
+		private int id;
+		private int paymentDay;
+		private BigDecimal hourlyWage;
+		private BigDecimal academicWage;
+		private String name;
+		private String surname;
+		private String phone;
+		private String city;
+		private String email;
+		private String picture;
+		private String document;
+		private String comment;
+		private Instant createdAt;
+		private Instant updatedAt;
+
+		private Builder() {}
+
+		@Override
+		public Builder id(int id) {
+			this.id = id;
+			return this;
+		}
+
+		@Override
+		public Builder paymentDay(int paymentDay) {
+			this.paymentDay = paymentDay;
+			return this;
+		}
+
+		@Override
+		public Builder hourlyWage(BigDecimal hourlyWage) {
+			this.hourlyWage = hourlyWage;
+			return this;
+		}
+
+        @Override
+        public Builder hourlyWage(double hourlyWage) {
+            this.hourlyWage = BigDecimal.valueOf(hourlyWage);
+            return this;
+        }
+
+        @Override
+		public Builder academicWage(BigDecimal academicWage) {
+			this.academicWage = academicWage;
+			return this;
+		}
+
+        @Override
+        public Builder academicWage(double academicWage) {
+            this.academicWage = BigDecimal.valueOf(academicWage);
+            return this;
+        }
+
+        @Override
+		public Builder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		@Override
+		public Builder surname(String surname) {
+			this.surname = surname;
+			return this;
+		}
+
+		@Override
+		public Builder phone(String phone) {
+			this.phone = phone;
+			return this;
+		}
+
+		@Override
+		public Builder city(String city) {
+			this.city = city;
+			return this;
+		}
+
+		@Override
+		public Builder email(String email) {
+			this.email = email;
+			return this;
+		}
+
+		@Override
+		public Builder picture(String picture) {
+			this.picture = picture;
+			return this;
+		}
+
+		@Override
+		public Builder document(String document) {
+			this.document = document;
+			return this;
+		}
+
+		@Override
+		public Builder comment(String comment) {
+			this.comment = comment;
+			return this;
+		}
+
+		@Override
+		public Builder createdAt(Instant createdAt) {
+			this.createdAt = createdAt;
+			return this;
+		}
+
+        @Override
+        public Builder createdAt(long createdAt) {
+            this.createdAt = new Instant(createdAt);
+            return this;
+        }
+
+        @Override
+		public Builder updatedAt(Instant updatedAt) {
+			this.updatedAt = updatedAt;
+			return this;
+		}
+
+        @Override
+        public Builder updatedAt(long updatedAt) {
+            this.updatedAt = new Instant(updatedAt);
+            return this;
+        }
+
+        @Override
+		public Teacher build() {
+			return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture, document, comment, createdAt, updatedAt);
+		}
+	}
 }

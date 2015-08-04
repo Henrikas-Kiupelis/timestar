@@ -130,6 +130,14 @@ public class Account {
 		return new Account(id, username, accountType, password, createdAt, updatedAt);
 	}
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static IdStep stepBuilder() {
+        return new Builder();
+    }
+
 	// PRIVATE
 	
 	private final int id;
@@ -144,5 +152,95 @@ public class Account {
 
     private final Instant createdAt;
     private final Instant updatedAt;
-	
+
+    // GENERATED
+
+	public interface IdStep {
+		UsernameStep id(int id);
+	}
+
+	public interface UsernameStep {
+		AccountTypeStep username(String username);
+	}
+
+	public interface AccountTypeStep {
+		PasswordStep accountType(String accountType);
+	}
+
+	public interface PasswordStep {
+        BuildStep password(char... password);
+	}
+
+	public interface BuildStep {
+        BuildStep createdAt(Instant createdAt);
+        BuildStep createdAt(long createdAt);
+		BuildStep updatedAt(Instant updatedAt);
+        BuildStep updatedAt(long updatedAt);
+		Account build();
+	}
+
+	public static class Builder implements IdStep, UsernameStep, AccountTypeStep, PasswordStep, BuildStep {
+		private int id;
+		private String username;
+		private String accountType;
+		private char[] password;
+
+		private Instant createdAt;
+		private Instant updatedAt;
+
+		private Builder() {}
+
+		@Override
+		public Builder id(int id) {
+			this.id = id;
+			return this;
+		}
+
+		@Override
+		public Builder username(String username) {
+			this.username = username;
+			return this;
+		}
+
+		@Override
+		public Builder accountType(String accountType) {
+			this.accountType = accountType;
+			return this;
+		}
+
+		@Override
+		public Builder password(char... password) {
+			this.password = password;
+			return this;
+		}
+
+		@Override
+		public Builder createdAt(Instant createdAt) {
+			this.createdAt = createdAt;
+			return this;
+		}
+
+        @Override
+        public Builder createdAt(long createdAt) {
+            this.createdAt = new Instant(createdAt);
+            return this;
+        }
+
+        @Override
+		public Builder updatedAt(Instant updatedAt) {
+			this.updatedAt = updatedAt;
+			return this;
+		}
+
+        @Override
+        public Builder updatedAt(long updatedAt) {
+            this.updatedAt = new Instant(updatedAt);
+            return this;
+        }
+
+        @Override
+		public Account build() {
+			return new Account(id, username, accountType, password, createdAt, updatedAt);
+		}
+	}
 }
