@@ -22,37 +22,37 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 
 	@Override
 	public LessonAttendance getAttendanceForLesson(long lessonId, int partitionId) {
-		LOG.debug("Reading LessonAttendance by ID: {}", lessonId);
+		LOG.debug("Reading ExtendedLessonAttendance by ID: {}", lessonId);
 		
 		LessonAttendance attendance = attendanceDAO.read(lessonId, partitionId);
-		LOG.debug("LessonAttendance retrieved: {}", attendance);
+		LOG.debug("ExtendedLessonAttendance retrieved: {}", attendance);
 		
 		return attendance;
 	}
 
 	@Override
 	public LessonAttendance updateAttendanceForLesson(LessonAttendance attendance, int partitionId) {
-		LOG.debug("Updating LessonAttendance: {}", attendance);
+		LOG.debug("Updating ExtendedLessonAttendance: {}", attendance);
 		
 		LessonAttendance oldAttendance = attendanceDAO.update(attendance, partitionId);
-		LOG.debug("Old LessonAttendance retrieved: {}", oldAttendance);
+		LOG.debug("Old ExtendedLessonAttendance retrieved: {}", oldAttendance);
 		
 		return oldAttendance;
 	}
 
 	@Override
 	public LessonAttendance deleteAttendanceForLesson(long lessonId, int partitionId) {
-		LOG.debug("Deleting LessonAttendance by ID: {}", lessonId);
+		LOG.debug("Deleting ExtendedLessonAttendance by ID: {}", lessonId);
 		
 		LessonAttendance deletedAttendance = attendanceDAO.delete(lessonId, partitionId);
-		LOG.debug("Deleted LessonAttendance: {}", deletedAttendance);
+		LOG.debug("Deleted ExtendedLessonAttendance: {}", deletedAttendance);
 		
 		return deletedAttendance;
 	}
 
 	@Override
 	public LessonAttendance deleteAttendanceForLesson(LessonAttendance attendance, int partitionId) {
-		LOG.debug("Deleting LessonAttendance: {}", attendance);
+		LOG.debug("Deleting ExtendedLessonAttendance: {}", attendance);
 		
 		LessonAttendance attendanceBeforeDeletion = attendanceDAO.delete(attendance, partitionId);
 		LOG.debug("Attendance before deletion: {}", attendanceBeforeDeletion);
@@ -62,7 +62,7 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 	
 	@Override
 	public int deleteAttendanceForStudent(int studentId, int partitionId) {
-		LOG.debug("Deleting LessonAttendance for Student with ID: {}", studentId);
+		LOG.debug("Deleting ExtendedLessonAttendance for Student with ID: {}", studentId);
 		
 		int deletedAttendanceAmount = attendanceDAO.deleteForStudent(studentId, partitionId);
 		LOG.debug("Deleted {} LessonAttendances", deletedAttendanceAmount);
