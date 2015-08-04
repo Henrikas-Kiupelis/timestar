@@ -6,11 +6,8 @@ This file should contain a rough list of ideas/things to be done in the future:
 
 A) Things to definitely do in the future
 
-    Implement code checking again!
-            Use:
-                List of Student ids to check against;
-                a code
-    FIX API if any errors
+    Make FullAttendance a mix of actual objects (i.e. lesson + students) rather than just ids (similar for groups)
+    CHECK IF STUDENTS FROM LESSON ATTENDANCE ACTUALLY BELONG TO APPROPRIATE GROUP
 
 B) Ideas
 

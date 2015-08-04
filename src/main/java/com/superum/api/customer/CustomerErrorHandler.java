@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * <pre>
+ * Handles how Customer specific exceptions are translated into HTTP responses
+ * </pre>
+ */
 @ControllerAdvice
 public class CustomerErrorHandler {
 

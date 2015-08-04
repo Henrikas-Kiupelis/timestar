@@ -7,11 +7,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.superum.db.customer.Customer;
-import com.superum.fields.*;
+import com.superum.fields.Field;
+import com.superum.fields.Mandatory;
+import com.superum.fields.NamedField;
+import com.superum.fields.SimpleField;
 import com.superum.fields.primitives.IntField;
+import com.superum.helper.AbstractFullClassWithTimestamps;
 import com.superum.helper.JodaLocalDate;
 import com.superum.helper.SetFieldComparator;
 import org.joda.time.Instant;
@@ -22,8 +25,6 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
@@ -31,22 +32,22 @@ import static com.superum.utils.ValidationUtils.fitsOrNull;
 
 /**
  * <pre>
- * Contains all information about the customer in one place
+ * Contains all information about a customer in one place
  *
  * When creating an instance of FullCustomer with JSON, these fields are required:
- *     FIELD_NAME    : FIELD_DESCRIPTION                                          FIELD_CONSTRAINTS
+ *      FIELD_NAME  : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
  *
- *     startDate     : date when a contract was signed;                           date String, "yyyy-MM-dd"
- *     name          : name                                                       any String, max 30 chars
- *     phone         : phone number                                               any String, max 30 chars
- *     website       : website                                                    any String, max 30 chars
+ *      startDate   : date when a contract was signed                           date String, "yyyy-MM-dd"
+ *      name        : name                                                      any String, max 30 chars
+ *      phone       : phone number                                              any String, max 30 chars
+ *      website     : website                                                   any String, max 30 chars
  *
  * These fields are optional:
- *     picture       : name of the picture of the customer, stored somewhere      any String, max 100 chars
- *     comment       : comment, made by the app client                            any String, max 500 chars
+ *      picture     : link to a picture of this customer, stored somewhere      any String, max 100 chars
+ *      comment     : comment, made by the app client                           any String, max 500 chars
  *
  * These fields should only be specified if they are known:
- *     id            : number representation of this customer in the system       1 <= id
+ *      id          : number representation of this customer in the system      1 <= id
  *
  * When building JSON, use format
  *      for single objects:  "FIELD_NAME":"VALUE"
@@ -54,20 +55,45 @@ import static com.superum.utils.ValidationUtils.fitsOrNull;
  * If you omit a field, it will assume default value (null for objects, 0/false for primitives),
  * all of which are assumed to be allowed unless stated otherwise (check FIELD_CONSTRAINTS)
  *
- * Example of JSON:
+ * Example of JSON to send:
  * {
- *     "id":"1",
- *     "startDate":"2015-07-22",
- *     "name":"SUPERUM",
- *     "phone":"+37069900001",
- *     "website":"http://superum.eu",
- *     "picture":"superum.jpg",
- *     "comment":"What a company"
+ *      "id":"1",
+ *      "startDate":"2015-07-22",
+ *      "name":"SUPERUM",
+ *      "phone":"+37069900001",
+ *      "website":"http://superum.eu",
+ *      "picture":"http://timestar.lt/uploads/superum.jpg",
+ *      "comment":"What a company"
+ * }
+ *
+ * When returning an instance of FullCustomer with JSON, these fields will be present:
+ *      FIELD_NAME  : FIELD_DESCRIPTION
+ *      id          : number representation of this customer in the system
+ *      startDate   : array containing the date when a contract was signed; [year, month, day], all integers
+ *      name        : name
+ *      phone       : phone number
+ *      website     : website
+ *      picture     : link to a picture of this customer, stored somewhere
+ *      comment     : comment, made by the app client
+ *      createdAt   : timestamp, taken by the database at the time of creation
+ *      updatedAt   : timestamp, taken by the database at the time of creation and updating
+ *
+ * Example of JSON to expect:
+ * {
+ *      "id": 1,
+ *      "startDate": [2015, 7, 22],
+ *      "name": "SUPERUM",
+ *      "phone": "+37069900001",
+ *      "website": "http://superum.eu",
+ *      "picture":"http://timestar.lt/uploads/superum.jpg",
+ *      "comment": "What a company",
+ *      "createdAt": 1437512400000,
+ *      "updatedAt": 1438689946954
  * }
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FullCustomer {
+public class FullCustomer extends AbstractFullClassWithTimestamps {
 
     // PUBLIC API
 
@@ -94,7 +120,7 @@ public class FullCustomer {
      */
     @JsonIgnore
     public FullCustomer withId(int id) {
-        return new FullCustomer(id, getStartDate(), getName(), getPhone(), getWebsite(), getPictureName(), getComment(), getCreatedAt(), getUpdatedAt());
+        return valueOf(id, getStartDate(), getName(), getPhone(), getWebsite(), getPicture(), getComment(), getCreatedAt(), getUpdatedAt());
     }
     /**
      * <pre>
@@ -104,18 +130,20 @@ public class FullCustomer {
      */
     @JsonIgnore
     public FullCustomer withoutId() {
-        return new FullCustomer(0, getStartDate(), getName(), getPhone(), getWebsite(), getPictureName(), getComment(), getCreatedAt(), getUpdatedAt());
+        return valueOf(0, getStartDate(), getName(), getPhone(), getWebsite(), getPicture(), getComment(), getCreatedAt(), getUpdatedAt());
     }
 
-	@JsonProperty(START_DATE_FIELD)
+    @JsonProperty(START_DATE_FIELD)
     @JsonSerialize(using = LocalDateSerializer.class)
 	public LocalDate getStartDate() {
 		return startDate.getValue();
 	}
+
     @JsonIgnore
     public boolean hasStartDate() {
         return startDate.isSet();
     }
+
     @JsonIgnore
     public java.sql.Date getStartDateSQL() {
         try {
@@ -129,72 +157,49 @@ public class FullCustomer {
 	public String getName() {
 		return name.getValue();
 	}
+
     @JsonIgnore
     public boolean hasName() {
         return name.isSet();
     }
-	
-	@JsonProperty(PHONE_FIELD)
+
+    @JsonProperty(PHONE_FIELD)
 	public String getPhone() {
 		return phone.getValue();
 	}
+
     @JsonIgnore
     public boolean hasPhone() {
         return phone.isSet();
     }
-	
-	@JsonProperty(WEBSITE_FIELD)
+
+    @JsonProperty(WEBSITE_FIELD)
 	public String getWebsite() {
 		return website.getValue();
 	}
+
     @JsonIgnore
     public boolean hasWebsite() {
         return website.isSet();
     }
 	
 	@JsonProperty(PICTURE_FIELD)
-	public String getPictureName() {
-		return pictureName.getValue();
+	public String getPicture() {
+		return picture.getValue();
 	}
     @JsonIgnore
     public boolean hasPictureName() {
-        return pictureName.isSet();
+        return picture.isSet();
     }
 	
 	@JsonProperty(COMMENT_FIELD)
 	public String getComment() {
 		return comment.getValue();
 	}
+
     @JsonIgnore
     public boolean hasComment() {
         return comment.isSet();
-    }
-
-    @JsonProperty(CREATED_AT_FIELD)
-    @JsonSerialize(using = InstantSerializer.class)
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-    @JsonProperty(UPDATED_AT_FIELD)
-    @JsonSerialize(using = InstantSerializer.class)
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    /**
-     * @return true if at least one field is set; false otherwise
-     */
-    @JsonIgnore
-    public boolean hasAnyFieldsSet() {
-        return allFields().anyMatch(Field::isSet);
-    }
-
-    /**
-     * @return true if all the mandatory fields are set; false otherwise
-     */
-    @JsonIgnore
-    public boolean canBeInserted() {
-        return mandatoryFields().allMatch(Field::isSet);
     }
 
     /**
@@ -221,130 +226,80 @@ public class FullCustomer {
     }
 
     /**
-     * @return a list of names of mandatory fields that are not set
-     */
-    @JsonIgnore
-    public List<String> missingMandatoryFieldNames() {
-        return mandatoryFields()
-                .filter(field -> !field.isSet())
-                .map(NamedField::getFieldName)
-                .collect(Collectors.toList());
-    }
-
-    /**
      * @return Customer value of this FullCustomer
      */
     @JsonIgnore
     public Customer toCustomer() {
-        return new Customer(getId(), getStartDate(), getName(), getPhone(), getWebsite(), getPictureName(), getComment(), getCreatedAt(), getUpdatedAt());
+        return new Customer(getId(), getStartDate(), getName(), getPhone(), getWebsite(), getPicture(), getComment(), getCreatedAt(), getUpdatedAt());
     }
 
 	// OBJECT OVERRIDES
 
 	@Override
 	public String toString() {
-		return string;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof FullCustomer))
-			return false;
-
-		FullCustomer other = (FullCustomer) o;
-
-		return Objects.equals(this.allFields, other.allFields);
-	}
-
-	@Override
-	public int hashCode() {
-        return hash;
+		return "FullCustomer{" + super.toString() + "}";
 	}
 
 	// CONSTRUCTORS
 
     @JsonCreator
-    public FullCustomer(@JsonProperty(ID_FIELD) int id,
-                        @JsonProperty(START_DATE_FIELD) @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate startDate,
-                        @JsonProperty(NAME_FIELD) String name,
-                        @JsonProperty(PHONE_FIELD) String phone,
-                        @JsonProperty(WEBSITE_FIELD) String website,
-                        @JsonProperty(PICTURE_FIELD) String picture,
-                        @JsonProperty(COMMENT_FIELD) String comment) {
-        this(id, startDate, name, phone, website, picture, comment, null, null);
+    public static FullCustomer valueOf(@JsonProperty(ID_FIELD) int id,
+                                       @JsonProperty(START_DATE_FIELD) @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate startDate,
+                                       @JsonProperty(NAME_FIELD) String name,
+                                       @JsonProperty(PHONE_FIELD) String phone,
+                                       @JsonProperty(WEBSITE_FIELD) String website,
+                                       @JsonProperty(PICTURE_FIELD) String picture,
+                                       @JsonProperty(COMMENT_FIELD) String comment) {
+        return valueOf(id, startDate, name, phone, website, picture, comment, null, null);
     }
 
-	public FullCustomer(int id, LocalDate startDate, String name, String phone, String website, String pictureName,
-                        String comment, Instant createdAt, Instant updatedAt) {
+    public static FullCustomer valueOf(int id, LocalDate startDate, String name, String phone, String website,
+                                       String pictureName, String comment, Instant createdAt, Instant updatedAt) {
         // Equivalent to (id != 0 && id <= 0); when id == 0, it simply was not set, so the state is valid, while id is not
         if (id < 0)
             throw new InvalidCustomerException("Customer id must be positive.");
 
-        this.id = new IntField(ID_FIELD, id, Mandatory.NO);
+        IntField fieldId = new IntField(ID_FIELD, id, Mandatory.NO);
 
         if (!fitsOrNull(NAME_SIZE_LIMIT, name))
             throw new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars");
 
-		this.name = SimpleField.valueOf(NAME_FIELD, name, Mandatory.YES);
+        SimpleField<String> fieldName = SimpleField.valueOf(NAME_FIELD, name, Mandatory.YES);
 
         if (!fitsOrNull(PHONE_SIZE_LIMIT, phone))
             throw new InvalidCustomerException("Customer phone must not exceed " + PHONE_SIZE_LIMIT + " chars");
 
-		this.phone = SimpleField.valueOf(PHONE_FIELD, phone, Mandatory.YES);
+        SimpleField<String> fieldPhone = SimpleField.valueOf(PHONE_FIELD, phone, Mandatory.YES);
 
         if (!fitsOrNull(WEBSITE_SIZE_LIMIT, website))
             throw new InvalidCustomerException("Customer website must not exceed " + WEBSITE_SIZE_LIMIT + " chars");
 
-		this.website = SimpleField.valueOf(WEBSITE_FIELD, website, Mandatory.YES);
+        SimpleField<String> fieldWebsite = SimpleField.valueOf(WEBSITE_FIELD, website, Mandatory.YES);
 
         if (!fitsOrNull(PICTURE_SIZE_LIMIT, pictureName))
             throw new InvalidCustomerException("Customer picture name must not exceed " + PICTURE_SIZE_LIMIT + " chars");
 
-		this.pictureName = SimpleField.valueOf(PICTURE_FIELD, pictureName, Mandatory.NO);
+        SimpleField<String> fieldPictureName = SimpleField.valueOf(PICTURE_FIELD, pictureName, Mandatory.NO);
 
         if (!fitsOrNull(COMMENT_SIZE_LIMIT, comment))
             throw new InvalidCustomerException("Customer comment must not exceed " + COMMENT_SIZE_LIMIT + " chars");
 
-		this.comment = SimpleField.valueOf(COMMENT_FIELD, comment, Mandatory.NO);
+        SimpleField<String> fieldComment = SimpleField.valueOf(COMMENT_FIELD, comment, Mandatory.NO);
 
-        this.startDate = SimpleField.valueOf(START_DATE_FIELD, startDate, Mandatory.YES);
+        SimpleField<LocalDate> fieldStartDate = SimpleField.valueOf(START_DATE_FIELD, startDate, Mandatory.YES);
 
-        this.allFields = fieldList();
-        // This class is immutable, and it will almost always be turned into a string at least once (logs); it makes sense to cache the value
-        this.string = "FullCustomer{" + allFields()
-                .map(Field::toString)
-                .collect(Collectors.joining(", ")) + "}";
-        // Caching for hashCode(), just like toString()
-        this.hash = allFields.hashCode();
-
-        this.setFieldComparator = new SetFieldComparator<>(this);
-
-        // The following fields are not significant, i.e. they are not to be used when comparing for equality
-        // Intended for JSON conversion purposes only
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public FullCustomer(Customer customer) {
-        this(customer.getId(), customer.getStartDate(), customer.getName(), customer.getPhone(), customer.getWebsite(),
-                customer.getPicture(), customer.getComment(), customer.getCreatedAt(), customer.getUpdatedAt());
+        List<NamedField> allFields = Collections.unmodifiableList(Arrays.asList(fieldId, fieldStartDate, fieldName, fieldPhone, fieldWebsite, fieldPictureName, fieldComment));
+        return new FullCustomer(allFields, createdAt, updatedAt, fieldId, fieldStartDate, fieldName, fieldPhone, fieldWebsite, fieldPictureName, fieldComment);
     }
 
     public static FullCustomer valueOf(Customer customer) {
-        return new FullCustomer(customer);
+        return valueOf(customer.getId(), customer.getStartDate(), customer.getName(), customer.getPhone(), customer.getWebsite(),
+                customer.getPicture(), customer.getComment(), customer.getCreatedAt(), customer.getUpdatedAt());
     }
 
     public static FullCustomer valueOf(Record record) {
         if (record == null)
             return null;
-
-        long createdTimestamp = record.getValue(CUSTOMER.CREATED_AT);
-        Instant createdAt = new Instant(createdTimestamp);
-        long updatedTimestamp = record.getValue(CUSTOMER.UPDATED_AT);
-        Instant updatedAt = new Instant(updatedTimestamp);
 
         return stepBuilder()
                 .withStartDate(from(record.getValue(CUSTOMER.START_DATE)))
@@ -354,8 +309,8 @@ public class FullCustomer {
                 .withId(record.getValue(CUSTOMER.ID))
                 .withPictureName(record.getValue(CUSTOMER.PICTURE))
                 .withComment(record.getValue(CUSTOMER.COMMENT))
-                .withCreatedAt(createdAt)
-                .withUpdatedAt(updatedAt)
+                .withCreatedAt(record.getValue(CUSTOMER.CREATED_AT))
+                .withUpdatedAt(record.getValue(CUSTOMER.UPDATED_AT))
                 .build();
     }
 
@@ -379,6 +334,22 @@ public class FullCustomer {
         return new StepBuilder();
     }
 
+    private FullCustomer(List<NamedField> allFields, Instant createdAt, Instant updatedAt, IntField id,
+                         SimpleField<LocalDate> startDate, SimpleField<String> name, SimpleField<String> phone,
+                         SimpleField<String> website, SimpleField<String> picture, SimpleField<String> comment) {
+        super(allFields, createdAt, updatedAt);
+
+        this.id = id;
+        this.startDate = startDate;
+        this.name = name;
+        this.phone = phone;
+        this.website = website;
+        this.picture = picture;
+        this.comment = comment;
+
+        this.setFieldComparator = new SetFieldComparator<>(this);
+    }
+
 	// PRIVATE
 	
 	private final IntField id;
@@ -386,39 +357,10 @@ public class FullCustomer {
 	private final NamedField<String> name;
 	private final NamedField<String> phone;
 	private final NamedField<String> website;
-	private final NamedField<String> pictureName;
+	private final NamedField<String> picture;
 	private final NamedField<String> comment;
 
-    private final Instant createdAt;
-    private final Instant updatedAt;
-
-    private final List<NamedField> allFields;
-    private final String string;
-    private final int hash;
-
     private final SetFieldComparator<FullCustomer> setFieldComparator;
-
-    /**
-     * <pre>
-     * Probably best to cache this, i.e. use in constructor
-     *
-     * The fields that are returned are the significant ones, i.e. the ones that should be used for equality tests
-     * </pre>
-     * @return a list of all fields
-     */
-    private List<NamedField> fieldList() {
-        return Collections.unmodifiableList(Arrays.asList(id, startDate, name, phone, website, pictureName, comment));
-    }
-
-    /**
-     * <pre>
-     * Intended to be used by other methods to reduce the call chain
-     * </pre>
-     * @return a stream of all fields
-     */
-    private Stream<NamedField> allFields() {
-        return allFields.stream();
-    }
 
     /**
      * <pre>
@@ -428,16 +370,6 @@ public class FullCustomer {
      */
     private Stream<NamedField> customerFields() {
         return allFields();
-    }
-
-    /**
-     * <pre>
-     * Intended to be used by other methods to reduce the filtering chain
-     * </pre>
-     * @return a stream of all mandatory fields
-     */
-    private Stream<NamedField> mandatoryFields() {
-        return allFields().filter(MaybeField::isMandatory);
     }
 
     private static LocalDate from(java.sql.Date sqlDate) {
@@ -490,7 +422,9 @@ public class FullCustomer {
         BuildStep withPictureName(String pictureName);
         BuildStep withComment(String comment);
         BuildStep withCreatedAt(Instant createdAt);
+        BuildStep withCreatedAt(long createdAt);
         BuildStep withUpdatedAt(Instant updatedAt);
+        BuildStep withUpdatedAt(long updatedAt);
         FullCustomer build();
     }
 
@@ -557,14 +491,26 @@ public class FullCustomer {
         }
 
         @Override
+        public BuildStep withCreatedAt(long createdAt) {
+            this.createdAt = new Instant(createdAt);
+            return this;
+        }
+
+        @Override
         public BuildStep withUpdatedAt(Instant updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
 
         @Override
+        public BuildStep withUpdatedAt(long updatedAt) {
+            this.updatedAt = new Instant(updatedAt);
+            return this;
+        }
+
+        @Override
         public FullCustomer build() {
-            return new FullCustomer(
+            return valueOf(
                     this.id,
                     this.startDate,
                     this.name,
@@ -638,7 +584,7 @@ public class FullCustomer {
         }
 
         public FullCustomer build() {
-            return new FullCustomer(
+            return valueOf(
                     this.id,
                     this.startDate,
                     this.name,
