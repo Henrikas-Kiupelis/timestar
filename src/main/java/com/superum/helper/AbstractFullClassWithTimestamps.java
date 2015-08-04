@@ -12,12 +12,12 @@ public abstract class AbstractFullClassWithTimestamps extends AbstractFullClass 
 
     @JsonProperty(CREATED_AT_FIELD)
     @JsonSerialize(using = InstantSerializer.class)
-    public Instant getCreatedAt() {
+    public final Instant getCreatedAt() {
         return createdAt;
     }
     @JsonProperty(UPDATED_AT_FIELD)
     @JsonSerialize(using = InstantSerializer.class)
-    public Instant getUpdatedAt() {
+    public final Instant getUpdatedAt() {
         return updatedAt;
     }
 
@@ -34,14 +34,12 @@ public abstract class AbstractFullClassWithTimestamps extends AbstractFullClass 
         this.updatedAt = updatedAt;
     }
 
-    // PROTECTED
-
-    protected static final String CREATED_AT_FIELD = "createdAt";
-    protected static final String UPDATED_AT_FIELD = "updatedAt";
-
     // PRIVATE
 
     private final Instant createdAt;
     private final Instant updatedAt;
+
+    private static final String CREATED_AT_FIELD = "createdAt";
+    private static final String UPDATED_AT_FIELD = "updatedAt";
 
 }

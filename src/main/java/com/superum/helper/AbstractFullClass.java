@@ -25,7 +25,7 @@ public abstract class AbstractFullClass {
      * @return true if at least one field is set; false otherwise
      */
     @JsonIgnore
-    public boolean hasAnyFieldsSet() {
+    public final boolean hasAnyFieldsSet() {
         return allFields().anyMatch(Field::isSet);
     }
 
@@ -33,7 +33,7 @@ public abstract class AbstractFullClass {
      * @return true if all the mandatory fields are set; false otherwise
      */
     @JsonIgnore
-    public boolean canBeInserted() {
+    public final boolean canBeInserted() {
         return mandatoryFields().allMatch(Field::isSet);
     }
 
@@ -41,7 +41,7 @@ public abstract class AbstractFullClass {
      * @return a list of names of mandatory fields that are not set
      */
     @JsonIgnore
-    public List<String> missingMandatoryFieldNames() {
+    public final List<String> missingMandatoryFieldNames() {
         return mandatoryFields()
                 .filter(field -> !field.isSet())
                 .map(NamedField::getFieldName)
@@ -95,7 +95,8 @@ public abstract class AbstractFullClass {
      * </pre>
      * @return a stream of all fields
      */
-    protected Stream<NamedField> allFields() {
+    @JsonIgnore
+    protected final Stream<NamedField> allFields() {
         return allFields.stream();
     }
 
@@ -105,7 +106,8 @@ public abstract class AbstractFullClass {
      * </pre>
      * @return a stream of all mandatory fields
      */
-    protected Stream<NamedField> mandatoryFields() {
+    @JsonIgnore
+    protected final Stream<NamedField> mandatoryFields() {
         return allFields().filter(MaybeField::isMandatory);
     }
 
