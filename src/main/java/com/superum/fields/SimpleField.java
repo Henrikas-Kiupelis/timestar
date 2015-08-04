@@ -1,9 +1,9 @@
 package com.superum.fields;
 
+import com.google.common.collect.ImmutableList;
 import com.superum.utils.ObjectUtils;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -85,7 +85,7 @@ public class SimpleField<T> extends NamedField<T> {
         if (value == null)
             return empty(fieldName, mandatory);
 
-        return new SimpleField<>(fieldName, Collections.unmodifiableList(value), mandatory);
+        return new SimpleField<>(fieldName, ImmutableList.copyOf(value), mandatory);
     }
 
     protected SimpleField(String fieldName, T value, Mandatory mandatory) {
