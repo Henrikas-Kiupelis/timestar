@@ -39,19 +39,31 @@ public class ValidationUtils {
      * Useful in cases where a BigDecimal JSON field can be optional, but has to be positive if it is present
      * </pre>
      */
-    public static boolean isNegativeNotNull(BigDecimal monetaryValue) {
-        return monetaryValue != null && isNegative(monetaryValue);
+    public static boolean isPositiveOrNull(BigDecimal monetaryValue) {
+        return monetaryValue == null || isPositive(monetaryValue);
     }
 
     /**
      * <pre>
-     * Returns true if a given BigDecimal value is negative
+     * Returns true if a given BigDecimal value is positive
      *
      * Assumes the BigDecimal is not null (i.e. checked beforehand)
      * </pre>
      */
-    public static boolean isNegative(BigDecimal monetaryValue) {
-        return monetaryValue.signum() == -1;
+    public static boolean isPositive(BigDecimal monetaryValue) {
+        return monetaryValue.signum() == 1;
+    }
+
+    /**
+     * <pre>
+     * Returns true if the given string is at most as large as the given size (but not empty), or null
+     *
+     * Useful in cases where a String JSON field can be optional, but has to be no larger than a certain limit
+     * if it is present, but empty value is invalid
+     * </pre>
+     */
+    public static boolean fitsOrNullNotEmpty(int size, String string) {
+        return string == null || (!string.isEmpty() && fits(size, string));
     }
 
     /**
@@ -64,6 +76,18 @@ public class ValidationUtils {
      */
     public static boolean fitsOrNull(int size, String string) {
         return string == null || fits(size, string);
+    }
+
+    /**
+     * <pre>
+     * Returns true if the given string is at most as large as the given size, not empty and not null
+     *
+     * Useful in cases where a List of String JSON field can be optional, but each element in the list in not optional
+     * and has to be no larger than a certain limit if it is present, and empty value is invalid
+     * </pre>
+     */
+    public static boolean fitsNotNullNotEmpty(int size, String string) {
+        return string != null && !string.isEmpty() && fits(size, string);
     }
 
     /**

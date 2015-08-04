@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
 import static com.superum.utils.ValidationUtils.fitsOrNull;
+import static com.superum.utils.ValidationUtils.fitsOrNullNotEmpty;
 
 /**
  * <pre>
@@ -261,17 +262,17 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
 
         IntField idField = new IntField(ID_FIELD, id, Mandatory.NO);
 
-        if (!fitsOrNull(NAME_SIZE_LIMIT, name))
+        if (!fitsOrNullNotEmpty(NAME_SIZE_LIMIT, name))
             throw new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars");
 
         SimpleField<String> nameField = SimpleField.valueOf(NAME_FIELD, name, Mandatory.YES);
 
-        if (!fitsOrNull(PHONE_SIZE_LIMIT, phone))
+        if (!fitsOrNullNotEmpty(PHONE_SIZE_LIMIT, phone))
             throw new InvalidCustomerException("Customer phone must not exceed " + PHONE_SIZE_LIMIT + " chars");
 
         SimpleField<String> phoneField = SimpleField.valueOf(PHONE_FIELD, phone, Mandatory.YES);
 
-        if (!fitsOrNull(WEBSITE_SIZE_LIMIT, website))
+        if (!fitsOrNullNotEmpty(WEBSITE_SIZE_LIMIT, website))
             throw new InvalidCustomerException("Customer website must not exceed " + WEBSITE_SIZE_LIMIT + " chars");
 
         SimpleField<String> websiteField = SimpleField.valueOf(WEBSITE_FIELD, website, Mandatory.YES);
