@@ -382,6 +382,9 @@ public class Lesson {
 
         @Override
         public Builder withoutEndTime() {
+			endDate = null;
+			endHour = null;
+			endMinute = null;
             return this;
         }
 
