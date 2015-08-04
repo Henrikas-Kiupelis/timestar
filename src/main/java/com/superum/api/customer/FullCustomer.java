@@ -254,42 +254,42 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
     }
 
     public static FullCustomer valueOf(int id, LocalDate startDate, String name, String phone, String website,
-                                       String pictureName, String comment, Instant createdAt, Instant updatedAt) {
+                                       String picture, String comment, Instant createdAt, Instant updatedAt) {
         // Equivalent to (id != 0 && id <= 0); when id == 0, it simply was not set, so the state is valid, while id is not
         if (id < 0)
             throw new InvalidCustomerException("Customer id must be positive.");
 
-        IntField fieldId = new IntField(ID_FIELD, id, Mandatory.NO);
+        IntField idField = new IntField(ID_FIELD, id, Mandatory.NO);
 
         if (!fitsOrNull(NAME_SIZE_LIMIT, name))
             throw new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars");
 
-        SimpleField<String> fieldName = SimpleField.valueOf(NAME_FIELD, name, Mandatory.YES);
+        SimpleField<String> nameField = SimpleField.valueOf(NAME_FIELD, name, Mandatory.YES);
 
         if (!fitsOrNull(PHONE_SIZE_LIMIT, phone))
             throw new InvalidCustomerException("Customer phone must not exceed " + PHONE_SIZE_LIMIT + " chars");
 
-        SimpleField<String> fieldPhone = SimpleField.valueOf(PHONE_FIELD, phone, Mandatory.YES);
+        SimpleField<String> phoneField = SimpleField.valueOf(PHONE_FIELD, phone, Mandatory.YES);
 
         if (!fitsOrNull(WEBSITE_SIZE_LIMIT, website))
             throw new InvalidCustomerException("Customer website must not exceed " + WEBSITE_SIZE_LIMIT + " chars");
 
-        SimpleField<String> fieldWebsite = SimpleField.valueOf(WEBSITE_FIELD, website, Mandatory.YES);
+        SimpleField<String> websiteField = SimpleField.valueOf(WEBSITE_FIELD, website, Mandatory.YES);
 
-        if (!fitsOrNull(PICTURE_SIZE_LIMIT, pictureName))
+        if (!fitsOrNull(PICTURE_SIZE_LIMIT, picture))
             throw new InvalidCustomerException("Customer picture name must not exceed " + PICTURE_SIZE_LIMIT + " chars");
 
-        SimpleField<String> fieldPictureName = SimpleField.valueOf(PICTURE_FIELD, pictureName, Mandatory.NO);
+        SimpleField<String> pictureField = SimpleField.valueOf(PICTURE_FIELD, picture, Mandatory.NO);
 
         if (!fitsOrNull(COMMENT_SIZE_LIMIT, comment))
             throw new InvalidCustomerException("Customer comment must not exceed " + COMMENT_SIZE_LIMIT + " chars");
 
-        SimpleField<String> fieldComment = SimpleField.valueOf(COMMENT_FIELD, comment, Mandatory.NO);
+        SimpleField<String> commentField = SimpleField.valueOf(COMMENT_FIELD, comment, Mandatory.NO);
 
-        SimpleField<LocalDate> fieldStartDate = SimpleField.valueOf(START_DATE_FIELD, startDate, Mandatory.YES);
+        SimpleField<LocalDate> startDateField = SimpleField.valueOf(START_DATE_FIELD, startDate, Mandatory.YES);
 
-        List<NamedField> allFields = Collections.unmodifiableList(Arrays.asList(fieldId, fieldStartDate, fieldName, fieldPhone, fieldWebsite, fieldPictureName, fieldComment));
-        return new FullCustomer(allFields, createdAt, updatedAt, fieldId, fieldStartDate, fieldName, fieldPhone, fieldWebsite, fieldPictureName, fieldComment);
+        List<NamedField> allFields = Collections.unmodifiableList(Arrays.asList(idField, startDateField, nameField, phoneField, websiteField, pictureField, commentField));
+        return new FullCustomer(allFields, createdAt, updatedAt, idField, startDateField, nameField, phoneField, websiteField, pictureField, commentField);
     }
 
     public static FullCustomer valueOf(Customer customer) {
@@ -396,13 +396,11 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
     private static final String PICTURE_FIELD = "picture";
     private static final String COMMENT_FIELD = "comment";
 
-    private static final String CREATED_AT_FIELD = "createdAt";
-    private static final String UPDATED_AT_FIELD = "updatedAt";
-
     // GENERATED
 
     public interface StartDateStep {
         NameStep withStartDate(LocalDate startDate);
+        NameStep withStartDate(String startDate);
     }
 
     public interface NameStep {
@@ -445,6 +443,12 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
         @Override
         public NameStep withStartDate(LocalDate startDate) {
             this.startDate = startDate;
+            return this;
+        }
+
+        @Override
+        public NameStep withStartDate(String startDate) {
+            this.startDate = LocalDate.parse(startDate);
             return this;
         }
 
@@ -548,6 +552,11 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
             return this;
         }
 
+        public Builder withStartDate(String startDate) {
+            this.startDate = LocalDate.parse(startDate);
+            return this;
+        }
+
         public Builder withName(String name) {
             this.name = name;
             return this;
@@ -578,8 +587,18 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
             return this;
         }
 
+        public Builder withCreatedAt(long createdAt) {
+            this.createdAt = new Instant(createdAt);
+            return this;
+        }
+
         public Builder withUpdatedAt(Instant updatedAt) {
             this.updatedAt = updatedAt;
+            return this;
+        }
+
+        public Builder withUpdatedAt(long updatedAt) {
+            this.updatedAt = new Instant(updatedAt);
             return this;
         }
 
