@@ -22,13 +22,13 @@ public class ValidationUtils {
 
     /**
      * <pre>
-     * Given a byte, returns true if this byte can be used to represent a day of a month, from 1st to 31st
+     * Given an int, returns true if this int can be used to represent a day of a month, from 1st to 31st
      *
      * While certain months do not have days 29 to 31, it is assumed that this is handled somewhere else
      * entirely; the purpose of this is simply to validate the input
      * </pre>
      */
-    public static boolean isDayOfMonth(byte day) {
+    public static boolean isDayOfMonth(int day) {
         return day >= 1 && day <= 31;
     }
 
