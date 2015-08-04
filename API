@@ -180,7 +180,6 @@ Customer API:
     Checks if a customer with specified bounds exists;
     The simplest use case is to check if a user with a particular id exists, or checking if a certain user's
     fields are set to some value;
-    The languages field is ignored in this method, so don't bother setting it
 
     It will fail if:
     a) HTTP 400; no fields were set;

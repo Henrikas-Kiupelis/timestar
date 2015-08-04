@@ -7,9 +7,10 @@ This file should contain a rough list of ideas/things to be done in the future:
 A) Things to definitely do in the future
 
     Implement code checking again!
-        Use:
-            List of Student ids to check against;
-            a code
+            Use:
+                List of Student ids to check against;
+                a code
+    FIX API if any errors
 
 B) Ideas
 

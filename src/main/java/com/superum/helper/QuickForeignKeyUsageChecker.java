@@ -46,7 +46,7 @@ public class QuickForeignKeyUsageChecker<ID> {
         if (sql == null)
             throw new IllegalArgumentException("DSLContext cannot be null");
 
-        if (foreignKeysAndPartitions == null || foreignKeysAndPartitions.values().size() < 1)
+        if (foreignKeysAndPartitions == null || foreignKeysAndPartitions.values().isEmpty())
             throw new IllegalArgumentException("You must provide at least a single field to the checker!");
 
         this.tables = foreignKeysAndPartitions.keySet().stream()
