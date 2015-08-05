@@ -1,15 +1,25 @@
 package com.superum.db.customer;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
+import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
+import com.superum.helper.JodaLocalDate;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
+import org.joda.time.Instant;
+import org.joda.time.LocalDate;
 import org.jooq.Record;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
-import java.util.Date;
+import java.text.ParseException;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
@@ -27,16 +37,28 @@ public class Customer {
 	public boolean hasId() {
 		return id > 0;
 	}
+    @JsonIgnore
+    public Customer withId(int id) {
+        return new Customer(id, startDate, name, phone, website, picture, comment, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Customer withoutId() {
+        return new Customer(0, startDate, name, phone, website, picture, comment, createdAt, updatedAt);
+    }
 
 	@JsonProperty("startDate")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
-	public Date getStartDate() {
+	@JsonSerialize(using = LocalDateSerializer.class)
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
     @JsonIgnore
     public java.sql.Date getStartDateSql() {
-        return new java.sql.Date(startDate.getTime());
+		try {
+			return JodaLocalDate.from(startDate).toJavaSqlDate();
+		} catch (ParseException e) {
+			throw new IllegalStateException("Error occurred when parsing date while writing Customer to database: " + startDate, e);
+		}
     }
 
 	@JsonProperty("name")
@@ -65,12 +87,14 @@ public class Customer {
 	}
 
     @JsonProperty("createdAt")
-    public Date getCreatedAt() {
+	@JsonSerialize(using = InstantSerializer.class)
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
-    public Date getUpdatedAt() {
+	@JsonSerialize(using = InstantSerializer.class)
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 	
@@ -101,7 +125,7 @@ public class Customer {
 		Customer other = (Customer) o;
 
 		return this.id == other.id
-				&& ObjectUtils.equalsJavaUtilDate(this.startDate, other.startDate)
+				&& Objects.equals(this.startDate, other.startDate)
 				&& Objects.equals(this.name, other.name)
 				&& Objects.equals(this.phone, other.phone)
 				&& Objects.equals(this.website, other.website)
@@ -118,7 +142,7 @@ public class Customer {
 
 	@JsonCreator
 	public Customer(@JsonProperty("id") int id,
-					@JsonProperty("startDate") Date startDate,
+					@JsonProperty("startDate") @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate startDate,
 					@JsonProperty("name") String name, 
 					@JsonProperty("phone") String phone,
 					@JsonProperty("website") String website,
@@ -127,7 +151,7 @@ public class Customer {
         this(id, startDate, name, phone, website, picture, comment, null, null);
 	}
 
-	public Customer(int id, Date startDate, String name, String phone, String website, String picture, String comment, Date createdAt, Date updatedAt) {
+	public Customer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.startDate = startDate;
         this.name = name;
@@ -144,7 +168,7 @@ public class Customer {
 			return null;
 		
 		int id = customerRecord.getValue(CUSTOMER.ID);
-		Date startDate = customerRecord.getValue(CUSTOMER.START_DATE);
+		LocalDate startDate = from(customerRecord.getValue(CUSTOMER.START_DATE));
 		String name = customerRecord.getValue(CUSTOMER.NAME);
 		String phone = customerRecord.getValue(CUSTOMER.PHONE);
 		String website = customerRecord.getValue(CUSTOMER.WEBSITE);
@@ -152,9 +176,9 @@ public class Customer {
 		String comment = customerRecord.getValue(CUSTOMER.COMMENT);
 
         long createdTimestamp = customerRecord.getValue(CUSTOMER.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+		Instant createdAt = new Instant(createdTimestamp);
         long updatedTimestamp = customerRecord.getValue(CUSTOMER.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		Instant updatedAt = new Instant(updatedTimestamp);
 		return new Customer(id, startDate, name, phone, website, pictureName, comment, createdAt, updatedAt);
 	}
 
@@ -164,7 +188,7 @@ public class Customer {
 	private final int id;
 
 	@NotNull(message = "There must be a start date")
-	private final Date startDate;
+	private final LocalDate startDate;
 
 	@NotNull(message = "The customer must have a name")
 	@Size(max = 30, message = "Name size must not exceed 30 characters")
@@ -186,7 +210,15 @@ public class Customer {
 	@Size(max = 500, message = "The comment must not exceed 500 characters")
 	private final String comment;
 
-    private final Date createdAt;
-    private final Date updatedAt;
+    private final Instant createdAt;
+    private final Instant updatedAt;
+
+	private static LocalDate from(java.sql.Date sqlDate) {
+		try {
+			return JodaLocalDate.from(sqlDate).toOrgJodaTimeLocalDate();
+		} catch (ParseException e) {
+			throw new IllegalStateException("Error occurred when parsing date while reading Customer from database: " + sqlDate, e);
+		}
+	}
 
 }

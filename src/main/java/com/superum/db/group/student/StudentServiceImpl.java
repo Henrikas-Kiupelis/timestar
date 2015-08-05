@@ -146,12 +146,12 @@ public class StudentServiceImpl implements StudentService {
             Student studentWithCode = student.withGeneratedCode();
             LOG.debug("Code for student generated: {}", studentWithCode);
 
-            updateStudent(studentWithCode, partitionId);
+			studentDAO.setStudentCode(studentWithCode.getId(), studentWithCode.getCode(), partitionId);
             try {
                 String fullTitle = EMAIL_TITLE + name;
                 String fullBody = EMAIL_BODY + studentWithCode.getCode();
                 mail.send(student.getEmail(), fullTitle, fullBody);
-                LOG.debug("Sent email to student '{}': title - '{}'; body - '{}'", student, fullTitle, fullBody);
+                LOG.debug("Sent email to student '{}': title - '{}'; body - '{}'", student.getName(), fullTitle, fullBody);
             } catch (MessagingException e) {
                 e.printStackTrace();
             }

@@ -1,18 +1,20 @@
 package com.superum.db.group;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.superum.db.teacher.WageType;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
+import org.joda.time.Instant;
 import org.jooq.Record;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
-import java.util.Date;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
@@ -26,9 +28,18 @@ public class Group {
 	public int getId() {
 		return id;
 	}
+    @JsonIgnore
 	public boolean hasId() {
 		return id > 0;
 	}
+    @JsonIgnore
+    public Group withId(int id) {
+        return new Group(id, customerId, teacherId, getUsesHourlyWage(), languageLevel, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Group withoutId() {
+        return new Group(0, customerId, teacherId, getUsesHourlyWage(), languageLevel, name, createdAt, updatedAt);
+    }
 	
 	@JsonProperty("customerId")
 	public Integer getCustomerId() {
@@ -56,12 +67,14 @@ public class Group {
 	}
 
     @JsonProperty("createdAt")
-    public Date getCreatedAt() {
+    @JsonSerialize(using = InstantSerializer.class)
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
-    public Date getUpdatedAt() {
+    @JsonSerialize(using = InstantSerializer.class)
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 	
@@ -115,7 +128,7 @@ public class Group {
 		this(id, customerId, teacherId, usesHourlyWage, languageLevel, name, null, null);
 	}
 
-    public Group(int id, Integer customerId, int teacherId, boolean usesHourlyWage, String languageLevel, String name, Date createdAt, Date updatedAt) {
+    public Group(int id, Integer customerId, int teacherId, boolean usesHourlyWage, String languageLevel, String name, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.customerId = customerId;
         this.teacherId = teacherId;
@@ -138,9 +151,9 @@ public class Group {
 		String name = groupRecord.getValue(GROUP_OF_STUDENTS.NAME);
 
         long createdTimestamp = groupRecord.getValue(GROUP_OF_STUDENTS.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        Instant createdAt = new Instant(createdTimestamp);
         long updatedTimestamp = groupRecord.getValue(GROUP_OF_STUDENTS.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+        Instant updatedAt = new Instant(updatedTimestamp);
 		return new Group(id, customerId, teacherId, usesHourlyWage, languageLevel, name, createdAt, updatedAt);
 	}
 
@@ -165,7 +178,7 @@ public class Group {
 	@Size(max = 30, message = "Name size must not exceed 30 characters")
 	private final String name;
 
-	private final Date createdAt;
-	private final Date updatedAt;
+	private final Instant createdAt;
+	private final Instant updatedAt;
 	
 }

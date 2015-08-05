@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.Email;
+import org.joda.time.Instant;
 import org.jooq.Record;
 
 import javax.validation.constraints.Max;
@@ -14,8 +17,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Date;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.TEACHER;
@@ -98,12 +99,14 @@ public class Teacher {
 	}
 
     @JsonProperty("createdAt")
-    public Date getCreatedAt() {
+	@JsonSerialize(using = InstantSerializer.class)
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
-    public Date getUpdatedAt() {
+	@JsonSerialize(using = InstantSerializer.class)
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 	
@@ -176,7 +179,7 @@ public class Teacher {
 	}
 
     public Teacher(int id, int paymentDay, BigDecimal hourlyWage, BigDecimal academicWage, String name, String surname,
-                   String phone, String city, String email, String picture, String document, String comment, Date createdAt, Date updatedAt) {
+                   String phone, String city, String email, String picture, String document, String comment, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.paymentDay = paymentDay;
         this.hourlyWage = hourlyWage;
@@ -210,10 +213,10 @@ public class Teacher {
 		String documentName = teacherRecord.getValue(TEACHER.DOCUMENT);
 		String comment = teacherRecord.getValue(TEACHER.COMMENT);
 
-        long createdTimestamp = teacherRecord.getValue(TEACHER.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
-        long updatedTimestamp = teacherRecord.getValue(TEACHER.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		long createdTimestamp = teacherRecord.getValue(TEACHER.CREATED_AT);
+		Instant createdAt = new Instant(createdTimestamp);
+		long updatedTimestamp = teacherRecord.getValue(TEACHER.UPDATED_AT);
+		Instant updatedAt = new Instant(updatedTimestamp);
 		return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, pictureName, documentName, comment, createdAt, updatedAt);
 	}
 
@@ -265,7 +268,7 @@ public class Teacher {
 	@Size(max = 500, message = "The comment must not exceed 500 characters")
 	private final String comment;
 
-	private final Date createdAt;
-    private final Date updatedAt;
+	private final Instant createdAt;
+    private final Instant updatedAt;
 
 }

@@ -2,8 +2,8 @@ package com.superum.db.group.student;
 
 import com.superum.exception.DatabaseException;
 import org.jooq.DSLContext;
-import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,7 +120,21 @@ public class StudentDAOImpl implements StudentDAO {
         }
 	}
 
-	// CONSTRUCTORS
+    @Override
+    public int setStudentCode(int studentId, int code, int partitionId) {
+        try {
+            return sql.update(STUDENT)
+                    .set(STUDENT.CODE, code)
+                    .where(STUDENT.ID.eq(studentId)
+                            .and(STUDENT.PARTITION_ID.eq(partitionId)))
+                    .execute();
+
+        } catch (DataAccessException e) {
+            throw new DatabaseException("An unexpected error occurred when trying to set student code: " + code, e);
+        }
+    }
+
+    // CONSTRUCTORS
 
 	@Autowired
 	public StudentDAOImpl(DSLContext sql) {

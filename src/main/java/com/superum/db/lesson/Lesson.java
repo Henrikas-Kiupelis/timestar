@@ -1,20 +1,24 @@
 package com.superum.db.lesson;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.helper.TimeConverter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
+import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
+import com.superum.helper.JodaTimeConverter;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
+import org.joda.time.Instant;
+import org.joda.time.LocalDate;
 import org.jooq.Record;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
-import java.util.Date;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.LESSON;
@@ -28,9 +32,18 @@ public class Lesson {
 	public long getId() {
 		return id;
 	}
+    @JsonIgnore
 	public boolean hasId() {
 		return id > 0;
 	}
+	@JsonIgnore
+	public Lesson withId(long id) {
+		return new Lesson(id, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
+	}
+    @JsonIgnore
+    public Lesson without() {
+        return new Lesson(0, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
+    }
 
 	@JsonProperty("groupId")
 	public int getGroupId() {
@@ -43,8 +56,8 @@ public class Lesson {
     }
 	
 	@JsonProperty("startDate")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
-	public Date getStartDate() {
+    @JsonSerialize(using = LocalDateSerializer.class)
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 	
@@ -60,16 +73,15 @@ public class Lesson {
 	
 	@JsonIgnore
 	public long getStartTime() {
-		return TimeConverter.time(startDate, startHour, startMinute);
+        return JodaTimeConverter.from(startDate, startHour, startMinute).toEpochMillis();
 	}
 
     @JsonProperty("endDate")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
-    public Date getEndDate() {
+    @JsonSerialize(using = LocalDateSerializer.class)
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-	
 	@JsonProperty("endHour")
 	public int getEndHour() {
 		return endHour;
@@ -82,10 +94,9 @@ public class Lesson {
 
     @JsonIgnore
     public long getEndTime() {
-        if (endDate != null && endHour != null && endMinute != null)
-            return TimeConverter.time(endDate, endHour, endMinute);
-
-        return TimeConverter.time(startDate, startHour, startMinute + length);
+        return endDate != null && endHour != null && endMinute != null
+                ? JodaTimeConverter.from(endDate, endHour, endMinute).toEpochMillis()
+                : JodaTimeConverter.from(startDate, startHour, startMinute + length).toEpochMillis();
     }
 
 	@JsonProperty("length")
@@ -99,12 +110,14 @@ public class Lesson {
 	}
 
     @JsonProperty("createdAt")
-    public Date getCreatedAt() {
+    @JsonSerialize(using = InstantSerializer.class)
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
-    public Date getUpdatedAt() {
+    @JsonSerialize(using = InstantSerializer.class)
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 	
@@ -141,7 +154,7 @@ public class Lesson {
 				&& this.startHour == other.startHour
 				&& this.startMinute == other.startMinute
                 && this.length == other.length
-                && ObjectUtils.equalsJavaUtilDate(this.startDate, other.startDate)
+                && Objects.equals(this.startDate, other.startDate)
 				&& Objects.equals(this.comment, other.comment);
 	}
 
@@ -154,7 +167,7 @@ public class Lesson {
 
 	public Lesson(@JsonProperty("id") long id,
 				@JsonProperty("groupId") int groupId, 
-				@JsonProperty("date") Date date,
+				@JsonProperty("startDate") @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate date,
 				@JsonProperty("startHour") int startHour,
 				@JsonProperty("startMinute") int startMinute,
 				@JsonProperty("length") int length,
@@ -162,8 +175,8 @@ public class Lesson {
 		this(id, groupId, null, date, startHour, startMinute, null, null, null, length, comment, null, null);
 	}
 
-    public Lesson(long id, int groupId, Integer teacherId, Date startDate, int startHour, int startMinute, Date endDate,
-                  Integer endHour, Integer endMinute, int length, String comment, Date createdAt, Date updatedAt) {
+    public Lesson(long id, int groupId, Integer teacherId, LocalDate startDate, int startHour, int startMinute, LocalDate endDate,
+                  Integer endHour, Integer endMinute, int length, String comment, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.groupId = groupId;
         this.teacherId = teacherId;
@@ -188,24 +201,24 @@ public class Lesson {
         int teacherId = lessonRecord.getValue(LESSON.TEACHER_ID);
 
         long startTimestamp = lessonRecord.getValue(LESSON.TIME_OF_START);
-        TimeConverter startConverter = new TimeConverter(startTimestamp);
-		Date startDate = startConverter.date();
-        int startHour = startConverter.hour();
-        int startMinute = startConverter.minute();
+        JodaTimeConverter start = JodaTimeConverter.from(startTimestamp);
+		LocalDate startDate = start.toOrgJodaTimeLocalDate();
+        int startHour = start.toHours();
+        int startMinute = start.toMinutes();
 
         long endTimestamp = lessonRecord.getValue(LESSON.TIME_OF_END);
-        TimeConverter endConverter = new TimeConverter(endTimestamp);
-        Date endDate = endConverter.date();
-        int endHour = endConverter.hour();
-        int endMinute = endConverter.minute();
+        JodaTimeConverter end = JodaTimeConverter.from(endTimestamp);
+        LocalDate endDate = end.toOrgJodaTimeLocalDate();
+        int endHour = end.toHours();
+        int endMinute = end.toMinutes();
 
         int length = lessonRecord.getValue(LESSON.DURATION_IN_MINUTES);
 		String comment = lessonRecord.getValue(LESSON.COMMENT);
 
         long createdTimestamp = lessonRecord.getValue(LESSON.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+		Instant createdAt = new Instant(createdTimestamp);
         long updatedTimestamp = lessonRecord.getValue(LESSON.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		Instant updatedAt = new Instant(updatedTimestamp);
 		return new Lesson(id, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
 	}
 
@@ -220,7 +233,7 @@ public class Lesson {
     private final Integer teacherId;
 	
 	@NotNull(message = "The date must be set")
-	private final Date startDate;
+	private final LocalDate startDate;
 	
 	@Min(value = 0, message = "The hour must be at least 0")
 	@Max(value = 23, message = "The hour must be at most 23")
@@ -230,7 +243,7 @@ public class Lesson {
 	@Max(value = 59, message = "The minute must be at most 59")
 	private final int startMinute;
 
-    private final Date endDate;
+    private final LocalDate endDate;
 	private final Integer endHour;
 	private final Integer endMinute;
 	
@@ -241,7 +254,7 @@ public class Lesson {
 	@Size(max = 500, message = "The comment must not exceed 500 characters")
 	private final String comment;
 
-	private final Date createdAt;
-    private final Date updatedAt;
+	private final Instant createdAt;
+    private final Instant updatedAt;
 	
 }

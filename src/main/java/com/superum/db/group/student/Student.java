@@ -1,17 +1,27 @@
 package com.superum.db.group.student;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
+import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
+import com.superum.helper.JodaLocalDate;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.RandomUtils;
 import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.Email;
+import org.joda.time.Instant;
+import org.joda.time.LocalDate;
 import org.jooq.Record;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.Instant;
-import java.util.Date;
+import java.text.ParseException;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.STUDENT;
@@ -25,17 +35,30 @@ public class Student {
 	public int getId() {
 		return id;
 	}
+	@JsonIgnore
 	public boolean hasId() {
 		return id > 0;
 	}
+    @JsonIgnore
+    public Student withId(int id) {
+        return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Student withoutId() {
+        return new Student(0, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
 
     @JsonProperty("code")
     public Integer getCode() {
         return code;
     }
-
+	@JsonIgnore
     public Student withCode(int code) {
         return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Student withoutCode() {
+        return new Student(id, null, customerId, startDate, email, name, createdAt, updatedAt);
     }
 
     public Student withGeneratedCode() {
@@ -48,14 +71,18 @@ public class Student {
 	}
 
     @JsonProperty("startDate")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="UTC")
-    public Date getStartDate() {
+    @JsonSerialize(using = LocalDateSerializer.class)
+    public LocalDate getStartDate() {
         return startDate;
     }
 
     @JsonIgnore
     public java.sql.Date getStartDateSql() {
-        return new java.sql.Date(startDate.getTime());
+        try {
+            return JodaLocalDate.from(startDate).toJavaSqlDate();
+        } catch (ParseException e) {
+            throw new IllegalStateException("Error occurred when parsing date while writing Student to database: " + startDate, e);
+        }
     }
 	
 	@JsonProperty("email")
@@ -69,12 +96,14 @@ public class Student {
 	}
 
     @JsonProperty("createdAt")
-    public Date getCreatedAt() {
+    @JsonSerialize(using = InstantSerializer.class)
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
-    public Date getUpdatedAt() {
+    @JsonSerialize(using = InstantSerializer.class)
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
@@ -110,7 +139,7 @@ public class Student {
 		return this.id == other.id
                 && Objects.equals(this.code, other.code)
 				&& Objects.equals(this.customerId, other.customerId)
-                && ObjectUtils.equalsJavaUtilDate(this.startDate, other.startDate)
+                && Objects.equals(this.startDate, other.startDate)
 				&& Objects.equals(this.email, other.email)
 				&& Objects.equals(this.name, other.name);
 	}
@@ -125,13 +154,13 @@ public class Student {
 	@JsonCreator
 	public Student(@JsonProperty("id") int id,
                    @JsonProperty("customerId") Integer customerId,
-                   @JsonProperty("startDate")  Date startDate,
+                   @JsonProperty("startDate") @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate startDate,
                    @JsonProperty("email") String email,
                    @JsonProperty("name") String name) {
 		this(id, null, customerId, startDate, email, name, null, null);
 	}
 
-    public Student(int id, Integer code, Integer customerId, Date startDate, String email, String name, Date createdAt, Date updatedAt) {
+    public Student(int id, Integer code, Integer customerId, LocalDate startDate, String email, String name, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.code = code;
         this.customerId = customerId;
@@ -147,16 +176,16 @@ public class Student {
 			return null;
 		
 		int id = studentRecord.getValue(STUDENT.ID);
-        int code = studentRecord.getValue(STUDENT.CODE);
+        Integer code = studentRecord.getValue(STUDENT.CODE);
         Integer customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
-        Date startDate = studentRecord.getValue(STUDENT.START_DATE);
+        LocalDate startDate = from(studentRecord.getValue(STUDENT.START_DATE));
 		String email = studentRecord.getValue(STUDENT.EMAIL);
 		String name = studentRecord.getValue(STUDENT.NAME);
 
         long createdTimestamp = studentRecord.getValue(STUDENT.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
+        Instant createdAt = new Instant(createdTimestamp);
         long updatedTimestamp = studentRecord.getValue(STUDENT.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+        Instant updatedAt = new Instant(updatedTimestamp);
 		return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
 	}
 
@@ -170,7 +199,7 @@ public class Student {
 	private final Integer customerId;
 
     @NotNull(message = "There must be a start date")
-    private final Date startDate;
+    private final LocalDate startDate;
 	
 	@NotNull(message = "The student must have an email")
 	@Size(max = 60, message = "Email size must not exceed 60 characters")
@@ -181,7 +210,15 @@ public class Student {
 	@Size(max = 60, message = "Name size must not exceed 60 characters")
 	private final String name;
 
-    private final Date createdAt;
-    private final Date updatedAt;
+    private final Instant createdAt;
+    private final Instant updatedAt;
+
+    private static LocalDate from(java.sql.Date sqlDate) {
+        try {
+            return JodaLocalDate.from(sqlDate).toOrgJodaTimeLocalDate();
+        } catch (ParseException e) {
+            throw new IllegalStateException("Error occurred when parsing date while reading Student from database: " + sqlDate, e);
+        }
+    }
 	
 }

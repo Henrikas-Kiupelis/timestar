@@ -1,9 +1,10 @@
 package com.superum.db.customer;
 
+import com.superum.api.customer.CustomerNotFoundException;
 import com.superum.exception.DatabaseException;
 import org.jooq.DSLContext;
-import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ public class CustomerDAOImpl implements CustomerDAO {
                     .fetch().stream()
                     .findFirst()
                     .map(Customer::valueOf)
-                    .orElseThrow(() -> new DatabaseException("Couldn't find customer with ID: " + id));
+                    .orElseThrow(() -> new CustomerNotFoundException("Couldn't find customer with id: " + id));
         } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when trying to read customer with id " + id, e);
         }

@@ -6,6 +6,7 @@ import com.superum.db.account.AccountDAO;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
 import com.superum.exception.DatabaseException;
+import com.superum.utils.FakeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 import static com.superum.utils.FakeUtils.makeFakeTeacher;
-import static com.superum.utils.FakeUtils.makeSomeFakeTeachers;
+import static com.superum.utils.FakeUtils.makeSomeFakes;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -47,7 +48,6 @@ public class TeacherServiceTests {
     public void testAddingTeacher() {
         int id = 1;
         int partitionId = 0;
-
         Teacher addedTeacher = makeFakeTeacher(id);
         Teacher originalTeacher = addedTeacher.withoutId();
 
@@ -59,18 +59,15 @@ public class TeacherServiceTests {
                 addedTeacher, retrievedTeacher);
 
         verify(teacherDAO, times(1)).create(originalTeacher, partitionId);
-
     }
 
     @Test
     public void testFindingExistingTeacher() {
         int id = 1;
         int partitionId = 0;
-
         Teacher teacher = makeFakeTeacher(id);
 
         when(teacherDAO.read(id, partitionId)).thenReturn(teacher);
-
 
         Teacher retrievedTeacher = teacherService.findTeacher(id, partitionId);
 
@@ -80,13 +77,11 @@ public class TeacherServiceTests {
         verify(teacherDAO, times(1)).read(id, partitionId);
     }
 
-    //+
     @Test
     public void testDeletingTeacher() {
         int id = 1;
         int partitionId = 0;
         Teacher teacher = makeFakeTeacher(id);
-
 
         when(teacherDAO.delete(id, partitionId)).thenReturn(teacher);
 
@@ -103,9 +98,7 @@ public class TeacherServiceTests {
     public void testUpdatingExistingTeacherData() {
         int id = 1;
         int partitionId = 0;
-
         Teacher originalTeacher = makeFakeTeacher(id);
-
 
         Teacher updatedTeacher = makeFakeTeacher(id + 1).withId(id);
 
@@ -116,13 +109,11 @@ public class TeacherServiceTests {
         assertEquals("Original teacher data should be the same as retrieved one;",
                 originalTeacher, retrievedTeacher);
 
-
         verify(teacherDAO, times(1)).update(updatedTeacher, partitionId);
     }
 
     @Test(expected = DatabaseException.class)
     public void testUpdatingNonExistingTeacher() {
-
         int id = Integer.MAX_VALUE;
         int partitionId = 0;
         Teacher nonExistentTeacher = makeFakeTeacher(id);
@@ -135,7 +126,8 @@ public class TeacherServiceTests {
     @Test
     public void testGettingAllTeachers() {
         int partitionId = 0;
-        List<Teacher> fakeTeachers = makeSomeFakeTeachers(2);
+        List<Teacher> fakeTeachers = makeSomeFakes(2, FakeUtils::makeFakeTeacher);
+
 
         when(teacherDAO.readAll(partitionId)).thenReturn(fakeTeachers);
 

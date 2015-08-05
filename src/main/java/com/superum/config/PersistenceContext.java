@@ -1,20 +1,11 @@
 package com.superum.config;
 
-import java.beans.PropertyVetoException;
-
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.jooq.ExecuteContext;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DataSourceConnectionProvider;
-import org.jooq.impl.DefaultConfiguration;
-import org.jooq.impl.DefaultDSLContext;
-import org.jooq.impl.DefaultExecuteListener;
-import org.jooq.impl.DefaultExecuteListenerProvider;
+import org.jooq.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -27,9 +18,8 @@ import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLStateSQLExceptionTranslator;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-
 import javax.sql.DataSource;
+import java.beans.PropertyVetoException;
 
 @Configuration
 @EnableTransactionManagement
@@ -41,6 +31,7 @@ public class PersistenceContext {
     Environment env;
     
     @Bean(destroyMethod = "close")
+    @Primary
     public DataSource dataSource() {
     	ComboPooledDataSource dataSource = new ComboPooledDataSource();
  

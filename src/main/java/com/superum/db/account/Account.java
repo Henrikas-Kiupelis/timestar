@@ -4,15 +4,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.Instant;
 import org.jooq.Record;
 
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.ACCOUNT;
@@ -38,12 +39,14 @@ public class Account {
 	}
 
 	@JsonProperty("createdAt")
-    public Date getCreatedAt() {
+	@JsonSerialize(using = InstantSerializer.class)
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("updatedAt")
-    public Date getUpdatedAt() {
+    @JsonSerialize(using = InstantSerializer.class)
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 	
@@ -102,7 +105,7 @@ public class Account {
 		this(id, username, accountType, password, null, null);
 	}
 
-    public Account(int id, String username, String accountType, char[] password, Date createdAt, Date updatedAt) {
+    public Account(int id, String username, String accountType, char[] password, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.username = username;
         this.accountType = accountType == null ? null : AccountType.valueOf(accountType);
@@ -120,10 +123,10 @@ public class Account {
 		String accountType = accountRecord.getValue(ACCOUNT.ACCOUNT_TYPE);
 		char[] password = accountRecord.getValue(ACCOUNT.PASSWORD).toCharArray();
 
-        long createdTimestamp = accountRecord.getValue(ACCOUNT.CREATED_AT);
-        Date createdAt = Date.from(Instant.ofEpochMilli(createdTimestamp));
-        long updatedTimestamp = accountRecord.getValue(ACCOUNT.UPDATED_AT);
-        Date updatedAt = Date.from(Instant.ofEpochMilli(updatedTimestamp));
+		long createdTimestamp = accountRecord.getValue(ACCOUNT.CREATED_AT);
+		Instant createdAt = new Instant(createdTimestamp);
+		long updatedTimestamp = accountRecord.getValue(ACCOUNT.UPDATED_AT);
+		Instant updatedAt = new Instant(updatedTimestamp);
 		return new Account(id, username, accountType, password, createdAt, updatedAt);
 	}
 
@@ -139,7 +142,7 @@ public class Account {
 	@NotEmpty
 	private char[] password;
 
-    private final Date createdAt;
-    private final Date updatedAt;
+    private final Instant createdAt;
+    private final Instant updatedAt;
 	
 }

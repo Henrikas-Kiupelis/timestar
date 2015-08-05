@@ -1,8 +1,8 @@
 package com.superum.utils;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 public class ObjectUtils {
 
@@ -17,11 +17,11 @@ public class ObjectUtils {
         return init;
     }
 
-    public static boolean equalsJavaSqlDate(Date date1, Date date2) {
+    public static boolean equalsJavaSqlDate(java.sql.Date date1, java.sql.Date date2) {
         return date1 == null ? date2 == null : date1.toString().equals(date2.toString());
     }
 
-    public static boolean equalsJavaUtilDate(java.util.Date date1, java.util.Date date2) {
+    public static boolean equalsJavaUtilDate(Date date1, Date date2) {
         return date1 == null ? date2 == null : date1.toInstant().truncatedTo(ChronoUnit.DAYS).equals(date2.toInstant().truncatedTo(ChronoUnit.DAYS));
     }
 

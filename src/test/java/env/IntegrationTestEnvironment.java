@@ -3,6 +3,8 @@ package env;
 import com.superum.TimeStarBackEndApplication;
 import com.superum.config.PersistenceContext;
 import com.superum.config.SecurityConfig;
+import com.superum.helper.DatabaseHelper;
+import com.superum.helper.HelperConfiguration;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.jooq.DSLContext;
 import org.junit.Before;
@@ -17,6 +19,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
@@ -24,9 +27,12 @@ import javax.naming.NamingException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {TimeStarBackEndApplication.class, PersistenceContext.class, SecurityConfig.class})
+@ContextConfiguration(classes = {TimeStarBackEndApplication.class, PersistenceContext.class, SecurityConfig.class, HelperConfiguration.class})
 @TransactionConfiguration(defaultRollback = true)
+@Transactional
 public abstract class IntegrationTestEnvironment {
+
+    public static final int TEST_PARTITION = 0;
 
     @Before
     public void setupMockMvc() throws NamingException {
@@ -43,11 +49,14 @@ public abstract class IntegrationTestEnvironment {
     @Autowired
     protected DSLContext sql;
 
+    @Autowired
+    protected DatabaseHelper databaseHelper;
+
     protected String authHeader() {
         return TOKEN_HEADER;
     }
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(IntegrationTestEnvironment.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(IntegrationTestEnvironment.class);
 
     // PRIVATE
 
@@ -57,7 +66,7 @@ public abstract class IntegrationTestEnvironment {
     @Resource
     private FilterChainProxy springSecurityFilterChain;
 
-    private static final String USERNAME = "1.test";
+    private static final String USERNAME = TEST_PARTITION + ".test";
     private static final String PASSWORD = "test";
     private static final byte[] TOKEN = (USERNAME + ":" + PASSWORD).getBytes();
     private static final String TOKEN_HEADER = "Basic " + Base64.encodeBase64String(TOKEN);

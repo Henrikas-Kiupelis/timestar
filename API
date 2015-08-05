@@ -1,3 +1,202 @@
+API V2:
+
+First of all, the API is partitioned. This basically means that depending on the user who is accessing the API,
+a different portion of the database will be used. All API calls are available only for the user's partition, with
+the exception of the partition API itself.
+Generally, this means that the username authorization is slightly more complicated (partition id must be added to the
+auth header) - this might be changed at a later date - but for all intents and purposes, every partition functions
+in exactly the same manner.
+
+Secondly, all APIv2 calls will have the following prefix, unless stated otherwise:
+
+    http://{IP}:{PORT}/timestar/api/v2/
+
+The API might switch to HTTPS eventually.
+
+All the methods will be given in this format (example):
+
+(1)    GET  /lesson/table/{pageId}
+(2)         pageId      int            0 < pageId <= MAX_INT
+(3)    OPT  per_page    int            0 < per_page <= 100; DEF 6
+(4)    OPT  start_date  java.sql.Date  any; DEF today
+(5)    OPT  end_date    java.sql.Date  any; DEF start_date
+(6)    RET  com.superum.db.lesson.table.core.LessonTable
+
+GET refers to the HTTP method the request expects;
+/lesson/table are constant mappings, which should always be in the request;
+/{pageId} is a mutable mapping; it must also always be in the request, but just like a normal parameter,
+    it can have different values and has certain limitations;
+(2) shows what the limitations for {pageId} are; specifically, that it is an integer and must be positive;
+(3) to (5) show parameters; REQ means that the parameter must be in the request, whereas OPT means that
+this parameter can be skipped; finally, if the parameter is optional, then it WILL provide the default value
+using the
+
+    ; DEF
+
+modifier; in this case, if per_page is not present, it defaults to 6; if start_date is not present, it defaults to
+today's date; if end_date is not present, it defaults to start_date
+(which will be today's date, if it also was not present)
+(6) shows what kind of Class object is returned by the request, assuming it is successful; JSON format is used in all
+methods, unless stated otherwise; please refer to the appropriate Class documentation
+One more modifier exists:
+
+    BODY
+
+which means that the method expects HTTP Body part; it also specifies a particular Class, just like RET.
+
+Finally, all API methods expect an auth header, unless stated otherwise;
+Currently (2015-07-20) a BASIC auth header is used:
+
+    Authentication: Basic base64(username:password)
+
+It is important to note, that username takes the following form:
+
+    partitionId.actualUsername
+
+This allows same username/email/etc to be used in separate partitions;
+This will be changed into a more secure scheme at a later date, when the basic functionality of the app has been
+realized and somewhat tested.
+
+Next, there will be a short description of the method, including:
+1) what the method does; if there's any special behaviour it is necessarily described here;
+2) when will the method fail, and what error response you can expect as a result;
+   obvious failures, such as breaking the limitations of parameters or failing to provide requires ones are omitted;
+3) the structure/meaning of the returned value; this can be described in 1) if it makes sense to do so;
+
+Customer API:
+
+1)
+    POST  /customer/create
+    BODY  com.superum.api.customer.FullCustomer
+    RET   com.superum.api.customer.FullCustomer
+
+    Creates a new customer;
+
+    It will fail if:
+    a) HTTP 400; the id field was set;
+    b) HTTP 400; a mandatory field was not set;
+
+    Returned FullCustomer will have its id field set;
+
+2)
+    GET  /customer/{customerId}
+         customerId     int            0 < customerId <= MAX_INT
+    RET  com.superum.api.customer.FullCustomer
+
+    Reads and returns an existing customer;
+
+    It will fail if:
+    a) HTTP 404; no customer with provided id exists;
+
+3)
+    POST  /customer/update
+    BODY  com.superum.api.customer.FullCustomer
+    RET   com.superum.api.customer.FullCustomer
+
+    Updates an existing customer; only fields that are sent are updated;
+
+    It will fail if:
+    a) HTTP 400; the id field was not set;
+    b) HTTP 400; only the id field was set and no other fields were;
+    c) HTTP 404; no customer with provided id exists;
+
+    Returned FullCustomer contains all the fields as they were before updating;
+
+4)
+    DELETE  /customer/delete/{customerId}
+            customerId     int            0 < customerId <= MAX_INT
+    RET     com.superum.api.customer.FullCustomer
+
+    Deletes an existing customer;
+
+    It will fail if:
+    a) HTTP 404; no customer with provided id exists;
+
+    Returned FullCustomer contains all the fields as they were before deleting;
+
+5)
+    GET  customer/for/teacher/{teacherId}
+         teacherId      int            0 < teacherId <= MAX_INT
+    OPT  page           int            0 < page <= MAX_INT; DEF 1
+    OPT  per_page       int            0 < per_page <= 100; DEF 25
+    RET  List<com.superum.api.customer.FullCustomer>
+
+    Reads and returns a list of customers for a certain teacher;
+    To determine if a certain customer is tied to a teacher, the following examination is made:
+    1) customers have students;
+    2) students are in groups;
+    3) teachers are responsible for groups;
+    4) so, a customer is tied to a teacher if they have any students in any groups that the teacher is responsible for;
+
+    It will fail if:
+    a) HTTP 404; no teacher with provided id exists;
+
+    Returned List is paged; using DEF parameter values, only first 25 customers will be returned; to access the rest,
+    the page parameter must be incremented, or per_page value raised;
+    If a customer is deleted, the results of this query will no longer be consistent with the ones before the deletion;
+
+6)
+    GET  customer/all
+    OPT  page           int            0 < page <= MAX_INT; DEF 1
+    OPT  per_page       int            0 < per_page <= 100; DEF 25
+    RET  List<com.superum.api.customer.FullCustomer>
+
+    Reads and returns a list of all customers;
+
+    It shouldn't fail under normal circumstances;
+
+    Returned List is paged; using DEF parameter values, only first 25 customers will be returned; to access the rest,
+    the page parameter must be incremented, or per_page value raised;
+    If a customer is deleted, the results of this query will no longer be consistent with the ones before the deletion;
+
+7)
+    GET  customer/for/teacher/{teacherId}/count
+         teacherId      int            0 < teacherId <= MAX_INT
+    RET  int
+
+    Counts and returns the amount of all customers for a certain teacher;
+    To determine if a certain customer is tied to a teacher, the following examination is made:
+    1) customers have students;
+    2) students are in groups;
+    3) teachers are responsible for groups;
+    4) so, a customer is tied to a teacher if they have any students in any groups that the teacher is responsible for;
+
+    It will fail if:
+    a) HTTP 404; no teacher with provided id exists;
+
+8)
+    GET  customer/all/count
+    RET  int
+
+    Counts and returns the amount of all customers;
+
+    It shouldn't fail under normal circumstances;
+
+9)
+    POST  customer/exists
+    BODY  com.superum.api.customer.FullCustomer
+    RET   com.superum.api.customer.FullCustomer
+
+    Checks if a customer with specified bounds exists;
+    The simplest use case is to check if a user with a particular id exists, or checking if a certain user's
+    fields are set to some value;
+
+    It will fail if:
+    a) HTTP 400; no fields were set;
+    b) HTTP 404; no customers for given fields were found;
+
+    Returned FullCustomer is any single customer that match all the criteria. The only scenario where uniqueness is
+    guaranteed is when the id field is set.
+
+Teacher API:
+
+
+
+API V1:
+
+Below is a rough explanation of v1 API; for all intents and purposes it is deprecated, with the exception of everything,
+that is also documented above;
+
 PREFIX:
 
 http://{IP}:{PORT}

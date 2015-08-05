@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.httpBasic()
 				.and()
-				.csrf().disable();
+			.csrf().disable();
 	}
 
 	@Bean
@@ -53,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public UserDetailsService userDetailsServiceBean() throws Exception {
 		return super.userDetailsServiceBean();
 	}
-
+	
 	private static final String USERS_QUERY = "select username,password,enabled from account where username = ?";
 	private static final String AUTHORITIES_QUERY = "select username,role from roles where username = ?";
 

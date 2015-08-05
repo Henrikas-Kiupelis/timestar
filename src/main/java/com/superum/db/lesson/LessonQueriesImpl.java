@@ -4,8 +4,8 @@ import com.superum.exception.DatabaseException;
 import com.superum.utils.ConditionUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
