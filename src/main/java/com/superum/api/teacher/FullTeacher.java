@@ -7,13 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.superum.db.teacher.Teacher;
 import com.superum.db.teacher.lang.TeacherLanguages;
-import com.superum.fields.Field;
-import com.superum.fields.Mandatory;
-import com.superum.fields.NamedField;
-import com.superum.fields.SimpleField;
-import com.superum.fields.primitives.IntField;
-import com.superum.helper.AbstractFullClassWithTimestamps;
-import com.superum.helper.SetFieldComparator;
+import com.superum.helper.fields.AbstractFullClassWithTimestamps;
+import com.superum.helper.fields.core.Field;
+import com.superum.helper.fields.core.Mandatory;
+import com.superum.helper.fields.core.NamedField;
+import com.superum.helper.fields.core.SimpleField;
+import com.superum.helper.fields.primitives.IntField;
+import com.superum.helper.jooq.SetFieldComparator;
 import org.joda.time.Instant;
 import org.jooq.Record;
 
@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.superum.utils.ValidationUtils.*;
+import static com.superum.helper.utils.ValidationUtils.*;
 
 /**
  * <pre>

@@ -7,8 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.superum.db.teacher.WageType;
-import com.superum.utils.ObjectUtils;
-import com.superum.utils.StringUtils;
+import com.superum.helper.utils.StringUtils;
 import org.joda.time.Instant;
 import org.jooq.Record;
 
@@ -113,7 +112,7 @@ public class Group {
 
 	@Override
 	public int hashCode() {
-        return ObjectUtils.hash(id, customerId, teacherId, wage, languageLevel, name);
+        return Objects.hash(id, customerId, teacherId, wage, languageLevel, name);
 	}
 
 	// CONSTRUCTORS

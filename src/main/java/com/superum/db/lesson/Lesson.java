@@ -9,8 +9,7 @@ import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.superum.helper.JodaTimeConverter;
-import com.superum.utils.ObjectUtils;
-import com.superum.utils.StringUtils;
+import com.superum.helper.utils.StringUtils;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
@@ -160,7 +159,7 @@ public class Lesson {
 
 	@Override
 	public int hashCode() {
-        return ObjectUtils.hash(id, groupId, startDate, startHour, startMinute, length, comment);
+        return Objects.hash(id, groupId, startDate, startHour, startMinute, length, comment);
 	}
 
 	// CONSTRUCTORS

@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
-import com.superum.utils.ObjectUtils;
-import com.superum.utils.StringUtils;
+import com.superum.helper.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.Instant;
 import org.jooq.Record;
@@ -92,7 +91,7 @@ public class Account {
 
 	@Override
 	public int hashCode() {
-        return ObjectUtils.hash(id, username, accountType, password);
+        return Objects.hash(id, username, accountType, password);
 	}
 
 	// CONSTRUCTORS

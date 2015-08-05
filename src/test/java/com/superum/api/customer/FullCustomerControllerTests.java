@@ -1,7 +1,7 @@
 package com.superum.api.customer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.superum.utils.FakeUtils;
+import com.superum.helper.utils.FakeUtils;
 import env.IntegrationTestEnvironment;
 import org.junit.Test;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.superum.utils.FakeUtils.makeFakeFullCustomer;
-import static com.superum.utils.FakeUtils.makeSomeFakes;
-import static com.superum.utils.TestUtils.*;
+import static com.superum.helper.utils.FakeUtils.makeFakeFullCustomer;
+import static com.superum.helper.utils.FakeUtils.makeSomeFakes;
+import static com.superum.helper.utils.TestUtils.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

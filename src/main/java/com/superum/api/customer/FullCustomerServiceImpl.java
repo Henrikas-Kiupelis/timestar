@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -26,7 +27,8 @@ public class FullCustomerServiceImpl implements FullCustomerService {
             throw new InvalidCustomerException("Provided customer has its id set; please unset it or use /update instead!");
 
         if (!fullCustomer.canBeInserted())
-            throw new InvalidCustomerException("Provided customer does not have the following mandatory fields set: " + fullCustomer.missingMandatoryFieldNames());
+            throw new InvalidCustomerException("Provided customer does not have the following mandatory fields set: "
+                    + fullCustomer.missingMandatoryFieldNames().collect(Collectors.joining(", ")));
 
         LOG.debug("Creating new customer: {}", fullCustomer);
 

@@ -6,6 +6,8 @@ This file should contain a rough list of ideas/things to be done in the future:
 
 A) Things to definitely do in the future
 
+    Change date requests to timestamp values (ONLY IF ROMAN AGREES)
+
     Add paymentDay fields to Student/Customer, however they should be calculated from their startDate fields, i.e. in the
     getter method (or cached, tho I don't think that's needed)
 

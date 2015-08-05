@@ -1,7 +1,7 @@
 package com.superum.api.quick;
 
-import com.superum.helper.QuickForeignKeyUsageChecker;
-import com.superum.helper.QuickIdExistenceChecker;
+import com.superum.helper.jooq.QuickForeignKeyUsageChecker;
+import com.superum.helper.jooq.QuickIdExistenceChecker;
 import org.jooq.Record;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
