@@ -3,6 +3,7 @@ package com.superum.db.lesson.attendance;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.superum.utils.ObjectUtils;
 import com.superum.utils.StringUtils;
 
 import javax.validation.constraints.Min;
@@ -28,7 +29,7 @@ public class LessonAttendance {
 
 	@Override
 	public String toString() {
-		return "LessonAttendance" + StringUtils.toString(
+		return "ExtendedLessonAttendance" + StringUtils.toString(
 				"Lesson ID: " + lessonId,
 				"Students: " + studentIds);
 	}
@@ -49,17 +50,14 @@ public class LessonAttendance {
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result = (result << 5) - result + (int)lessonId;
-		result = (result << 5) - result + (studentIds == null ? 0 : studentIds.hashCode());
-		return result;
+		return ObjectUtils.hash(lessonId, studentIds);
 	}
 
 	// CONSTRUCTORS
 
 	@JsonCreator
 	public LessonAttendance(@JsonProperty("id") long lessonId,
-					  @JsonProperty("studentIds") List<Integer> studentIds) {
+                            @JsonProperty("studentIds") List<Integer> studentIds) {
 		this.lessonId = lessonId;
 		this.studentIds = studentIds;
 	}

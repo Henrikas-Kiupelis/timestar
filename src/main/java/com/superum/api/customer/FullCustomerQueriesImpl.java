@@ -210,7 +210,7 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
                 .fieldCheck(FullCustomer::hasName, CUSTOMER.NAME, FullCustomer::getName)
                 .fieldCheck(FullCustomer::hasPhone, CUSTOMER.PHONE, FullCustomer::getPhone)
                 .fieldCheck(FullCustomer::hasWebsite, CUSTOMER.WEBSITE, FullCustomer::getWebsite)
-                .fieldCheck(FullCustomer::hasPictureName, CUSTOMER.PICTURE, FullCustomer::getPictureName)
+                .fieldCheck(FullCustomer::hasPictureName, CUSTOMER.PICTURE, FullCustomer::getPicture)
                 .fieldCheck(FullCustomer::hasComment, CUSTOMER.COMMENT, FullCustomer::getComment)
                 .finalCondition();
     }
@@ -224,7 +224,7 @@ public class FullCustomerQueriesImpl extends QuickQueries<CustomerRecord, Intege
                 .setField(FullCustomer::hasName, CUSTOMER.NAME, FullCustomer::getName)
                 .setField(FullCustomer::hasPhone, CUSTOMER.PHONE, FullCustomer::getPhone)
                 .setField(FullCustomer::hasWebsite, CUSTOMER.WEBSITE, FullCustomer::getWebsite)
-                .setField(FullCustomer::hasPictureName, CUSTOMER.PICTURE, FullCustomer::getPictureName)
+                .setField(FullCustomer::hasPictureName, CUSTOMER.PICTURE, FullCustomer::getPicture)
                 .setField(FullCustomer::hasComment, CUSTOMER.COMMENT, FullCustomer::getComment)
                 .finalStep();
     }

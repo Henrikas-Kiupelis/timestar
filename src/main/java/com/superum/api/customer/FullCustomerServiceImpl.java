@@ -9,10 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class FullCustomerServiceImpl implements FullCustomerService {
 
     @Override
@@ -43,7 +45,7 @@ public class FullCustomerServiceImpl implements FullCustomerService {
         LOG.debug("Reading customer with id: {}", customerId);
 
         Customer customer = customerService.findCustomer(customerId, partitionId);
-        FullCustomer fullCustomer = new FullCustomer(customer);
+        FullCustomer fullCustomer = FullCustomer.valueOf(customer);
         LOG.debug("Customer retrieved: {}", fullCustomer);
 
         return fullCustomer;

@@ -157,7 +157,16 @@ public class Group {
 		return new Group(id, customerId, teacherId, usesHourlyWage, languageLevel, name, createdAt, updatedAt);
 	}
 
-	// PRIVATE
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static TeacherIdStep stepBuilder() {
+        return new Builder();
+    }
+
+    // PRIVATE
 
 	@Min(value = 0, message = "Negative group ids not allowed")
 	private final int id;
@@ -180,5 +189,111 @@ public class Group {
 
 	private final Instant createdAt;
 	private final Instant updatedAt;
-	
+
+    // GENERATED
+
+    public interface TeacherIdStep {
+        UsesHourlyWageStep teacherId(int teacherId);
+    }
+
+    public interface UsesHourlyWageStep {
+        LanguageLevelStep usesHourlyWage(boolean usesHourlyWage);
+    }
+
+    public interface LanguageLevelStep {
+        NameStep languageLevel(String languageLevel);
+    }
+
+    public interface NameStep {
+        BuildStep name(String name);
+    }
+
+    public interface BuildStep {
+        BuildStep id(int id);
+        BuildStep customerId(Integer customerId);
+        BuildStep createdAt(Instant createdAt);
+        BuildStep createdAt(long createdAt);
+        BuildStep updatedAt(Instant updatedAt);
+        BuildStep updatedAt(long updatedAt);
+        Group build();
+    }
+
+
+    public static class Builder implements TeacherIdStep, UsesHourlyWageStep, LanguageLevelStep, NameStep, BuildStep {
+        private int id;
+        private Integer customerId;
+        private int teacherId;
+        private boolean usesHourlyWage;
+        private String languageLevel;
+        private String name;
+        private Instant createdAt;
+        private Instant updatedAt;
+
+        private Builder() {}
+
+        @Override
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
+
+        @Override
+        public Builder customerId(Integer customerId) {
+            this.customerId = customerId;
+            return this;
+        }
+
+        @Override
+        public Builder teacherId(int teacherId) {
+            this.teacherId = teacherId;
+            return this;
+        }
+
+        @Override
+        public Builder usesHourlyWage(boolean usesHourlyWage) {
+            this.usesHourlyWage = usesHourlyWage;
+            return this;
+        }
+
+        @Override
+        public Builder languageLevel(String languageLevel) {
+            this.languageLevel = languageLevel;
+            return this;
+        }
+
+        @Override
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public Builder createdAt(Instant createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        @Override
+        public Builder createdAt(long createdAt) {
+            this.createdAt = new Instant(createdAt);
+            return this;
+        }
+
+        @Override
+        public Builder updatedAt(Instant updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        @Override
+        public Builder updatedAt(long updatedAt) {
+            this.updatedAt = new Instant(updatedAt);
+            return this;
+        }
+
+        @Override
+        public Group build() {
+            return new Group(id, customerId, teacherId, usesHourlyWage, languageLevel, name, createdAt, updatedAt);
+        }
+    }
 }

@@ -189,7 +189,15 @@ public class Student {
 		return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
 	}
 
-	// PRIVATE
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static CustomerIdStep stepBuilder() {
+        return new Builder();
+    }
+
+    // PRIVATE
 
 	@Min(value = 0, message = "Negative student ids not allowed")
 	private final int id;
@@ -220,5 +228,125 @@ public class Student {
             throw new IllegalStateException("Error occurred when parsing date while reading Student from database: " + sqlDate, e);
         }
     }
-	
+
+    // GENERATED
+
+    public interface CustomerIdStep {
+        NameStep customerId(Integer customerId);
+        EmailStep noCustomer();
+    }
+
+    public interface StartDateStep {
+        EmailStep withStartDate(LocalDate startDate);
+        EmailStep withStartDate(String startDate);
+    }
+
+    public interface EmailStep {
+        NameStep withEmail(String email);
+    }
+
+    public interface NameStep {
+        BuildStep withName(String name);
+    }
+
+    public interface BuildStep {
+        BuildStep withId(int id);
+        BuildStep withCode(Integer code);
+        BuildStep withCreatedAt(Instant createdAt);
+        BuildStep withCreatedAt(long createdAt);
+        BuildStep withUpdatedAt(Instant updatedAt);
+        BuildStep withUpdatedAt(long updatedAt);
+        Student build();
+    }
+
+
+    public static class Builder implements CustomerIdStep, StartDateStep, EmailStep, NameStep, BuildStep {
+        private int id;
+        private Integer code;
+        private Integer customerId;
+        private LocalDate startDate;
+        private String email;
+        private String name;
+        private Instant createdAt;
+        private Instant updatedAt;
+
+        private Builder() {}
+
+        @Override
+        public Builder withId(int id) {
+            this.id = id;
+            return this;
+        }
+
+        @Override
+        public Builder withCode(Integer code) {
+            this.code = code;
+            return this;
+        }
+
+        @Override
+        public Builder customerId(Integer customerId) {
+            this.customerId = customerId;
+            return this;
+        }
+
+        @Override
+        public Builder noCustomer() {
+            this.customerId = null;
+            return this;
+        }
+
+        @Override
+        public Builder withStartDate(LocalDate startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        @Override
+        public Builder withStartDate(String startDate) {
+            this.startDate = LocalDate.parse(startDate);
+            return this;
+        }
+
+        @Override
+        public Builder withEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        @Override
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public Builder withCreatedAt(Instant createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        @Override
+        public Builder withCreatedAt(long createdAt) {
+            this.createdAt = new Instant(createdAt);
+            return this;
+        }
+
+        @Override
+        public Builder withUpdatedAt(Instant updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        @Override
+        public Builder withUpdatedAt(long updatedAt) {
+            this.updatedAt = new Instant(updatedAt);
+            return this;
+        }
+
+        @Override
+        public Student build() {
+            return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+        }
+    }
 }

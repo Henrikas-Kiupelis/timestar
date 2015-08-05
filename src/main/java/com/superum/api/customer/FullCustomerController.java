@@ -43,7 +43,7 @@ public class FullCustomerController {
         return createdCustomer;
 	}
 
-    @RequestMapping(value = "/{customerId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{customerId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
 	public FullCustomer readCustomer(Principal user, @PathVariable int customerId) {
         if (user == null)
@@ -61,7 +61,7 @@ public class FullCustomerController {
         return customer;
 	}
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FullCustomer updateCustomer(Principal user, @RequestBody FullCustomer customer) {
         if (user == null)
@@ -79,7 +79,7 @@ public class FullCustomerController {
         return updatedCustomer;
     }
 
-    @RequestMapping(value = "/delete/{customerId:[\\d]+}", method = RequestMethod.DELETE, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/delete/{customerId:[\\d]+}", method = RequestMethod.DELETE, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FullCustomer deleteCustomer(Principal user, @PathVariable int customerId) {
         if (user == null)
@@ -97,7 +97,7 @@ public class FullCustomerController {
         return deletedCustomer;
     }
 
-    @RequestMapping(value = "/for/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/for/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<FullCustomer> readCustomersForTeacher(Principal user, @PathVariable int teacherId,
                                                       @RequestParam(value="page", required=false) Integer page,
@@ -140,7 +140,7 @@ public class FullCustomerController {
         return customers;
     }
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/all", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<FullCustomer> readCustomersAll(Principal user,
                                                @RequestParam(value="page", required=false) Integer page,
@@ -180,7 +180,7 @@ public class FullCustomerController {
         return customers;
     }
 
-    @RequestMapping(value = "/for/teacher/{teacherId:[\\d]+}/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/for/teacher/{teacherId:[\\d]+}/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public int countCustomersForTeacher(Principal user, @PathVariable int teacherId) {
         if (user == null)
@@ -198,7 +198,7 @@ public class FullCustomerController {
         return count;
     }
 
-    @RequestMapping(value = "/all/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/all/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public int countCustomers(Principal user) {
         if (user == null)
@@ -213,7 +213,7 @@ public class FullCustomerController {
         return count;
     }
 
-    @RequestMapping(value = "/exists", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/exists", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FullCustomer customerExists(Principal user, @RequestBody FullCustomer customer) {
         if (user == null)

@@ -23,7 +23,7 @@ public class DatabaseHelper {
                 .set(CUSTOMER.START_DATE, fullCustomer.getStartDateSQL())
                 .set(CUSTOMER.PHONE, fullCustomer.getPhone())
                 .set(CUSTOMER.WEBSITE, fullCustomer.getWebsite())
-                .set(CUSTOMER.PICTURE, fullCustomer.getPictureName())
+                .set(CUSTOMER.PICTURE, fullCustomer.getPicture())
                 .set(CUSTOMER.COMMENT, fullCustomer.getComment())
                 .returning()
                 .fetchOne()

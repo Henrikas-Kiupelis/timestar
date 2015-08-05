@@ -42,13 +42,13 @@ public class FakeUtils {
     // API V2
 
     public static FullCustomer makeFakeFullCustomer(int id) {
-        return new FullCustomer(makeFakeCustomer(id));
+        return FullCustomer.valueOf(makeFakeCustomer(id));
     }
 
     // FULL FAKES
 
     public static FullCustomer makeFakeFullCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
-        return new FullCustomer(makeFakeCustomer(id, startDate, name, phone, website, picture, comment));
+        return FullCustomer.valueOf(makeFakeCustomer(id, startDate, name, phone, website, picture, comment));
     }
 
     // API V1
