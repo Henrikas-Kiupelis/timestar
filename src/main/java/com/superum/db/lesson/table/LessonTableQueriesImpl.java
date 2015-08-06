@@ -4,7 +4,7 @@ import com.superum.db.lesson.table.core.CustomerLanguages;
 import com.superum.db.lesson.table.core.PaymentData;
 import com.superum.db.lesson.table.core.TeacherLessonData;
 import com.superum.exception.DatabaseException;
-import com.superum.utils.ConditionUtils;
+import com.superum.helper.utils.ConditionUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record3;
@@ -23,7 +23,7 @@ import java.util.List;
 import static com.superum.db.generated.timestar.Keys.LESSON_IBFK_1;
 import static com.superum.db.generated.timestar.Keys.LESSON_IBFK_2;
 import static com.superum.db.generated.timestar.Tables.*;
-import static com.superum.utils.DateUtils.*;
+import static com.superum.helper.utils.DateUtils.*;
 
 @Repository
 @Transactional

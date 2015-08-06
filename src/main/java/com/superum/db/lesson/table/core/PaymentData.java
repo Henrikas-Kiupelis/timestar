@@ -3,8 +3,7 @@ package com.superum.db.lesson.table.core;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.ObjectUtils;
-import com.superum.utils.StringUtils;
+import com.superum.helper.utils.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -51,7 +50,7 @@ public class PaymentData {
 
 	@Override
 	public int hashCode() {
-		return ObjectUtils.hash(paymentDate, cost);
+		return Objects.hash(paymentDate, cost);
 	}
 
 	// CONSTRUCTORS

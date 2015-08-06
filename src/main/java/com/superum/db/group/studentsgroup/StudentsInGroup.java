@@ -3,8 +3,7 @@ package com.superum.db.group.studentsgroup;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.ObjectUtils;
-import com.superum.utils.StringUtils;
+import com.superum.helper.utils.StringUtils;
 
 import javax.validation.constraints.Min;
 import java.util.List;
@@ -49,7 +48,7 @@ public class StudentsInGroup {
 
     @Override
     public int hashCode() {
-        return ObjectUtils.hash(groupId, studentIds);
+        return Objects.hash(groupId, studentIds);
     }
 
     // CONSTRUCTORS

@@ -4,8 +4,8 @@ import org.joda.time.*;
 
 import java.text.ParseException;
 
-import static com.superum.utils.TimeUtils.getDefaultChronology;
-import static com.superum.utils.TimeUtils.getDefaultTimeZone;
+import static com.superum.helper.utils.TimeUtils.getDefaultChronology;
+import static com.superum.helper.utils.TimeUtils.getDefaultTimeZone;
 
 /**
  * <pre>

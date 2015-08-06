@@ -3,8 +3,7 @@ package com.superum.db.teacher.lang;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.ObjectUtils;
-import com.superum.utils.StringUtils;
+import com.superum.helper.utils.StringUtils;
 
 import javax.validation.constraints.Min;
 import java.util.Collections;
@@ -51,7 +50,7 @@ public class TeacherLanguages {
 
 	@Override
 	public int hashCode() {
-		return ObjectUtils.hash(teacherId, languages);
+		return Objects.hash(teacherId, languages);
 	}
 
 	// CONSTRUCTORS

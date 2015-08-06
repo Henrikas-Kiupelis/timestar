@@ -10,9 +10,8 @@ import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.superum.helper.JodaLocalDate;
-import com.superum.utils.ObjectUtils;
-import com.superum.utils.RandomUtils;
-import com.superum.utils.StringUtils;
+import com.superum.helper.utils.RandomUtils;
+import com.superum.helper.utils.StringUtils;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -146,7 +145,7 @@ public class Student {
 
 	@Override
 	public int hashCode() {
-        return ObjectUtils.hash(id, code, customerId, startDate, email, name);
+        return Objects.hash(id, code, customerId, startDate, email, name);
 	}
 
 	// CONSTRUCTORS

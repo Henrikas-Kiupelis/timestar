@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.customer.Customer;
-import com.superum.utils.ObjectUtils;
-import com.superum.utils.StringUtils;
+import com.superum.helper.utils.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -72,7 +71,7 @@ public class CustomerLessonData {
 
 	@Override
 	public int hashCode() {
-		return ObjectUtils.hash(customer, customerContractLanguages, teacherLessonData, totalData, paymentData);
+		return Objects.hash(customer, customerContractLanguages, teacherLessonData, totalData, paymentData);
 	}
 
 	// CONSTRUCTORS

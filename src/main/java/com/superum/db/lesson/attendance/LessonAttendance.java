@@ -3,8 +3,7 @@ package com.superum.db.lesson.attendance;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.ObjectUtils;
-import com.superum.utils.StringUtils;
+import com.superum.helper.utils.StringUtils;
 
 import javax.validation.constraints.Min;
 import java.util.List;
@@ -50,7 +49,7 @@ public class LessonAttendance {
 
 	@Override
 	public int hashCode() {
-		return ObjectUtils.hash(lessonId, studentIds);
+		return Objects.hash(lessonId, studentIds);
 	}
 
 	// CONSTRUCTORS

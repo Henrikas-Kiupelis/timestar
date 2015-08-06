@@ -1,8 +1,8 @@
 package com.superum.db.lesson.table;
 
 import com.superum.db.lesson.table.core.LessonTable;
-import com.superum.utils.DateUtils;
-import com.superum.utils.PrincipalUtils;
+import com.superum.helper.utils.DateUtils;
+import com.superum.helper.utils.PrincipalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.sql.Date;
 
-import static com.superum.utils.ControllerUtils.APPLICATION_JSON_UTF8;
+import static com.superum.helper.utils.Constants.APPLICATION_JSON_UTF8;
 
 @Controller
 @RequestMapping(value = "/timestar/api")
