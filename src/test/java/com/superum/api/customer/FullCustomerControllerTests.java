@@ -97,6 +97,38 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
     }
 
     @Test
+    public void updatingPartialCustomerWithValidData_shouldReturnOldCustomer() throws Exception {
+        FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        int customerId = insertedCustomer.getId();
+
+        FullCustomer otherCustomer = makeFakeFullCustomer(CUSTOMER_SEED + 1);
+
+        FullCustomer partialUpdatedCustomer = makeFakeFullCustomer(customerId, null,
+                otherCustomer.getName(), otherCustomer.getPhone(),
+                null, null, null);
+
+        MvcResult result = mockMvc.perform(post("/timestar/api/v2/customer/update")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", authHeader())
+                .content(convertObjectToJsonBytes(partialUpdatedCustomer)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        FullCustomer returnedCustomer = fromResponse(result, FullCustomer.class);
+
+        assertEquals("The read customer should be equal to original customer; ", returnedCustomer, insertedCustomer);
+
+        FullCustomer customerFromDB = databaseHelper.readCustomerFromDb(customerId);
+        FullCustomer updatedCustomer = makeFakeFullCustomer(customerId, insertedCustomer.getStartDate(),
+                otherCustomer.getName(), otherCustomer.getPhone(),
+                insertedCustomer.getWebsite(), insertedCustomer.getPicture(), insertedCustomer.getComment());
+
+        assertEquals("The customer in the database should be equal to the updated customer; ", customerFromDB, updatedCustomer);
+    }
+
+    @Test
     public void deletingCustomerWithValidId_shouldReturnDeletedCustomer() throws Exception {
         FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
