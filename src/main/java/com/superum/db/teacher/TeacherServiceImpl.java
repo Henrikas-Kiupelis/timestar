@@ -7,9 +7,9 @@ import com.superum.db.account.AccountType;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguages;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
+import com.superum.helper.Random;
 import com.superum.helper.mail.GMail;
 import com.superum.utils.PrincipalUtils;
-import com.superum.utils.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +111,7 @@ public class TeacherServiceImpl implements TeacherService {
         new Thread(() -> {
             String name = partitionService.findPartition(partitionId).getName();
 
-            char[] randomPassword = RandomUtils.randomPassword(PASSWORD_LENGTH);
+            char[] randomPassword = Random.password(true, true, false, PASSWORD_LENGTH);
             StringBuilder message = new StringBuilder()
                     .append(EMAIL_BODY);
             for (char ch : randomPassword)

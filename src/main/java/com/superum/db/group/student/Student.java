@@ -9,7 +9,7 @@ import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.google.common.base.MoreObjects;
 import com.superum.helper.Equals;
 import com.superum.helper.JodaLocalDate;
-import com.superum.utils.RandomUtils;
+import com.superum.helper.Random;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -106,7 +106,7 @@ public class Student {
     }
 
     public static int generateCode() {
-        return RandomUtils.randomNumber(900000) + 100000;
+        return Random.numberWithDigits(6);
     }
 	
 	// OBJECT OVERRIDES
