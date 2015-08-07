@@ -45,6 +45,8 @@ public class FakeFieldUtils {
     }
 
     public static int fakeDay(long id) {
+        if (id < 0)
+            id = -id;
         return (int)(id % 31) + 1;
     }
 
@@ -89,6 +91,12 @@ public class FakeFieldUtils {
         if (dayString.length() == 1)
             dayString = 0 + dayString;
         return dayString;
+    }
+
+    // PRIVATE
+
+    private FakeFieldUtils() {
+        throw new AssertionError("You should not be instantiating this class, use static methods/fields instead!");
     }
 
 }
