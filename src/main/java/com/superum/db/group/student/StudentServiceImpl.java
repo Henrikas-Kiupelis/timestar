@@ -1,8 +1,8 @@
 package com.superum.db.group.student;
 
-import com.superum.config.Gmail;
 import com.superum.db.lesson.attendance.LessonAttendanceService;
 import com.superum.db.partition.PartitionService;
+import com.superum.helper.mail.GMail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,7 +122,7 @@ public class StudentServiceImpl implements StudentService {
 	// CONSTRUCTORS
 
 	@Autowired
-	public StudentServiceImpl(StudentDAO studentDAO, StudentQueries studentQueries, LessonAttendanceService attendanceService, Gmail mail, PartitionService partitionService) {
+	public StudentServiceImpl(StudentDAO studentDAO, StudentQueries studentQueries, LessonAttendanceService attendanceService, GMail mail, PartitionService partitionService) {
 		this.studentDAO = studentDAO;
 		this.studentQueries = studentQueries;
 		this.attendanceService = attendanceService;
@@ -135,7 +135,7 @@ public class StudentServiceImpl implements StudentService {
 	private final StudentDAO studentDAO;
 	private final StudentQueries studentQueries;
 	private final LessonAttendanceService attendanceService;
-	private final Gmail mail;
+	private final GMail mail;
 	private final PartitionService partitionService;
 
     private void generateCode(Student student, int partitionId) {

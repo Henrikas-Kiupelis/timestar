@@ -1,11 +1,11 @@
 package com.superum.db.teacher;
 
 import com.superum.TimeStarBackEndApplication;
-import com.superum.config.Gmail;
 import com.superum.db.account.AccountDAO;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
 import com.superum.exception.DatabaseException;
+import com.superum.helper.mail.GMail;
 import com.superum.utils.FakeUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class TeacherServiceTests {
     private TeacherService teacherService;
     private TeacherDAO teacherDAO;
     private PasswordEncoder encoder;
-    private Gmail mail;
+    private GMail mail;
     private AccountDAO accountDAO;
     private TeacherLanguagesService teacherLanguagesService;
     private PartitionService partitionService;
@@ -40,7 +40,7 @@ public class TeacherServiceTests {
         partitionService = mock(PartitionService.class);
         teacherLanguagesService = mock(TeacherLanguagesService.class);
         encoder = mock(PasswordEncoder.class);
-        mail = mock(Gmail.class);
+        mail = mock(GMail.class);
         teacherService = new TeacherServiceImpl(teacherDAO, encoder, mail, accountDAO, teacherLanguagesService, partitionService);
     }
 

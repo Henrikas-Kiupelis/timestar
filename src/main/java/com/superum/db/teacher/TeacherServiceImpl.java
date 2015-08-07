@@ -1,13 +1,13 @@
 package com.superum.db.teacher;
 
 import com.google.common.primitives.Chars;
-import com.superum.config.Gmail;
 import com.superum.db.account.Account;
 import com.superum.db.account.AccountDAO;
 import com.superum.db.account.AccountType;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguages;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
+import com.superum.helper.mail.GMail;
 import com.superum.utils.PrincipalUtils;
 import com.superum.utils.RandomUtils;
 import org.slf4j.Logger;
@@ -87,7 +87,7 @@ public class TeacherServiceImpl implements TeacherService {
 	// CONSTRUCTORS
 	
 	@Autowired
-	public TeacherServiceImpl(TeacherDAO teacherDAO, PasswordEncoder encoder, Gmail mail, AccountDAO accountDAO,
+	public TeacherServiceImpl(TeacherDAO teacherDAO, PasswordEncoder encoder, GMail mail, AccountDAO accountDAO,
 			TeacherLanguagesService teacherLanguagesService, PartitionService partitionService) {
 		this.teacherDAO = teacherDAO;
 		this.encoder = encoder;
@@ -101,7 +101,7 @@ public class TeacherServiceImpl implements TeacherService {
 	
 	private final TeacherDAO teacherDAO;
 	private final PasswordEncoder encoder;
-	private final Gmail mail;
+	private final GMail mail;
 	private final AccountDAO accountDAO;
 	private final TeacherLanguagesService teacherLanguagesService;
 	private final PartitionService partitionService;
