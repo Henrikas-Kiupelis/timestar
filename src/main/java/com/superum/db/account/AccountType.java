@@ -1,10 +1,10 @@
 package com.superum.db.account;
 
+import com.superum.config.SecurityConfig.Role;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.superum.config.Role;
 
 public enum AccountType {
 

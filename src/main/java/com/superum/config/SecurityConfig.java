@@ -12,6 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -53,16 +56,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public UserDetailsService userDetailsServiceBean() throws Exception {
 		return super.userDetailsServiceBean();
 	}
-	
-	private static final String USERS_QUERY = "select username,password,enabled from account where username = ?";
-	private static final String AUTHORITIES_QUERY = "select username,role from roles where username = ?";
 
-	private static final String[] PERMISION_ALL = {
-			//"/timestar/api/account/info"
-	};
-	private static final String[] PERMISION_TEACHER = {
-			"/timestar/api/account/update",
-			"/timestar/api/lesson/**"
-	};
+	public enum Role {
+
+		ADMIN,
+		TEACHER;
+
+		public String fullName() {
+			return "ROLE_" + this.name();
+		}
+
+		public static List<String> allFullNames() {
+			return Arrays.stream(Role.values())
+					.map(Role::fullName)
+					.collect(Collectors.toList());
+		}
+
+	}
+
+    // PRIVATE
+
+    private static final String USERS_QUERY = "select username,password,enabled from account where username = ?";
+    private static final String AUTHORITIES_QUERY = "select username,role from roles where username = ?";
+
+    private static final String[] PERMISION_ALL = {
+            //"/timestar/api/account/info"
+    };
+    private static final String[] PERMISION_TEACHER = {
+            "/timestar/api/account/update",
+            "/timestar/api/lesson/**"
+    };
+
 
 }
