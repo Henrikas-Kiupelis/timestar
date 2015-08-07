@@ -3,7 +3,7 @@ package com.superum.helper.fields.primitives;
 import com.superum.helper.fields.core.Mandatory;
 import com.superum.helper.fields.core.NamedField;
 
-public class IntField extends NamedField<Integer> {
+public final class IntField extends NamedField<Integer> {
 
     @Override
     public boolean isSet() {

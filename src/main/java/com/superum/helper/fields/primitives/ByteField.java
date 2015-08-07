@@ -3,7 +3,7 @@ package com.superum.helper.fields.primitives;
 import com.superum.helper.fields.core.Mandatory;
 import com.superum.helper.fields.core.NamedField;
 
-public class ByteField extends NamedField<Byte> {
+public final class ByteField extends NamedField<Byte> {
 
     @Override
     public boolean isSet() {

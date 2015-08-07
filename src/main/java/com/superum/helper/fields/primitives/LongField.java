@@ -3,7 +3,7 @@ package com.superum.helper.fields.primitives;
 import com.superum.helper.fields.core.Mandatory;
 import com.superum.helper.fields.core.NamedField;
 
-public class LongField extends NamedField<Long> {
+public final class LongField extends NamedField<Long> {
 
     @Override
     public boolean isSet() {

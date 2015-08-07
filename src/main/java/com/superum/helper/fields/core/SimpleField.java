@@ -1,15 +1,13 @@
 package com.superum.helper.fields.core;
 
 import com.google.common.collect.ImmutableList;
-import com.superum.helper.utils.EqualsUtils;
+import com.superum.helper.SpecialUtils;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
-import static com.superum.helper.utils.TimeUtils.fromString;
 
 /**
  * <pre>
@@ -62,19 +60,13 @@ public class SimpleField<T> extends NamedField<T> {
     }
 
     /**
-     * @deprecated Please use org.joda.time.Instant instead!
+     * @throws UnsupportedOperationException - java.util.Date/java.sql.Date fields not allowed
+     * @deprecated Please use org.joda.time.Instant/org.joda.time.LocalDate instead!
      */
     @Deprecated
     public static SimpleField<Date> valueOf(String fieldName, Date value, Mandatory mandatory) throws ParseException {
-        if (value == null)
-            return empty(fieldName, mandatory);
-
-        if (value instanceof java.sql.Date)
-            value = fromString(value.toString());
-
-        @SuppressWarnings("deprecation")
-        SimpleField<Date> field = new JavaUtilDateField(fieldName, value, mandatory);
-        return field;
+        throw new UnsupportedOperationException("java.util.Date/java.sql.Date fields not allowed," +
+                " please use org.joda.time.Instant/org.joda.time.LocalDate instead!");
     }
 
     public static <T> SimpleField<T> valueOf(String fieldName, T value, Mandatory mandatory) {
@@ -97,7 +89,7 @@ public class SimpleField<T> extends NamedField<T> {
         return new SimpleField<>(fieldName, ImmutableList.copyOf(value), mandatory);
     }
 
-    protected SimpleField(String fieldName, T value, Mandatory mandatory) {
+    private SimpleField(String fieldName, T value, Mandatory mandatory) {
         super(fieldName, mandatory);
         this.value = value;
     }
@@ -115,7 +107,7 @@ public class SimpleField<T> extends NamedField<T> {
      * This Field will use compareTo() method to check for equality of the Fields, which will ignore things such as scale
      * </pre>
      */
-    private static class BigDecimalField extends SimpleField<BigDecimal> {
+    private static final class BigDecimalField extends SimpleField<BigDecimal> {
 
         @Override
         public boolean equals(Object o) {
@@ -127,7 +119,7 @@ public class SimpleField<T> extends NamedField<T> {
 
             BigDecimalField other = (BigDecimalField) o;
 
-            return EqualsUtils.equalsJavaMathBigDecimal(this.value, other.value);
+            return SpecialUtils.equalsJavaMathBigDecimal(this.value, other.value);
         }
 
         @Override
@@ -137,85 +129,7 @@ public class SimpleField<T> extends NamedField<T> {
 
         // CONSTRUCTORS
 
-        protected BigDecimalField(String fieldName, BigDecimal value, Mandatory mandatory) {
-            super(fieldName, value, mandatory);
-        }
-
-    }
-
-    /**
-     * <pre>
-     * Specialized NamedField, intended to be used with java.sql.Date
-     *
-     * This Field will check for String equality between java.sql.Date instances;
-     * normal equality can fail due to timezone differences
-     * </pre>
-     * @deprecated java.sql.Date should not be used with Spring/Jackson according to their documentation,
-     *               therefore this class is now marked as deprecated. AVOID!
-     */
-    @Deprecated
-    private static class JavaSqlDateField extends SimpleField<java.sql.Date> {
-
-        @Override
-        @SuppressWarnings("deprecation")
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-
-            if (!(o instanceof JavaSqlDateField))
-                return false;
-
-            JavaSqlDateField other = (JavaSqlDateField) o;
-
-            return EqualsUtils.equalsJavaSqlDate(this.value, other.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return value == null ? 0 : value.toString().hashCode();
-        }
-
-        // CONSTRUCTORS
-
-        protected JavaSqlDateField(String fieldName, java.sql.Date value, Mandatory mandatory) {
-            super(fieldName, value, mandatory);
-        }
-
-    }
-
-    /**
-     * <pre>
-     * Specialized NamedField, intended to be used with java.util.Date
-     *
-     * This Field will check for day equality, rather than comparing the entire Date (i.e. hours, minutes, etc)
-     * </pre>
-     * @deprecated Please use org.joda.time.Instant instead!
-     */
-    @Deprecated
-    private static class JavaUtilDateField extends SimpleField<Date> {
-
-        @Override
-        @SuppressWarnings("deprecation")
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-
-            if (!(o instanceof JavaUtilDateField))
-                return false;
-
-            JavaUtilDateField other = (JavaUtilDateField) o;
-
-            return EqualsUtils.equalsJavaUtilDate(this.value, other.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return value == null ? 0 : value.toString().hashCode();
-        }
-
-        // CONSTRUCTORS
-
-        protected JavaUtilDateField(String fieldName, java.util.Date value, Mandatory mandatory) {
+        private BigDecimalField(String fieldName, BigDecimal value, Mandatory mandatory) {
             super(fieldName, value, mandatory);
         }
 
