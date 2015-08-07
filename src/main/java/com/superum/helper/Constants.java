@@ -1,4 +1,4 @@
-package com.superum.helper.utils;
+package com.superum.helper;
 
 /**
  * <pre>
