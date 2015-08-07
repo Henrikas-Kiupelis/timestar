@@ -15,7 +15,8 @@ import static com.superum.utils.FakeFieldUtils.fakeName;
 import static com.superum.utils.FakeFieldUtils.fakePhone;
 import static com.superum.utils.FakeUtils.makeFakeFullCustomer;
 import static com.superum.utils.FakeUtils.makeSomeFakes;
-import static com.superum.utils.TestUtils.*;
+import static com.superum.utils.JsonUtils.*;
+import static com.superum.utils.MockMvcUtils.fromResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -126,6 +127,21 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
                 insertedCustomer.getWebsite(), insertedCustomer.getPicture(), insertedCustomer.getComment());
 
         assertEquals("The customer in the database should be equal to the updated customer; ", customerFromDB, updatedCustomer);
+    }
+
+    @Test
+    public void updatingCustomerWithInvalidId_shouldThrowInvalidCustomerException() throws Exception {
+        FullCustomer validCustomer = makeFakeFullCustomer(CUSTOMER_SEED);
+
+        String json = convertObjectToString(validCustomer);
+        String invalidJson = replace(json, "id", -1);
+
+        mockMvc.perform(post("/timestar/api/v2/customer/update")
+                .contentType(APPLICATION_JSON_UTF8)
+                .header("Authorization", authHeader())
+                .content(invalidJson))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
