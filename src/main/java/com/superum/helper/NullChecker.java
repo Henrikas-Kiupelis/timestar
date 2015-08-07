@@ -2,6 +2,7 @@ package com.superum.helper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * <pre>
@@ -26,6 +27,18 @@ import java.util.List;
  * </pre>
  */
 public final class NullChecker {
+
+    /**
+     * <pre>
+     * Allows customizing the kind of exception that is thrown using lambda expression:
+     * () -> new X()
+     * </pre>
+     * @throws X if any of the objects in this NullChecker are null
+     */
+    public <X extends Throwable> void notNull(Supplier<? extends X> exceptionSupplier) throws X {
+        if (objects.contains(null))
+            throw exceptionSupplier.get();
+    }
 
     /**
      * @throws NullPointerException if any of the objects in this NullChecker are null
