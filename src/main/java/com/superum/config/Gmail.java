@@ -12,7 +12,7 @@ import java.security.Security;
 import java.util.Date;
 import java.util.Properties;
 
-public final class Gmail {
+public class Gmail {
 
 	/**
      * Send email using GMail SMTP server.

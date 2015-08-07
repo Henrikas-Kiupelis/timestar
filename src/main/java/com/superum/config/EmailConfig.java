@@ -10,7 +10,7 @@ import org.springframework.core.env.Environment;
 @Configuration
 @PropertySource("classpath:email.properties")
 @Lazy
-public final class EmailConfig {
+public class EmailConfig {
 
 	@Autowired
     Environment env;
