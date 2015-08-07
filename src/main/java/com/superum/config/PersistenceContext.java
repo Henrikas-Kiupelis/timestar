@@ -19,14 +19,13 @@ import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLStateSQLExceptionTranslator;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 
 @Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:persistence.properties")
 @Lazy
-public class PersistenceContext {
+public final class PersistenceContext {
  
     @Autowired
     Environment env;
@@ -39,7 +38,7 @@ public class PersistenceContext {
 
     @Bean(destroyMethod = "close")
     @Primary
-    public DataSource dataSource() {
+    public ComboPooledDataSource dataSource() {
     	ComboPooledDataSource dataSource = new ComboPooledDataSource();
  
         try {

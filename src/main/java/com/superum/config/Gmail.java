@@ -1,38 +1,35 @@
 package com.superum.config;
 
 import com.sun.mail.smtp.SMTPTransport;
-import java.security.Security;
-import java.util.Date;
-import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.security.Security;
+import java.util.Date;
+import java.util.Properties;
 
-public class Gmail {
+public final class Gmail {
 
 	/**
      * Send email using GMail SMTP server.
      *
-     * @param username GMail username
-     * @param password GMail password
      * @param recipientEmail TO recipient
      * @param title title of the message
      * @param message message to be sent
      * @throws AddressException if the email address parse failed
      * @throws MessagingException if the connection is dead or not in the connected state or if the message is not a MimeMessage
      */
-    public void send(String recipientEmail, String title, String message) throws AddressException, MessagingException {
+    public void send(String recipientEmail, String title, String message) throws MessagingException {
         send(recipientEmail, "", title, message);
     }
 	
 	/**
      * Send email using GMail SMTP server.
      *
-     * @param username GMail username
-     * @param password GMail password
      * @param recipientEmail TO recipient
      * @param ccEmail CC recipient. Can be empty if there is no CC recipient
      * @param title title of the message
@@ -40,7 +37,7 @@ public class Gmail {
      * @throws AddressException if the email address parse failed
      * @throws MessagingException if the connection is dead or not in the connected state or if the message is not a MimeMessage
      */
-    public void send(String recipientEmail, String ccEmail, String title, String message) throws AddressException, MessagingException {
+    public void send(String recipientEmail, String ccEmail, String title, String message) throws MessagingException {
         Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
         final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
 
