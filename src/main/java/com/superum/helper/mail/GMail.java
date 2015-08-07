@@ -12,6 +12,9 @@ import java.security.Security;
 import java.util.Date;
 import java.util.Properties;
 
+/**
+ * Borrowed from some stackoverflow thread (sorry, guy, can't remember!)
+ */
 public final class GMail {
 
 	/**
