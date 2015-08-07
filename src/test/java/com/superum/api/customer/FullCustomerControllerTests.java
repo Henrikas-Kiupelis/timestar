@@ -1,7 +1,7 @@
 package com.superum.api.customer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.superum.helper.utils.FakeUtils;
+import com.superum.utils.FakeUtils;
 import env.IntegrationTestEnvironment;
 import org.junit.Test;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -11,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.superum.helper.utils.FakeUtils.makeFakeFullCustomer;
-import static com.superum.helper.utils.FakeUtils.makeSomeFakes;
-import static com.superum.helper.utils.TestUtils.*;
+import static com.superum.utils.FakeFieldUtils.fakeName;
+import static com.superum.utils.FakeFieldUtils.fakePhone;
+import static com.superum.utils.FakeUtils.makeFakeFullCustomer;
+import static com.superum.utils.FakeUtils.makeSomeFakes;
+import static com.superum.utils.TestUtils.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -101,10 +103,8 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
         FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
 
-        FullCustomer otherCustomer = makeFakeFullCustomer(CUSTOMER_SEED + 1);
-
         FullCustomer partialUpdatedCustomer = makeFakeFullCustomer(customerId, null,
-                otherCustomer.getName(), otherCustomer.getPhone(),
+                fakeName(CUSTOMER_SEED + 1), fakePhone(CUSTOMER_SEED + 1),
                 null, null, null);
 
         MvcResult result = mockMvc.perform(post("/timestar/api/v2/customer/update")
@@ -122,7 +122,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         FullCustomer customerFromDB = databaseHelper.readCustomerFromDb(customerId);
         FullCustomer updatedCustomer = makeFakeFullCustomer(customerId, insertedCustomer.getStartDate(),
-                otherCustomer.getName(), otherCustomer.getPhone(),
+                partialUpdatedCustomer.getName(), partialUpdatedCustomer.getPhone(),
                 insertedCustomer.getWebsite(), insertedCustomer.getPicture(), insertedCustomer.getComment());
 
         assertEquals("The customer in the database should be equal to the updated customer; ", customerFromDB, updatedCustomer);

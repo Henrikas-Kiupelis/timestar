@@ -1,4 +1,4 @@
-package com.superum.helper.utils;
+package com.superum.utils;
 
 import com.superum.api.customer.FullCustomer;
 import com.superum.db.account.Account;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-import static com.superum.helper.utils.FakeFieldUtils.*;
+import static com.superum.utils.FakeFieldUtils.*;
 
 public class FakeUtils {
 

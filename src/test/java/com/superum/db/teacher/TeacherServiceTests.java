@@ -6,7 +6,7 @@ import com.superum.db.account.AccountDAO;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
 import com.superum.exception.DatabaseException;
-import com.superum.helper.utils.FakeUtils;
+import com.superum.utils.FakeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,8 +16,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
-import static com.superum.helper.utils.FakeUtils.makeFakeTeacher;
-import static com.superum.helper.utils.FakeUtils.makeSomeFakes;
+import static com.superum.utils.FakeUtils.makeFakeTeacher;
+import static com.superum.utils.FakeUtils.makeSomeFakes;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
