@@ -124,4 +124,10 @@ public class FakeUtils {
         return new Partition(id, name);
     }
 
+    // PRIVATE
+
+    private FakeUtils() {
+        throw new AssertionError("You should not be instantiating this class, use static methods/fields instead!");
+    }
+
 }

@@ -13,4 +13,10 @@ public class MatcherUtils {
 	    return either(org.hamcrest.core.Is.is(value)).or(org.hamcrest.core.Is.is(value.intValue()));
 	}
 
+	// PRIVATE
+
+	private MatcherUtils() {
+		throw new AssertionError("You should not be instantiating this class, use static methods/fields instead!");
+	}
+
 }

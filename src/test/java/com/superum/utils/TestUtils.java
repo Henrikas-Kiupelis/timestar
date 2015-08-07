@@ -58,6 +58,10 @@ public class TestUtils {
     }
     
     // PRIVATE
+
+    private TestUtils() {
+        throw new AssertionError("You should not be instantiating this class, use static methods/fields instead!");
+    }
     
     private static final ObjectMapper mapper;
     static {
