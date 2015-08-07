@@ -6,10 +6,6 @@ This file should contain a rough list of ideas/things to be done in the future:
 
 A) Things to definitely do in the future
 
-
-
-    Equality testing based on getter Functions
-
     Change date requests to timestamp choose one - timestamp value, or valid TimeZone in JSON
 
     Add paymentDay fields to Student/Customer, however they should be calculated from their startDate fields, i.e. in the
