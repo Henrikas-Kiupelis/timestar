@@ -2,15 +2,17 @@ package com.superum.db.lesson.table.core;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.superum.db.customer.Customer;
-import com.superum.helper.utils.StringUtils;
+import com.superum.utils.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class CustomerLessonData {
 
 	// PUBLIC API

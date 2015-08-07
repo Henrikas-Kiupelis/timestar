@@ -1,17 +1,14 @@
 package com.superum.db.group.student;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.superum.helper.JodaLocalDate;
-import com.superum.helper.utils.RandomUtils;
-import com.superum.helper.utils.StringUtils;
+import com.superum.utils.RandomUtils;
+import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -26,6 +23,7 @@ import java.util.Objects;
 import static com.superum.db.generated.timestar.Tables.STUDENT;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class Student {
 
 	// PUBLIC API

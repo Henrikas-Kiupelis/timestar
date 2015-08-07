@@ -1,9 +1,6 @@
 package com.superum.db.customer;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
@@ -24,6 +21,7 @@ import java.util.Objects;
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class Customer {
 
 	// PUBLIC API

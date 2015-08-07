@@ -1,12 +1,9 @@
 package com.superum.db.account;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
-import com.superum.helper.utils.StringUtils;
+import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.Instant;
 import org.jooq.Record;
@@ -18,6 +15,7 @@ import java.util.Objects;
 import static com.superum.db.generated.timestar.Tables.ACCOUNT;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class Account {
 
 	// PUBLIC API
