@@ -2,7 +2,7 @@ package com.superum.api.customer;
 
 import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.exception.UnauthorizedRequestException;
-import com.superum.helper.utils.PrincipalUtils;
+import com.superum.utils.PrincipalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
-import static com.superum.helper.utils.Constants.APPLICATION_JSON_UTF8;
+import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
 
 /**
  * <pre>

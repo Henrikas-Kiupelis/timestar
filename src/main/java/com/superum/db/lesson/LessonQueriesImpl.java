@@ -1,7 +1,7 @@
 package com.superum.db.lesson;
 
 import com.superum.exception.DatabaseException;
-import com.superum.helper.utils.ConditionUtils;
+import com.superum.utils.ConditionUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;

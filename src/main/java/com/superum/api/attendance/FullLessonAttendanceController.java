@@ -3,7 +3,7 @@ package com.superum.api.attendance;
 import com.superum.db.group.student.Student;
 import com.superum.db.lesson.attendance.LessonAttendance;
 import com.superum.db.lesson.attendance.LessonAttendanceController;
-import com.superum.helper.utils.PrincipalUtils;
+import com.superum.utils.PrincipalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +11,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
-import static com.superum.helper.utils.Constants.APPLICATION_JSON_UTF8;
+import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
 
 @RestController
 @RequestMapping(value = "/timestar/api/v2/lesson/attendance")

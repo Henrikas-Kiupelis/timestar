@@ -1,7 +1,7 @@
 package com.superum.api.student;
 
 import com.superum.db.group.student.Student;
-import com.superum.helper.utils.PrincipalUtils;
+import com.superum.utils.PrincipalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.Principal;
 import java.util.List;
 
-import static com.superum.helper.utils.Constants.APPLICATION_JSON_UTF8;
+import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
 
 @RestController
 @RequestMapping(value = "/timestar/api/v2/student")
