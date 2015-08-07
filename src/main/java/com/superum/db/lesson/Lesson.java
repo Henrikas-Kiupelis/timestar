@@ -9,8 +9,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
+import com.google.common.base.MoreObjects;
+import com.superum.helper.Equals;
 import com.superum.helper.JodaTimeConverter;
-import com.superum.utils.StringUtils;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
@@ -126,37 +127,24 @@ public class Lesson {
 
 	@Override
 	public String toString() {
-		return "Lesson" + StringUtils.toString(
-				"Lesson ID: " + id,
-				"Group ID: " + groupId,
-                "Teacher ID: " + teacherId,
-				"Start date: " + startDate,
-				"Start time: " + startHour + ":" + startMinute,
-                "End date: " + endDate,
-				"End time: " + endHour + ":" + endMinute,
-				"Length: " + length,
-				"Comment: " + comment,
-                "Created at: " + createdAt,
-                "Updated at: " + updatedAt);
+        return MoreObjects.toStringHelper("Lesson")
+                .add("Lesson id", id)
+                .add("Group id", groupId)
+                .add("Teacher id", teacherId)
+                .add("Start date", startDate)
+                .add("Start time", startHour + ":" + startMinute)
+                .add("End date", endDate)
+                .add("End time", endHour + ":" + endMinute)
+                .add("Length", length)
+                .add("Comment", comment)
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof Lesson))
-			return false;
-
-		Lesson other = (Lesson) o;
-
-		return this.id == other.id
-				&& this.groupId == other.groupId
-				&& this.startHour == other.startHour
-				&& this.startMinute == other.startMinute
-                && this.length == other.length
-                && Objects.equals(this.startDate, other.startDate)
-				&& Objects.equals(this.comment, other.comment);
+        return this == o || o instanceof Lesson && EQUALS.equals(this, (Lesson) o);
 	}
 
 	@Override
@@ -265,6 +253,9 @@ public class Lesson {
 
 	private final Instant createdAt;
     private final Instant updatedAt;
+
+    private static final Equals<Lesson> EQUALS = new Equals<>(Lesson::getId, Lesson::getGroupId,  Lesson::getStartDate,
+            Lesson::getStartHour, Lesson::getStartMinute, Lesson::getLength, Lesson::getComment);
 
     // GENERATED
 

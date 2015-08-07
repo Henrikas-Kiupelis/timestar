@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 import com.superum.db.customer.Customer;
-import com.superum.utils.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -46,12 +46,13 @@ public class CustomerLessonData {
 
 	@Override
 	public String toString() {
-		return "CustomerLessonData" + StringUtils.toString(
-				"Customer: " + customer,
-				"Customer contract languages: " + customerContractLanguages,
-				"Lesson data: " + teacherLessonData,
-				"Total data: " + totalData,
-				"Payment data: " + paymentData);
+        return MoreObjects.toStringHelper("CustomerLessonData")
+                .add("Customer", customer)
+                .add("Customer contract languages", customerContractLanguages)
+                .add("Lesson data", teacherLessonData)
+                .add("Total data", totalData)
+                .add("Payment data", paymentData)
+                .toString();
 	}
 
 	@Override

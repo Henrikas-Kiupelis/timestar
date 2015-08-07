@@ -3,8 +3,9 @@ package com.superum.db.group;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
+import com.google.common.base.MoreObjects;
 import com.superum.db.teacher.WageType;
-import com.superum.utils.StringUtils;
+import com.superum.helper.Equals;
 import org.joda.time.Instant;
 import org.jooq.Record;
 
@@ -79,33 +80,21 @@ public class Group {
 
 	@Override
 	public String toString() {
-		return "Group" + StringUtils.toString(
-				"Group ID: " + id,
-                "Customer ID: " + customerId,
-				"Teacher ID: " + teacherId,
-                "WageType: " + wage,
-                "Language level: " + languageLevel,
-				"Name: " + name,
-                "Created at: " + createdAt,
-                "Updated at: " + updatedAt);
+        return MoreObjects.toStringHelper("Group")
+                .add("Group id", id)
+                .add("Customer id", customerId)
+                .add("Teacher id", teacherId)
+                .add("WageType", wage)
+                .add("Language level", languageLevel)
+                .add("Name", name)
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof Group))
-			return false;
-
-		Group other = (Group) o;
-
-		return this.id == other.id
-                && this.teacherId == other.teacherId
-				&& Objects.equals(this.customerId, other.customerId)
-                && Objects.equals(this.wage, other.wage)
-                && Objects.equals(this.languageLevel, other.languageLevel)
-                && Objects.equals(this.name, other.name);
+        return this == o || o instanceof Group && EQUALS.equals(this, (Group) o);
 	}
 
 	@Override
@@ -186,6 +175,9 @@ public class Group {
 
 	private final Instant createdAt;
 	private final Instant updatedAt;
+
+    private static final Equals<Group> EQUALS = new Equals<>(Group::getId, Group::getTeacherId, Group::getCustomerId,
+            Group::getUsesHourlyWage, Group::getLanguageLevel, Group::getName);
 
     // GENERATED
 

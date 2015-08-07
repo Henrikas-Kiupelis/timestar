@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.StringUtils;
+import com.google.common.base.MoreObjects;
 
 import javax.validation.constraints.Min;
 import java.util.Collections;
@@ -30,9 +30,10 @@ public class CustomerLanguages {
     // OBJECT OVERRIDES
     @Override
     public String toString() {
-        return "CustomerLanguages" + StringUtils.toString(
-                "Customer ID: " + customerId,
-                "Languages: " + languages);
+        return MoreObjects.toStringHelper("CustomerLanguages")
+                .add("Customer id", customerId)
+                .add("Languages", languages)
+                .toString();
     }
 
     @Override

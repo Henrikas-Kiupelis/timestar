@@ -3,7 +3,9 @@ package com.superum.db.account;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
-import com.superum.utils.StringUtils;
+import com.google.common.base.MoreObjects;
+import com.google.common.primitives.Chars;
+import com.superum.helper.Equals;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.Instant;
 import org.jooq.Record;
@@ -49,12 +51,12 @@ public class Account {
 	
 	@JsonIgnore
 	public String getPassword() {
-		return StringUtils.toStr(password);
+        return Chars.join("", password);
 	}
 	
 	@JsonIgnore
 	public void erasePassword() {
-		StringUtils.erase(password);
+        Arrays.fill(password, '?');
 		password = null;
 	}
 	
@@ -62,30 +64,20 @@ public class Account {
 
 	@Override
 	public String toString() {
-		return "Account" + StringUtils.toString(
-				"Account ID: " + id,
-				"Username: " + username,
-				"Account Type: " + accountType,
-				"Password: [PROTECTED]",
-                "Created at: " + createdAt,
-                "Updated at: " + updatedAt);
+        return MoreObjects.toStringHelper("Account")
+                .add("Account id", id)
+                .add("Username", username)
+                .add("Account Type", accountType)
+                .addValue("Password: [PROTECTED]")
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof Account))
-			return false;
-
-		Account other = (Account) o;
-
-		return this.id == other.id
-				&& Objects.equals(this.username, other.username)
-				&& Objects.equals(this.accountType, other.accountType)
-				&& Arrays.equals(this.password, other.password);
-	}
+        return this == o || o instanceof Account && EQUALS.equals(this, (Account) o);
+    }
 
 	@Override
 	public int hashCode() {
@@ -149,6 +141,8 @@ public class Account {
 
     private final Instant createdAt;
     private final Instant updatedAt;
+
+    private static final Equals<Account> EQUALS = new Equals<>(Account::getId, Account::getUsername, Account::getAccountType, Account::getPassword);
 
     // GENERATED
 

@@ -3,7 +3,8 @@ package com.superum.db.teacher;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
-import com.superum.utils.StringUtils;
+import com.google.common.base.MoreObjects;
+import com.superum.helper.Equals;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.jooq.Record;
@@ -111,45 +112,27 @@ public class Teacher {
 
 	@Override
 	public String toString() {
-		return "Teacher" + StringUtils.toString(
-				"Teacher ID: " + id,
-				"Payment day: " + paymentDay,
-                "Hourly wage: " + hourlyWage,
-                "Academic wage: " + academicWage,
-				"Name: " + name,
-				"Surname: " + surname,
-				"Phone: " + phone,
-				"City: " + city,
-				"Email: " + email, 
-				"Picture: " + picture,
-				"Document: " + document,
-				"Comment: " + comment,
-                "Created at: " + createdAt,
-                "Updated at: " + updatedAt);
+        return MoreObjects.toStringHelper("Teacher")
+                .add("Teacher id", id)
+                .add("Payment day", paymentDay)
+                .add("Hourly wage", hourlyWage)
+                .add("Academic wage", academicWage)
+                .add("Name", name)
+                .add("Surname", surname)
+                .add("Phone", phone)
+                .add("City", city)
+                .add("Email", email)
+                .add("Picture", picture)
+                .add("Document", document)
+                .add("Comment", comment)
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof Teacher))
-			return false;
-
-		Teacher other = (Teacher) o;
-
-		return this.id == other.id
-				&& this.paymentDay == other.paymentDay
-                && Objects.equals(this.hourlyWage, other.hourlyWage)
-                && Objects.equals(this.academicWage, other.academicWage)
-				&& Objects.equals(this.name, other.name)
-				&& Objects.equals(this.surname, other.surname)
-				&& Objects.equals(this.phone, other.phone)
-				&& Objects.equals(this.city, other.city)
-				&& Objects.equals(this.email, other.email)
-				&& Objects.equals(this.picture, other.picture)
-				&& Objects.equals(this.document, other.document)
-				&& Objects.equals(this.comment, other.comment);
+        return this == o || o instanceof Teacher && EQUALS.equals(this, (Teacher) o);
 	}
 
 	@Override
@@ -275,6 +258,10 @@ public class Teacher {
 
 	private final Instant createdAt;
     private final Instant updatedAt;
+
+    private static final Equals<Teacher> EQUALS = new Equals<>(Teacher::getId, Teacher::getPaymentDay,  Teacher::getHourlyWage,
+            Teacher::getAcademicWage, Teacher::getName, Teacher::getSurname, Teacher::getPhone, Teacher::getCity, Teacher::getEmail,
+            Teacher::getPicture, Teacher::getDocument, Teacher::getComment);
 
     // GENERATED
 

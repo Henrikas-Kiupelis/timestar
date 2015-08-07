@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.StringUtils;
+import com.google.common.base.MoreObjects;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -36,10 +36,11 @@ public class TeacherLessonData {
 
 	@Override
 	public String toString() {
-		return "TeacherLessonData" + StringUtils.toString(
-				"Lesson IDs: " + lessonIds,
-				"Duration: " + duration,
-				"Cost: " + cost);
+        return MoreObjects.toStringHelper("TeacherLessonData")
+                .add("Lesson ids", lessonIds)
+                .add("Duration", duration)
+                .add("Cost", cost)
+                .toString();
 	}
 
 	@Override

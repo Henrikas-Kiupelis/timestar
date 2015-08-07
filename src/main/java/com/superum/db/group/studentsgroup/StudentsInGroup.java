@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.StringUtils;
+import com.google.common.base.MoreObjects;
+import com.superum.helper.Equals;
 
 import javax.validation.constraints.Min;
 import java.util.List;
@@ -29,23 +30,15 @@ public class StudentsInGroup {
 
     @Override
     public String toString() {
-        return "StudentsInGroup" +  StringUtils.toString(
-                "Group ID: " + groupId,
-                "Students: " + studentIds);
+        return MoreObjects.toStringHelper("StudentsInGroup")
+                .add("Group id", groupId)
+                .add("Students", studentIds)
+                .toString();
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-
-        if (!(o instanceof StudentsInGroup))
-            return false;
-
-        StudentsInGroup other = (StudentsInGroup)o;
-
-        return groupId == other.groupId &&
-                Objects.equals(studentIds, other.studentIds);
+        return this == o || o instanceof StudentsInGroup && EQUALS.equals(this, (StudentsInGroup) o);
     }
 
     @Override
@@ -68,5 +61,7 @@ public class StudentsInGroup {
     private final int groupId;
 
     private final List<Integer> studentIds;
+
+    private static final Equals<StudentsInGroup> EQUALS = new Equals<>(StudentsInGroup::getGroupId, StudentsInGroup::getStudentIds);
 
 }

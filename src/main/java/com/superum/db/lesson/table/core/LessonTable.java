@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 import com.superum.db.teacher.Teacher;
 import com.superum.db.teacher.lang.TeacherLanguages;
-import com.superum.utils.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -52,13 +52,14 @@ public class LessonTable {
 
 	@Override
 	public String toString() {
-		return "LessonTable" + StringUtils.toString(
-				"Teachers total: " + totalTeacherCount,
-				"Teachers: " + teachers,
-				"Languages: " + languages,
-				"Lesson data: " + customerLessonData,
-				"Total data: " + totalData,
-				"Payment data: " + paymentData);
+        return MoreObjects.toStringHelper("LessonTable")
+                .add("Teachers total", totalTeacherCount)
+                .add("Teachers", teachers)
+                .add("Languages", languages)
+                .add("Lesson data", customerLessonData)
+                .add("Total data", totalData)
+                .add("Payment data", paymentData)
+                .toString();
 	}
 
 	@Override

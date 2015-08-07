@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.StringUtils;
+import com.google.common.base.MoreObjects;
+import com.superum.helper.Equals;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jooq.Record;
 
@@ -32,23 +33,15 @@ public class Partition {
 
 	@Override
 	public String toString() {
-		return "Partition" + StringUtils.toString(
-				"Partition ID: " + id,
-				"Name: " + name);
+        return MoreObjects.toStringHelper("Partition")
+                .add("Partition id", id)
+                .add("Name", name)
+                .toString();
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof Partition))
-			return false;
-
-		Partition other = (Partition) o;
-
-		return this.id == other.id
-				&& Objects.equals(this.name, other.name);
+        return this == o || o instanceof Partition && EQUALS.equals(this, (Partition) o);
 	}
 
 	@Override
@@ -80,5 +73,7 @@ public class Partition {
 	
 	@NotEmpty
 	private final String name;
+
+    private static final Equals<Partition> EQUALS = new Equals<>(Partition::getId, Partition::getName);
 
 }

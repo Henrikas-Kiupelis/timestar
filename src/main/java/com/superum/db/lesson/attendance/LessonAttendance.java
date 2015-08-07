@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.superum.utils.StringUtils;
+import com.google.common.base.MoreObjects;
+import com.superum.helper.Equals;
 
 import javax.validation.constraints.Min;
 import java.util.List;
@@ -30,23 +31,15 @@ public class LessonAttendance {
 
 	@Override
 	public String toString() {
-		return "ExtendedLessonAttendance" + StringUtils.toString(
-				"Lesson ID: " + lessonId,
-				"Students: " + studentIds);
+        return MoreObjects.toStringHelper("LessonAttendance")
+            .add("Lesson id", lessonId)
+            .add("Students", studentIds)
+            .toString();
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof LessonAttendance))
-			return false;
-
-		LessonAttendance other = (LessonAttendance) o;
-
-		return this.lessonId == other.lessonId
-				&& Objects.equals(this.studentIds, other.studentIds);
+        return this == o || o instanceof LessonAttendance && EQUALS.equals(this, (LessonAttendance) o);
 	}
 
 	@Override
@@ -69,5 +62,7 @@ public class LessonAttendance {
 	private final long lessonId;
 	
 	private final List<Integer> studentIds;
+
+    private static final Equals<LessonAttendance> EQUALS = new Equals<>(LessonAttendance::getLessonId, LessonAttendance::getStudentIds);
 
 }

@@ -1,5 +1,6 @@
 package com.superum.db.teacher;
 
+import com.google.common.primitives.Chars;
 import com.superum.config.Gmail;
 import com.superum.db.account.Account;
 import com.superum.db.account.AccountDAO;
@@ -9,7 +10,6 @@ import com.superum.db.teacher.lang.TeacherLanguages;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
 import com.superum.utils.PrincipalUtils;
 import com.superum.utils.RandomUtils;
-import com.superum.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -126,8 +127,9 @@ public class TeacherServiceImpl implements TeacherService {
                 throw new IllegalStateException("Failed to send mail! Creation aborted.", e);
             }
 
-            String securePassword = encoder.encode(StringUtils.toStr(randomPassword));
-            StringUtils.erase(randomPassword);
+            String securePassword = encoder.encode(Chars.join("", randomPassword));
+            Arrays.fill(randomPassword, '?');
+            randomPassword = null;
             LOG.debug("Password encoded and erased from memory");
 
             String accountName = PrincipalUtils.makeName(newTeacher.getEmail(), partitionId);

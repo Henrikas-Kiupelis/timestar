@@ -6,8 +6,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
+import com.google.common.base.MoreObjects;
+import com.superum.helper.Equals;
 import com.superum.helper.JodaLocalDate;
-import com.superum.utils.StringUtils;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
@@ -99,36 +100,23 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer" + StringUtils.toString(
-				"Customer ID: " + id,
-				"Contract started: " + startDate,
-				"Name: " + name,
-				"Phone: " + phone,
-				"Website: " + website,
-				"Picture: " + picture,
-				"Comment: " + comment,
-                "Created at: " + createdAt,
-                "Updated at: " + updatedAt);
+        return MoreObjects.toStringHelper("Customer")
+                .add("Customer id", id)
+                .add("Contract started", startDate)
+                .add("Name", name)
+                .add("Phone", phone)
+                .add("Website", website)
+                .add("Picture", picture)
+                .add("Comment", comment)
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof Customer))
-			return false;
-
-		Customer other = (Customer) o;
-
-		return this.id == other.id
-				&& Objects.equals(this.startDate, other.startDate)
-				&& Objects.equals(this.name, other.name)
-				&& Objects.equals(this.phone, other.phone)
-				&& Objects.equals(this.website, other.website)
-				&& Objects.equals(this.picture, other.picture)
-				&& Objects.equals(this.comment, other.comment);
-	}
+        return this == o || o instanceof Customer && EQUALS.equals(this, (Customer) o);
+    }
 
 	@Override
 	public int hashCode() {
@@ -225,6 +213,9 @@ public class Customer {
 			throw new IllegalStateException("Error occurred when parsing date while reading Customer from database: " + sqlDate, e);
 		}
 	}
+
+    private static final Equals<Customer> EQUALS = new Equals<>(Customer::getId, Customer::getStartDate,  Customer::getName,
+            Customer::getPhone, Customer::getWebsite, Customer::getPicture, Customer::getPhone);
 
     // GENERATED
 

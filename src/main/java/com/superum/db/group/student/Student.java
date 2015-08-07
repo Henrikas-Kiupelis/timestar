@@ -6,9 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
+import com.google.common.base.MoreObjects;
+import com.superum.helper.Equals;
 import com.superum.helper.JodaLocalDate;
 import com.superum.utils.RandomUtils;
-import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -112,34 +113,22 @@ public class Student {
 
 	@Override
 	public String toString() {
-		return "Student" + StringUtils.toString(
-				"Student ID: " + id,
-                "Student code: " + code,
-				"Customer ID: " + customerId,
-                "Start date: " + startDate,
-				"Email: " + email,
-				"Name: " + name,
-                "Created at: " + createdAt,
-                "Updated at: " + updatedAt);
+        return MoreObjects.toStringHelper("Student")
+                .add("Student id", id)
+                .add("Student code", code)
+                .add("Customer id", customerId)
+                .add("Start date", startDate)
+                .add("Email", email)
+                .add("Name", name)
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof Student))
-			return false;
-
-		Student other = (Student) o;
-
-		return this.id == other.id
-                && Objects.equals(this.code, other.code)
-				&& Objects.equals(this.customerId, other.customerId)
-                && Objects.equals(this.startDate, other.startDate)
-				&& Objects.equals(this.email, other.email)
-				&& Objects.equals(this.name, other.name);
-	}
+        return this == o || o instanceof Student && EQUALS.equals(this, (Student) o);
+    }
 
 	@Override
 	public int hashCode() {
@@ -225,6 +214,9 @@ public class Student {
             throw new IllegalStateException("Error occurred when parsing date while reading Student from database: " + sqlDate, e);
         }
     }
+
+    private static final Equals<Student> EQUALS = new Equals<>(Student::getId, Student::getCode,  Student::getCustomerId,
+            Student::getStartDate, Student::getEmail, Student::getName);
 
     // GENERATED
 
