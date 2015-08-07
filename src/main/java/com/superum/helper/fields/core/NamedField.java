@@ -1,21 +1,20 @@
 package com.superum.helper.fields.core;
 
 /**
- * <pre>
  * MaybeField that has a name
- * </pre>
  */
 public abstract class NamedField<T> extends MaybeField<T> {
 
     /**
-     * <pre>
-     * Returns the name of this Field
-     * </pre>
+     * @return name of this Field
      */
     public final String getFieldName() {
         return fieldName;
     }
 
+    /**
+     * @return true if the name of the other field is equal to the name of this field; false otherwise
+     */
     public final boolean equalsName(NamedField other) {
         return this.fieldName.equals(other.fieldName);
     }

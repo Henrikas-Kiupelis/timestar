@@ -1,9 +1,10 @@
 package com.superum.exception;
 
 /**
- * Placeholder exception for all database problems at the current time
- * 
- * @author Goodlike
+ * <pre>
+ * This exception is thrown when an error occurs inside the database, i.e. malformed SQL statements, key constraint
+ * violations and similar
+ * </pre>
  */
 public class DatabaseException extends RuntimeException {
 

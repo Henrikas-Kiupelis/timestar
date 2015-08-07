@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * <pre>
  * NamedField intended for use with non-primitives
- * </pre>
  */
 public class SimpleField<T> extends NamedField<T> {
 

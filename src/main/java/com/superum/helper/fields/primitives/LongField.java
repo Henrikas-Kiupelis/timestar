@@ -3,6 +3,9 @@ package com.superum.helper.fields.primitives;
 import com.superum.helper.fields.core.Mandatory;
 import com.superum.helper.fields.core.NamedField;
 
+/**
+ * NamedField intended for use with longs
+ */
 public final class LongField extends NamedField<Long> {
 
     @Override
@@ -10,11 +13,18 @@ public final class LongField extends NamedField<Long> {
         return value != 0;
     }
 
+    /**
+     * @deprecated use longValue() instead; if you need a boxed version, use SimpleField{@code<Long>} instead
+     */
     @Override
+    @Deprecated
     public Long getValue() {
         return value;
     }
 
+    /**
+     * @return the primitive long value of this field
+     */
     public long longValue() {
         return value;
     }

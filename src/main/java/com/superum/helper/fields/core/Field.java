@@ -10,16 +10,12 @@ package com.superum.helper.fields.core;
 public interface Field<T> {
 
     /**
-     * <pre>
-     * Returns true if the field is set (not equal to default value, such as null/0/false), false otherwise
-     * </pre>
+     * @return true if the field is set (not equal to default value, such as null/0/false), false otherwise
      */
     boolean isSet();
 
     /**
-     * <pre>
-     * Returns the value of this field
-     * </pre>
+     * @return the value of this field
      */
     T getValue();
 

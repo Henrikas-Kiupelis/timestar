@@ -1,17 +1,13 @@
 package com.superum.helper.fields.core;
 
 /**
- * <pre>
  * Field that can be mandatory or optional for some operation (i.e. insertion of an object in database)
- * </pre>
  */
 public abstract class MaybeField<T> implements Field<T> {
 
     /**
-     * <pre>
-     * Returns true if this object is mandatory for some operation (i.e. insertion of an object in database),
-     * false otherwise
-     * </pre>
+     * @return true if this object is mandatory for some operation
+     *          (i.e. insertion of an object in database), false otherwise
      */
     public final boolean isMandatory() {
         return mandatory == Mandatory.YES;

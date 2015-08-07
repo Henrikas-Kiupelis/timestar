@@ -3,6 +3,9 @@ package com.superum.helper.fields.primitives;
 import com.superum.helper.fields.core.Mandatory;
 import com.superum.helper.fields.core.NamedField;
 
+/**
+ * NamedField intended for use with bytes
+ */
 public final class ByteField extends NamedField<Byte> {
 
     @Override
@@ -10,11 +13,18 @@ public final class ByteField extends NamedField<Byte> {
         return value != 0;
     }
 
+    /**
+     * @deprecated use byteValue() instead; if you need a boxed version, use SimpleField{@code<Byte>} instead
+     */
     @Override
+    @Deprecated
     public Byte getValue() {
         return value;
     }
 
+    /**
+     * @return the primitive byte value of this field
+     */
     public byte byteValue() {
         return value;
     }

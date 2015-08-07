@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
+ * Sends emails using a GMail account
+ *
  * Borrowed from some stackoverflow thread (sorry, guy, can't remember!)
  */
 public final class GMail {

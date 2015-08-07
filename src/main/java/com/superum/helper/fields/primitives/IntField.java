@@ -3,6 +3,9 @@ package com.superum.helper.fields.primitives;
 import com.superum.helper.fields.core.Mandatory;
 import com.superum.helper.fields.core.NamedField;
 
+/**
+ * NamedField intended for use with ints
+ */
 public final class IntField extends NamedField<Integer> {
 
     @Override
@@ -10,11 +13,18 @@ public final class IntField extends NamedField<Integer> {
         return value != 0;
     }
 
+    /**
+     * @deprecated use intValue() instead; if you need a boxed version, use SimpleField{@code<Integer>} instead
+     */
     @Override
+    @Deprecated
     public Integer getValue() {
         return value;
     }
 
+    /**
+     * @return the primitive int value of this field
+     */
     public int intValue() {
         return value;
     }

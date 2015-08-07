@@ -12,6 +12,18 @@ import java.math.BigDecimal;
  */
 public class SpecialUtils {
 
+    /**
+     * <pre>
+     * This method is useful when BigDecimals can come from different sources, which may choose to trim the scale
+     * of their BigDecimals; using normal equals() method would imply that 10.0000 != 10 != 10.00, etc
+     * In this method, however, 10.0000 == 10 == 10.00, etc
+     *
+     * It is important to note, that if you use this method to compare two BigDecimals in an equals() method
+     * of some class, you need to also use a customized hashCode() implementation; it is suggested to use
+     * Double.valueOf(bigDecimal.doubleValue()).hashCode();
+     * </pre>
+     * @return true if the given BigDecimals are equal, ignoring scale; false otherwise
+     */
     public static boolean equalsJavaMathBigDecimal(BigDecimal bigDecimal1, BigDecimal bigDecimal2) {
         return bigDecimal1 == null ? bigDecimal2 == null : bigDecimal1.compareTo(bigDecimal2) == 0;
     }
