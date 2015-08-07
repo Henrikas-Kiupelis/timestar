@@ -9,7 +9,7 @@ import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.superum.helper.JodaTimeConverter;
-import com.superum.helper.utils.StringUtils;
+import com.superum.utils.StringUtils;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
@@ -186,7 +186,7 @@ public class Lesson {
         this.endHour = endHour;
         this.endMinute = endMinute;
         this.length = length;
-        this.comment = comment != null ? comment : "";
+        this.comment = comment;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

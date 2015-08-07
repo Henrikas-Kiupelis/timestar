@@ -89,9 +89,9 @@ CREATE TABLE teacher (
   phone VARCHAR(30) NOT NULL,
   city VARCHAR(30) NOT NULL,
   email VARCHAR(60) NOT NULL,
-  picture VARCHAR(100) NOT NULL,
-  document VARCHAR(100) NOT NULL,
-  comment VARCHAR(500) NOT NULL,
+  picture VARCHAR(100),
+  document VARCHAR(100),
+  comment VARCHAR(500),
   PRIMARY KEY(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id),
   UNIQUE KEY(partition_id, email));
@@ -134,8 +134,8 @@ CREATE TABLE customer (
   name VARCHAR(30) NOT NULL,
   phone VARCHAR(30) NOT NULL,
   website VARCHAR(30) NOT NULL,
-  picture VARCHAR(100) NOT NULL,
-  comment VARCHAR(500) NOT NULL,
+  picture VARCHAR(100),
+  comment VARCHAR(500),
   PRIMARY KEY(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id));
 
@@ -250,7 +250,7 @@ CREATE TABLE lesson (
   time_of_start BIGINT NOT NULL,
   time_of_end BIGINT,
   duration_in_minutes INT NOT NULL,
-  comment VARCHAR(500) NOT NULL,
+  comment VARCHAR(500),
   PRIMARY KEY(id),
   FOREIGN KEY(teacher_id) REFERENCES teacher(id),
   FOREIGN KEY(group_id) REFERENCES group_of_students(id),

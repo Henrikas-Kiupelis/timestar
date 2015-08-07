@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
-import com.superum.helper.utils.StringUtils;
+import com.superum.utils.StringUtils;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.jooq.Record;
@@ -188,9 +188,9 @@ public class Teacher {
         this.phone = phone;
         this.city = city;
         this.email = email;
-        this.picture = picture != null ? picture : "";
-        this.document = document != null ? document : "";
-        this.comment = comment != null ? comment : "";
+        this.picture = picture;
+        this.document = document;
+        this.comment = comment;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

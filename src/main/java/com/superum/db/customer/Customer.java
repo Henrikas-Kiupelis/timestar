@@ -10,7 +10,7 @@ import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.superum.helper.JodaLocalDate;
-import com.superum.helper.utils.StringUtils;
+import com.superum.utils.StringUtils;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
@@ -156,8 +156,8 @@ public class Customer {
         this.name = name;
         this.phone = phone;
         this.website = website;
-        this.picture = picture != null ? picture : "";
-        this.comment = comment != null ? comment : "";
+        this.picture = picture;
+        this.comment = comment;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
