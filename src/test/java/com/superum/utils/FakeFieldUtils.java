@@ -45,9 +45,10 @@ public class FakeFieldUtils {
     }
 
     public static int fakeDay(long id) {
-        if (id < 0)
-            id = -id;
-        return (int)(id % 31) + 1;
+        if (id == 0) return 31;
+        if (id < 0) id = -id;
+
+        return (int)((id - 1) % 31) + 1;
     }
 
     /**
