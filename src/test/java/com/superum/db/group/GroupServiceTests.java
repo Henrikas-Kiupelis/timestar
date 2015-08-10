@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.superum.helper.utils.FakeUtils.makeFakeGroup;
@@ -114,7 +115,8 @@ public class GroupServiceTests {
     public void testFindingGroupForCustomer(){
         int customerId = 1;
         int partitionId = 0;
-        List<Group> fakeGroups = makeSomeFakes(2, FakeUtils::makeFakeGroup);
+        List<Group> fakeGroups = Arrays.asList(makeFakeGroup(customerId));
+
 
         when(groupDAO.readAllForCustomer(customerId, partitionId)).thenReturn(fakeGroups);
 
@@ -131,7 +133,7 @@ public class GroupServiceTests {
     public void testFindingGroupForTeacher(){
         int teacherId = 1;
         int partitionId = 0;
-        List<Group> fakeGroups = makeSomeFakes(2, FakeUtils::makeFakeGroup);
+        List<Group> fakeGroups = Arrays.asList(makeFakeGroup(teacherId));
 
         when(groupDAO.readAllForTeacher(teacherId, partitionId)).thenReturn(fakeGroups);
 
@@ -149,7 +151,7 @@ public class GroupServiceTests {
         int teacherId = 1;
         int customerId = 1;
         int partitionId = 0;
-        List<Group> fakeGroups = makeSomeFakes(2, FakeUtils::makeFakeGroup);
+        List<Group> fakeGroups = Arrays.asList(makeFakeGroup(customerId));
 
         when(groupDAO.readAllForCustomerAndTeacher(customerId, teacherId, partitionId)).thenReturn(fakeGroups);
 
