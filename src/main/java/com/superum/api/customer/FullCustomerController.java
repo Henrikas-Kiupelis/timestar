@@ -1,14 +1,12 @@
 package com.superum.api.customer;
 
 import com.superum.api.exception.InvalidRequestException;
-import com.superum.api.exception.UnauthorizedRequestException;
-import com.superum.utils.PrincipalUtils;
+import com.superum.helper.PartitionAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
@@ -27,17 +25,13 @@ public class FullCustomerController {
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public FullCustomer createCustomer(Principal user, @RequestBody FullCustomer customer) {
-        if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to create new customer.");
-
+	public FullCustomer createCustomer(PartitionAccount account, @RequestBody FullCustomer customer) {
         if (customer == null)
             throw new InvalidRequestException("Customer cannot be null");
 
-        LOG.info("User {} is creating FullCustomer {}", user, customer);
+        LOG.info("User {} is creating FullCustomer {}", account, customer);
 
-		int partitionId = PrincipalUtils.partitionId(user);
-        FullCustomer createdCustomer = fullCustomerService.createCustomer(customer, partitionId);
+        FullCustomer createdCustomer = fullCustomerService.createCustomer(customer, account.partitionId());
         LOG.info("Successfully created FullCustomer: {}", createdCustomer);
 
         return createdCustomer;
@@ -45,17 +39,13 @@ public class FullCustomerController {
 
     @RequestMapping(value = "/{customerId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
-	public FullCustomer readCustomer(Principal user, @PathVariable int customerId) {
-        if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to read a customer.");
-
+	public FullCustomer readCustomer(PartitionAccount account, @PathVariable int customerId) {
         if (customerId <= 0)
             throw new InvalidRequestException("Customers can only have positive ids, not " + customerId);
 
-        LOG.info("User {} is reading FullCustomer with id {}", user, customerId);
+        LOG.info("User {} is reading FullCustomer with id {}", account, customerId);
 
-        int partitionId = PrincipalUtils.partitionId(user);
-        FullCustomer customer = fullCustomerService.readCustomer(customerId, partitionId);
+        FullCustomer customer = fullCustomerService.readCustomer(customerId, account.partitionId());
         LOG.info("Successfully read FullCustomer: {}", customer);
 
         return customer;
@@ -63,17 +53,13 @@ public class FullCustomerController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public FullCustomer updateCustomer(Principal user, @RequestBody FullCustomer customer) {
-        if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to update a customer.");
-
+    public FullCustomer updateCustomer(PartitionAccount account, @RequestBody FullCustomer customer) {
         if (customer == null)
             throw new InvalidRequestException("Customer cannot be null");
 
-        LOG.info("User {} is updating FullCustomer {}", user, customer);
+        LOG.info("User {} is updating FullCustomer {}", account, customer);
 
-        int partitionId = PrincipalUtils.partitionId(user);
-        FullCustomer updatedCustomer = fullCustomerService.updateCustomer(customer, partitionId);
+        FullCustomer updatedCustomer = fullCustomerService.updateCustomer(customer, account.partitionId());
         LOG.info("Successfully updated FullCustomer: {}", updatedCustomer);
 
         return updatedCustomer;
@@ -81,17 +67,13 @@ public class FullCustomerController {
 
     @RequestMapping(value = "/delete/{customerId:[\\d]+}", method = RequestMethod.DELETE, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public FullCustomer deleteCustomer(Principal user, @PathVariable int customerId) {
-        if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to delete a customer.");
-
+    public FullCustomer deleteCustomer(PartitionAccount account, @PathVariable int customerId) {
         if (customerId <= 0)
             throw new InvalidRequestException("Customers can only have positive ids, not " + customerId);
 
-        LOG.info("User {} is deleting FullCustomer with id {}", user, customerId);
+        LOG.info("User {} is deleting FullCustomer with id {}", account, customerId);
 
-        int partitionId = PrincipalUtils.partitionId(user);
-        FullCustomer deletedCustomer = fullCustomerService.deleteCustomer(customerId, partitionId);
+        FullCustomer deletedCustomer = fullCustomerService.deleteCustomer(customerId, account.partitionId());
         LOG.info("Successfully deleted FullCustomer: {}", deletedCustomer);
 
         return deletedCustomer;
@@ -99,12 +81,9 @@ public class FullCustomerController {
 
     @RequestMapping(value = "/for/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public List<FullCustomer> readCustomersForTeacher(Principal user, @PathVariable int teacherId,
+    public List<FullCustomer> readCustomersForTeacher(PartitionAccount account, @PathVariable int teacherId,
                                                       @RequestParam(value="page", required=false) Integer page,
                                                       @RequestParam(value="per_page", required=false) Integer per_page) {
-        if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to read customers for teacher.");
-
         if (teacherId <= 0)
             throw new InvalidRequestException("Teachers can only have positive ids, not " + teacherId);
 
@@ -130,11 +109,10 @@ public class FullCustomerController {
         if (per_page <= 0 || per_page > 100)
             throw new InvalidRequestException("You can only request 1-100 items per page, not " + per_page);
 
-        LOG.info("User {} is reading FullCustomers for teacher with id {}", user, teacherId);
+        LOG.info("User {} is reading FullCustomers for teacher with id {}", account, teacherId);
         LOG.info("Reading page {}, with {} entries per page", page, per_page);
 
-        int partitionId = PrincipalUtils.partitionId(user);
-        List<FullCustomer> customers = fullCustomerService.readCustomersForTeacher(teacherId, page, per_page, partitionId);
+        List<FullCustomer> customers = fullCustomerService.readCustomersForTeacher(teacherId, page, per_page, account.partitionId());
         LOG.info("Successfully read FullCustomers: {}", customers);
 
         return customers;
@@ -142,12 +120,9 @@ public class FullCustomerController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public List<FullCustomer> readCustomersAll(Principal user,
+    public List<FullCustomer> readCustomersAll(PartitionAccount account,
                                                @RequestParam(value="page", required=false) Integer page,
                                                @RequestParam(value="per_page", required=false) Integer per_page) {
-        if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to read all customers.");
-
         /**
          * Defaults are set up below rather than in annotation because otherwise
          *
@@ -170,11 +145,10 @@ public class FullCustomerController {
         if (per_page <= 0 || per_page > 100)
             throw new InvalidRequestException("You can only request 1-100 items per page, not " + per_page);
 
-        LOG.info("User {} is reading all FullCustomers", user);
+        LOG.info("User {} is reading all FullCustomers", account);
         LOG.info("Reading page {}, with {} entries per page", page, per_page);
 
-        int partitionId = PrincipalUtils.partitionId(user);
-        List<FullCustomer> customers = fullCustomerService.readCustomersAll(page, per_page, partitionId);
+        List<FullCustomer> customers = fullCustomerService.readCustomersAll(page, per_page, account.partitionId());
         LOG.info("Successfully read FullCustomers: {}", customers);
 
         return customers;
@@ -182,17 +156,13 @@ public class FullCustomerController {
 
     @RequestMapping(value = "/for/teacher/{teacherId:[\\d]+}/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public int countCustomersForTeacher(Principal user, @PathVariable int teacherId) {
-        if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to count all customers for teacher.");
-
+    public int countCustomersForTeacher(PartitionAccount account, @PathVariable int teacherId) {
         if (teacherId <= 0)
             throw new InvalidRequestException("Teachers can only have positive ids, not " + teacherId);
 
-        LOG.info("User {} is counting FullCustomers for teacher with id {}", user, teacherId);
+        LOG.info("User {} is counting FullCustomers for teacher with id {}", account, teacherId);
 
-        int partitionId = PrincipalUtils.partitionId(user);
-        int count = fullCustomerService.countForTeacher(teacherId, partitionId);
+        int count = fullCustomerService.countForTeacher(teacherId, account.partitionId());
         LOG.info("Amount of FullCustomers: {}", count);
 
         return count;
@@ -200,14 +170,10 @@ public class FullCustomerController {
 
     @RequestMapping(value = "/all/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public int countCustomers(Principal user) {
-        if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to count all customers.");
+    public int countCustomers(PartitionAccount account) {
+        LOG.info("User {} is counting FullCustomers", account);
 
-        LOG.info("User {} is counting FullCustomers", user);
-
-        int partitionId = PrincipalUtils.partitionId(user);
-        int count = fullCustomerService.countAll(partitionId);
+        int count = fullCustomerService.countAll(account.partitionId());
         LOG.info("Amount of FullCustomers: {}", count);
 
         return count;
@@ -215,17 +181,13 @@ public class FullCustomerController {
 
     @RequestMapping(value = "/exists", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public FullCustomer customerExists(Principal user, @RequestBody FullCustomer customer) {
-        if (user == null)
-            throw new UnauthorizedRequestException("Missing auth token for request to check if customer exists.");
-
+    public FullCustomer customerExists(PartitionAccount account, @RequestBody FullCustomer customer) {
         if (customer == null)
             throw new InvalidRequestException("Customer cannot be null");
 
-        LOG.info("User {} is checking if customer {} exists", user, customer);
+        LOG.info("User {} is checking if customer {} exists", account, customer);
 
-        int partitionId = PrincipalUtils.partitionId(user);
-        FullCustomer existingCustomer = fullCustomerService.exists(customer, partitionId);
+        FullCustomer existingCustomer = fullCustomerService.exists(customer, account.partitionId());
         LOG.info("Customer retrieved: {}", existingCustomer);
 
         return existingCustomer;

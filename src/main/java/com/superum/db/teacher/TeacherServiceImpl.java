@@ -7,9 +7,9 @@ import com.superum.db.account.AccountType;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguages;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
+import com.superum.helper.PartitionAccount;
 import com.superum.helper.Random;
 import com.superum.helper.mail.GMail;
-import com.superum.utils.PrincipalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +26,13 @@ import java.util.List;
 public class TeacherServiceImpl implements TeacherService {
 
 	@Override
-	public Teacher addTeacher(Teacher teacher, int partitionId) {
+	public Teacher addTeacher(Teacher teacher, PartitionAccount account) {
 		LOG.debug("Creating new Teacher: {}");
 		
-		Teacher newTeacher = teacherDAO.create(teacher, partitionId);
+		Teacher newTeacher = teacherDAO.create(teacher, account.partitionId());
 		LOG.debug("New Teacher created: {}", newTeacher);
 		
-		createAccount(newTeacher, partitionId);
+		createAccount(newTeacher, account);
 
 		return newTeacher;
 	}
@@ -58,16 +58,16 @@ public class TeacherServiceImpl implements TeacherService {
 	}
 	
 	@Override
-	public Teacher deleteTeacher(int id, int partitionId) {
+	public Teacher deleteTeacher(int id, PartitionAccount account) {
 		LOG.debug("Deleting Teacher by ID: {}", id);
 		
-		TeacherLanguages deletedLanguages = teacherLanguagesService.deleteLanguagesForTeacher(id, partitionId);
+		TeacherLanguages deletedLanguages = teacherLanguagesService.deleteLanguagesForTeacher(id, account.partitionId());
 		LOG.debug("Deleted TeacherLanguages: {}", deletedLanguages);
 		
-		Teacher deletedTeacher = teacherDAO.delete(id, partitionId);
+		Teacher deletedTeacher = teacherDAO.delete(id, account.partitionId());
 		LOG.debug("Deleted Teacher: {}", deletedTeacher);
 		
-		String username = PrincipalUtils.makeName(deletedTeacher.getEmail(), partitionId);
+		String username = account.usernameFor(deletedTeacher.getEmail());
 		Account deletedAccount = accountDAO.delete(username);
 		LOG.debug("Deleted Account: {}", deletedAccount);
 		
@@ -106,10 +106,10 @@ public class TeacherServiceImpl implements TeacherService {
 	private final TeacherLanguagesService teacherLanguagesService;
 	private final PartitionService partitionService;
 
-    private void createAccount(Teacher newTeacher, int partitionId) {
+    private void createAccount(Teacher newTeacher, PartitionAccount account) {
         // To avoid long pauses when sending e-mails/generating passwords, accounts are created on a separate thread
         new Thread(() -> {
-            String name = partitionService.findPartition(partitionId).getName();
+            String name = partitionService.findPartition(account.partitionId()).getName();
 
             char[] randomPassword = Random.password(true, true, false, PASSWORD_LENGTH);
             StringBuilder message = new StringBuilder()
@@ -123,7 +123,7 @@ public class TeacherServiceImpl implements TeacherService {
                 mail.send(newTeacher.getEmail(), fullTitle, message.toString());
                 LOG.debug("Sent email to teacher '{}': title - '{}'; body - '{}'", newTeacher, fullTitle, EMAIL_BODY + "[PROTECTED}");
             } catch (MessagingException e) {
-                teacherDAO.delete(newTeacher.getId(), partitionId);
+                teacherDAO.delete(newTeacher.getId(), account.partitionId());
                 throw new IllegalStateException("Failed to send mail! Creation aborted.", e);
             }
 
@@ -132,7 +132,7 @@ public class TeacherServiceImpl implements TeacherService {
             randomPassword = null;
             LOG.debug("Password encoded and erased from memory");
 
-            String accountName = PrincipalUtils.makeName(newTeacher.getEmail(), partitionId);
+            String accountName = account.usernameFor(newTeacher.getEmail());
             Account teacherAccount = accountDAO.create(new Account(newTeacher.getId(), accountName, AccountType.TEACHER.name(), securePassword.toCharArray()));
             LOG.debug("New Teacher Account created: {}", teacherAccount);
 		}).start();

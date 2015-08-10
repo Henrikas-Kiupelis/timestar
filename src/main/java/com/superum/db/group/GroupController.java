@@ -1,11 +1,10 @@
 package com.superum.db.group;
 
-import com.superum.utils.PrincipalUtils;
+import com.superum.helper.PartitionAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.List;
 
 import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
@@ -16,58 +15,50 @@ public class GroupController {
 
 	@RequestMapping(value = "/group/add", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public Group addGroup(Principal user, @RequestBody @Valid Group group) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return groupService.addGroup(group, partitionId);
+	public Group addGroup(PartitionAccount account, @RequestBody @Valid Group group) {
+		return groupService.addGroup(group, account.partitionId());
 	}
 	
 	@RequestMapping(value = "/group/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public Group findGroup(Principal user, @PathVariable int id) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return groupService.findGroup(id, partitionId);
+	public Group findGroup(PartitionAccount account, @PathVariable int id) {
+		return groupService.findGroup(id, account.partitionId());
 	}
 	
 	@RequestMapping(value = "/group/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public Group updateGroup(Principal user, @RequestBody @Valid Group group) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return groupService.updateGroup(group, partitionId);
+	public Group updateGroup(PartitionAccount account, @RequestBody @Valid Group group) {
+		return groupService.updateGroup(group, account.partitionId());
 	}
 	
 	@RequestMapping(value = "/group/delete/{id:[\\d]+}", method = RequestMethod.DELETE, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public Group deleteGroup(Principal user, @PathVariable int id) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return groupService.deleteGroup(id, partitionId);
+	public Group deleteGroup(PartitionAccount account, @PathVariable int id) {
+		return groupService.deleteGroup(id, account.partitionId());
 	}
 	
 	@RequestMapping(value = "/group/customer/{customerId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public List<Group> findGroupsForCustomer(Principal user, @PathVariable int customerId) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return groupService.findGroupsForCustomer(customerId, partitionId);
+	public List<Group> findGroupsForCustomer(PartitionAccount account, @PathVariable int customerId) {
+		return groupService.findGroupsForCustomer(customerId, account.partitionId());
 	}
 	
 	@RequestMapping(value = "/group/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public List<Group> findGroupsForTeacher(Principal user, @PathVariable int teacherId) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return groupService.findGroupsForTeacher(teacherId, partitionId);
+	public List<Group> findGroupsForTeacher(PartitionAccount account, @PathVariable int teacherId) {
+		return groupService.findGroupsForTeacher(teacherId, account.partitionId());
 	}
 	
 	@RequestMapping(value = "/group/customer/{customerId:[\\d]+}/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public List<Group> findGroupsForCustomerAndTeacher(Principal user, @PathVariable int customerId, @PathVariable int teacherId) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return groupService.findGroupsForCustomerAndTeacher(customerId, teacherId, partitionId);
+	public List<Group> findGroupsForCustomerAndTeacher(PartitionAccount account, @PathVariable int customerId, @PathVariable int teacherId) {
+		return groupService.findGroupsForCustomerAndTeacher(customerId, teacherId, account.partitionId());
 	}
 
 	@RequestMapping(value = "/group/all", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public List<Group> all(Principal user) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return groupService.all(partitionId);
+	public List<Group> all(PartitionAccount account) {
+		return groupService.all(account.partitionId());
 	}
 	
 	// CONSTRUCTORS

@@ -1,11 +1,10 @@
 package com.superum.db.teacher.lang;
 
-import com.superum.utils.PrincipalUtils;
+import com.superum.helper.PartitionAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
 
@@ -15,37 +14,32 @@ public class TeacherLanguagesController {
 
 	@RequestMapping(value = "/teacher/lang/add", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public TeacherLanguages addLanguagesToTeacher(Principal user, @RequestBody @Valid TeacherLanguages languages) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return languageService.addLanguagesToTeacher(languages, partitionId);
+	public TeacherLanguages addLanguagesToTeacher(PartitionAccount account, @RequestBody @Valid TeacherLanguages languages) {
+		return languageService.addLanguagesToTeacher(languages, account.partitionId());
 	}
 	
 	@RequestMapping(value = "/teacher/lang/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public TeacherLanguages getLanguagesForTeacher(Principal user, @PathVariable int teacherId) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return languageService.getLanguagesForTeacher(teacherId, partitionId);
+	public TeacherLanguages getLanguagesForTeacher(PartitionAccount account, @PathVariable int teacherId) {
+		return languageService.getLanguagesForTeacher(teacherId, account.partitionId());
 	}
 	
 	@RequestMapping(value = "/teacher/lang/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public TeacherLanguages updateLanguagesForTeacher(Principal user, @RequestBody @Valid TeacherLanguages languages) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return languageService.updateLanguagesForTeacher(languages, partitionId);
+	public TeacherLanguages updateLanguagesForTeacher(PartitionAccount account, @RequestBody @Valid TeacherLanguages languages) {
+		return languageService.updateLanguagesForTeacher(languages, account.partitionId());
 	}
 	
 	@RequestMapping(value = "/teacher/lang/delete/{teacherId:[\\d]+}", method = RequestMethod.DELETE, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public TeacherLanguages deleteLanguagesForTeacher(Principal user, @PathVariable int teacherId) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return languageService.deleteLanguagesForTeacher(teacherId, partitionId);
+	public TeacherLanguages deleteLanguagesForTeacher(PartitionAccount account, @PathVariable int teacherId) {
+		return languageService.deleteLanguagesForTeacher(teacherId, account.partitionId());
 	}
 	
 	@RequestMapping(value = "/teacher/lang/delete", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public TeacherLanguages deleteLanguagesForTeacher(Principal user, @RequestBody @Valid TeacherLanguages languages) {
-		int partitionId = PrincipalUtils.partitionId(user);
-		return languageService.deleteLanguagesForTeacher(languages, partitionId);
+	public TeacherLanguages deleteLanguagesForTeacher(PartitionAccount account, @RequestBody @Valid TeacherLanguages languages) {
+		return languageService.deleteLanguagesForTeacher(languages, account.partitionId());
 	}
 
 	// CONSTRUCTORS

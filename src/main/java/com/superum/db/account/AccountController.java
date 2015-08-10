@@ -1,12 +1,11 @@
 package com.superum.db.account;
 
-import com.superum.utils.PrincipalUtils;
+import com.superum.helper.PartitionAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
 
@@ -16,8 +15,8 @@ public class AccountController {
 
 	@RequestMapping(value = "/account/admin/add", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public Account createNewAdmin(Principal user, @RequestBody @Valid Account account) {
-		String username = PrincipalUtils.makeName(account.getUsername(), PrincipalUtils.partitionId(user));
+	public Account createNewAdmin(PartitionAccount partitionAccount, @RequestBody @Valid Account account) {
+		String username = partitionAccount.usernameFor(account);
 		
 		String securePassword = encoder.encode(account.getPassword());
 		account.erasePassword();
@@ -27,22 +26,21 @@ public class AccountController {
 	
 	@RequestMapping(value = "/account/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public Account updateAccount(Principal user, @RequestBody @Valid Account account) throws IllegalArgumentException {
-		String username = PrincipalUtils.makeName(account.getUsername(), PrincipalUtils.partitionId(user));
-		if (!user.getName().equals(username))
+	public Account updateAccount(PartitionAccount partitionAccount, @RequestBody @Valid Account account) throws IllegalArgumentException {
+        if (!partitionAccount.belongsTo(account))
 			throw new IllegalArgumentException("Users can only update their own account!");
 			
 		String securePassword = encoder.encode(account.getPassword());
 		account.erasePassword();
 		
-		return accountService.updateAccount(new Account(0, username, account.getAccountType(), securePassword.toCharArray()));
+		return accountService.updateAccount(new Account(0, partitionAccount.accountUsername(),
+                account.getAccountType(),securePassword.toCharArray()));
 	}
 	
 	@RequestMapping(value = "/account/info", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public Account retrieveInfo(Principal user, @RequestParam(value="username") String username) {
-		username = PrincipalUtils.makeName(username, PrincipalUtils.partitionId(user));
-		return accountService.retrieveInfo(username);
+	public Account retrieveInfo(PartitionAccount partitionAccount, @RequestParam(value="username") String username) {
+		return accountService.retrieveInfo(partitionAccount.usernameFor(username));
 	}
 
 	// CONSTRUCTORS

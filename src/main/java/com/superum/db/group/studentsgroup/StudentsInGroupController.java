@@ -1,11 +1,10 @@
 package com.superum.db.group.studentsgroup;
 
-import com.superum.utils.PrincipalUtils;
+import com.superum.helper.PartitionAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
 
@@ -15,37 +14,32 @@ public class StudentsInGroupController {
 
     @RequestMapping(value = "/group/student/add", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public StudentsInGroup addStudentsToGroup(Principal user, @RequestBody @Valid StudentsInGroup studentsInGroup) {
-        int partitionId = PrincipalUtils.partitionId(user);
-        return studentsInGroupService.addStudentsToGroup(studentsInGroup, partitionId);
+    public StudentsInGroup addStudentsToGroup(PartitionAccount account, @RequestBody @Valid StudentsInGroup studentsInGroup) {
+        return studentsInGroupService.addStudentsToGroup(studentsInGroup, account.partitionId());
     }
 
     @RequestMapping(value = "/group/student/{groupId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public StudentsInGroup getStudentsInGroup(Principal user, @PathVariable int groupId) {
-        int partitionId = PrincipalUtils.partitionId(user);
-        return studentsInGroupService.getStudentsInGroup(groupId, partitionId);
+    public StudentsInGroup getStudentsInGroup(PartitionAccount account, @PathVariable int groupId) {
+        return studentsInGroupService.getStudentsInGroup(groupId, account.partitionId());
     }
 
     @RequestMapping(value = "/group/student/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public StudentsInGroup updateStudentsInGroup(Principal user, @RequestBody @Valid StudentsInGroup studentsInGroup) {
-        int partitionId = PrincipalUtils.partitionId(user);
-        return studentsInGroupService.updateStudentsInGroup(studentsInGroup, partitionId);
+    public StudentsInGroup updateStudentsInGroup(PartitionAccount account, @RequestBody @Valid StudentsInGroup studentsInGroup) {
+        return studentsInGroupService.updateStudentsInGroup(studentsInGroup, account.partitionId());
     }
 
     @RequestMapping(value = "/group/student/delete/{groupId:[\\d]+}", method = RequestMethod.DELETE, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public StudentsInGroup deleteStudentsInGroup(Principal user, @PathVariable int groupId) {
-        int partitionId = PrincipalUtils.partitionId(user);
-        return studentsInGroupService.deleteStudentsInGroup(groupId, partitionId);
+    public StudentsInGroup deleteStudentsInGroup(PartitionAccount account, @PathVariable int groupId) {
+        return studentsInGroupService.deleteStudentsInGroup(groupId, account.partitionId());
     }
 
     @RequestMapping(value = "/group/student/delete", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public StudentsInGroup deleteStudentsInGroup(Principal user, @RequestBody @Valid StudentsInGroup studentsInGroup) {
-        int partitionId = PrincipalUtils.partitionId(user);
-        return studentsInGroupService.deleteStudentsInGroup(studentsInGroup, partitionId);
+    public StudentsInGroup deleteStudentsInGroup(PartitionAccount account, @RequestBody @Valid StudentsInGroup studentsInGroup) {
+        return studentsInGroupService.deleteStudentsInGroup(studentsInGroup, account.partitionId());
     }
 
     // CONSTRUCTORS
