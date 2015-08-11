@@ -14,6 +14,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.TEACHER;
@@ -259,9 +260,9 @@ public class Teacher {
 	private final Instant createdAt;
     private final Instant updatedAt;
 
-    private static final Equals<Teacher> EQUALS = new Equals<>(Teacher::getId, Teacher::getPaymentDay,  Teacher::getHourlyWage,
-            Teacher::getAcademicWage, Teacher::getName, Teacher::getSurname, Teacher::getPhone, Teacher::getCity, Teacher::getEmail,
-            Teacher::getPicture, Teacher::getDocument, Teacher::getComment);
+    private static final Equals<Teacher> EQUALS = new Equals<>(Arrays.asList(Teacher::getId, Teacher::getPaymentDay,
+			Teacher::getHourlyWage, Teacher::getAcademicWage, Teacher::getName, Teacher::getSurname, Teacher::getPhone,
+            Teacher::getCity, Teacher::getEmail, Teacher::getPicture, Teacher::getDocument, Teacher::getComment));
 
     // GENERATED
 

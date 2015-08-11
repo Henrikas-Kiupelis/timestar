@@ -12,6 +12,7 @@ import org.jooq.Record;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
@@ -176,8 +177,8 @@ public class Group {
 	private final Instant createdAt;
 	private final Instant updatedAt;
 
-    private static final Equals<Group> EQUALS = new Equals<>(Group::getId, Group::getTeacherId, Group::getCustomerId,
-            Group::getUsesHourlyWage, Group::getLanguageLevel, Group::getName);
+    private static final Equals<Group> EQUALS = new Equals<>(Arrays.asList(Group::getId, Group::getTeacherId,
+            Group::getCustomerId, Group::getUsesHourlyWage, Group::getLanguageLevel, Group::getName));
 
     // GENERATED
 

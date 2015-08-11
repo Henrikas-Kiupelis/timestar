@@ -1,14 +1,11 @@
 package com.superum.db.customer;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
-import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.google.common.base.MoreObjects;
 import com.superum.helper.Equals;
-import com.superum.helper.JodaLocalDate;
+import com.superum.helper.time.JodaTimeZoneHandler;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
@@ -16,7 +13,7 @@ import org.jooq.Record;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
@@ -45,18 +42,17 @@ public class Customer {
     }
 
 	@JsonProperty("startDate")
-	@JsonSerialize(using = LocalDateSerializer.class)
+    public String getStartDateString() {
+        return startDate.toString();
+    }
+    @JsonIgnore
 	public LocalDate getStartDate() {
 		return startDate;
 	}
 
     @JsonIgnore
     public java.sql.Date getStartDateSql() {
-		try {
-			return JodaLocalDate.from(startDate).toJavaSqlDate();
-		} catch (ParseException e) {
-			throw new IllegalStateException("Error occurred when parsing date while writing Customer to database: " + startDate, e);
-		}
+        return JodaTimeZoneHandler.getDefault().from(startDate).toJavaSqlDate();
     }
 
 	@JsonProperty("name")
@@ -127,13 +123,13 @@ public class Customer {
 
 	@JsonCreator
 	public Customer(@JsonProperty("id") int id,
-					@JsonProperty("startDate") @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate startDate,
+					@JsonProperty("startDate") String startDate,
 					@JsonProperty("name") String name, 
 					@JsonProperty("phone") String phone,
 					@JsonProperty("website") String website,
 					@JsonProperty("picture") String picture,
 					@JsonProperty("comment") String comment) {
-        this(id, startDate, name, phone, website, picture, comment, null, null);
+        this(id, startDate == null ? null : LocalDate.parse(startDate), name, phone, website, picture, comment, null, null);
 	}
 
 	public Customer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment, Instant createdAt, Instant updatedAt) {
@@ -151,9 +147,11 @@ public class Customer {
 	public static Customer valueOf(Record customerRecord) {
 		if (customerRecord == null)
 			return null;
-		
+
 		int id = customerRecord.getValue(CUSTOMER.ID);
-		LocalDate startDate = from(customerRecord.getValue(CUSTOMER.START_DATE));
+		LocalDate startDate = JodaTimeZoneHandler.getDefault()
+                .from(customerRecord.getValue(CUSTOMER.START_DATE))
+                .toOrgJodaTimeLocalDate();
 		String name = customerRecord.getValue(CUSTOMER.NAME);
 		String phone = customerRecord.getValue(CUSTOMER.PHONE);
 		String website = customerRecord.getValue(CUSTOMER.WEBSITE);
@@ -206,16 +204,9 @@ public class Customer {
     private final Instant createdAt;
     private final Instant updatedAt;
 
-	private static LocalDate from(java.sql.Date sqlDate) {
-		try {
-			return JodaLocalDate.from(sqlDate).toOrgJodaTimeLocalDate();
-		} catch (ParseException e) {
-			throw new IllegalStateException("Error occurred when parsing date while reading Customer from database: " + sqlDate, e);
-		}
-	}
-
-    private static final Equals<Customer> EQUALS = new Equals<>(Customer::getId, Customer::getStartDate,  Customer::getName,
-            Customer::getPhone, Customer::getWebsite, Customer::getPicture, Customer::getPhone);
+    private static final Equals<Customer> EQUALS = new Equals<>(Arrays.asList(Customer::getId,
+            Customer::getStartDate,  Customer::getName, Customer::getPhone, Customer::getWebsite,
+            Customer::getPicture, Customer::getPhone));
 
     // GENERATED
 

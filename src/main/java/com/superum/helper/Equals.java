@@ -41,9 +41,17 @@ public final class Equals<T> {
 
     // CONSTRUCTORS
 
+    /**
+     * @deprecated avoid using this to avoid compiler warnings
+     */
     @SafeVarargs
+    @Deprecated
     public Equals(Function<T, ?>... getters) {
-        this.getters = Arrays.asList(getters);
+        this(Arrays.asList(getters));
+    }
+
+    public Equals(List<Function<T, ?>> getters) {
+        this.getters = getters;
     }
 
     // PRIVATE

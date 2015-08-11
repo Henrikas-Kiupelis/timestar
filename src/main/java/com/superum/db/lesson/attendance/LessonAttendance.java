@@ -8,6 +8,7 @@ import com.google.common.base.MoreObjects;
 import com.superum.helper.Equals;
 
 import javax.validation.constraints.Min;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,6 +64,7 @@ public class LessonAttendance {
 	
 	private final List<Integer> studentIds;
 
-    private static final Equals<LessonAttendance> EQUALS = new Equals<>(LessonAttendance::getLessonId, LessonAttendance::getStudentIds);
+    private static final Equals<LessonAttendance> EQUALS = new Equals<>(Arrays.asList(LessonAttendance::getLessonId,
+			LessonAttendance::getStudentIds));
 
 }

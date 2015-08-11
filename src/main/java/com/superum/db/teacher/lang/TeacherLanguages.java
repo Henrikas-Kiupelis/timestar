@@ -8,6 +8,7 @@ import com.google.common.base.MoreObjects;
 import com.superum.helper.Equals;
 
 import javax.validation.constraints.Min;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -64,6 +65,7 @@ public class TeacherLanguages {
 
 	private final List<String> languages;
 
-    private static final Equals<TeacherLanguages> EQUALS = new Equals<>(TeacherLanguages::getTeacherId, TeacherLanguages::getLanguages);
+    private static final Equals<TeacherLanguages> EQUALS = new Equals<>(Arrays.asList(TeacherLanguages::getTeacherId,
+			TeacherLanguages::getLanguages));
 
 }

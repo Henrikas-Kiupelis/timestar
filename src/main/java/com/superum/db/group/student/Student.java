@@ -1,15 +1,12 @@
 package com.superum.db.group.student;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
-import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.google.common.base.MoreObjects;
 import com.superum.helper.Equals;
-import com.superum.helper.JodaLocalDate;
 import com.superum.helper.Random;
+import com.superum.helper.time.JodaTimeZoneHandler;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -18,7 +15,7 @@ import org.jooq.Record;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.STUDENT;
@@ -58,7 +55,7 @@ public class Student {
     public Student withoutCode() {
         return new Student(id, null, customerId, startDate, email, name, createdAt, updatedAt);
     }
-
+    @JsonIgnore
     public Student withGeneratedCode() {
         return withCode(generateCode());
     }
@@ -69,18 +66,16 @@ public class Student {
 	}
 
     @JsonProperty("startDate")
-    @JsonSerialize(using = LocalDateSerializer.class)
+    public String getStartDateString() {
+        return startDate.toString();
+    }
+    @JsonIgnore
     public LocalDate getStartDate() {
         return startDate;
     }
-
     @JsonIgnore
     public java.sql.Date getStartDateSql() {
-        try {
-            return JodaLocalDate.from(startDate).toJavaSqlDate();
-        } catch (ParseException e) {
-            throw new IllegalStateException("Error occurred when parsing date while writing Student to database: " + startDate, e);
-        }
+        return JodaTimeZoneHandler.getDefault().from(startDate).toJavaSqlDate();
     }
 	
 	@JsonProperty("email")
@@ -140,10 +135,10 @@ public class Student {
 	@JsonCreator
 	public Student(@JsonProperty("id") int id,
                    @JsonProperty("customerId") Integer customerId,
-                   @JsonProperty("startDate") @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate startDate,
+                   @JsonProperty("startDate") String startDate,
                    @JsonProperty("email") String email,
                    @JsonProperty("name") String name) {
-		this(id, null, customerId, startDate, email, name, null, null);
+		this(id, null, customerId, startDate == null ? null : LocalDate.parse(startDate), email, name, null, null);
 	}
 
     public Student(int id, Integer code, Integer customerId, LocalDate startDate, String email, String name, Instant createdAt, Instant updatedAt) {
@@ -164,7 +159,9 @@ public class Student {
 		int id = studentRecord.getValue(STUDENT.ID);
         Integer code = studentRecord.getValue(STUDENT.CODE);
         Integer customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
-        LocalDate startDate = from(studentRecord.getValue(STUDENT.START_DATE));
+        LocalDate startDate = JodaTimeZoneHandler.getDefault()
+                .from(studentRecord.getValue(STUDENT.START_DATE))
+                .toOrgJodaTimeLocalDate();
 		String email = studentRecord.getValue(STUDENT.EMAIL);
 		String name = studentRecord.getValue(STUDENT.NAME);
 
@@ -207,16 +204,8 @@ public class Student {
     private final Instant createdAt;
     private final Instant updatedAt;
 
-    private static LocalDate from(java.sql.Date sqlDate) {
-        try {
-            return JodaLocalDate.from(sqlDate).toOrgJodaTimeLocalDate();
-        } catch (ParseException e) {
-            throw new IllegalStateException("Error occurred when parsing date while reading Student from database: " + sqlDate, e);
-        }
-    }
-
-    private static final Equals<Student> EQUALS = new Equals<>(Student::getId, Student::getCode,  Student::getCustomerId,
-            Student::getStartDate, Student::getEmail, Student::getName);
+    private static final Equals<Student> EQUALS = new Equals<>(Arrays.asList(Student::getId, Student::getCode,
+            Student::getCustomerId, Student::getStartDate, Student::getEmail, Student::getName));
 
     // GENERATED
 

@@ -142,7 +142,8 @@ public class Account {
     private final Instant createdAt;
     private final Instant updatedAt;
 
-    private static final Equals<Account> EQUALS = new Equals<>(Account::getId, Account::getUsername, Account::getAccountType, Account::getPassword);
+    private static final Equals<Account> EQUALS = new Equals<>(Arrays.asList(Account::getId, Account::getUsername,
+			Account::getAccountType, Account::getPassword));
 
     // GENERATED
 

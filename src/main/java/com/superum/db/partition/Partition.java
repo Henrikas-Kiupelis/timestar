@@ -9,6 +9,7 @@ import com.superum.helper.Equals;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jooq.Record;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.PARTITIONS;
@@ -74,6 +75,6 @@ public class Partition {
 	@NotEmpty
 	private final String name;
 
-    private static final Equals<Partition> EQUALS = new Equals<>(Partition::getId, Partition::getName);
+    private static final Equals<Partition> EQUALS = new Equals<>(Arrays.asList(Partition::getId, Partition::getName));
 
 }
