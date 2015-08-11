@@ -17,10 +17,11 @@ import static env.IntegrationTestEnvironment.TEST_PARTITION;
 public class DatabaseHelper {
 
     public FullCustomer insertCustomerIntoDb(FullCustomer fullCustomer) {
+
         FullCustomer customer = sql.insertInto(CUSTOMER)
                 .set(CUSTOMER.PARTITION_ID, TEST_PARTITION)
                 .set(CUSTOMER.NAME, fullCustomer.getName())
-                .set(CUSTOMER.START_DATE, fullCustomer.getStartDateSQL())
+                .set(CUSTOMER.START_DATE, java.sql.Date.valueOf(fullCustomer.getStartDateString()))
                 .set(CUSTOMER.PHONE, fullCustomer.getPhone())
                 .set(CUSTOMER.WEBSITE, fullCustomer.getWebsite())
                 .set(CUSTOMER.PICTURE, fullCustomer.getPicture())

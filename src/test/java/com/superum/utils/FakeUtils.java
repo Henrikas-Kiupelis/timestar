@@ -12,6 +12,7 @@ import com.superum.db.lesson.attendance.LessonAttendance;
 import com.superum.db.partition.Partition;
 import com.superum.db.teacher.Teacher;
 import com.superum.db.teacher.lang.TeacherLanguages;
+import com.superum.helper.PartitionAccount;
 import org.joda.time.LocalDate;
 
 import java.math.BigDecimal;
@@ -41,14 +42,18 @@ public class FakeUtils {
 
     // API V2
 
+    public static PartitionAccount makeFakePartitionAccount() {
+        return new PartitionAccount(0, "test");
+    }
+
     public static FullCustomer makeFakeFullCustomer(int id) {
-        return FullCustomer.valueOf(id, fakeLocalDate(id), fakeName(id), fakePhone(id), fakeWebsite(id), fakePicture(id), fakeComment(id));
+        return FullCustomer.valueOf(id, fakeLocalDate(id).toString(), fakeName(id), fakePhone(id), fakeWebsite(id), fakePicture(id), fakeComment(id));
     }
 
     // FULL FAKES
 
     public static FullCustomer makeFakeFullCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
-        return FullCustomer.valueOf(id, startDate, name, phone, website, picture, comment);
+        return FullCustomer.valueOf(id, startDate.toString(), name, phone, website, picture, comment);
     }
 
     // API V1

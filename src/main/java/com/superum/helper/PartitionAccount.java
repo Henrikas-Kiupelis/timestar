@@ -63,6 +63,11 @@ public class PartitionAccount {
 
     // CONSTRUCTORS
 
+    public PartitionAccount(int partitionId, String username) {
+        this.partitionId = partitionId;
+        this.username = username;
+    }
+
     public PartitionAccount(Principal user) {
         String accountUsername = user.getName();
         int separatorIndex = accountUsername.indexOf(SEPARATOR);
