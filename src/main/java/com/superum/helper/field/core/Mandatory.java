@@ -1,4 +1,4 @@
-package com.superum.helper.fields.core;
+package com.superum.helper.field.core;
 
 /**
  * <pre>

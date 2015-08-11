@@ -1,28 +1,26 @@
 package com.superum.api.teacher;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableList;
+import com.fasterxml.jackson.annotation.*;
 import com.superum.db.teacher.Teacher;
 import com.superum.db.teacher.lang.TeacherLanguages;
-import com.superum.helper.fields.AbstractFullClassWithTimestamps;
-import com.superum.helper.fields.core.Field;
-import com.superum.helper.fields.core.Mandatory;
-import com.superum.helper.fields.core.NamedField;
-import com.superum.helper.fields.core.SimpleField;
-import com.superum.helper.fields.primitives.IntField;
-import com.superum.helper.jooq.SetFieldComparator;
+import com.superum.helper.field.FieldDef;
+import com.superum.helper.field.FieldDefinition;
+import com.superum.helper.field.FieldDefinitions;
+import com.superum.helper.field.MappedClassWithTimestamps;
+import com.superum.helper.field.core.Mandatory;
+import com.superum.helper.field.core.MappedField;
+import com.superum.helper.field.core.Primary;
+import com.superum.helper.validation.Validator;
 import org.joda.time.Instant;
 import org.jooq.Record;
+import org.jooq.lambda.Seq;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
-import static com.superum.helper.utils.ValidationUtils.*;
+import static com.superum.db.generated.timestar.Tables.TEACHER;
+import static com.superum.helper.validation.Validator.validate;
 
 /**
  * <pre>
@@ -121,145 +119,122 @@ import static com.superum.helper.utils.ValidationUtils.*;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FullTeacher extends AbstractFullClassWithTimestamps {
+@JsonInclude(JsonInclude.Include.ALWAYS)
+public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, Integer> {
 
     @JsonProperty(ID_FIELD)
     public int getId() {
-        return id.intValue();
-    }
-    @JsonIgnore
-    public boolean hasId() {
-        return id.isSet();
+        return id;
     }
     /**
-     * <pre>
-     * Intended to be used when the id field is not set yet, and is retrieved from the database
-     * </pre>
+     * @return true if id field is set; false otherwise
+     */
+    public boolean hasId() {
+        return primaryKey().isSet();
+    }
+    /**
+     * @return true if only id field is set; false otherwise
+     */
+    public boolean hasOnlyId() {
+        return hasId() && nonPrimaryFields().noneMatch(MappedField::isSet);
+    }
+    /**
+     * Intended to be used for unit/integration testing, to help emulate database behaviour
      * @return a copy of this FullTeacher, with its id replaced by the provided one
      */
     @JsonIgnore
     public FullTeacher withId(int id) {
-        return valueOf(id, getPaymentDay(), getHourlyWage(), getAcademicWage(), getName(), getSurname(), getPhone(),
-                getCity(), getEmail(), getPicture(), getDocument(), getComment(), getLanguages(), getCreatedAt(), getUpdatedAt());
+        return valueOf(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
+                document, comment, languages, getCreatedAt(), getUpdatedAt());
     }
     /**
-     * <pre>
      * Intended to be used for unit/integration testing, to help emulate database behaviour
-     * </pre>
      * @return a copy of this FullTeacher, with its id no longer set
      */
     @JsonIgnore
     public FullTeacher withoutId() {
-        return valueOf(0, getPaymentDay(), getHourlyWage(), getAcademicWage(), getName(), getSurname(), getPhone(),
-                getCity(), getEmail(), getPicture(), getDocument(), getComment(), getLanguages(), getCreatedAt(), getUpdatedAt());
+        return valueOf(0, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
+                document, comment, languages, getCreatedAt(), getUpdatedAt());
     }
 
     @JsonProperty(PAYMENT_DAY_FIELD)
     public int getPaymentDay() {
-        return paymentDay.intValue();
-    }
-    @JsonIgnore
-    public boolean hasPaymentDay() {
-        return paymentDay.isSet();
+        return paymentDay;
     }
 
     @JsonProperty(HOURLY_WAGE_FIELD)
     public BigDecimal getHourlyWage() {
-        return hourlyWage.getValue();
-    }
-    @JsonIgnore
-    public boolean hasHourlyWage() {
-        return hourlyWage.isSet();
+        return hourlyWage;
     }
 
     @JsonProperty(ACADEMIC_WAGE_FIELD)
     public BigDecimal getAcademicWage() {
-        return academicWage.getValue();
-    }
-    @JsonIgnore
-    public boolean hasAcademicWage() {
-        return academicWage.isSet();
+        return academicWage;
     }
 
     @JsonProperty(NAME_FIELD)
     public String getName() {
-        return name.getValue();
-    }
-    @JsonIgnore
-    public boolean hasName() {
-        return name.isSet();
+        return name;
     }
 
     @JsonProperty(SURNAME_FIELD)
     public String getSurname() {
-        return surname.getValue();
-    }
-    @JsonIgnore
-    public boolean hasSurname() {
-        return surname.isSet();
+        return surname;
     }
 
     @JsonProperty(PHONE_FIELD)
     public String getPhone() {
-        return phone.getValue();
-    }
-    @JsonIgnore
-    public boolean hasPhone() {
-        return phone.isSet();
+        return phone;
     }
 
     @JsonProperty(CITY_FIELD)
     public String getCity() {
-        return city.getValue();
-    }
-    @JsonIgnore
-    public boolean hasCity() {
-        return city.isSet();
+        return city;
     }
 
     @JsonProperty(EMAIL_FIELD)
     public String getEmail() {
-        return email.getValue();
-    }
-    @JsonIgnore
-    public boolean hasEmail() {
-        return email.isSet();
+        return email;
     }
 
     @JsonProperty(PICTURE_FIELD)
     public String getPicture() {
-        return picture.getValue();
-    }
-    @JsonIgnore
-    public boolean hasPicture() {
-        return picture.isSet();
+        return picture;
     }
 
     @JsonProperty(DOCUMENT_FIELD)
     public String getDocument() {
-        return document.getValue();
-    }
-    @JsonIgnore
-    public boolean hasDocument() {
-        return document.isSet();
+        return document;
     }
 
     @JsonProperty(COMMENT_FIELD)
     public String getComment() {
-        return comment.getValue();
-    }
-    @JsonIgnore
-    public boolean hasComment() {
-        return comment.isSet();
+        return comment;
     }
 
     @JsonProperty(LANGUAGES_FIELD)
     public List<String> getLanguages() {
-        return languages.getValue();
+        return languages;
     }
-    @JsonIgnore
-    public boolean hasLanguages() {
-        return languages.isSet();
+
+    @Override
+    public MappedField<Integer> primaryKey() {
+        return primaryField();
+    }
+
+    @Override
+    public Seq<MappedField<?>> createFields() {
+        throw new UnsupportedOperationException("FullTeacher should be created by using Teacher, not directly");
+    }
+
+    @Override
+    public Seq<MappedField<?>> updateFields() {
+        return allNonPrimarySetFields().filter(field -> field != languagesField());
+    }
+
+    @Override
+    public Seq<MappedField<?>> conditionFields() {
+        return allSetFields().filter(field -> field != languagesField());
     }
 
     /**
@@ -268,8 +243,8 @@ public class FullTeacher extends AbstractFullClassWithTimestamps {
     @JsonIgnore
     public boolean canUpdateTeacher() {
         return teacherFields()
-                .filter(field -> field != id)
-                .anyMatch(Field::isSet);
+                .filter(MappedField::isNotPrimary)
+                .anyMatch(MappedField::isSet);
     }
 
     /**
@@ -277,7 +252,7 @@ public class FullTeacher extends AbstractFullClassWithTimestamps {
      */
     @JsonIgnore
     public boolean canUpdateTeacherLanguages() {
-        return hasLanguages();
+        return languagesField().isSet();
     }
 
     /**
@@ -290,7 +265,7 @@ public class FullTeacher extends AbstractFullClassWithTimestamps {
      * @return true if all the set Teacher fields of this FullTeacher are equal to the given FullTeacher's; false otherwise
      */
     public boolean hasEqualSetTeacherFields(FullTeacher other) {
-        return setFieldComparator.compare(other, FullTeacher::teacherFields);
+        return compare(other, FullTeacher::teacherFields);
     }
 
     /**
@@ -303,7 +278,7 @@ public class FullTeacher extends AbstractFullClassWithTimestamps {
      * @return true if all the set TeacherLanguages fields of this FullTeacher are equal to the given FullTeacher's; false otherwise
      */
     public boolean hasEqualSetTeacherLanguagesFields(FullTeacher other) {
-        return setFieldComparator.compare(other, FullTeacher::teacherLanguagesFields);
+        return compare(other, FullTeacher::teacherLanguagesFields);
     }
 
     // OBJECT OVERRIDES
@@ -332,81 +307,41 @@ public class FullTeacher extends AbstractFullClassWithTimestamps {
         return valueOf(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture, document, comment, languages, null, null);
     }
 
+    /**
+     * Main entry point for creating FullTeacher; this method should be the only one that invokes the constructor
+     */
     public static FullTeacher valueOf(int id, int paymentDay, BigDecimal hourlyWage, BigDecimal academicWage, String name,
-                       String surname, String phone, String city, String email, String picture, String document,
-                       String comment, List<String> languages, Instant createdAt, Instant updatedAt) {
-        // Equivalent to (id != 0 && id <= 0); when id == 0, it simply was not set, so the state is valid, while id is not
-        if (id < 0)
-            throw new InvalidTeacherException("Customer id must be positive.");
+                                      String surname, String phone, String city, String email, String picture, String document,
+                                      String comment, List<String> languages, Instant createdAt, Instant updatedAt) {
+        // when id == 0, it simply was not set, so the state is valid, while id is not
+        validate(id).equal(0).or().moreThan(0).ifInvalid(() -> new InvalidTeacherException("Teacher id can't be negative: " + id));
+        validate(paymentDay).equal(0).or().dayOfMonth().ifInvalid(() -> new InvalidTeacherException("Such payment day for teacher is impossible: " + paymentDay));
+        validate(hourlyWage).isNull().or().positive().ifInvalid(() -> new InvalidTeacherException("Hourly wage for teacher must be positive, not " + hourlyWage));
+        validate(academicWage).isNull().or().positive().ifInvalid(() -> new InvalidTeacherException("Academic wage for teacher must be positive, not " + academicWage));
+        validate(name).isNull().or().notEmpty().fits(NAME_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher name must not exceed " + NAME_SIZE_LIMIT + " chars or be empty: " + name));
+        validate(surname).isNull().or().notEmpty().fits(SURNAME_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher surname must not exceed " + SURNAME_SIZE_LIMIT + " chars or be empty: " + surname));
+        validate(phone).isNull().or().notEmpty().fits(PHONE_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher phone must not exceed " + PHONE_SIZE_LIMIT + " chars or be empty: " + phone));
+        validate(city).isNull().or().notEmpty().fits(CITY_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher city must not exceed " + CITY_SIZE_LIMIT + " chars or be empty: " + city));
+        validate(email).isNull().or().notEmpty().fits(EMAIL_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher email must not exceed " + EMAIL_SIZE_LIMIT + " chars or be empty: " + email));
+        validate(picture).isNull().or().fits(PICTURE_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher picture must not exceed " + PICTURE_SIZE_LIMIT + " chars: " + picture));
+        validate(document).isNull().or().fits(DOCUMENT_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher document must not exceed " + DOCUMENT_SIZE_LIMIT + " chars: " + document));
+        validate(comment).isNull().or().fits(COMMENT_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher comment must not exceed " + COMMENT_SIZE_LIMIT + " chars: " + comment));
+        validate(languages).isNull().or().notEmpty()
+                .forEach(Validator::validate, validator -> validator.notNull().notEmpty().fits(LANGUAGE_CODE_SIZE_LIMIT)
+                        .ifInvalid(() -> new InvalidTeacherException("Specific Teacher languages must not be null, empty or exceed "
+                                + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + validator.value())))
+                .ifInvalid(() -> new InvalidTeacherException("Teacher must have at least a single language!"));
 
-        IntField idField  = new IntField(ID_FIELD, id, Mandatory.NO);
-
-        if (paymentDay != 0 && !isDayOfMonth(paymentDay))
-            throw new InvalidTeacherException("Such payment day for teacher is impossible: " + paymentDay);
-
-        IntField paymentDayField = new IntField(PAYMENT_DAY_FIELD, paymentDay, Mandatory.YES);
-
-        if (!isPositiveOrNull(hourlyWage))
-            throw new InvalidTeacherException("Hourly wage for teacher must be positive, not " + hourlyWage);
-
-        NamedField<BigDecimal> hourlyWageField = SimpleField.valueOf(HOURLY_WAGE_FIELD, hourlyWage, Mandatory.YES);
-
-        if (!isPositiveOrNull(academicWage))
-            throw new InvalidTeacherException("Academic wage for teacher must be positive, not " + academicWage);
-
-        NamedField<BigDecimal> academicWageField = SimpleField.valueOf(ACADEMIC_WAGE_FIELD, academicWage, Mandatory.YES);
-
-        if(!fitsOrNullNotEmpty(NAME_SIZE_LIMIT, name))
-            throw new InvalidTeacherException("Teacher name must not exceed " + NAME_SIZE_LIMIT + " chars");
-
-        NamedField<String> nameField = SimpleField.valueOf(NAME_FIELD, name, Mandatory.YES);
-
-        if(!fitsOrNullNotEmpty(SURNAME_SIZE_LIMIT, surname))
-            throw new InvalidTeacherException("Teacher surname must not exceed " + SURNAME_SIZE_LIMIT + " chars");
-
-        NamedField<String> surnameField = SimpleField.valueOf(SURNAME_FIELD, surname, Mandatory.YES);
-
-        if(!fitsOrNullNotEmpty(PHONE_SIZE_LIMIT, phone))
-            throw new InvalidTeacherException("Teacher phone must not exceed " + PHONE_SIZE_LIMIT + " chars");
-
-        NamedField<String> phoneField = SimpleField.valueOf(PHONE_FIELD, phone, Mandatory.YES);
-
-        if(!fitsOrNullNotEmpty(CITY_SIZE_LIMIT, city))
-            throw new InvalidTeacherException("Teacher city must not exceed " + CITY_SIZE_LIMIT + " chars");
-
-        NamedField<String> cityField = SimpleField.valueOf(CITY_FIELD, city, Mandatory.YES);
-
-        if(!fitsOrNullNotEmpty(EMAIL_SIZE_LIMIT, email))
-            throw new InvalidTeacherException("Teacher email must not exceed " + EMAIL_SIZE_LIMIT + " chars");
-
-        NamedField<String> emailField = SimpleField.valueOf(EMAIL_FIELD, email, Mandatory.YES);
-
-        if(!fitsOrNull(PICTURE_SIZE_LIMIT, picture))
-            throw new InvalidTeacherException("Teacher picture must not exceed " + PICTURE_SIZE_LIMIT + " chars");
-
-        NamedField<String> pictureField = SimpleField.valueOf(PICTURE_FIELD, picture, Mandatory.NO);
-
-        if(!fitsOrNull(DOCUMENT_SIZE_LIMIT, document))
-            throw new InvalidTeacherException("Teacher document must not exceed " + DOCUMENT_SIZE_LIMIT + " chars");
-
-        NamedField<String> documentField = SimpleField.valueOf(DOCUMENT_FIELD, document, Mandatory.NO);
-
-        if(!fitsOrNull(COMMENT_SIZE_LIMIT, comment))
-            throw new InvalidTeacherException("Teacher comment must not exceed " + COMMENT_SIZE_LIMIT + " chars");
-
-        NamedField<String> commentField = SimpleField.valueOf(COMMENT_FIELD, comment, Mandatory.NO);
-
-        if (languages != null && !languages.stream().allMatch(languageCode -> fitsNotNullNotEmpty(LANGUAGE_CODE_SIZE_LIMIT, languageCode)))
-            throw new InvalidTeacherException("Teacher languages must not be null or exceed " + LANGUAGE_CODE_SIZE_LIMIT + " chars");
-
-        NamedField<List<String>> languagesField = SimpleField.immutableValueOf(LANGUAGES_FIELD, languages, Mandatory.YES);
-
-        List<NamedField> allFields = ImmutableList.of(idField, paymentDayField, hourlyWageField,
-                academicWageField, nameField, surnameField, phoneField, cityField, emailField, pictureField,
-                documentField, commentField, languagesField);
-        return new FullTeacher(allFields, createdAt, updatedAt, idField, paymentDayField, hourlyWageField,
-                academicWageField, nameField, surnameField, phoneField, cityField, emailField, pictureField,
-                documentField, commentField, languagesField);
+        return new FullTeacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
+                document, comment, languages, createdAt, updatedAt);
     }
 
     public static FullTeacher valueOf(Teacher teacher, TeacherLanguages languages) {
@@ -421,13 +356,31 @@ public class FullTeacher extends AbstractFullClassWithTimestamps {
     }
 
     public static FullTeacher valueOf(Record record) {
-        return null; // TODO - implement valueOf for JOOQ record
+        if (record == null)
+            return null;
+
+        String[] languages = {}; //record.getValue(TEACHER.) TODO fix when we have an actual query
+
+        return FullTeacher.stepBuilder()
+                .paymentDay(record.getValue(TEACHER.PAYMENT_DAY))
+                .hourlyWage(record.getValue(TEACHER.HOURLY_WAGE))
+                .academicWage(record.getValue(TEACHER.ACADEMIC_WAGE))
+                .name(record.getValue(TEACHER.NAME))
+                .surname(record.getValue(TEACHER.SURNAME))
+                .phone(record.getValue(TEACHER.PHONE))
+                .city(record.getValue(TEACHER.CITY))
+                .email(record.getValue(TEACHER.EMAIL))
+                .languages(languages)
+                .picture(record.getValue(TEACHER.PICTURE))
+                .document(record.getValue(TEACHER.DOCUMENT))
+                .comment(record.getValue(TEACHER.COMMENT))
+                .createdAt(record.getValue(TEACHER.CREATED_AT))
+                .updatedAt(record.getValue(TEACHER.UPDATED_AT))
+                .build();
     }
 
     /**
-     * <pre>
      * Intended for updating
-     * </pre>
      * @return a new builder which can be used to make any kind of FullTeacher
      */
     public static Builder builder() {
@@ -435,21 +388,17 @@ public class FullTeacher extends AbstractFullClassWithTimestamps {
     }
 
     /**
-     * <pre>
      * Intended for creating
-     * </pre>
      * @return a new builder which creates a FullTeacher that has all its mandatory fields set
      */
     public static PaymentDayStep stepBuilder() {
         return new Builder();
     }
 
-    private FullTeacher(List<NamedField> allFields, Instant createdAt, Instant updatedAt, IntField id,
-                        IntField paymentDay, NamedField<BigDecimal> hourlyWage, NamedField<BigDecimal> academicWage,
-                        NamedField<String> name, NamedField<String> surname, NamedField<String> phone,
-                        NamedField<String> city, NamedField<String> email, NamedField<String> picture,
-                        NamedField<String> document, NamedField<String> comment, NamedField<List<String>> languages) {
-        super(allFields, createdAt, updatedAt);
+    private FullTeacher(int id, int paymentDay, BigDecimal hourlyWage, BigDecimal academicWage, String name,
+                        String surname, String phone, String city, String email, String picture, String document,
+                        String comment, List<String> languages, Instant createdAt, Instant updatedAt) {
+        super(createdAt, updatedAt);
 
         this.id = id;
         this.paymentDay = paymentDay;
@@ -465,45 +414,54 @@ public class FullTeacher extends AbstractFullClassWithTimestamps {
         this.comment = comment;
         this.languages = languages;
 
-        this.setFieldComparator = new SetFieldComparator<>(this);
+        registerFields(FIELD_DEFINITIONS);
+    }
+
+    // PROTECTED
+
+    @Override
+    protected FullTeacher thisObject() {
+        return this;
     }
 
     // PRIVATE
 
-    private final IntField id;
-    private final IntField paymentDay;
-    private final NamedField<BigDecimal> hourlyWage;
-    private final NamedField<BigDecimal> academicWage;
-    private final NamedField<String> name;
-    private final NamedField<String> surname;
-    private final NamedField<String> phone;
-    private final NamedField<String> city;
-    private final NamedField<String> email;
-    private final NamedField<String> picture;
-    private final NamedField<String> document;
-    private final NamedField<String> comment;
-    private final NamedField<List<String>> languages;
-
-    private final SetFieldComparator<FullTeacher> setFieldComparator;
+    private final int id;
+    private final int paymentDay;
+    private final BigDecimal hourlyWage;
+    private final BigDecimal academicWage;
+    private final String name;
+    private final String surname;
+    private final String phone;
+    private final String city;
+    private final String email;
+    private final String picture;
+    private final String document;
+    private final String comment;
+    private final List<String> languages;
 
     /**
-     * <pre>
      * Intended to be used by other methods to reduce the filtering chain
-     * </pre>
      * @return a stream of all Teacher fields
      */
-    private Stream<NamedField> teacherFields() {
-        return allFields().filter(field -> field != languages);
+    private Seq<MappedField<?>> teacherFields() {
+        return allFields().filter(field -> field != languagesField());
     }
 
     /**
-     * <pre>
      * Intended to be used by other methods to reduce the filtering chain
-     * </pre>
      * @return a stream of all TeacherLanguages fields
      */
-    private Stream<NamedField> teacherLanguagesFields() {
-        return Arrays.<NamedField>asList(id, languages).stream();
+    private Seq<MappedField<?>> teacherLanguagesFields() {
+        return Seq.of(primaryField(), languagesField());
+    }
+
+    /**
+     * @return languages field
+     */
+    private MappedField<?> languagesField() {
+        return allFields().filter(field -> field.nameEquals(LANGUAGES_FIELD)).findAny()
+                .orElseThrow(() -> new IllegalStateException("There should be only a single 'languages' field!"));
     }
 
     private static final int NAME_SIZE_LIMIT = 30;
@@ -531,6 +489,25 @@ public class FullTeacher extends AbstractFullClassWithTimestamps {
     private static final String DOCUMENT_FIELD = "document";
     private static final String COMMENT_FIELD = "comment";
     private static final String LANGUAGES_FIELD = "languages";
+
+    // FIELD DEFINITIONS
+
+    private static final List<FieldDef<FullTeacher, ?>> FIELD_DEFINITION_LIST = Arrays.asList(
+            FieldDefinition.ofInt(ID_FIELD, TEACHER.ID, Mandatory.NO, Primary.YES, FullTeacher::getId),
+            FieldDefinition.ofInt(PAYMENT_DAY_FIELD, TEACHER.PAYMENT_DAY, Mandatory.YES, Primary.NO, FullTeacher::getPaymentDay),
+            FieldDefinition.of(HOURLY_WAGE_FIELD, TEACHER.HOURLY_WAGE, Mandatory.YES, Primary.NO, FullTeacher::getHourlyWage),
+            FieldDefinition.of(ACADEMIC_WAGE_FIELD, TEACHER.ACADEMIC_WAGE, Mandatory.YES, Primary.NO, FullTeacher::getAcademicWage),
+            FieldDefinition.of(NAME_FIELD, TEACHER.NAME, Mandatory.YES, Primary.NO, FullTeacher::getName),
+            FieldDefinition.of(SURNAME_FIELD, TEACHER.SURNAME, Mandatory.YES, Primary.NO, FullTeacher::getSurname),
+            FieldDefinition.of(PHONE_FIELD, TEACHER.PHONE, Mandatory.YES, Primary.NO, FullTeacher::getPhone),
+            FieldDefinition.of(CITY_FIELD, TEACHER.CITY, Mandatory.YES, Primary.NO, FullTeacher::getCity),
+            FieldDefinition.of(EMAIL_FIELD, TEACHER.EMAIL, Mandatory.YES, Primary.NO, FullTeacher::getEmail),
+            FieldDefinition.of(PICTURE_FIELD, TEACHER.PICTURE, Mandatory.NO, Primary.NO, FullTeacher::getPicture),
+            FieldDefinition.of(DOCUMENT_FIELD, TEACHER.DOCUMENT, Mandatory.NO, Primary.NO, FullTeacher::getDocument),
+            FieldDefinition.of(COMMENT_FIELD, TEACHER.COMMENT, Mandatory.NO, Primary.NO, FullTeacher::getComment),
+            FieldDefinition.of(LANGUAGES_FIELD, null, Mandatory.YES, Primary.NO, FullTeacher::getLanguages)
+    );
+    private static final FieldDefinitions<FullTeacher> FIELD_DEFINITIONS = new FieldDefinitions<>(FIELD_DEFINITION_LIST);
 
     // GENERATED
 

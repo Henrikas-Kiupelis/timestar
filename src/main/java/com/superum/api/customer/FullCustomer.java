@@ -1,34 +1,26 @@
 package com.superum.api.customer;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
-import com.google.common.collect.ImmutableList;
+import com.fasterxml.jackson.annotation.*;
 import com.superum.db.customer.Customer;
 import com.superum.helper.JodaLocalDate;
-import com.superum.helper.fields.AbstractFullClassWithTimestamps;
-import com.superum.helper.fields.core.Field;
-import com.superum.helper.fields.core.Mandatory;
-import com.superum.helper.fields.core.NamedField;
-import com.superum.helper.fields.core.SimpleField;
-import com.superum.helper.fields.primitives.IntField;
-import com.superum.helper.jooq.SetFieldComparator;
+import com.superum.helper.field.FieldDef;
+import com.superum.helper.field.FieldDefinition;
+import com.superum.helper.field.FieldDefinitions;
+import com.superum.helper.field.MappedClassWithTimestamps;
+import com.superum.helper.field.core.Mandatory;
+import com.superum.helper.field.core.MappedField;
+import com.superum.helper.field.core.Primary;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
+import org.jooq.lambda.Seq;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
-import static com.superum.helper.utils.ValidationUtils.fitsOrNull;
-import static com.superum.helper.utils.ValidationUtils.fitsOrNullNotEmpty;
+import static com.superum.helper.validation.Validator.validate;
 
 /**
  * <pre>
@@ -57,19 +49,19 @@ import static com.superum.helper.utils.ValidationUtils.fitsOrNullNotEmpty;
  *
  * Example of JSON to send:
  * {
- *      "id":"1",
- *      "startDate":"2015-07-22",
- *      "name":"SUPERUM",
- *      "phone":"+37069900001",
- *      "website":"http://superum.eu",
- *      "picture":"http://timestar.lt/uploads/superum.jpg",
- *      "comment":"What a company"
+ *      "id": "1",
+ *      "startDate": "2015-07-22",
+ *      "name": "SUPERUM",
+ *      "phone": "+37069900001",
+ *      "website": "http://superum.eu",
+ *      "picture": "http://timestar.lt/uploads/superum.jpg",
+ *      "comment": "What a company"
  * }
  *
  * When returning an instance of FullCustomer with JSON, these fields will be present:
  *      FIELD_NAME  : FIELD_DESCRIPTION
  *      id          : number representation of this customer in the system
- *      startDate   : array containing the date when a contract was signed; [year, month, day], all integers
+ *      startDate   : string containing the date when a contract was signed; yyyy-MM-dd format
  *      name        : name
  *      phone       : phone number
  *      website     : website
@@ -81,7 +73,7 @@ import static com.superum.helper.utils.ValidationUtils.fitsOrNullNotEmpty;
  * Example of JSON to expect:
  * {
  *      "id": 1,
- *      "startDate": [2015, 7, 22],
+ *      "startDate": "2015-07-22",
  *      "name": "SUPERUM",
  *      "phone": "+37069900001",
  *      "website": "http://superum.eu",
@@ -93,123 +85,102 @@ import static com.superum.helper.utils.ValidationUtils.fitsOrNullNotEmpty;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FullCustomer extends AbstractFullClassWithTimestamps {
-
-    // PUBLIC API
+@JsonInclude(JsonInclude.Include.ALWAYS)
+public final class FullCustomer extends MappedClassWithTimestamps<FullCustomer, Integer> {
 
 	@JsonProperty(ID_FIELD)
 	public int getId() {
-		return id.intValue();
+		return id;
 	}
-	@JsonIgnore
-	public boolean hasId() {
-		return id.isSet();
-	}
+    /**
+     * @return true if id field is set; false otherwise
+     */
+    public boolean hasId() {
+        return primaryKey().isSet();
+    }
     /**
      * @return true if only id field is set; false otherwise
      */
-    @JsonIgnore
     public boolean hasOnlyId() {
-        return hasId() && allFields().filter(field -> field != id).noneMatch(Field::isSet);
+        return hasId() && nonPrimaryFields().noneMatch(MappedField::isSet);
     }
     /**
-     * <pre>
-     * Intended to be used when the id field is not set yet, and is retrieved from the database
-     * </pre>
+     * Intended to be used for unit/integration testing, to help emulate database behaviour
      * @return a copy of this FullCustomer, with its id replaced by the provided one
      */
-    @JsonIgnore
     public FullCustomer withId(int id) {
-        return valueOf(id, getStartDate(), getName(), getPhone(), getWebsite(), getPicture(), getComment(), getCreatedAt(), getUpdatedAt());
+        return valueOf(id, startDate, name, phone, website, picture, comment, getCreatedAt(), getUpdatedAt());
     }
     /**
-     * <pre>
      * Intended to be used for unit/integration testing, to help emulate database behaviour
-     * </pre>
      * @return a copy of this FullCustomer, with its id no longer set
      */
-    @JsonIgnore
     public FullCustomer withoutId() {
-        return valueOf(0, getStartDate(), getName(), getPhone(), getWebsite(), getPicture(), getComment(), getCreatedAt(), getUpdatedAt());
+        return valueOf(0, startDate, name, phone, website, picture, comment, getCreatedAt(), getUpdatedAt());
     }
 
     @JsonProperty(START_DATE_FIELD)
-    @JsonSerialize(using = LocalDateSerializer.class)
-	public LocalDate getStartDate() {
-		return startDate.getValue();
+	public String getStartDateString() {
+		return startDate.toString();
 	}
-
     @JsonIgnore
-    public boolean hasStartDate() {
-        return startDate.isSet();
-    }
-
-    @JsonIgnore
-    public java.sql.Date getStartDateSQL() {
-        try {
-            return JodaLocalDate.from(getStartDate()).toJavaSqlDate();
-        } catch (ParseException e) {
-            throw new IllegalStateException("Error occurred when parsing date while writing Customer to database: " + startDate, e);
-        }
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
 	@JsonProperty(NAME_FIELD)
 	public String getName() {
-		return name.getValue();
+		return name;
 	}
-
-    @JsonIgnore
-    public boolean hasName() {
-        return name.isSet();
-    }
 
     @JsonProperty(PHONE_FIELD)
 	public String getPhone() {
-		return phone.getValue();
+		return phone;
 	}
-
-    @JsonIgnore
-    public boolean hasPhone() {
-        return phone.isSet();
-    }
 
     @JsonProperty(WEBSITE_FIELD)
 	public String getWebsite() {
-		return website.getValue();
+		return website;
 	}
-
-    @JsonIgnore
-    public boolean hasWebsite() {
-        return website.isSet();
-    }
 	
 	@JsonProperty(PICTURE_FIELD)
 	public String getPicture() {
-		return picture.getValue();
+		return picture;
 	}
-    @JsonIgnore
-    public boolean hasPictureName() {
-        return picture.isSet();
-    }
 	
 	@JsonProperty(COMMENT_FIELD)
 	public String getComment() {
-		return comment.getValue();
+		return comment;
 	}
 
-    @JsonIgnore
-    public boolean hasComment() {
-        return comment.isSet();
+    @Override
+    public MappedField<Integer> primaryKey() {
+        return primaryField();
+    }
+
+    @Override
+    public Seq<MappedField<?>> createFields() {
+        throw new UnsupportedOperationException("FullCustomer should be created by using Customer, not directly");
+    }
+
+    @Override
+    public Seq<MappedField<?>> updateFields() {
+        return allNonPrimarySetFields();
+    }
+
+
+    @Override
+    public Seq<MappedField<?>> conditionFields() {
+        return allSetFields();
     }
 
     /**
-     * @return true if at least one field, other than id is set; false otherwise
+     * @return true if at least one customer field, other than id is set; false otherwise
      */
-    @JsonIgnore
     public boolean canUpdateCustomer() {
         return customerFields()
-                .filter(field -> field != id)
-                .anyMatch(Field::isSet);
+                .filter(MappedField::isNotPrimary)
+                .anyMatch(MappedField::isSet);
     }
 
     /**
@@ -223,7 +194,7 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
      */
     @JsonIgnore
     public boolean hasEqualSetCustomerFields(FullCustomer other) {
-        return setFieldComparator.compare(other, FullCustomer::customerFields);
+        return compare(other, FullCustomer::customerFields);
     }
 
     /**
@@ -231,12 +202,12 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
      */
     @JsonIgnore
     public Customer toCustomer() {
-        return new Customer(getId(), getStartDate(), getName(), getPhone(), getWebsite(), getPicture(), getComment(), getCreatedAt(), getUpdatedAt());
+        return new Customer(id, startDate, name, phone, website, picture, comment, getCreatedAt(), getUpdatedAt());
     }
 
 	// OBJECT OVERRIDES
 
-	@Override
+    @Override
 	public String toString() {
 		return "FullCustomer{" + super.toString() + "}";
 	}
@@ -245,52 +216,35 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
 
     @JsonCreator
     public static FullCustomer valueOf(@JsonProperty(ID_FIELD) int id,
-                                       @JsonProperty(START_DATE_FIELD) @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate startDate,
+                                       @JsonProperty(START_DATE_FIELD) String startDate,
                                        @JsonProperty(NAME_FIELD) String name,
                                        @JsonProperty(PHONE_FIELD) String phone,
                                        @JsonProperty(WEBSITE_FIELD) String website,
                                        @JsonProperty(PICTURE_FIELD) String picture,
                                        @JsonProperty(COMMENT_FIELD) String comment) {
-        return valueOf(id, startDate, name, phone, website, picture, comment, null, null);
+        LocalDate date = startDate == null ? null : LocalDate.parse(startDate);
+        return valueOf(id, date, name, phone, website, picture, comment, null, null);
     }
 
+    /**
+     * Main entry point for creating FullCustomer; this method should be the only one that invokes the constructor
+     */
     public static FullCustomer valueOf(int id, LocalDate startDate, String name, String phone, String website,
                                        String picture, String comment, Instant createdAt, Instant updatedAt) {
-        // Equivalent to (id != 0 && id <= 0); when id == 0, it simply was not set, so the state is valid, while id is not
-        if (id < 0)
-            throw new InvalidCustomerException("Customer id must be positive.");
+        // when id == 0, it simply was not set, so the state is valid, while id is not
+        validate(id).equal(0).or().moreThan(0).ifInvalid(() -> new InvalidCustomerException("Customer id can't be negative: " + id));
+        validate(name).isNull().or().notEmpty().fits(NAME_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars or be empty: " + name));
+        validate(phone).isNull().or().notEmpty().fits(PHONE_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidCustomerException("Customer phone must not exceed " + PHONE_SIZE_LIMIT + " chars or be empty: " + phone));
+        validate(website).isNull().or().notEmpty().fits(WEBSITE_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidCustomerException("Customer website must not exceed " + WEBSITE_SIZE_LIMIT + " chars or be empty: " + website));
+        validate(picture).isNull().or().fits(PICTURE_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidCustomerException("Customer picture must not exceed " + PICTURE_SIZE_LIMIT + " chars: " + picture));
+        validate(comment).isNull().or().fits(COMMENT_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidCustomerException("Customer comment must not exceed " + COMMENT_SIZE_LIMIT + " chars: " + comment));
 
-        IntField idField = new IntField(ID_FIELD, id, Mandatory.NO);
-
-        if (!fitsOrNullNotEmpty(NAME_SIZE_LIMIT, name))
-            throw new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars");
-
-        SimpleField<String> nameField = SimpleField.valueOf(NAME_FIELD, name, Mandatory.YES);
-
-        if (!fitsOrNullNotEmpty(PHONE_SIZE_LIMIT, phone))
-            throw new InvalidCustomerException("Customer phone must not exceed " + PHONE_SIZE_LIMIT + " chars");
-
-        SimpleField<String> phoneField = SimpleField.valueOf(PHONE_FIELD, phone, Mandatory.YES);
-
-        if (!fitsOrNullNotEmpty(WEBSITE_SIZE_LIMIT, website))
-            throw new InvalidCustomerException("Customer website must not exceed " + WEBSITE_SIZE_LIMIT + " chars");
-
-        SimpleField<String> websiteField = SimpleField.valueOf(WEBSITE_FIELD, website, Mandatory.YES);
-
-        if (!fitsOrNull(PICTURE_SIZE_LIMIT, picture))
-            throw new InvalidCustomerException("Customer picture name must not exceed " + PICTURE_SIZE_LIMIT + " chars");
-
-        SimpleField<String> pictureField = SimpleField.valueOf(PICTURE_FIELD, picture, Mandatory.NO);
-
-        if (!fitsOrNull(COMMENT_SIZE_LIMIT, comment))
-            throw new InvalidCustomerException("Customer comment must not exceed " + COMMENT_SIZE_LIMIT + " chars");
-
-        SimpleField<String> commentField = SimpleField.valueOf(COMMENT_FIELD, comment, Mandatory.NO);
-
-        SimpleField<LocalDate> startDateField = SimpleField.valueOf(START_DATE_FIELD, startDate, Mandatory.YES);
-
-        List<NamedField> allFields = ImmutableList.of(idField, startDateField, nameField, phoneField, websiteField, pictureField, commentField);
-        return new FullCustomer(allFields, createdAt, updatedAt, idField, startDateField, nameField, phoneField, websiteField, pictureField, commentField);
+        return new FullCustomer(id, startDate, name, phone, website, picture, comment, createdAt, updatedAt);
     }
 
     public static FullCustomer valueOf(Customer customer) {
@@ -302,8 +256,16 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
         if (record == null)
             return null;
 
+        java.sql.Date sqlDate = record.getValue(CUSTOMER.START_DATE);
+        LocalDate localDate;
+        try {
+            localDate = JodaLocalDate.from(sqlDate).toOrgJodaTimeLocalDate();
+        } catch (ParseException e) {
+            throw new IllegalStateException("Error occurred when parsing date while reading Customer from database: " + sqlDate, e);
+        }
+
         return stepBuilder()
-                .startDate(from(record.getValue(CUSTOMER.START_DATE)))
+                .startDate(localDate)
                 .name(record.getValue(CUSTOMER.NAME))
                 .phone(record.getValue(CUSTOMER.PHONE))
                 .website(record.getValue(CUSTOMER.WEBSITE))
@@ -316,9 +278,7 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
     }
 
     /**
-     * <pre>
      * Intended for updating
-     * </pre>
      * @return a new builder which can be used to make any kind of FullCustomer
      */
     public static Builder builder() {
@@ -326,19 +286,15 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
     }
 
     /**
-     * <pre>
      * Intended for creating
-     * </pre>
      * @return a new builder which creates a FullCustomer that has all its mandatory fields set
      */
     public static StartDateStep stepBuilder() {
         return new Builder();
     }
 
-    private FullCustomer(List<NamedField> allFields, Instant createdAt, Instant updatedAt, IntField id,
-                         SimpleField<LocalDate> startDate, SimpleField<String> name, SimpleField<String> phone,
-                         SimpleField<String> website, SimpleField<String> picture, SimpleField<String> comment) {
-        super(allFields, createdAt, updatedAt);
+    private FullCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment, Instant createdAt, Instant updatedAt) {
+        super(createdAt, updatedAt);
 
         this.id = id;
         this.startDate = startDate;
@@ -348,38 +304,32 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
         this.picture = picture;
         this.comment = comment;
 
-        this.setFieldComparator = new SetFieldComparator<>(this);
+        registerFields(FIELD_DEFINITIONS);
+    }
+
+    // PROTECTED
+
+    @Override
+    public FullCustomer thisObject() {
+        return this;
     }
 
 	// PRIVATE
-	
-	private final IntField id;
-	private final NamedField<LocalDate> startDate;
-	private final NamedField<String> name;
-	private final NamedField<String> phone;
-	private final NamedField<String> website;
-	private final NamedField<String> picture;
-	private final NamedField<String> comment;
 
-    private final SetFieldComparator<FullCustomer> setFieldComparator;
+    private final int id;
+    private final LocalDate startDate;
+    private final String name;
+    private final String phone;
+    private final String website;
+    private final String picture;
+    private final String comment;
 
     /**
-     * <pre>
-     * Intended to be used by other methods to reduce the filtering chain
-     * </pre>
-     * @return a stream of all Customer fields
+     * @return a stream of all Customer fields (currently synonymous with allFields)
      */
     @JsonIgnore
-    private Stream<NamedField> customerFields() {
+    private Seq<MappedField<?>> customerFields() {
         return allFields();
-    }
-
-    private static LocalDate from(java.sql.Date sqlDate) {
-        try {
-            return JodaLocalDate.from(sqlDate).toOrgJodaTimeLocalDate();
-        } catch (ParseException e) {
-            throw new IllegalStateException("Error occurred when parsing date while reading Customer from database: " + sqlDate, e);
-        }
     }
 
     private static final int NAME_SIZE_LIMIT = 30;
@@ -397,6 +347,19 @@ public class FullCustomer extends AbstractFullClassWithTimestamps {
     private static final String WEBSITE_FIELD = "website";
     private static final String PICTURE_FIELD = "picture";
     private static final String COMMENT_FIELD = "comment";
+
+    // FIELD DEFINITIONS
+
+    private static final List<FieldDef<FullCustomer, ?>> FIELD_DEFINITION_LIST = Arrays.asList(
+            FieldDefinition.ofInt(ID_FIELD, CUSTOMER.ID, Mandatory.NO, Primary.YES, FullCustomer::getId),
+            FieldDefinition.ofDate(START_DATE_FIELD, CUSTOMER.START_DATE, Mandatory.YES, Primary.NO, FullCustomer::getStartDate),
+            FieldDefinition.of(NAME_FIELD, CUSTOMER.NAME, Mandatory.YES, Primary.NO, FullCustomer::getName),
+            FieldDefinition.of(PHONE_FIELD, CUSTOMER.PHONE, Mandatory.YES, Primary.NO, FullCustomer::getPhone),
+            FieldDefinition.of(WEBSITE_FIELD, CUSTOMER.WEBSITE, Mandatory.YES, Primary.NO, FullCustomer::getWebsite),
+            FieldDefinition.of(PICTURE_FIELD, CUSTOMER.PICTURE, Mandatory.NO, Primary.NO, FullCustomer::getPicture),
+            FieldDefinition.of(COMMENT_FIELD, CUSTOMER.COMMENT, Mandatory.NO, Primary.NO, FullCustomer::getComment)
+    );
+    private static final FieldDefinitions<FullCustomer> FIELD_DEFINITIONS = new FieldDefinitions<>(FIELD_DEFINITION_LIST);
 
     // GENERATED
 
