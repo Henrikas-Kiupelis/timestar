@@ -1,7 +1,6 @@
 package com.superum.db.teacher;
 
 import com.superum.TimeStarBackEndApplication;
-import com.superum.config.Gmail;
 import com.superum.db.account.AccountDAO;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
@@ -85,6 +84,7 @@ public class TeacherServiceTests {
         Teacher teacher = makeFakeTeacher(id);
 
         when(teacherDAO.delete(id, account.partitionId())).thenReturn(teacher);
+        // TODO too few mocks!
 
         Teacher retrievedTeacher = teacherService.deleteTeacher(id, account);
 
