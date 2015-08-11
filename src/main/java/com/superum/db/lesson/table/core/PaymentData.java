@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import org.joda.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,7 +18,7 @@ public class PaymentData {
 	// PUBLIC API
 
 	@JsonProperty("paymentDate")
-	public Date getPaymentDate() {
+	public LocalDate getPaymentDate() {
 		return paymentDate;
 	}
 	
@@ -59,7 +59,7 @@ public class PaymentData {
 	// CONSTRUCTORS
 
 	@JsonCreator
-	public PaymentData(@JsonProperty("paymentDate") Date paymentDate,
+	public PaymentData(@JsonProperty("paymentDate") LocalDate paymentDate,
 					   @JsonProperty("cost") BigDecimal cost) {
 		this.paymentDate = paymentDate;
 		this.cost = cost;
@@ -68,7 +68,7 @@ public class PaymentData {
 	// PRIVATE
 	
 	@NotNull
-	private final Date paymentDate;
+	private final LocalDate paymentDate;
 	
 	@NotNull
 	private final BigDecimal cost;

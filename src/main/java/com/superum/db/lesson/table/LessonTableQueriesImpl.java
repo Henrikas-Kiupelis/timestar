@@ -4,7 +4,9 @@ import com.superum.db.lesson.table.core.CustomerLanguages;
 import com.superum.db.lesson.table.core.PaymentData;
 import com.superum.db.lesson.table.core.TeacherLessonData;
 import com.superum.exception.DatabaseException;
-import com.superum.utils.ConditionUtils;
+import com.superum.helper.time.JodaTimeZoneHandler;
+import com.superum.helper.time.TimeResolver;
+import org.joda.time.LocalDate;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record3;
@@ -15,28 +17,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Keys.LESSON_IBFK_1;
 import static com.superum.db.generated.timestar.Keys.LESSON_IBFK_2;
 import static com.superum.db.generated.timestar.Tables.*;
-import static com.superum.utils.DateUtils.*;
 
 @Repository
 @Transactional
 public class LessonTableQueriesImpl implements LessonTableQueries {
 
 	@Override
-	public TeacherLessonData readForTeacherAndCustomer(int teacherId, int customerId, Date start, Date end, int partitionId) {
+	public TeacherLessonData readForTeacherAndCustomer(int teacherId, int customerId, long start, long end, int partitionId) {
 		Condition condition = LESSON.TEACHER_ID.eq(teacherId)
 				.and(GROUP_OF_STUDENTS.CUSTOMER_ID.eq(customerId))
-				.and(LESSON.PARTITION_ID.eq(partitionId));
-		Condition dateCondition = ConditionUtils.betweenDates(LESSON.TIME_OF_START, start, end);
-		if (dateCondition != null)
-			condition = condition.and(dateCondition);
+				.and(LESSON.PARTITION_ID.eq(partitionId))
+				.and(LESSON.TIME_OF_START.between(start, end));
 		
 		Result<Record3<Long,Integer,BigDecimal>> result = sql.select(LESSON.ID, LESSON.DURATION_IN_MINUTES, TEACHER.HOURLY_WAGE.mul(LESSON.DURATION_IN_MINUTES).as("cost"))
                 .from(LESSON)
@@ -72,20 +69,16 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 				.findFirst()
 				.map(record -> record.getValue(TEACHER.PAYMENT_DAY))
 				.orElseThrow(() -> new DatabaseException("Couldn't find teacher with id " + teacherId));
-		
-		Calendar init = initialDay(paymentDay);
-		Date start = sqlDate(init);
-		Date end = sqlDate(finalDay(init, paymentDay));
 
+        TimeResolver timeResolver = TimeResolver.from(paymentDay);
         Condition condition = LESSON.TEACHER_ID.eq(teacherId)
-                .and(LESSON.PARTITION_ID.eq(partitionId));
-
-        Condition dateCondition = ConditionUtils.betweenDates(LESSON.TIME_OF_START, start, end);
+                .and(LESSON.PARTITION_ID.eq(partitionId))
+                .and(timeResolver.isBetween(LESSON.TIME_OF_START));
 		
 		BigDecimal cost = sql.select(TEACHER.HOURLY_WAGE.mul(LESSON.DURATION_IN_MINUTES).as("cost"))
                 .from(LESSON)
                 .join(TEACHER).onKey(LESSON_IBFK_1)
-                .where(condition.and(dateCondition))
+                .where(condition.and(condition))
                 .groupBy(LESSON.ID)
                 .orderBy(LESSON.ID)
                 .fetch()
@@ -93,7 +86,8 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
                 .map(object -> (BigDecimal) object)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		return new PaymentData(end, cost.divide(BigDecimal.valueOf(60), 4, BigDecimal.ROUND_HALF_EVEN));
+        LocalDate endDate = JodaTimeZoneHandler.getDefault().from(timeResolver.getEndTime()).toOrgJodaTimeLocalDate();
+		return new PaymentData(endDate, cost.divide(BigDecimal.valueOf(60), 4, BigDecimal.ROUND_HALF_EVEN));
 	}
 
 	@Override
@@ -107,27 +101,17 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 				.map(record -> record.getValue(CUSTOMER.START_DATE))
 				.orElseThrow(() -> new DatabaseException("Couldn't find customer with id " + customerId));
 
-        Calendar forPaymentDay = new GregorianCalendar();
-        forPaymentDay.setTime(contractStartDate);
-        int paymentDay = forPaymentDay.get(Calendar.DAY_OF_MONTH);
-        int max = forPaymentDay.getActualMaximum(Calendar.DAY_OF_MONTH);
-        if (paymentDay > max)
-            paymentDay -= max;
-
-		Calendar init = initialDay(paymentDay);
-		Date start = sqlDate(init);
-		Date end = sqlDate(finalDay(init, paymentDay));
-
+        LocalDate contractDate = JodaTimeZoneHandler.getDefault().from(contractStartDate).toOrgJodaTimeLocalDate();
+        TimeResolver timeResolver = TimeResolver.from(contractDate);
         Condition condition = GROUP_OF_STUDENTS.CUSTOMER_ID.eq(customerId)
-                .and(LESSON.PARTITION_ID.eq(partitionId));
-
-        Condition dateCondition = ConditionUtils.betweenDates(LESSON.TIME_OF_START, start, end);
+                .and(LESSON.PARTITION_ID.eq(partitionId))
+                .and(timeResolver.isBetween(LESSON.TIME_OF_START));
 
 		BigDecimal cost = sql.select(TEACHER.HOURLY_WAGE.mul(LESSON.DURATION_IN_MINUTES).as("Cost"))
 				.from(LESSON)
                 .join(TEACHER).onKey(LESSON_IBFK_1)
                 .join(GROUP_OF_STUDENTS).onKey(LESSON_IBFK_2)
-                .where(condition.and(dateCondition))
+                .where(condition.and(condition))
                 .groupBy(LESSON.ID)
                 .orderBy(LESSON.ID)
                 .fetch()
@@ -135,7 +119,8 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
                 .map(object -> (BigDecimal) object)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		return new PaymentData(end, cost.divide(BigDecimal.valueOf(60), 4, BigDecimal.ROUND_HALF_EVEN));
+        LocalDate endDate = JodaTimeZoneHandler.getDefault().from(timeResolver.getEndTime()).toOrgJodaTimeLocalDate();
+		return new PaymentData(endDate, cost.divide(BigDecimal.valueOf(60), 4, BigDecimal.ROUND_HALF_EVEN));
 	}
 
 	@Override

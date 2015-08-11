@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 public class LessonTableServiceImpl implements LessonTableService {
 
 	@Override
-	public LessonTable lessonData(int amount, int offset, Date start, Date end, int partitionId) {
+	public LessonTable lessonData(int amount, int offset, long start, long end, int partitionId) {
 		LOG.debug("Retrieving lesson table.");
 		
 		int totalTeacherCount = teacherDAO.count(partitionId);
@@ -88,7 +87,7 @@ public class LessonTableServiceImpl implements LessonTableService {
 	private final CustomerDAO customerDAO;
 	private final LessonTableQueries lessonTableQueries;
 	
-	private CustomerLessonData customerData(Customer customer, List<Teacher> teachers, Date start, Date end, int partitionId) {
+	private CustomerLessonData customerData(Customer customer, List<Teacher> teachers, long start, long end, int partitionId) {
 		CustomerLanguages contractLanguages = lessonTableQueries.getCustomerLanguages(customer.getId(), partitionId);
 		
 		List<TeacherLessonData> lessonData = teachers.stream()
@@ -110,7 +109,7 @@ public class LessonTableServiceImpl implements LessonTableService {
 		return new CustomerLessonData(customer, contractLanguages, lessonData, totalData, paymentData);
 	}
 	
-	private TeacherLessonData teacherData(Teacher teacher, Customer customer, Date start, Date end, int partitionId) {
+	private TeacherLessonData teacherData(Teacher teacher, Customer customer, long start, long end, int partitionId) {
 		return lessonTableQueries.readForTeacherAndCustomer(teacher.getId(), customer.getId(), start, end, partitionId);
 	}
 	

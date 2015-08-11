@@ -5,12 +5,10 @@ import com.superum.db.lesson.table.core.PaymentData;
 import com.superum.db.lesson.table.core.TeacherLessonData;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
-
 @Repository
 public interface LessonTableQueries {
 
-	TeacherLessonData readForTeacherAndCustomer(int teacherId, int customerId, Date start, Date end, int partitionId);
+	TeacherLessonData readForTeacherAndCustomer(int teacherId, int customerId, long start, long end, int partitionId);
 	
 	PaymentData countPriceForTeacher(int teacherId, int partitionId);
 	
