@@ -1,7 +1,6 @@
 package com.superum.config;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.superum.helper.jooq.DefaultQueryMaker;
 import org.jooq.ExecuteContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.*;
@@ -30,12 +29,6 @@ public class PersistenceContext {
  
     @Autowired
     Environment env;
-
-    @Bean
-    @DependsOn("dataSource")
-    public DefaultQueryMaker defaultQueryMaker() {
-        return new DefaultQueryMaker(dsl());
-    }
 
     @Bean
     @Primary

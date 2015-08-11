@@ -6,9 +6,6 @@ import com.superum.helper.field.core.MappedField;
 import org.jooq.*;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,8 +29,6 @@ import java.util.function.Function;
  * isUsed()     checks if a foreign key constraint is used
  * </pre>
  */
-@Component
-@Transactional
 public class DefaultQueryMaker {
 
     /**
@@ -52,10 +47,11 @@ public class DefaultQueryMaker {
      * @param <R> JOOQ generated table record for a table
      * @param <ID> primary key field type for this table
      */
-    public <R extends Record, ID> Queries<R, ID> forTable(Table<R> table, TableField<R, ID> keyField, TableField<R, Integer> partitionField) {
+    public static <R extends Record, ID>  Queries<R, ID> forTable(DSLContext sql, Table<R> table,
+                                                                  TableField<R, ID> keyField, TableField<R, Integer> partitionField) {
         NullChecker.check(table, keyField, partitionField).notNull("Table, id field and partition id field cannot be null");
 
-        return new QueryMaker<>(table, keyField, partitionField);
+        return new QueryMaker<>(sql, table, keyField, partitionField);
     }
 
     /**
@@ -68,23 +64,12 @@ public class DefaultQueryMaker {
      * @param <ID> foreign key type
      */
     @SafeVarargs
-    public final <ID> ForeignQueries<ID> forOtherTables(TableField<?, ID>... foreignKeys) {
+    public static <ID> ForeignQueries<ID> forOtherTables(DSLContext sql, TableField<?, ID>... foreignKeys) {
         NullChecker.check((Object)foreignKeys).notNull("Foreign keys cannot be null");
         NullChecker.check((Object[])foreignKeys).notNull("None of the foreign keys can be null");
 
-        return new ForeignQueryMaker<>(foreignKeys);
+        return new ForeignQueryMaker<>(sql, foreignKeys);
     }
-
-    // CONSTRUCTORS
-
-    @Autowired
-    public DefaultQueryMaker(DSLContext sql) {
-        this.sql = sql;
-    }
-
-    // PRIVATE
-
-    private final DSLContext sql;
 
     // INNER
 
@@ -185,7 +170,7 @@ public class DefaultQueryMaker {
         boolean isUsed(ID id);
     }
 
-    private final class QueryMaker<R extends Record, ID> implements Queries<R, ID> {
+    private static final class QueryMaker<R extends Record, ID> implements Queries<R, ID> {
 
         @Override
         public <T extends Defined<T, ID>> Optional<T> create(T body, int partitionId, Function<R, T> mapper) {
@@ -289,7 +274,8 @@ public class DefaultQueryMaker {
 
         // CONSTRUCTORS
 
-        private QueryMaker(Table<R> table, TableField<R, ID> keyField, TableField<R, Integer> partitionField) {
+        private QueryMaker(DSLContext sql, Table<R> table, TableField<R, ID> keyField, TableField<R, Integer> partitionField) {
+            this.sql = sql;
             this.table = table;
             this.keyField = keyField;
             this.partitionField = partitionField;
@@ -297,6 +283,7 @@ public class DefaultQueryMaker {
 
         // PRIVATE
 
+        private final DSLContext sql;
         private final Table<R> table;
         private final TableField<R, ID> keyField;
         private final TableField<R, Integer> partitionField;
@@ -311,7 +298,7 @@ public class DefaultQueryMaker {
 
     }
 
-    private final class ForeignQueryMaker<ID> implements ForeignQueries<ID> {
+    private static final class ForeignQueryMaker<ID> implements ForeignQueries<ID> {
 
         /**
          * @return true if a record with foreign key value id exists in given partition; false otherwise
@@ -334,12 +321,14 @@ public class DefaultQueryMaker {
         // CONSTRUCTORS
 
         @SafeVarargs
-        private ForeignQueryMaker(TableField<?, ID>... foreignKeys) {
+        private ForeignQueryMaker(DSLContext sql, TableField<?, ID>... foreignKeys) {
+            this.sql = sql;
             this.foreignKeys = Arrays.asList(foreignKeys);
         }
 
         // PRIVATE
 
+        private final DSLContext sql;
         private final List<TableField<?, ID>> foreignKeys;
 
         private Table[] tables() {
