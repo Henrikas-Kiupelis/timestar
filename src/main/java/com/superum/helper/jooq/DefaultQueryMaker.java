@@ -34,7 +34,7 @@ import java.util.function.Function;
  */
 @Component
 @Transactional
-public final class DefaultQueryMaker {
+public class DefaultQueryMaker {
 
     /**
      * <pre>

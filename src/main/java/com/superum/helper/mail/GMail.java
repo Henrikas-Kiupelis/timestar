@@ -17,7 +17,7 @@ import java.util.Properties;
  *
  * Borrowed from some stackoverflow thread (sorry, guy, can't remember!)
  */
-public final class GMail {
+public class GMail {
 
 	/**
      * Send email using GMail SMTP server.
