@@ -2,7 +2,6 @@ package com.superum.api.customer;
 
 import com.fasterxml.jackson.annotation.*;
 import com.superum.db.customer.Customer;
-import com.superum.helper.JodaLocalDate;
 import com.superum.helper.field.FieldDef;
 import com.superum.helper.field.FieldDefinition;
 import com.superum.helper.field.FieldDefinitions;
@@ -10,12 +9,12 @@ import com.superum.helper.field.MappedClassWithTimestamps;
 import com.superum.helper.field.core.Mandatory;
 import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.core.Primary;
+import com.superum.helper.time.JodaTimeZoneHandler;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
 import org.jooq.lambda.Seq;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -121,7 +120,7 @@ public final class FullCustomer extends MappedClassWithTimestamps<FullCustomer, 
 
     @JsonProperty(START_DATE_FIELD)
 	public String getStartDateString() {
-		return startDate.toString();
+		return startDate == null ? null : startDate.toString();
 	}
     @JsonIgnore
     public LocalDate getStartDate() {
@@ -256,16 +255,10 @@ public final class FullCustomer extends MappedClassWithTimestamps<FullCustomer, 
         if (record == null)
             return null;
 
-        java.sql.Date sqlDate = record.getValue(CUSTOMER.START_DATE);
-        LocalDate localDate;
-        try {
-            localDate = JodaLocalDate.from(sqlDate).toOrgJodaTimeLocalDate();
-        } catch (ParseException e) {
-            throw new IllegalStateException("Error occurred when parsing date while reading Customer from database: " + sqlDate, e);
-        }
-
         return stepBuilder()
-                .startDate(localDate)
+                .startDate(JodaTimeZoneHandler.getDefault()
+                        .from(record.getValue(CUSTOMER.START_DATE))
+                        .toOrgJodaTimeLocalDate())
                 .name(record.getValue(CUSTOMER.NAME))
                 .phone(record.getValue(CUSTOMER.PHONE))
                 .website(record.getValue(CUSTOMER.WEBSITE))

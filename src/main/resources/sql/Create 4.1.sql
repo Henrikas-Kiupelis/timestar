@@ -248,7 +248,7 @@ CREATE TABLE lesson (
   teacher_id INT,
   group_id INT NOT NULL,
   time_of_start BIGINT NOT NULL,
-  time_of_end BIGINT,
+  time_of_end BIGINT NOT NULL,
   duration_in_minutes INT NOT NULL,
   comment VARCHAR(500),
   PRIMARY KEY(id),
@@ -263,7 +263,6 @@ FOR EACH ROW
   BEGIN
     SET NEW.created_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
     SET NEW.updated_at = NEW.created_at;
-    SET NEW.time_of_end = NEW.time_of_start + (NEW.duration_in_minutes * 60000);
     SET NEW.teacher_id = (SELECT group_of_students.teacher_id FROM group_of_students
     WHERE group_of_students.id = NEW.group_id LIMIT 1);
   END; //

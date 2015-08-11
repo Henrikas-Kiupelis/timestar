@@ -1,7 +1,6 @@
 package com.superum.db.lesson;
 
 import com.superum.exception.DatabaseException;
-import com.superum.utils.ConditionUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
@@ -26,6 +24,7 @@ public class LessonDAOImpl implements LessonDAO {
                     .set(LESSON.PARTITION_ID, partitionId)
                     .set(LESSON.GROUP_ID, lesson.getGroupId())
                     .set(LESSON.TIME_OF_START, lesson.getStartTime())
+                    .set(LESSON.TIME_OF_END, lesson.getEndTime())
                     .set(LESSON.DURATION_IN_MINUTES, lesson.getLength())
                     .set(LESSON.COMMENT, lesson.getComment())
                     .returning()
@@ -64,6 +63,7 @@ public class LessonDAOImpl implements LessonDAO {
             sql.update(LESSON)
                     .set(LESSON.GROUP_ID, lesson.getGroupId())
                     .set(LESSON.TIME_OF_START, lesson.getStartTime())
+                    .set(LESSON.TIME_OF_END, lesson.getEndTime())
                     .set(LESSON.DURATION_IN_MINUTES, lesson.getLength())
                     .set(LESSON.COMMENT, lesson.getComment())
                     .where(LESSON.ID.eq(id)
@@ -95,13 +95,11 @@ public class LessonDAOImpl implements LessonDAO {
 	}
 
 	@Override
-	public List<Lesson> readAllForGroup(int groupId, Date start, Date end, int partitionId) {
+	public List<Lesson> readAllForGroup(int groupId, long start, long end, int partitionId) {
         try {
             Condition condition = LESSON.GROUP_ID.eq(groupId)
-                    .and(LESSON.PARTITION_ID.eq(partitionId));
-            Condition dateCondition = ConditionUtils.betweenDates(LESSON.TIME_OF_START, start, end);
-            if (dateCondition != null)
-                condition = condition.and(dateCondition);
+                    .and(LESSON.PARTITION_ID.eq(partitionId))
+                    .and(LESSON.TIME_OF_START.between(start, end));
 
             return sql.selectFrom(LESSON)
                     .where(condition)
@@ -115,13 +113,11 @@ public class LessonDAOImpl implements LessonDAO {
 	}
 
     @Override
-    public List<Lesson> readAllForTeacher(int teacherId, Date start, Date end, int partitionId) {
+    public List<Lesson> readAllForTeacher(int teacherId, long start, long end, int partitionId) {
         try {
             Condition condition = LESSON.TEACHER_ID.eq(teacherId)
-                    .and(LESSON.PARTITION_ID.eq(partitionId));
-            Condition dateCondition = ConditionUtils.betweenDates(LESSON.TIME_OF_START, start, end);
-            if (dateCondition != null)
-                condition = condition.and(dateCondition);
+                    .and(LESSON.PARTITION_ID.eq(partitionId))
+                    .and(LESSON.TIME_OF_START.between(start, end));
 
             return sql.selectFrom(LESSON)
                     .where(condition)

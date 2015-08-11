@@ -1,16 +1,15 @@
 package com.superum.helper.field;
 
-import com.superum.helper.JodaLocalDate;
 import com.superum.helper.NullChecker;
 import com.superum.helper.field.core.Mandatory;
 import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.core.Primary;
 import com.superum.helper.field.core.SimpleMappedField;
+import com.superum.helper.time.JodaTimeZoneHandler;
 import org.joda.time.LocalDate;
 import org.jooq.Field;
 
 import java.sql.Date;
-import java.text.ParseException;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
@@ -37,7 +36,7 @@ import java.util.function.ToLongFunction;
  * @param <T> type of the object this field definition belongs to
  * @param <F> type of the field this definition is defining
  */
-public class FieldDefinition<T, F> implements FieldDef<T, F> {
+public final class FieldDefinition<T, F> implements FieldDef<T, F> {
 
     public MappedField<F> toField(T t) {
         NullChecker.check(t).notNull("Body cannot be null");
@@ -155,12 +154,8 @@ public class FieldDefinition<T, F> implements FieldDef<T, F> {
             if (localDate == null)
                 return SimpleMappedField.empty(name, field, mandatory, primary);
 
-            try {
-                java.sql.Date sqlDate = JodaLocalDate.from(localDate).toJavaSqlDate();
-                return SimpleMappedField.valueOf(name, field, mandatory, primary, sqlDate);
-            } catch (ParseException e) {
-                throw new IllegalStateException("Error occurred when parsing date to write to database: " + localDate, e);
-            }
+            java.sql.Date sqlDate = JodaTimeZoneHandler.getDefault().from(localDate).toJavaSqlDate();
+            return SimpleMappedField.valueOf(name, field, mandatory, primary, sqlDate);
         }
 
         // CONSTRUCTORS

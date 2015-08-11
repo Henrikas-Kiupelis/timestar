@@ -30,6 +30,10 @@ import java.util.TimeZone;
  */
 public final class JodaTimeZoneHandler {
 
+    public static DateTimeZone defaultTimeZone() {
+        return DEFAULT_TIME_ZONE;
+    }
+
     public JodaTimeConverter from(long epochMillis) {
         return new JodaTimeConverter(epochMillis, null, null, null, null, null, null);
     }
@@ -118,7 +122,7 @@ public final class JodaTimeZoneHandler {
     /**
      * <pre>
      * The assumption behind java.sql.Date is that it was created using a String value, i.e.
-     * Date.parse("yyyy-MM-dd");
+     *      Date.parse("yyyy-MM-dd");
      * This uses the JAVA timezone to create a localized instance; therefore, the epoch milliseconds value
      * refers to the start of day at JAVA timezone, and the String value of the Date can get altered during conversion;
      * using toString() method, however, once again uses JAVA timezone, essentially allowing the value to remain correct
@@ -133,7 +137,7 @@ public final class JodaTimeZoneHandler {
     /**
      * <pre>
      * This method expects the following date format:
-     * "yyyy-MM-dd"; for example: "2015-08-05"
+     *      "yyyy-MM-dd"; for example: "2015-08-05"
      *
      * The instance created by this method will assume that the time was 00:00:00.000, using the handler's timezone
      * </pre>
@@ -153,6 +157,10 @@ public final class JodaTimeZoneHandler {
         return jodaTimeZoneHandler;
     }
 
+    public static JodaTimeZoneHandler getDefault() {
+        return forTimeZone(defaultTimeZone());
+    }
+
     public static JodaTimeZoneHandler forTimeZoneId(String timeZoneId) {
         return forTimeZone(DateTimeZone.forID(timeZoneId));
     }
@@ -170,6 +178,8 @@ public final class JodaTimeZoneHandler {
 
     private final DateTimeZone timeZone;
     private final Chronology chronology;
+
+    private static final DateTimeZone DEFAULT_TIME_ZONE = DateTimeZone.forID("UTC");
 
     private static final class Retrieval {
         private static final Map<DateTimeZone, JodaTimeZoneHandler> byZone = new HashMap<>();

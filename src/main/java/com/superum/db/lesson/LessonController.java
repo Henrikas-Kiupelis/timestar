@@ -1,11 +1,11 @@
 package com.superum.db.lesson;
 
 import com.superum.helper.PartitionAccount;
+import com.superum.helper.time.TimeResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
@@ -37,31 +37,19 @@ public class LessonController {
 	public Lesson deleteLesson(PartitionAccount account, @PathVariable long id) {
 		return lessonService.deleteLesson(id, account.partitionId());
 	}
-	
-	@RequestMapping(value = "/lesson/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+
+	@RequestMapping(value = "/lesson/{table:teacher|customer|group}/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public List<Lesson> findLessonsForTeacher(PartitionAccount account, @PathVariable int teacherId,
-											  @RequestParam(value="start", required=false) Date start,
-											  @RequestParam(value="end", required=false) Date end) {
-		return lessonService.findLessonsForTeacher(teacherId, start, end, account.partitionId());
+	public List<Lesson> findLessonsForTable(PartitionAccount account, @PathVariable String table, @PathVariable int id,
+                                              @RequestParam(value="timeZone", required=false) String timeZone,
+                                              @RequestParam(value="startDate", required=false) String startDate,
+                                              @RequestParam(value="endDate", required=false) String endDate,
+                                              @RequestParam(value="start", required=false) Long start,
+											  @RequestParam(value="end", required=false) Long end) {
+        TimeResolver timeResolver = TimeResolver.from(timeZone, startDate, endDate, start, end);
+        return lessonService.findLessonsForTable(table, id, timeResolver.getStartTime(), timeResolver.getEndTime(), account.partitionId());
 	}
-	
-	@RequestMapping(value = "/lesson/customer/{customerId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
-	@ResponseBody
-	public List<Lesson> findLessonsForCustomer(PartitionAccount account, @PathVariable int customerId,
-											   @RequestParam(value="start", required=false) Date start,
-											   @RequestParam(value="end", required=false) Date end) {
-		return lessonService.findLessonsForCustomer(customerId, start, end, account.partitionId());
-	}
-	
-	@RequestMapping(value = "/lesson/group/{groupId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
-	@ResponseBody
-	public List<Lesson> findLessonsForGroup(PartitionAccount account, @PathVariable int groupId,
-											@RequestParam(value="start", required=false) Date start,
-											@RequestParam(value="end", required=false) Date end) {
-		return lessonService.findLessonsForGroup(groupId, start, end, account.partitionId());
-	}
-	
+
 	// CONSTRUCTORS
 	
 	@Autowired

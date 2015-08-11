@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -66,40 +65,34 @@ public class LessonServiceImpl implements LessonService {
 	}
 
 	@Override
-	public List<Lesson> findLessonsForTeacher(int teacherId, Date start, Date end, int partitionId) {
-		LOG.debug("Reading Lessons for Teacher with ID '{}' on dates from {} to {}", teacherId, start, end);
+	public List<Lesson> findLessonsForTable(String table, int id, long start, long end, int partitionId) {
+		LOG.debug("Reading Lessons for {} with ID {} at times from {} to {}", table, id, start, end);
+
+        List<Lesson> lessons;
+        switch (table) {
+            case TEACHER_TABLE:
+                lessons = lessonDAO.readAllForTeacher(id, start, end, partitionId);
+                break;
+            case CUSTOMER_TABLE:
+                lessons = lessonQueries.readAllForCustomer(id, start, end, partitionId);
+                break;
+            case GROUP_TABLE:
+                lessons = lessonDAO.readAllForGroup(id, start, end, partitionId);
+                break;
+            default:
+                throw new AssertionError("This should never happen, because request mapping will " +
+                        "filter out all other possibilities");
+        }
+		LOG.debug("Lessons retrieved: {}", lessons);
 		
-		List<Lesson> lessonsForTeacher = lessonDAO.readAllForTeacher(teacherId, start, end, partitionId);
-		LOG.debug("Lessons retrieved: {}", lessonsForTeacher);
-		
-		return lessonsForTeacher;
+		return lessons;
 	}
-	
-	@Override
-	public List<Lesson> findLessonsForGroup(int groupId, Date start, Date end, int partitionId) {
-		LOG.debug("Reading Lessons for Group with ID '{}' on dates from {} to {}", groupId, start, end);
-		
-		List<Lesson> lessonsForGroup = lessonDAO.readAllForGroup(groupId, start, end, partitionId);
-		LOG.debug("Lessons retrieved: {}", lessonsForGroup);
-		
-		return lessonsForGroup;
-	}
-	
-	@Override
-	public List<Lesson> findLessonsForCustomer(int customerId, Date start, Date end, int partitionId) {
-		LOG.debug("Reading Lessons for Customer with ID '{}' on dates from {} to {}", customerId, start, end);
-		
-		List<Lesson> lessonsForCustomer = lessonQueries.readAllForCustomer(customerId, start, end, partitionId);
-		LOG.debug("Lessons retrieved: {}", lessonsForCustomer);
-		
-		return lessonsForCustomer;
-	}
-	
+
 	@Override
 	public List<Lesson> deleteForTeacher(int teacherId, int partitionId) {
 		LOG.debug("Deleting Lessons for Teacher with ID: {}", teacherId);
 		
-		List<Lesson> old = findLessonsForTeacher(teacherId, null, null, partitionId);
+		List<Lesson> old = findLessonsForTable(TEACHER_TABLE, teacherId, 0, Long.MAX_VALUE, partitionId);
 		
 		old.stream()
 			.mapToLong(Lesson::getId)
@@ -113,7 +106,7 @@ public class LessonServiceImpl implements LessonService {
 	public List<Lesson> deleteForGroup(int groupId, int partitionId) {
 		LOG.debug("Deleting Lessons for Group with ID: {}", groupId);
 		
-		List<Lesson> old = findLessonsForGroup(groupId, null, null, partitionId);
+		List<Lesson> old = findLessonsForTable(GROUP_TABLE, groupId, 0, Long.MAX_VALUE, partitionId);
 		
 		old.stream()
 			.mapToLong(Lesson::getId)
@@ -137,7 +130,11 @@ public class LessonServiceImpl implements LessonService {
 	private final LessonDAO lessonDAO;
 	private final LessonQueries lessonQueries;
 	private final LessonAttendanceService lessonAttendanceService;
-	
+
+    private static final String TEACHER_TABLE = "teacher";
+    private static final String CUSTOMER_TABLE = "customer";
+    private static final String GROUP_TABLE = "group";
+
 	private static final Logger LOG = LoggerFactory.getLogger(LessonService.class);
 
 }

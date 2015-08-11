@@ -1,25 +1,23 @@
 package com.superum.db.lesson;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
-import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
 import com.google.common.base.MoreObjects;
+import com.superum.api.exception.InvalidRequestException;
 import com.superum.helper.Equals;
-import com.superum.helper.JodaTimeConverter;
+import com.superum.helper.NullChecker;
+import com.superum.helper.time.JodaTimeZoneHandler;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.LESSON;
@@ -40,11 +38,11 @@ public class Lesson {
 	}
 	@JsonIgnore
 	public Lesson withId(long id) {
-		return new Lesson(id, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
+		return new Lesson(id, groupId, teacherId, startTime, endTime, length, comment, createdAt, updatedAt);
 	}
     @JsonIgnore
     public Lesson without() {
-        return new Lesson(0, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
+        return new Lesson(0, groupId, teacherId, startTime, endTime, length, comment, createdAt, updatedAt);
     }
 
 	@JsonProperty("groupId")
@@ -57,48 +55,14 @@ public class Lesson {
         return teacherId;
     }
 	
-	@JsonProperty("startDate")
-    @JsonSerialize(using = LocalDateSerializer.class)
-	public LocalDate getStartDate() {
-		return startDate;
-	}
-	
-	@JsonProperty("startHour")
-	public int getStartHour() {
-		return startHour;
-	}
-	
-	@JsonProperty("startMinute")
-	public int getStartMinute() {
-		return startMinute;
-	}
-	
-	@JsonIgnore
+    @JsonProperty("startTime")
 	public long getStartTime() {
-        return JodaTimeConverter.from(startDate, startHour, startMinute).toEpochMillis();
+        return startTime;
 	}
 
-    @JsonProperty("endDate")
-    @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-	@JsonProperty("endHour")
-	public int getEndHour() {
-		return endHour;
-	}
-	
-	@JsonProperty("endMinute")
-	public int getEndMinute() {
-		return endMinute;
-	}
-
-    @JsonIgnore
+    @JsonProperty("endTime")
     public long getEndTime() {
-        return endDate != null && endHour != null && endMinute != null
-                ? JodaTimeConverter.from(endDate, endHour, endMinute).toEpochMillis()
-                : JodaTimeConverter.from(startDate, startHour, startMinute + length).toEpochMillis();
+        return endTime;
     }
 
 	@JsonProperty("length")
@@ -131,10 +95,8 @@ public class Lesson {
                 .add("Lesson id", id)
                 .add("Group id", groupId)
                 .add("Teacher id", teacherId)
-                .add("Start date", startDate)
-                .add("Start time", startHour + ":" + startMinute)
-                .add("End date", endDate)
-                .add("End time", endHour + ":" + endMinute)
+                .add("Start time", startTime)
+                .add("End time", endTime)
                 .add("Length", length)
                 .add("Comment", comment)
                 .add("Created at", createdAt)
@@ -149,32 +111,52 @@ public class Lesson {
 
 	@Override
 	public int hashCode() {
-        return Objects.hash(id, groupId, startDate, startHour, startMinute, length, comment);
+        return Objects.hash(id, groupId, startTime, length, comment);
 	}
 
 	// CONSTRUCTORS
 
-	public Lesson(@JsonProperty("id") long id,
-				@JsonProperty("groupId") int groupId, 
-				@JsonProperty("startDate") @JsonDeserialize(using=LocalDateDeserializer.class) LocalDate date,
-				@JsonProperty("startHour") int startHour,
-				@JsonProperty("startMinute") int startMinute,
-				@JsonProperty("length") int length,
-				@JsonProperty("comment") String comment) {
-		this(id, groupId, null, date, startHour, startMinute, null, null, null, length, comment, null, null);
+    @JsonCreator
+	public static Lesson jsonInstance(@JsonProperty("id") long id,
+                                      @JsonProperty("groupId") int groupId,
+                                      @JsonProperty("startTime") Long startTime,
+                                      @JsonProperty("timeZone") String timeZone,
+                                      @JsonProperty("startDate") String startDate,
+                                      @JsonProperty("startHour") Integer startHour,
+                                      @JsonProperty("startMinute") Integer startMinute,
+                                      @JsonProperty("length") int length,
+                                      @JsonProperty("comment") String comment) {
+        if (startTime == null) {
+            NullChecker.check(timeZone, startDate, startHour, startMinute)
+                    .notNull(() -> new InvalidRequestException("Must provide either startTime or timeZone, " +
+                            "startDate, startHour and startMinute"));
+
+            return fromTimeZone(id, groupId, null, DateTimeZone.forID(timeZone), LocalDate.parse(startDate),
+                    startHour, startMinute, length, comment, null, null);
+        }
+        return fromStartTime(id, groupId, null, startTime, length, comment, null, null);
 	}
 
-    public Lesson(long id, int groupId, Integer teacherId, LocalDate startDate, int startHour, int startMinute, LocalDate endDate,
-                  Integer endHour, Integer endMinute, int length, String comment, Instant createdAt, Instant updatedAt) {
+    public static Lesson fromStartTime(long id, int groupId, Integer teacherId, long startTime, int length,
+                                       String comment, Instant createdAt, Instant updatedAt) {
+        long endTime = new Instant(startTime).plus(Duration.standardMinutes(length)).getMillis();
+        return new Lesson(id, groupId, teacherId, startTime, endTime, length, comment, createdAt, updatedAt);
+    }
+
+    public static Lesson fromTimeZone(long id, int groupId, Integer teacherId, DateTimeZone timeZone,
+                                      LocalDate startDate, int startHour, int startMinute, int length,
+                                      String comment, Instant createdAt, Instant updatedAt) {
+        long startTime = JodaTimeZoneHandler.forTimeZone(timeZone).from(startDate, startHour, startMinute).toEpochMillis();
+        return fromStartTime(id, groupId, teacherId, startTime, length, comment, createdAt, updatedAt);
+    }
+
+    public Lesson(long id, int groupId, Integer teacherId, long startTime, long endTime, int length, String comment,
+                  Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.groupId = groupId;
         this.teacherId = teacherId;
-        this.startDate = startDate;
-        this.startHour = startHour;
-        this.startMinute = startMinute;
-        this.endDate = endDate;
-        this.endHour = endHour;
-        this.endMinute = endMinute;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.length = length;
         this.comment = comment;
         this.createdAt = createdAt;
@@ -188,19 +170,8 @@ public class Lesson {
 		long id = lessonRecord.getValue(LESSON.ID);
 		int groupId = lessonRecord.getValue(LESSON.GROUP_ID);
         int teacherId = lessonRecord.getValue(LESSON.TEACHER_ID);
-
-        long startTimestamp = lessonRecord.getValue(LESSON.TIME_OF_START);
-        JodaTimeConverter start = JodaTimeConverter.from(startTimestamp);
-		LocalDate startDate = start.toOrgJodaTimeLocalDate();
-        int startHour = start.toHours();
-        int startMinute = start.toMinutes();
-
-        long endTimestamp = lessonRecord.getValue(LESSON.TIME_OF_END);
-        JodaTimeConverter end = JodaTimeConverter.from(endTimestamp);
-        LocalDate endDate = end.toOrgJodaTimeLocalDate();
-        int endHour = end.toHours();
-        int endMinute = end.toMinutes();
-
+        long startTime = lessonRecord.getValue(LESSON.TIME_OF_START);
+        long endTime = lessonRecord.getValue(LESSON.TIME_OF_END);
         int length = lessonRecord.getValue(LESSON.DURATION_IN_MINUTES);
 		String comment = lessonRecord.getValue(LESSON.COMMENT);
 
@@ -208,7 +179,7 @@ public class Lesson {
 		Instant createdAt = new Instant(createdTimestamp);
         long updatedTimestamp = lessonRecord.getValue(LESSON.UPDATED_AT);
 		Instant updatedAt = new Instant(updatedTimestamp);
-		return new Lesson(id, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour, endMinute, length, comment, createdAt, updatedAt);
+		return new Lesson(id, groupId, teacherId, startTime, endTime, length, comment, createdAt, updatedAt);
 	}
 
     public static Builder builder() {
@@ -228,21 +199,9 @@ public class Lesson {
 	private final int groupId;
 
     private final Integer teacherId;
-	
-	@NotNull(message = "The date must be set")
-	private final LocalDate startDate;
-	
-	@Min(value = 0, message = "The hour must be at least 0")
-	@Max(value = 23, message = "The hour must be at most 23")
-	private final int startHour;
-	
-	@Min(value = 0, message = "The minute must be at least 0")
-	@Max(value = 59, message = "The minute must be at most 59")
-	private final int startMinute;
 
-    private final LocalDate endDate;
-	private final Integer endHour;
-	private final Integer endMinute;
+    private final long startTime;
+    private final long endTime;
 	
 	@Min(value = 1, message = "The length of lesson must be set")
 	private final int length;
@@ -254,37 +213,37 @@ public class Lesson {
 	private final Instant createdAt;
     private final Instant updatedAt;
 
-    private static final Equals<Lesson> EQUALS = new Equals<>(Lesson::getId, Lesson::getGroupId,  Lesson::getStartDate,
-            Lesson::getStartHour, Lesson::getStartMinute, Lesson::getLength, Lesson::getComment);
+    private static final Equals<Lesson> EQUALS = new Equals<>(Arrays.asList(Lesson::getId, Lesson::getGroupId,
+            Lesson::getStartTime, Lesson::getLength, Lesson::getComment));
 
     // GENERATED
 
 	public interface GroupIdStep {
-        StartDateStep groupIdWithTeacher(int groupId);
-        StartDateStep groupIdWithTeacher(int groupId, Integer teacherId);
+        TimeStep groupIdWithTeacher(int groupId, Integer teacherId);
+	}
+
+	public interface TimeStep {
+        StartDateStep timeZone(DateTimeZone timeZone);
+        StartDateStep timeZone(String timeZone);
+        LengthStep startTime(long startTime);
 	}
 
 	public interface StartDateStep {
-		StartHourStep startDate(LocalDate startDate);
+        StartHourStep startDate(LocalDate startDate);
         StartHourStep startDate(String startDate);
-	}
+    }
 
-	public interface StartHourStep {
-		StartMinuteStep startHour(int startHour);
-	}
+    public interface StartHourStep {
+        StartMinuteStep startHour(int startHour);
+    }
 
-	public interface StartMinuteStep {
+    public interface StartMinuteStep {
         LengthStep startMinute(int startMinute);
-	}
+    }
 
 	public interface LengthStep {
-        EndTimeStep length(int length);
+        BuildStep length(int length);
 	}
-
-    public interface EndTimeStep {
-        BuildStep withEndTime();
-        BuildStep withoutEndTime();
-    }
 
 	public interface BuildStep {
         BuildStep id(long id);
@@ -296,17 +255,15 @@ public class Lesson {
 		Lesson build();
 	}
 
-
-	public static class Builder implements GroupIdStep, StartDateStep, StartHourStep, StartMinuteStep, LengthStep, EndTimeStep, BuildStep {
+	public static class Builder implements GroupIdStep, TimeStep, StartDateStep, StartHourStep, StartMinuteStep, LengthStep, BuildStep {
 		private long id;
 		private int groupId;
 		private Integer teacherId;
+        private Long startTime;
+        private DateTimeZone timeZone;
 		private LocalDate startDate;
 		private int startHour;
 		private int startMinute;
-		private LocalDate endDate;
-		private Integer endHour;
-		private Integer endMinute;
 		private int length;
 		private String comment;
 		private Instant createdAt;
@@ -320,12 +277,6 @@ public class Lesson {
 			return this;
 		}
 
-		@Override
-		public Builder groupIdWithTeacher(int groupId) {
-			this.groupId = groupId;
-			return this;
-		}
-
         @Override
         public Builder groupIdWithTeacher(int groupId, Integer teacherId) {
             this.groupId = groupId;
@@ -333,11 +284,29 @@ public class Lesson {
             return this;
         }
 
-		@Override
-		public Builder startDate(LocalDate startDate) {
-			this.startDate = startDate;
-			return this;
-		}
+        @Override
+        public Builder startTime(long startTime) {
+            this.startTime = startTime;
+            return this;
+        }
+
+        @Override
+        public Builder timeZone(DateTimeZone timeZone) {
+            this.timeZone = timeZone;
+            return this;
+        }
+
+        @Override
+        public Builder timeZone(String timeZone) {
+            this.timeZone = DateTimeZone.forID(timeZone);
+            return this;
+        }
+
+        @Override
+        public Builder startDate(LocalDate startDate) {
+            this.startDate = startDate;
+            return this;
+        }
 
         @Override
         public Builder startDate(String startDate) {
@@ -346,37 +315,20 @@ public class Lesson {
         }
 
         @Override
-		public Builder startHour(int startHour) {
-			this.startHour = startHour;
-			return this;
-		}
-
-		@Override
-		public Builder startMinute(int startMinute) {
-			this.startMinute = startMinute;
-			return this;
-		}
-
-		@Override
-		public Builder length(int length) {
-			this.length = length;
-			return this;
-		}
-
-        @Override
-        public Builder withEndTime() {
-            JodaTimeConverter end = JodaTimeConverter.from(startDate, startHour, startMinute + length);
-            endDate = end.toOrgJodaTimeLocalDate();
-            endHour = end.toHours();
-            endMinute = end.toMinutes();
+        public Builder startHour(int startHour) {
+            this.startHour = startHour;
             return this;
         }
 
         @Override
-        public Builder withoutEndTime() {
-			endDate = null;
-			endHour = null;
-			endMinute = null;
+        public Builder startMinute(int startMinute) {
+            this.startMinute = startMinute;
+            return this;
+        }
+
+        @Override
+        public Builder length(int length) {
+            this.length = length;
             return this;
         }
 
@@ -412,8 +364,12 @@ public class Lesson {
 
         @Override
 		public Lesson build() {
-			return new Lesson(id, groupId, teacherId, startDate, startHour, startMinute, endDate, endHour,
-                    endMinute, length, comment, createdAt, updatedAt);
+            if (startTime == null)
+			    return Lesson.fromTimeZone(id, groupId, teacherId, timeZone, startDate, startHour,
+                        startMinute, length, comment, createdAt, updatedAt);
+
+            return Lesson.fromStartTime(id, groupId, teacherId, startTime, length, comment, createdAt, updatedAt);
 		}
-	}
+
+    }
 }

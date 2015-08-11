@@ -1,7 +1,6 @@
 package com.superum.db.lesson;
 
 import com.superum.exception.DatabaseException;
-import com.superum.utils.ConditionUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Keys.LESSON_IBFK_2;
@@ -21,13 +19,11 @@ import static com.superum.db.generated.timestar.Tables.LESSON;
 public class LessonQueriesImpl implements LessonQueries {
 
 	@Override
-	public List<Lesson> readAllForCustomer(int customerId, Date start, Date end, int partitionId) {
+	public List<Lesson> readAllForCustomer(int customerId, long start, long end, int partitionId) {
 		try {
             Condition condition = GROUP_OF_STUDENTS.CUSTOMER_ID.eq(customerId)
-                    .and(LESSON.PARTITION_ID.eq(partitionId));
-            Condition dateCondition = ConditionUtils.betweenDates(LESSON.TIME_OF_START, start, end);
-            if (dateCondition != null)
-                condition = condition.and(dateCondition);
+                    .and(LESSON.PARTITION_ID.eq(partitionId))
+                    .and(LESSON.TIME_OF_START.between(start, end));
 
             return sql.select(LESSON.fields())
                     .from(LESSON)
