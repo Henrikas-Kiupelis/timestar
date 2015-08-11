@@ -53,7 +53,7 @@ public class FakeUtils {
     // FULL FAKES
 
     public static FullCustomer makeFakeFullCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
-        return FullCustomer.valueOf(id, startDate.toString(), name, phone, website, picture, comment);
+        return FullCustomer.valueOf(id, startDate == null ? null : startDate.toString(), name, phone, website, picture, comment);
     }
 
     // API V1
@@ -108,7 +108,7 @@ public class FakeUtils {
     }
 
     public static Customer makeFakeCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
-        return new Customer(id, startDate, name, phone, website, picture, comment);
+        return new Customer(id, startDate == null ? null : startDate.toString(), name, phone, website, picture, comment);
     }
 
     public static Group makeFakeGroup(int id, Integer customerId, int teacherId, boolean usesHourlyWage, String languageLevel, String name) {
@@ -116,11 +116,11 @@ public class FakeUtils {
     }
 
     public static Student makeFakeStudent(int id, Integer customerId, LocalDate startDate, String email, String name) {
-        return new Student(id, customerId, startDate, email, name);
+        return new Student(id, customerId, startDate == null ? null : startDate.toString(), email, name);
     }
 
-    public static Lesson makeFakeLesson(long id, int groupId, LocalDate date, int startHour, int startMinute, int length, String comment) {
-        return new Lesson(id, groupId, date, startHour, startMinute, length, comment);
+    public static Lesson makeFakeLesson(long id, int groupId, LocalDate startDate, int startHour, int startMinute, int length, String comment) {
+        return Lesson.jsonInstance(id, groupId, null, "UTC", startDate == null ? null : startDate.toString(), startHour, startMinute, length, comment);
     }
 
     public static Partition makeFakePartition(int id, String name) {
