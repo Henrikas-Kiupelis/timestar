@@ -3,6 +3,7 @@ package com.superum.api.customer;
 import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.teacher.TeacherNotFoundException;
 import com.superum.helper.jooq.DefaultQueryMaker;
+import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
@@ -115,10 +116,10 @@ public class FullCustomerQueriesImpl implements FullCustomerQueries {
     // CONSTRUCTORS
 
     @Autowired
-    public FullCustomerQueriesImpl(DefaultQueryMaker defaultQueryMaker) {
-        this.defaultQueries = defaultQueryMaker.forTable(CUSTOMER, CUSTOMER.ID, CUSTOMER.PARTITION_ID);
-        this.defaultQueriesForTeacher = defaultQueryMaker.forTable(TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
-        this.foreignQueries = defaultQueryMaker.forOtherTables(STUDENT.CUSTOMER_ID, GROUP_OF_STUDENTS.CUSTOMER_ID);
+    public FullCustomerQueriesImpl(DSLContext sql) {
+        this.defaultQueries = DefaultQueryMaker.forTable(sql, CUSTOMER, CUSTOMER.ID, CUSTOMER.PARTITION_ID);
+        this.defaultQueriesForTeacher = DefaultQueryMaker.forTable(sql, TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
+        this.foreignQueries = DefaultQueryMaker.forOtherTables(sql, STUDENT.CUSTOMER_ID, GROUP_OF_STUDENTS.CUSTOMER_ID);
     }
 
     // PRIVATE
