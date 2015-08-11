@@ -1,6 +1,7 @@
 package com.superum.db.teacher;
 
 import com.superum.TimeStarBackEndApplication;
+import com.superum.config.Gmail;
 import com.superum.db.account.AccountDAO;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
@@ -44,7 +45,6 @@ public class TeacherServiceTests {
         teacherService = new TeacherServiceImpl(teacherDAO, encoder, mail, accountDAO, teacherLanguagesService, partitionService);
     }
 
-    //+
     @Test
     public void testAddingTeacher() {
         int id = 1;
@@ -62,7 +62,6 @@ public class TeacherServiceTests {
         verify(teacherDAO, times(1)).create(originalTeacher, account.partitionId());
     }
 
-    //+
     @Test
     public void testFindingExistingTeacher() {
         int id = 1;
@@ -79,7 +78,6 @@ public class TeacherServiceTests {
         verify(teacherDAO, times(1)).read(id, account.partitionId());
     }
 
-    //+
     @Test
     public void testDeletingTeacher() {
         int id = 1;
@@ -97,7 +95,6 @@ public class TeacherServiceTests {
 
     }
 
-    //+
     @Test
     public void testUpdatingExistingTeacherData() {
         int id = 1;
@@ -116,7 +113,6 @@ public class TeacherServiceTests {
         verify(teacherDAO, times(1)).update(updatedTeacher, account.partitionId());
     }
 
-    //+
     @Test(expected = DatabaseException.class)
     public void testUpdatingNonExistingTeacher() {
         int id = Integer.MAX_VALUE;
