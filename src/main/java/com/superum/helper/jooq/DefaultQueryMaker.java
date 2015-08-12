@@ -6,6 +6,7 @@ import com.superum.helper.field.core.MappedField;
 import org.jooq.*;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -157,6 +158,27 @@ public class DefaultQueryMaker {
          * @param mapper function, which maps the returned record back to an object
          */
         <T> List<T> readAllCustom(int page, int amount, RecordMapper<Record, T> mapper, Function<SelectJoinStep<Record>, SelectConditionStep<Record>> customQuery);
+
+        /**
+         * @return list of records for a custom, join statement; only specified fields are returned; paged, with offset
+         * @param mapper function, which maps the returned record back to an object
+         */
+        <T> List<T> readAllCustom(int page, int amount, RecordMapper<Record, T> mapper, Field<?>[] customFields,
+                                  Function<SelectJoinStep<Record>, SelectConditionStep<Record>> customQuery);
+
+        /**
+         * @return record for a custom, join statement
+         * @param mapper function, which maps the returned record back to an object
+         */
+        <T> Optional<T> readCustom(ID id, int partitionId, Function<Record, T> mapper,
+                                   Function<SelectJoinStep<Record>, SelectWhereStep<Record>> customQuery);
+
+        /**
+         * @return record for a custom, join statement; only specified fields are returned
+         * @param mapper function, which maps the returned record back to an object
+         */
+        <T> Optional<T> readCustom(ID id, int partitionId, Function<Record, T> mapper, Field<?>[] customFields,
+                                   Function<SelectJoinStep<Record>, SelectWhereStep<Record>> customQuery);
     }
 
     /**
@@ -170,6 +192,7 @@ public class DefaultQueryMaker {
         boolean isUsed(ID id);
     }
 
+    @Transactional
     private static final class QueryMaker<R extends Record, ID> implements Queries<R, ID> {
 
         @Override
@@ -259,7 +282,8 @@ public class DefaultQueryMaker {
         }
 
         @Override
-        public <T> List<T> readAllCustom(int page, int amount, RecordMapper<Record, T> mapper, Function<SelectJoinStep<Record>, SelectConditionStep<Record>> customQuery) {
+        public <T> List<T> readAllCustom(int page, int amount, RecordMapper<Record, T> mapper,
+                                         Function<SelectJoinStep<Record>, SelectConditionStep<Record>> customQuery) {
             NullChecker.check(mapper, customQuery).notNull("Record mapper and custom query cannot be null");
 
             return customQuery.apply(sql.select(table.fields()).from(table))
@@ -271,6 +295,39 @@ public class DefaultQueryMaker {
                     .map(mapper);
         }
 
+        @Override
+        public <T> List<T> readAllCustom(int page, int amount, RecordMapper<Record, T> mapper, Field<?>[] customFields,
+                                         Function<SelectJoinStep<Record>, SelectConditionStep<Record>> customQuery) {
+            NullChecker.check(mapper, customQuery).notNull("Record mapper and custom query cannot be null");
+
+            return customQuery.apply(sql.select(customFields).from(table))
+                    .groupBy(keyField)
+                    .orderBy(keyField)
+                    .limit(amount)
+                    .offset(page * amount)
+                    .fetch()
+                    .map(mapper);
+        }
+
+        @Override
+        public <T> Optional<T> readCustom(ID id, int partitionId, Function<Record, T> mapper,
+                                Function<SelectJoinStep<Record>, SelectWhereStep<Record>> customQuery) {
+            return customQuery.apply(sql.select(table.fields()).from(table))
+                    .where(idAndPartition(id, partitionId))
+                    .groupBy(keyField)
+                    .fetch().stream().findFirst()
+                    .map(mapper);
+        }
+
+        @Override
+        public <T> Optional<T> readCustom(ID id, int partitionId, Function<Record, T> mapper,Field<?>[] customFields,
+                                          Function<SelectJoinStep<Record>, SelectWhereStep<Record>> customQuery) {
+            return customQuery.apply(sql.select(customFields).from(table))
+                    .where(idAndPartition(id, partitionId))
+                    .groupBy(keyField)
+                    .fetch().stream().findFirst()
+                    .map(mapper);
+        }
 
         // CONSTRUCTORS
 
@@ -298,6 +355,7 @@ public class DefaultQueryMaker {
 
     }
 
+    @Transactional
     private static final class ForeignQueryMaker<ID> implements ForeignQueries<ID> {
 
         /**
