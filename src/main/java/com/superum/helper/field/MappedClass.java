@@ -108,7 +108,7 @@ public abstract class MappedClass<T extends MappedClass<T, ID>, ID> implements D
      * </pre>
      * @throws IllegalArgumentException if any arguments are null
      */
-    public boolean compare(T other, Function<T, Stream<MappedField<?>>> fieldGetter) {
+    public boolean compare(T other, Function<? super T, Stream<MappedField<?>>> fieldGetter) {
         NullChecker.check(other, fieldGetter).notNull("Other object and field getter cannot be null");
 
         return fieldGetter.apply(thisObject())
@@ -118,6 +118,10 @@ public abstract class MappedClass<T extends MappedClass<T, ID>, ID> implements D
                         .findFirst()
                         .orElseThrow(() -> new AssertionError("Two different " + thisObject().getClass().getSimpleName() + " objects should have the same fields!"))
                         .equals(field));
+    }
+
+    public boolean hasEqualSetFields(T other) {
+        return compare(other, MappedClass::allSetFields);
     }
 
     // OBJECT OVERRIDES

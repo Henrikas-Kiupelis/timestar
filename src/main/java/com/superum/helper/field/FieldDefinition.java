@@ -9,6 +9,7 @@ import com.superum.helper.time.JodaTimeZoneHandler;
 import org.joda.time.LocalDate;
 import org.jooq.Field;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
@@ -52,6 +53,12 @@ public final class FieldDefinition<T, F> implements FieldDef<T, F> {
         return new FieldDefinition<>(name, field, mandatory, primary, getter);
     }
 
+    public static <T> FieldDef<T, BigDecimal> ofBigDecimal(String name, Field<BigDecimal> field, Mandatory mandatory, Primary primary, Function<T, BigDecimal> getter) {
+        NullChecker.check(name, mandatory, getter).notNull("Name, mandatory and getter function cannot be null for FieldDefinitions");
+
+        return new BigDecimalFieldDefinition<>(name, field, mandatory, primary, getter);
+    }
+
     public static <T> FieldDef<T, Integer> ofInt(String name, Field<Integer> field, Mandatory mandatory, Primary primary, ToIntFunction<T> getter) {
         NullChecker.check(name, mandatory, getter).notNull("Name, mandatory and getter function cannot be null for FieldDefinitions");
 
@@ -85,6 +92,43 @@ public final class FieldDefinition<T, F> implements FieldDef<T, F> {
     private final Mandatory mandatory;
     private final Primary primary;
     private final Function<T, F> getter;
+
+    /**
+     * <pre>
+     * This class is required explicitly due to generics erasure
+     *
+     * SimpleMappedField.valueOf() can't resolve BigDecimal version dynamically (JAVA uses static resolving
+     * techniques), which results in a SimpleMappedField rather than BigDecimalField, which has the custom
+     * equality logic that we need
+     * </pre>
+     */
+    private static final class BigDecimalFieldDefinition<T> implements FieldDef<T, BigDecimal> {
+
+        @Override
+        public MappedField<BigDecimal> toField(T t) {
+            NullChecker.check(t).notNull("Body cannot be null");
+
+            return SimpleMappedField.valueOf(name, field, mandatory, primary, getter.apply(t));
+        }
+
+        // CONSTRUCTORS
+
+        private BigDecimalFieldDefinition(String name, Field<BigDecimal> field, Mandatory mandatory, Primary primary, Function<T, BigDecimal> getter) {
+            this.name = name;
+            this.field = field;
+            this.mandatory = mandatory;
+            this.primary = primary;
+            this.getter = getter;
+        }
+
+        // PRIVATE
+
+        private final String name;
+        private final Field<BigDecimal> field;
+        private final Mandatory mandatory;
+        private final Primary primary;
+        private final Function<T, BigDecimal> getter;
+    }
 
     private static final class IntFieldDefinition<T> implements FieldDef<T, Integer> {
 
