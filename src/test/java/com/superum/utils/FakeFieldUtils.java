@@ -94,6 +94,15 @@ public class FakeFieldUtils {
         return dayString;
     }
 
+    public static String fakeLanguage(long id) {
+        if (id < 0) id = -id;
+        return "L" + (id % 100);
+    }
+
+    public static String fakePassword() {
+        return "canYouGuessMe?nah";
+    }
+
     // PRIVATE
 
     private FakeFieldUtils() {

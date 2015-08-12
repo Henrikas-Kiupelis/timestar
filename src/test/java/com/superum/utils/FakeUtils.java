@@ -1,6 +1,7 @@
 package com.superum.utils;
 
 import com.superum.api.customer.FullCustomer;
+import com.superum.api.teacher.FullTeacher;
 import com.superum.db.account.Account;
 import com.superum.db.account.AccountType;
 import com.superum.db.customer.Customer;
@@ -17,6 +18,7 @@ import org.joda.time.LocalDate;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.IntFunction;
 import java.util.function.LongFunction;
@@ -50,10 +52,34 @@ public class FakeUtils {
         return FullCustomer.valueOf(id, fakeLocalDate(id).toString(), fakeName(id), fakePhone(id), fakeWebsite(id), fakePicture(id), fakeComment(id));
     }
 
+
+    public static FullTeacher makeFakeFullTeacher(int id) {
+        return FullTeacher.valueOf(id, fakeDay(id), fakeWage(id), fakeWage(id), fakeName(id), fakeSurname(id),
+                fakePhone(id), fakeCity(id), fakeEmail(id), fakePicture(id), fakeDocument(id), fakeComment(id),
+                Collections.singletonList(fakeLanguage(id)));
+    }
+
     // FULL FAKES
 
     public static FullCustomer makeFakeFullCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
         return FullCustomer.valueOf(id, startDate == null ? null : startDate.toString(), name, phone, website, picture, comment);
+    }
+
+
+    public static FullTeacher makeFakeFullTeacher(int id, int paymentDay, BigDecimal hourlyWage,
+                                                  BigDecimal academicWage, String name, String surname, String phone,
+                                                  String city, String email, String picture, String document,
+                                                  String comment, String... languages) {
+        return FullTeacher.valueOf(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
+                document, comment, Arrays.asList(languages));
+    }
+
+    public static FullTeacher makeFakeFullTeacher(int id, int paymentDay, BigDecimal hourlyWage,
+                                                  BigDecimal academicWage, String name, String surname, String phone,
+                                                  String city, String email, String picture, String document,
+                                                  String comment, List<String> languages) {
+        return FullTeacher.valueOf(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
+                document, comment, languages);
     }
 
     // API V1
@@ -103,8 +129,8 @@ public class FakeUtils {
 
     public static Teacher makeFakeTeacher(int id, int paymentDay, BigDecimal hourlyWage,  BigDecimal academicWage,
                                           String name, String surname, String phone, String city, String email,
-                                          String pictureName, String documentName, String comment) {
-        return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, pictureName, documentName, comment);
+                                          String picture, String document, String comment) {
+        return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture, document, comment);
     }
 
     public static Customer makeFakeCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {

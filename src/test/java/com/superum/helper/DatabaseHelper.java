@@ -1,23 +1,35 @@
 package com.superum.helper;
 
 import com.superum.api.customer.FullCustomer;
+import com.superum.api.teacher.FullTeacher;
+import com.superum.db.account.AccountType;
+import com.superum.db.generated.timestar.tables.records.TeacherLanguageRecord;
 import com.superum.db.group.Group;
 import com.superum.db.group.student.Student;
 import com.superum.db.teacher.Teacher;
+import com.superum.db.teacher.lang.TeacherLanguages;
 import org.jooq.DSLContext;
+import org.jooq.InsertValuesStep3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static com.superum.api.teacher.FullTeacher.fullTeacherFields;
+import static com.superum.db.generated.timestar.Keys.TEACHER_LANGUAGE_IBFK_1;
 import static com.superum.db.generated.timestar.Tables.*;
+import static com.superum.utils.FakeFieldUtils.fakePassword;
+import static com.superum.utils.FakeUtils.makeFakePartitionAccount;
 import static env.IntegrationTestEnvironment.TEST_PARTITION;
 
 @Repository
 @Transactional
+@TransactionConfiguration(defaultRollback = true)
 public class DatabaseHelper {
 
-    public FullCustomer insertCustomerIntoDb(FullCustomer fullCustomer) {
-
+    public FullCustomer insertFullCustomerIntoDb(FullCustomer fullCustomer) {
         FullCustomer customer = sql.insertInto(CUSTOMER)
                 .set(CUSTOMER.PARTITION_ID, TEST_PARTITION)
                 .set(CUSTOMER.NAME, fullCustomer.getName())
@@ -35,7 +47,7 @@ public class DatabaseHelper {
         return customer;
     }
 
-    public FullCustomer readCustomerFromDb(int customerId) {
+    public FullCustomer readFullCustomerFromDb(int customerId) {
         return sql.selectFrom(CUSTOMER)
                 .where(CUSTOMER.ID.eq(customerId))
                 .fetch().stream()
@@ -65,6 +77,52 @@ public class DatabaseHelper {
         assert insertedTeacher != null; //if this assert fails, database is broken/offline
 
         return insertedTeacher;
+    }
+
+    public TeacherLanguages insertTeacherLanguagesIntoDb(TeacherLanguages teacherLanguages) {
+        Integer teacherId = teacherLanguages.getTeacherId();
+        List<String> languageList = teacherLanguages.getLanguages();
+
+        InsertValuesStep3<TeacherLanguageRecord, Integer, Integer, String> step =
+                sql.insertInto(TEACHER_LANGUAGE, TEACHER_LANGUAGE.PARTITION_ID, TEACHER_LANGUAGE.TEACHER_ID, TEACHER_LANGUAGE.CODE);
+        for (String language : languageList)
+            step = step.values(TEST_PARTITION, teacherId, language);
+
+        step.execute();
+        return teacherLanguages;
+    }
+
+    public FullTeacher insertFullTeacherIntoDb(FullTeacher fullTeacher) {
+        Teacher teacher = insertTeacherIntoDb(fullTeacher.toTeacher());
+        fullTeacher = fullTeacher.withId(teacher.getId());
+        insertTeacherLanguagesIntoDb(fullTeacher.toTeacherLanguages());
+
+        insertAccountIntoDb(teacher);
+        return fullTeacher;
+    }
+
+    public void insertAccountIntoDb(Teacher teacher) {
+        PartitionAccount partitionAccount = makeFakePartitionAccount();
+        String username = teacher.getEmail();
+        String accountUsername = partitionAccount.usernameFor(username);
+
+        sql.insertInto(ACCOUNT)
+                .set(ACCOUNT.ID, teacher.getId())
+                .set(ACCOUNT.USERNAME, accountUsername)
+                .set(ACCOUNT.ACCOUNT_TYPE, AccountType.TEACHER.name())
+                .set(ACCOUNT.PASSWORD, fakePassword())
+                .execute();
+    }
+
+    public FullTeacher readFullTeacherFromDb(int teacherId) {
+        return sql.select(fullTeacherFields()).from(TEACHER)
+                .join(TEACHER_LANGUAGE).onKey(TEACHER_LANGUAGE_IBFK_1)
+                .where(TEACHER.ID.eq(teacherId))
+                .groupBy(TEACHER.ID)
+                .fetch().stream()
+                .findFirst()
+                .map(FullTeacher::valueOf)
+                .orElse(null);
     }
 
     public Group insertGroupIntoDb(Group group) {

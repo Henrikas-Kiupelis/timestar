@@ -47,14 +47,14 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         assertEquals("The returned customer should be equal to original customer, except for id field; ", returnedCustomer, customer);
 
-        FullCustomer customerFromDB = databaseHelper.readCustomerFromDb(customerId);
+        FullCustomer customerFromDB = databaseHelper.readFullCustomerFromDb(customerId);
 
         assertEquals("The customer in the database should be equal to the returned customer; ", customerFromDB, returnedCustomer);
     }
 
     @Test
     public void readingCustomerWithValidId_shouldReturnACustomer() throws Exception {
-        FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        FullCustomer insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
 
         MvcResult result = mockMvc.perform(get("/timestar/api/v2/customer/{customerId}", customerId)
@@ -69,14 +69,14 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         assertEquals("The read customer should be equal to original customer; ", returnedCustomer, insertedCustomer);
 
-        FullCustomer customerFromDB = databaseHelper.readCustomerFromDb(customerId);
+        FullCustomer customerFromDB = databaseHelper.readFullCustomerFromDb(customerId);
 
         assertEquals("The customer in the database should be equal to the returned customer; ", customerFromDB, returnedCustomer);
     }
 
     @Test
     public void updatingCustomerWithValidData_shouldReturnOldCustomer() throws Exception {
-        FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        FullCustomer insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
 
         FullCustomer updatedCustomer = makeFakeFullCustomer(CUSTOMER_SEED + 1).withId(customerId);
@@ -94,14 +94,14 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         assertEquals("The read customer should be equal to original customer; ", returnedCustomer, insertedCustomer);
 
-        FullCustomer customerFromDB = databaseHelper.readCustomerFromDb(customerId);
+        FullCustomer customerFromDB = databaseHelper.readFullCustomerFromDb(customerId);
 
         assertEquals("The customer in the database should be equal to the updated customer; ", customerFromDB, updatedCustomer);
     }
 
     @Test
     public void updatingPartialCustomerWithValidData_shouldReturnOldCustomer() throws Exception {
-        FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        FullCustomer insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
 
         FullCustomer partialUpdatedCustomer = makeFakeFullCustomer(customerId, null,
@@ -121,7 +121,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         assertEquals("The read customer should be equal to original customer; ", returnedCustomer, insertedCustomer);
 
-        FullCustomer customerFromDB = databaseHelper.readCustomerFromDb(customerId);
+        FullCustomer customerFromDB = databaseHelper.readFullCustomerFromDb(customerId);
         FullCustomer updatedCustomer = makeFakeFullCustomer(customerId, insertedCustomer.getStartDate(),
                 partialUpdatedCustomer.getName(), partialUpdatedCustomer.getPhone(),
                 insertedCustomer.getWebsite(), insertedCustomer.getPicture(), insertedCustomer.getComment());
@@ -130,7 +130,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
     }
 
     @Test
-    public void updatingCustomerWithInvalidId_shouldThrowInvalidCustomerException() throws Exception {
+    public void updatingCustomerWithInvalidId_shouldReturnBadReques() throws Exception {
         FullCustomer validCustomer = makeFakeFullCustomer(CUSTOMER_SEED);
 
         String json = convertObjectToString(validCustomer);
@@ -146,7 +146,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void deletingCustomerWithValidId_shouldReturnDeletedCustomer() throws Exception {
-        FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        FullCustomer insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
 
         MvcResult result = mockMvc.perform(delete("/timestar/api/v2/customer/delete/{customerId}", customerId)
@@ -161,7 +161,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         assertEquals("The read customer should be equal to original customer; ", returnedCustomer, insertedCustomer);
 
-        FullCustomer customerFromDB = databaseHelper.readCustomerFromDb(customerId);
+        FullCustomer customerFromDB = databaseHelper.readFullCustomerFromDb(customerId);
 
         assertNull("The customer from the database should be equal null, since it was deleted; ", customerFromDB);
     }
@@ -170,7 +170,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
     public void readingCustomerForTeacherWithValidId_shouldReturnListOfCustomers() throws Exception {
         // THIS TEST NEEDS TO BE REWRITTEN DUE TO SCHEMA CHANGES
         /*
-        FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        FullCustomer insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
         List<FullCustomer> validCustomers = Collections.singletonList(insertedCustomer);
 
@@ -194,7 +194,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         assertEquals("The read customers should be equal to original customers; ", returnedCustomers, validCustomers);
 
-        FullCustomer customerFromDB = databaseHelper.readCustomerFromDb(customerId);
+        FullCustomer customerFromDB = databaseHelper.readFullCustomerFromDb(customerId);
         List<FullCustomer> customersFromDb = Collections.singletonList(customerFromDB);
 
         assertEquals("The customers in the database should be equal to the read customers; ", customersFromDb, returnedCustomers);*/
@@ -204,7 +204,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
     public void readingAllCustomers_shouldReturnListOfCustomers() throws Exception {
         List<FullCustomer> allCustomers = makeSomeFakes(2, FakeUtils::makeFakeFullCustomer).stream()
                 .map(FullCustomer::withoutId)
-                .map(databaseHelper::insertCustomerIntoDb)
+                .map(databaseHelper::insertFullCustomerIntoDb)
                 .collect(Collectors.toList());
 
         MvcResult result = mockMvc.perform(get("/timestar/api/v2/customer/all")
@@ -221,8 +221,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         List<FullCustomer> customersFromDb = allCustomers.stream()
                 .mapToInt(FullCustomer::getId)
-                .mapToObj(databaseHelper::readCustomerFromDb)
-                .filter(customer -> customer != null)
+                .mapToObj(databaseHelper::readFullCustomerFromDb)
                 .collect(Collectors.toList());
 
         assertEquals("The customers in the database should be equal to the read customers; ", customersFromDb, returnedCustomers);
@@ -232,7 +231,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
     public void countingCustomersForTeacherWithValidId_shouldReturnCount() throws Exception {
         // THIS TEST NEEDS TO BE REWRITTEN DUE TO SCHEMA CHANGES
         /*
-        FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        FullCustomer insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
         List<FullCustomer> validCustomers = Collections.singletonList(insertedCustomer);
 
@@ -256,7 +255,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         assertEquals("The amount of read customers should be equal to original amount of customers; ", returnedCount, validCustomers.size());
 
-        FullCustomer customerFromDB = databaseHelper.readCustomerFromDb(customerId);
+        FullCustomer customerFromDB = databaseHelper.readFullCustomerFromDb(customerId);
         List<FullCustomer> customersFromDb = Collections.singletonList(customerFromDB);
 
         assertEquals("The amount of customers from the database should be equal to the amount of read customers; ", customersFromDb.size(), returnedCount);*/
@@ -266,7 +265,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
     public void countingAllCustomers_shouldReturnCount() throws Exception {
         List<FullCustomer> allCustomers = makeSomeFakes(2, FakeUtils::makeFakeFullCustomer).stream()
                 .map(FullCustomer::withoutId)
-                .map(databaseHelper::insertCustomerIntoDb)
+                .map(databaseHelper::insertFullCustomerIntoDb)
                 .collect(Collectors.toList());
 
         MvcResult result = mockMvc.perform(get("/timestar/api/v2/customer/all/count")
@@ -283,7 +282,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         long amountOfCustomersInDb = allCustomers.stream()
                 .mapToInt(FullCustomer::getId)
-                .mapToObj(databaseHelper::readCustomerFromDb)
+                .mapToObj(databaseHelper::readFullCustomerFromDb)
                 .filter(customer -> customer != null)
                 .count();
 
@@ -292,15 +291,8 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void doesCustomerExist_shouldReturnExistingCustomer() throws Exception {
-        FullCustomer insertedCustomer = databaseHelper.insertCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        FullCustomer insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
-
-        System.out.println("Before JSON: " + insertedCustomer);
-        byte[] json = convertObjectToJsonBytes(insertedCustomer);
-        String jsonStr1 = convertBytesToObject(json, FullCustomer.class).toString();
-        System.out.println("Byte JSON: " + jsonStr1);
-        String jsonStr2 = convertObjectToString(insertedCustomer);
-        System.out.println("String JSON: " + jsonStr2);
 
         MvcResult result = mockMvc.perform(post("/timestar/api/v2/customer/exists")
                 .contentType(APPLICATION_JSON_UTF8)
@@ -315,7 +307,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
         assertEquals("The read customer should be equal to original customer; ", returnedCustomer, insertedCustomer);
 
-        FullCustomer customerFromDB = databaseHelper.readCustomerFromDb(customerId);
+        FullCustomer customerFromDB = databaseHelper.readFullCustomerFromDb(customerId);
 
         assertEquals("The customer in the database should be equal to the returned customer; ", customerFromDB, returnedCustomer);
     }
