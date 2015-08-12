@@ -32,7 +32,7 @@ public class TeacherServiceImpl implements TeacherService {
 		Teacher newTeacher = teacherDAO.create(teacher, account.partitionId());
 		LOG.debug("New Teacher created: {}", newTeacher);
 		
-		createAccount(newTeacher, account);
+		createAccountAsynchronously(newTeacher, account);
 
 		return newTeacher;
 	}
@@ -84,6 +84,38 @@ public class TeacherServiceImpl implements TeacherService {
 		return allTeachers;
 	}
 
+    /**
+     * This method is public so it can be tested; should not be accessible by other classes because it is not in the
+     * interface, and can only be called by casting the interface to this class
+     */
+    public void createAccount(Teacher newTeacher, PartitionAccount account) {
+        String name = partitionService.findPartition(account.partitionId()).getName();
+
+        char[] randomPassword = Random.password(true, true, false, PASSWORD_LENGTH);
+        StringBuilder message = new StringBuilder()
+                .append(EMAIL_BODY);
+        for (char ch : randomPassword)
+            message.append(ch);
+        LOG.debug("Random password generated");
+
+        try {
+            String fullTitle = EMAIL_TITLE + name;
+            mail.send(newTeacher.getEmail(), fullTitle, message.toString());
+            LOG.debug("Sent email to teacher '{}': title - '{}'; body - '{}'", newTeacher, fullTitle, EMAIL_BODY + "[PROTECTED}");
+        } catch (MessagingException e) {
+            teacherDAO.delete(newTeacher.getId(), account.partitionId());
+            throw new IllegalStateException("Failed to send mail! Creation aborted.", e);
+        }
+
+        String securePassword = encoder.encode(Chars.join("", randomPassword));
+        Arrays.fill(randomPassword, '?');
+        LOG.debug("Password encoded and erased from memory");
+
+        String accountName = account.usernameFor(newTeacher.getEmail());
+        Account teacherAccount = accountDAO.create(new Account(newTeacher.getId(), accountName, AccountType.TEACHER.name(), securePassword.toCharArray()));
+        LOG.debug("New Teacher Account created: {}", teacherAccount);
+    }
+
 	// CONSTRUCTORS
 	
 	@Autowired
@@ -106,36 +138,9 @@ public class TeacherServiceImpl implements TeacherService {
 	private final TeacherLanguagesService teacherLanguagesService;
 	private final PartitionService partitionService;
 
-    private void createAccount(Teacher newTeacher, PartitionAccount account) {
+    private void createAccountAsynchronously(Teacher newTeacher, PartitionAccount account) {
         // To avoid long pauses when sending e-mails/generating passwords, accounts are created on a separate thread
-        new Thread(() -> {
-            String name = partitionService.findPartition(account.partitionId()).getName();
-
-            char[] randomPassword = Random.password(true, true, false, PASSWORD_LENGTH);
-            StringBuilder message = new StringBuilder()
-                    .append(EMAIL_BODY);
-            for (char ch : randomPassword)
-                message.append(ch);
-            LOG.debug("Random password generated");
-
-            try {
-                String fullTitle = EMAIL_TITLE + name;
-                mail.send(newTeacher.getEmail(), fullTitle, message.toString());
-                LOG.debug("Sent email to teacher '{}': title - '{}'; body - '{}'", newTeacher, fullTitle, EMAIL_BODY + "[PROTECTED}");
-            } catch (MessagingException e) {
-                teacherDAO.delete(newTeacher.getId(), account.partitionId());
-                throw new IllegalStateException("Failed to send mail! Creation aborted.", e);
-            }
-
-            String securePassword = encoder.encode(Chars.join("", randomPassword));
-            Arrays.fill(randomPassword, '?');
-            randomPassword = null;
-            LOG.debug("Password encoded and erased from memory");
-
-            String accountName = account.usernameFor(newTeacher.getEmail());
-            Account teacherAccount = accountDAO.create(new Account(newTeacher.getId(), accountName, AccountType.TEACHER.name(), securePassword.toCharArray()));
-            LOG.debug("New Teacher Account created: {}", teacherAccount);
-		}).start();
+        new Thread(() -> createAccount(newTeacher, account)).start();
     }
 	
 	private static final int PASSWORD_LENGTH = 7;

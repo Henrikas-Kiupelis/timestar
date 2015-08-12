@@ -23,7 +23,7 @@ public class StudentServiceImpl implements StudentService {
 		Student newStudent = studentDAO.create(student, partitionId);
 		LOG.debug("New Student created: {}", newStudent);
 
-        generateCode(newStudent, partitionId);
+        generateCodeAsynchronously(newStudent, partitionId);
 		
 		return newStudent;
 	}
@@ -119,6 +119,27 @@ public class StudentServiceImpl implements StudentService {
 		return old;
 	}
 
+    /**
+     * This method is public so it can be tested; should not be accessible by other classes because it is not in the
+     * interface, and can only be called by casting the interface to this class
+     */
+    public void generateCode(Student student, int partitionId) {
+        String name = partitionService.findPartition(partitionId).getName();
+
+        Student studentWithCode = student.withGeneratedCode();
+        LOG.debug("Code for student generated: {}", studentWithCode);
+
+        studentDAO.setStudentCode(studentWithCode.getId(), studentWithCode.getCode(), partitionId);
+        try {
+            String fullTitle = EMAIL_TITLE + name;
+            String fullBody = EMAIL_BODY + studentWithCode.getCode();
+            mail.send(student.getEmail(), fullTitle, fullBody);
+            LOG.debug("Sent email to student '{}': title - '{}'; body - '{}'", student.getName(), fullTitle, fullBody);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
 	// CONSTRUCTORS
 
 	@Autowired
@@ -138,24 +159,9 @@ public class StudentServiceImpl implements StudentService {
 	private final GMail mail;
 	private final PartitionService partitionService;
 
-    private void generateCode(Student student, int partitionId) {
+    private void generateCodeAsynchronously(Student student, int partitionId) {
         // To avoid long pauses when sending e-mails/generating numbers, a separate thread is used
-        new Thread(() -> {
-            String name = partitionService.findPartition(partitionId).getName();
-
-            Student studentWithCode = student.withGeneratedCode();
-            LOG.debug("Code for student generated: {}", studentWithCode);
-
-			studentDAO.setStudentCode(studentWithCode.getId(), studentWithCode.getCode(), partitionId);
-            try {
-                String fullTitle = EMAIL_TITLE + name;
-                String fullBody = EMAIL_BODY + studentWithCode.getCode();
-                mail.send(student.getEmail(), fullTitle, fullBody);
-                LOG.debug("Sent email to student '{}': title - '{}'; body - '{}'", student.getName(), fullTitle, fullBody);
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        new Thread(() -> generateCode(student, partitionId)).start();
     }
 
     private static final String EMAIL_TITLE = "Your lesson code for ";
