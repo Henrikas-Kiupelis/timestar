@@ -25,7 +25,8 @@ public class TeacherLanguagesDAOImpl implements TeacherLanguagesDAO {
 			Integer teacherId = languages.getTeacherId();
 			List<String> languageList = languages.getLanguages();
 
-			InsertValuesStep3<TeacherLanguageRecord, Integer, Integer, String> step = sql.insertInto(TEACHER_LANGUAGE, TEACHER_LANGUAGE.PARTITION_ID, TEACHER_LANGUAGE.TEACHER_ID, TEACHER_LANGUAGE.CODE);
+			InsertValuesStep3<TeacherLanguageRecord, Integer, Integer, String> step =
+                    sql.insertInto(TEACHER_LANGUAGE, TEACHER_LANGUAGE.PARTITION_ID, TEACHER_LANGUAGE.TEACHER_ID, TEACHER_LANGUAGE.CODE);
 			for (String language : languageList)
 				step = step.values(partitionId, teacherId, language);
 
