@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * <pre>
  * Responsible for handling the app logic in regard to customers
- * </pre>
  */
 @Service
 public interface FullCustomerService {
@@ -164,7 +162,7 @@ public interface FullCustomerService {
      * @return customer, if it exists
      *
      * @throws InvalidRequestException if customer is null
-     * @throws InvalidCustomerException if customer has no fields set (ignoring languages)
+     * @throws InvalidCustomerException if customer has no fields set
      * @throws CustomerNotFoundException if given customer cannot be found
      * @throws DatabaseException if database error occurred
      */
