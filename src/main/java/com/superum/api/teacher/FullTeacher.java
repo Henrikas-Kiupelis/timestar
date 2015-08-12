@@ -1,6 +1,7 @@
 package com.superum.api.teacher;
 
 import com.fasterxml.jackson.annotation.*;
+import com.google.common.collect.ObjectArrays;
 import com.superum.db.teacher.Teacher;
 import com.superum.db.teacher.lang.TeacherLanguages;
 import com.superum.helper.field.FieldDef;
@@ -12,6 +13,7 @@ import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.core.Primary;
 import com.superum.helper.validation.Validator;
 import org.joda.time.Instant;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.lambda.Seq;
 
@@ -20,7 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.TEACHER;
+import static com.superum.db.generated.timestar.Tables.TEACHER_LANGUAGE;
+import static com.superum.helper.Constants.MYSQL_GROUP_CONCAT_SEPARATOR;
 import static com.superum.helper.validation.Validator.validate;
+import static org.jooq.impl.DSL.groupConcat;
 
 /**
  * <pre>
@@ -281,6 +286,19 @@ public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, In
         return compare(other, FullTeacher::teacherLanguagesFields);
     }
 
+    public Teacher toTeacher() {
+        return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email,
+                picture, document, comment, getCreatedAt(), getUpdatedAt());
+    }
+
+    public TeacherLanguages toTeacherLanguages() {
+        return new TeacherLanguages(id, languages);
+    }
+
+    public static Field<?>[] fullTeacherFields() {
+        return FULL_TEACHER_FIELDS;
+    }
+
     // OBJECT OVERRIDES
 
     @Override
@@ -359,7 +377,7 @@ public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, In
         if (record == null)
             return null;
 
-        String[] languages = {}; //record.getValue(TEACHER.) TODO fix when we have an actual query
+        String[] languages = record.getValue(LANGUAGES_FIELD, String.class).split(MYSQL_GROUP_CONCAT_SEPARATOR);
 
         return FullTeacher.stepBuilder()
                 .paymentDay(record.getValue(TEACHER.PAYMENT_DAY))
@@ -371,6 +389,7 @@ public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, In
                 .city(record.getValue(TEACHER.CITY))
                 .email(record.getValue(TEACHER.EMAIL))
                 .languages(languages)
+                .id(record.getValue(TEACHER.ID))
                 .picture(record.getValue(TEACHER.PICTURE))
                 .document(record.getValue(TEACHER.DOCUMENT))
                 .comment(record.getValue(TEACHER.COMMENT))
@@ -490,13 +509,16 @@ public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, In
     private static final String COMMENT_FIELD = "comment";
     private static final String LANGUAGES_FIELD = "languages";
 
+    private static final Field<?>[] FULL_TEACHER_FIELDS = ObjectArrays.concat(TEACHER.fields(),
+            groupConcat(TEACHER_LANGUAGE.CODE).as(LANGUAGES_FIELD));
+
     // FIELD DEFINITIONS
 
     private static final List<FieldDef<FullTeacher, ?>> FIELD_DEFINITION_LIST = Arrays.asList(
             FieldDefinition.ofInt(ID_FIELD, TEACHER.ID, Mandatory.NO, Primary.YES, FullTeacher::getId),
             FieldDefinition.ofInt(PAYMENT_DAY_FIELD, TEACHER.PAYMENT_DAY, Mandatory.YES, Primary.NO, FullTeacher::getPaymentDay),
-            FieldDefinition.of(HOURLY_WAGE_FIELD, TEACHER.HOURLY_WAGE, Mandatory.YES, Primary.NO, FullTeacher::getHourlyWage),
-            FieldDefinition.of(ACADEMIC_WAGE_FIELD, TEACHER.ACADEMIC_WAGE, Mandatory.YES, Primary.NO, FullTeacher::getAcademicWage),
+            FieldDefinition.ofBigDecimal(HOURLY_WAGE_FIELD, TEACHER.HOURLY_WAGE, Mandatory.YES, Primary.NO, FullTeacher::getHourlyWage),
+            FieldDefinition.ofBigDecimal(ACADEMIC_WAGE_FIELD, TEACHER.ACADEMIC_WAGE, Mandatory.YES, Primary.NO, FullTeacher::getAcademicWage),
             FieldDefinition.of(NAME_FIELD, TEACHER.NAME, Mandatory.YES, Primary.NO, FullTeacher::getName),
             FieldDefinition.of(SURNAME_FIELD, TEACHER.SURNAME, Mandatory.YES, Primary.NO, FullTeacher::getSurname),
             FieldDefinition.of(PHONE_FIELD, TEACHER.PHONE, Mandatory.YES, Primary.NO, FullTeacher::getPhone),
@@ -551,6 +573,7 @@ public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, In
     }
 
     public interface BuildStep {
+        BuildStep id(int id);
         BuildStep picture(String picture);
         BuildStep document(String document);
         BuildStep comment(String comment);
@@ -582,6 +605,7 @@ public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, In
 
         private Builder() {}
 
+        @Override
         public Builder id(int id) {
             this.id = id;
             return this;
