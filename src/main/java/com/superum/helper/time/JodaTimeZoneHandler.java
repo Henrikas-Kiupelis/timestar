@@ -47,9 +47,7 @@ public final class JodaTimeZoneHandler {
     }
 
     /**
-     * <pre>
      * The instance created by this method will assume that the time was 00:00:00.000, using the handler's timezone
-     * </pre>
      */
     public JodaTimeConverter from(LocalDate localDate) {
         DateTime dateTime = localDate.toDateTimeAtStartOfDay(timeZone);
@@ -63,7 +61,7 @@ public final class JodaTimeZoneHandler {
 
     /**
      * @throws IllegalArgumentException if the total time period of hours, minutes, seconds and milliseconds
-     *          exceeds a day's worth of time (essentially, overflowing into the next or previous day)
+     *          exceeds a day's worth of time (essentially, overflowing into the next day)
      */
     public JodaTimeConverter from(LocalDate localDate, int hours, int minutes, int seconds, int milliseconds) {
         DateTime dateTimeAtStartOfDay = localDate.toDateTimeAtStartOfDay(timeZone);
@@ -77,7 +75,7 @@ public final class JodaTimeZoneHandler {
 
     /**
      * @throws IllegalArgumentException if the total time period of hours, minutes and seconds
-     *          exceeds a day's worth of time (essentially, overflowing into the next or previous day)
+     *          exceeds a day's worth of time (essentially, overflowing into the next day)
      */
     public JodaTimeConverter from(LocalDate localDate, int hours, int minutes, int seconds) {
         return from(localDate, hours, minutes, seconds, 0);
@@ -85,7 +83,7 @@ public final class JodaTimeZoneHandler {
 
     /**
      * @throws IllegalArgumentException if the total time period of hours and minutes
-     *          exceeds a day's worth of time (essentially, overflowing into the next or previous day)
+     *          exceeds a day's worth of time (essentially, overflowing into the next day)
      */
     public JodaTimeConverter from(LocalDate localDate, int hours, int minutes) {
         return from(localDate, hours, minutes, 0, 0);
@@ -93,7 +91,7 @@ public final class JodaTimeZoneHandler {
 
     /**
      * @throws IllegalArgumentException if the total time period of hours
-     *          exceeds a day's worth of time (essentially, overflowing into the next or previous day)
+     *          exceeds a day's worth of time (essentially, overflowing into the next day)
      */
     public JodaTimeConverter from(LocalDate localDate, int hours) {
         return from(localDate, hours, 0, 0, 0);
@@ -109,7 +107,7 @@ public final class JodaTimeZoneHandler {
      * Please refer to "from(java.sql.Date)" method for reasons
      *
      * The assumption behind java.util.Date is that it was created using a long value, i.e.
-     * new Date(long);
+     *      new java.util.Date(long);
      * </pre>
      */
     public JodaTimeConverter from(java.util.Date date) {
@@ -122,7 +120,7 @@ public final class JodaTimeZoneHandler {
     /**
      * <pre>
      * The assumption behind java.sql.Date is that it was created using a String value, i.e.
-     *      Date.parse("yyyy-MM-dd");
+     *      java.sql.Date.valueOf("yyyy-MM-dd");
      * This uses the JAVA timezone to create a localized instance; therefore, the epoch milliseconds value
      * refers to the start of day at JAVA timezone, and the String value of the Date can get altered during conversion;
      * using toString() method, however, once again uses JAVA timezone, essentially allowing the value to remain correct
@@ -265,7 +263,7 @@ public final class JodaTimeZoneHandler {
         /**
          * <pre>
          * The assumption behind java.util.Date is that it will be consumed using a long value, i.e.
-         * date.getTime();
+         *      date.getTime();
          * </pre>
          */
         public java.util.Date toJavaUtilDate() {
@@ -278,7 +276,7 @@ public final class JodaTimeZoneHandler {
         /**
          * <pre>
          * The assumption behind java.sql.Date is that it will be consumed using a String value, i.e.
-         * date.toString():
+         *      date.toString():
          * This uses the JAVA timezone to create a localized instance; therefore, the epoch milliseconds value
          * refers to the start of day at JAVA timezone, and the String value of the Date can get altered during conversion;
          * using toString() method, however, once again uses JAVA timezone, essentially allowing the value to remain correct

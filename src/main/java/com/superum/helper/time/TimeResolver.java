@@ -113,7 +113,7 @@ public final class TimeResolver {
      *      a) if it's after today, find the next month's paymentDate;
      *      b) if it's today or before today, find the previous month's paymentDate;
      * 3) use JodaTimeZoneHandler set to UTC, earlier payment date plus one day (so it is exclusive) and later
-     * payment day to resolve time;
+     * payment date to resolve time;
      * </pre>
      */
     public static TimeResolver from(int paymentDay) {
