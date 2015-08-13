@@ -219,6 +219,10 @@ public abstract class Validator<T, V extends Validator<T, V>> {
 
     // CONSTRUCTORS
 
+    public static CharArrayValidator validate(char[] charArray) {
+        return new CharArrayValidator(charArray);
+    }
+
     public static StringValidator validate(String string) {
         return new StringValidator(string);
     }
