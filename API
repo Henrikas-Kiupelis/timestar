@@ -196,10 +196,13 @@ Teacher API:
     RET   com.superum.api.teacher.FullTeacher
 
     Creates a new teacher;
+    also creates an Account for this teacher, with a randomly generated password, which is sent to the e-mail
+    specified inside the FullTeacher
 
     It will fail if:
     a) HTTP 400; the id field was set;
     b) HTTP 400; a mandatory field was not set;
+    c) HTTP 500; the email is already taken in the partition of the request;
 
     Returned FullTeacher will have its id field set;
 
@@ -224,6 +227,7 @@ Teacher API:
     a) HTTP 400; the id field was not set;
     b) HTTP 400; only the id field was set and no other fields were;
     c) HTTP 404; no teacher with provided id exists;
+    d) HTTP 500; the email is already taken in the partition of the request;
 
     Returned FullTeacher contains all the fields as they were before updating;
 
@@ -233,6 +237,7 @@ Teacher API:
     RET     com.superum.api.teacher.FullTeacher
 
     Deletes an existing teacher;
+    also deletes the Account of this teacher;
 
     It will fail if:
     a) HTTP 404; no teacher with provided id exists;
@@ -278,6 +283,57 @@ Teacher API:
     guaranteed is when the id field is set.
 
 
+
+Account API:
+
+1)
+    POST  admin/add
+    BODY  com.superum.api.account.ValidAccount
+    RET   com.superum.api.account.ValidAccount
+
+    Creates a new admin account in the same partition as the request;
+
+    It will fail if:
+    a) HTTP 400; username or password were not set;
+    b) HTTP 500; the username is already taken;
+
+    Returned ValidAccount will not contain additional information about the account, or the password
+
+2)
+    POST  update
+    BODY  com.superum.api.account.ValidAccount
+    RET   com.superum.api.account.ValidAccount
+
+    Updates an existing account; only password field is updated;
+    you can only update the account using the credentials of the account being updated;
+
+    It will fail if:
+    a) HTTP 400; username or password were not set;
+    b) HTTP 401; the request was made using another account's credentials;
+    c) HTTP 404; an account with given username does not exist;
+    d) HTTP 500; the username is already taken;
+
+    Returned ValidAccount contains all the fields as they were before updating, except password;
+
+3)
+    GET  info
+    REQ  username       String         any, username.length() <= 60
+    RET  com.superum.api.account.ValidAccount
+
+    Reads and returns an existing account;
+
+    It will fail if:
+    a) HTTP 404; an account with given username does not exist;
+
+    Returned ValidAccount contains all the fields, except password;
+
+Partition API:
+
+1)
+
+Files API:
+
+1)
 
 
 
