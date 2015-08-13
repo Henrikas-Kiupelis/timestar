@@ -1,6 +1,7 @@
 package com.superum.api.teacher;
 
 import com.fasterxml.jackson.annotation.*;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ObjectArrays;
 import com.superum.db.teacher.Teacher;
 import com.superum.db.teacher.lang.TeacherLanguages;
@@ -353,9 +354,9 @@ public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, In
         validate(comment).isNull().or().fits(COMMENT_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher comment must not exceed " + COMMENT_SIZE_LIMIT + " chars: " + comment));
         validate(languages).isNull().or().notEmpty()
-                .forEach(Validator::validate, validator -> validator.notNull().notEmpty().fits(LANGUAGE_CODE_SIZE_LIMIT)
+                .forEach(Validator::validate, language -> language.notNull().notEmpty().fits(LANGUAGE_CODE_SIZE_LIMIT)
                         .ifInvalid(() -> new InvalidTeacherException("Specific Teacher languages must not be null, empty or exceed "
-                                + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + validator.value())))
+                                + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + language.value())))
                 .ifInvalid(() -> new InvalidTeacherException("Teacher must have at least a single language!"));
 
         return new FullTeacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
@@ -431,7 +432,7 @@ public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, In
         this.picture = picture;
         this.document = document;
         this.comment = comment;
-        this.languages = languages;
+        this.languages = ImmutableList.copyOf(languages);
 
         registerFields(FIELD_DEFINITIONS);
     }

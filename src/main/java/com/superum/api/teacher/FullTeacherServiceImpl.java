@@ -56,7 +56,7 @@ public class FullTeacherServiceImpl implements FullTeacherService {
 
         LOG.debug("Reading teacher with id: {}", teacherId);
 
-        FullTeacher fullTeacher = defaultQueries.readCustom(teacherId, partitionId, FullTeacher::valueOf,
+        FullTeacher fullTeacher = defaultTeacherQueries.readCustom(teacherId, partitionId, FullTeacher::valueOf,
                 fullTeacherFields(), FullTeacherServiceImpl::teacher)
                 .orElseThrow(() -> new TeacherNotFoundException("Couldn't find teacher with id " + teacherId));
         LOG.debug("Teacher retrieved: {}", fullTeacher);
@@ -81,7 +81,7 @@ public class FullTeacherServiceImpl implements FullTeacherService {
         if (!teacher.hasEqualSetFields(oldTeacher)) {
             if (teacher.canUpdateTeacher())
                 try {
-                    if (defaultQueries.update(teacher, partitionId) == 0)
+                    if (defaultTeacherQueries.update(teacher, partitionId) == 0)
                         throw new DatabaseException("Couldn't update teacher: " + teacher);
                 } catch (DataAccessException e) {
                     throw new DatabaseException("An unexpected error occurred when trying to update teacher: " + teacher, e);
@@ -122,7 +122,7 @@ public class FullTeacherServiceImpl implements FullTeacherService {
 
         List<FullTeacher> teachers;
         try {
-            teachers = defaultQueries.readAllCustom(page, amount, FullTeacher::valueOf,
+            teachers = defaultTeacherQueries.readAllCustom(page, amount, FullTeacher::valueOf,
                     fullTeacherFields(), select -> teachers(select, partitionId));
         } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when trying to read all teachers", e);
@@ -136,7 +136,7 @@ public class FullTeacherServiceImpl implements FullTeacherService {
     public int countAll(int partitionId) {
         int count;
         try {
-            count = defaultQueries.countAll(partitionId);
+            count = defaultTeacherQueries.countAll(partitionId);
         } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when trying to count all teachers", e);
         }
@@ -159,11 +159,11 @@ public class FullTeacherServiceImpl implements FullTeacherService {
         try {
             if (teacher.hasOnlyId()) {
                 teacherId = teacher.getId();
-                if (!defaultQueries.exists(teacherId, partitionId))
+                if (!defaultTeacherQueries.exists(teacherId, partitionId))
                     throw new TeacherNotFoundException("Couldn't find teacher with id " + teacherId);
             }
 
-            teacherId = defaultQueries.exists(teacher, partitionId)
+            teacherId = defaultTeacherQueries.exists(teacher, partitionId)
                     .orElseThrow(() -> new TeacherNotFoundException("Couldn't find this teacher: " + teacher));
         } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when trying to check if this teacher exists: " + teacher, e);
@@ -180,14 +180,14 @@ public class FullTeacherServiceImpl implements FullTeacherService {
     public FullTeacherServiceImpl(TeacherService teacherService, TeacherLanguagesService teacherLanguagesService, DSLContext sql) {
         this.teacherService = teacherService;
         this.teacherLanguagesService = teacherLanguagesService;
-        this.defaultQueries = DefaultQueryMaker.forTable(sql, TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
+        this.defaultTeacherQueries = DefaultQueryMaker.forTable(sql, TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
     }
 
     // PRIVATE
 
     private final TeacherService teacherService;
     private final TeacherLanguagesService teacherLanguagesService;
-    private final DefaultQueryMaker.Queries<?, Integer> defaultQueries;
+    private final DefaultQueryMaker.Queries<?, Integer> defaultTeacherQueries;
 
     private static <R extends Record> SelectWhereStep<R> teacher(SelectJoinStep<R> select) {
         return select.join(TEACHER_LANGUAGE).onKey(TEACHER_LANGUAGE_IBFK_1);
