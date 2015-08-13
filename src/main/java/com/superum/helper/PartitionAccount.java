@@ -1,5 +1,6 @@
 package com.superum.helper;
 
+import com.superum.api.exception.UnauthorizedRequestException;
 import com.superum.db.account.Account;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -69,6 +70,9 @@ public class PartitionAccount {
     }
 
     public PartitionAccount(Principal user) {
+        if (user == null)
+            throw new UnauthorizedRequestException("Anonymous request to a method which requires authentication");
+
         String accountUsername = user.getName();
         int separatorIndex = accountUsername.indexOf(SEPARATOR);
         this.partitionId = Integer.parseInt(accountUsername.substring(0, separatorIndex));
