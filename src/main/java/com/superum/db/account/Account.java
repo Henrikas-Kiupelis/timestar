@@ -23,7 +23,7 @@ public class Account {
 	// PUBLIC API
 
 	@JsonProperty("id")
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	
@@ -53,11 +53,14 @@ public class Account {
 	public String getPassword() {
         return Chars.join("", password);
 	}
+    @JsonIgnore
+    public char[] getPasswordArray() {
+        return password;
+    }
 	
 	@JsonIgnore
 	public void erasePassword() {
         Arrays.fill(password, '?');
-		password = null;
 	}
 	
 	// OBJECT OVERRIDES
@@ -87,14 +90,14 @@ public class Account {
 	// CONSTRUCTORS
 
 	@JsonCreator
-	public Account(@JsonProperty("id") int id,
+	public Account(@JsonProperty("id") Integer id,
 				   @JsonProperty("username") String username,
 				   @JsonProperty("accountType") String accountType,
 				   @JsonProperty("password") char[] password) {
 		this(id, username, accountType, password, null, null);
 	}
 
-    public Account(int id, String username, String accountType, char[] password, Instant createdAt, Instant updatedAt) {
+    public Account(Integer id, String username, String accountType, char[] password, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.username = username;
         this.accountType = accountType == null ? null : AccountType.valueOf(accountType);
@@ -106,8 +109,8 @@ public class Account {
 	public static Account valueOf(Record accountRecord) {
 		if (accountRecord == null)
 			return null;
-		
-		int id = accountRecord.getValue(ACCOUNT.ID);
+
+		Integer id = accountRecord.getValue(ACCOUNT.ID);
 		String username = accountRecord.getValue(ACCOUNT.USERNAME);
 		String accountType = accountRecord.getValue(ACCOUNT.ACCOUNT_TYPE);
 		char[] password = accountRecord.getValue(ACCOUNT.PASSWORD).toCharArray();
@@ -129,7 +132,7 @@ public class Account {
 
 	// PRIVATE
 	
-	private final int id;
+	private final Integer id;
 	
 	@NotNull
 	private final String username;
@@ -148,7 +151,8 @@ public class Account {
     // GENERATED
 
 	public interface IdStep {
-		UsernameStep id(int id);
+		UsernameStep id(Integer id);
+        UsernameStep noId();
 	}
 
 	public interface UsernameStep {
@@ -172,7 +176,7 @@ public class Account {
 	}
 
 	public static class Builder implements IdStep, UsernameStep, AccountTypeStep, PasswordStep, BuildStep {
-		private int id;
+		private Integer id;
 		private String username;
 		private String accountType;
 		private char[] password;
@@ -183,12 +187,18 @@ public class Account {
 		private Builder() {}
 
 		@Override
-		public Builder id(int id) {
+		public Builder id(Integer id) {
 			this.id = id;
 			return this;
 		}
 
-		@Override
+        @Override
+        public Builder noId() {
+            this.id = null;
+            return this;
+        }
+
+        @Override
 		public Builder username(String username) {
 			this.username = username;
 			return this;
