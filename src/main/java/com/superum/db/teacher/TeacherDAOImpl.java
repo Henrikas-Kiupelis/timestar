@@ -1,5 +1,6 @@
 package com.superum.db.teacher;
 
+import com.superum.api.teacher.TeacherNotFoundException;
 import com.superum.exception.DatabaseException;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class TeacherDAOImpl implements TeacherDAO {
                     .fetch().stream()
                     .findFirst()
                     .map(Teacher::valueOf)
-                    .orElseThrow(() -> new DatabaseException("Couldn't find teacher with ID: " + id));
+                    .orElseThrow(() -> new TeacherNotFoundException("Couldn't find teacher with ID: " + id));
         } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when trying to read teacher for id " + id, e);
         }
