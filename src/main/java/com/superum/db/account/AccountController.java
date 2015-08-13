@@ -1,5 +1,6 @@
 package com.superum.db.account;
 
+import com.superum.api.exception.UnauthorizedRequestException;
 import com.superum.helper.PartitionAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,9 +27,9 @@ public class AccountController {
 	
 	@RequestMapping(value = "/account/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public Account updateAccount(PartitionAccount partitionAccount, @RequestBody @Valid Account account) throws IllegalArgumentException {
+	public Account updateAccount(PartitionAccount partitionAccount, @RequestBody @Valid Account account) {
         if (!partitionAccount.belongsTo(account))
-			throw new IllegalArgumentException("Users can only update their own account!");
+			throw new UnauthorizedRequestException("Users can only update their own account!");
 			
 		String securePassword = encoder.encode(account.getPassword());
 		account.erasePassword();

@@ -1,5 +1,6 @@
 package com.superum.db.account;
 
+import com.superum.api.account.AccountNotFoundException;
 import com.superum.exception.DatabaseException;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class AccountDAOImpl implements AccountDAO {
                     .fetch().stream()
                     .findFirst()
                     .map(Account::valueOf)
-                    .orElseThrow(() -> new DatabaseException("Couldn't find account with username: " + username));
+                    .orElseThrow(() -> new AccountNotFoundException("Couldn't find account with username: " + username));
         } catch (DataAccessException e) {
             throw new DatabaseException("An unexpected error occurred when trying to read account for username " + username, e);
         }
