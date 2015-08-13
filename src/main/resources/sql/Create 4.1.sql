@@ -10,13 +10,13 @@ CREATE TABLE partitions (
   PRIMARY KEY (id));
 
 CREATE TABLE account (
-  id INT NOT NULL,
+  id INT,
   enabled BIT NOT NULL DEFAULT 1,
   created_at BIGINT,
   updated_at BIGINT,
   password CHAR(60) NOT NULL,
   account_type VARCHAR(10) NOT NULL,
-  username VARCHAR(60) NOT NULL UNIQUE,
+  username VARCHAR(70) NOT NULL UNIQUE,
   PRIMARY KEY(username));
 
 DELIMITER //
@@ -69,11 +69,11 @@ VALUES (0, 'TEST');
 INSERT INTO partitions (id, name)
 VALUES (1, 'DEV');
 
-INSERT INTO account (username, password, account_type, id)
-VALUES ('0.test', '$2a$10$ReQmCgAd1YqDMHNg5zg7hOj.uzJhAACGRkMSMV04h6iaTzxhfTC.6', 'ADMIN', 0);
+INSERT INTO account (username, password, account_type)
+VALUES ('0.test', '$2a$10$ReQmCgAd1YqDMHNg5zg7hOj.uzJhAACGRkMSMV04h6iaTzxhfTC.6', 'ADMIN');
 
-INSERT INTO account (username, password, account_type, id)
-VALUES ('1.goodlike', '$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.', 'ADMIN', 0);
+INSERT INTO account (username, password, account_type)
+VALUES ('1.goodlike', '$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.', 'ADMIN');
 
 CREATE TABLE teacher (
   partition_id INT NOT NULL,
