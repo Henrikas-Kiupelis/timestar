@@ -1,5 +1,7 @@
 package com.superum.helper.validation;
 
+import java.util.Collection;
+
 /**
  * <pre>
  * Validator implementation for strings
@@ -59,6 +61,14 @@ public final class StringValidator extends Validator<String, StringValidator> {
         return this;
     }
 
+    /**
+     * Adds a predicate which tests if the string being validated belongs to a predetermined collection of Strings
+     */
+    public StringValidator matches(Collection<String> values) {
+        registerCondition(values::contains);
+        return this;
+    }
+
     // CONSTRUCTORS
 
     public StringValidator(String object) {
@@ -76,5 +86,6 @@ public final class StringValidator extends Validator<String, StringValidator> {
     protected StringValidator newValidator() {
         return new StringValidator(object);
     }
+
 
 }
