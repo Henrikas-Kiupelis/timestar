@@ -89,7 +89,7 @@ import static org.jooq.impl.DSL.groupConcat;
  *      "languages": ["ENG"]
  * }
  *
- * When returning an instance of FullCustomer with JSON, these fields will be present:
+ * When returning an instance of FullTeacher with JSON, these fields will be present:
  *      FIELD_NAME   : FIELD_DESCRIPTION
  *      id           : number representation of this teacher in the system
  *      paymentDay   : day, at which the teacher is to be paid
