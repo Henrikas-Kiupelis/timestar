@@ -178,7 +178,7 @@ Customer API:
     RET   com.superum.api.customer.FullCustomer
 
     Checks if a customer with specified bounds exists;
-    The simplest use case is to check if a user with a particular id exists, or checking if a certain user's
+    The simplest use case is to check if a customer with a particular id exists, or checking if a certain customer's
     fields are set to some value;
 
     It will fail if:
@@ -189,6 +189,95 @@ Customer API:
     guaranteed is when the id field is set.
 
 Teacher API:
+
+1)
+    POST  /teacher/create
+    BODY  com.superum.api.teacher.FullTeacher
+    RET   com.superum.api.teacher.FullTeacher
+
+    Creates a new teacher;
+
+    It will fail if:
+    a) HTTP 400; the id field was set;
+    b) HTTP 400; a mandatory field was not set;
+
+    Returned FullTeacher will have its id field set;
+
+2)
+    GET  /teacher/{teacherId}
+         teacherId      int            0 < teacherId <= MAX_INT
+    RET  com.superum.api.teacher.FullTeacher
+
+    Reads and returns an existing teacher;
+
+    It will fail if:
+    a) HTTP 404; no teacher with provided id exists;
+
+3)
+    POST  /teacher/update
+    BODY  com.superum.api.teacher.FullTeacher
+    RET   com.superum.api.teacher.FullTeacher
+
+    Updates an existing teacher; only fields that are sent are updated;
+
+    It will fail if:
+    a) HTTP 400; the id field was not set;
+    b) HTTP 400; only the id field was set and no other fields were;
+    c) HTTP 404; no teacher with provided id exists;
+
+    Returned FullTeacher contains all the fields as they were before updating;
+
+4)
+    DELETE  /teacher/delete/{teacherId}
+            teacherId      int            0 < teacherId <= MAX_INT
+    RET     com.superum.api.teacher.FullTeacher
+
+    Deletes an existing teacher;
+
+    It will fail if:
+    a) HTTP 404; no teacher with provided id exists;
+
+    Returned FullTeacher contains all the fields as they were before deleting;
+
+5)
+    GET  teacher/all
+    OPT  page           int            0 < page <= MAX_INT; DEF 1
+    OPT  per_page       int            0 < per_page <= 100; DEF 25
+    RET  List<com.superum.api.teacher.FullTeacher>
+
+    Reads and returns a list of all teachers;
+
+    It shouldn't fail under normal circumstances;
+
+    Returned List is paged; using DEF parameter values, only first 25 teachers will be returned; to access the rest,
+    the page parameter must be incremented, or per_page value raised;
+    If a teacher is deleted, the results of this query will no longer be consistent with the ones before the deletion;
+
+6)
+    GET  teacher/all/count
+    RET  int
+
+    Counts and returns the amount of all teachers;
+
+    It shouldn't fail under normal circumstances;
+
+7)
+    POST  teacher/exists
+    BODY  com.superum.api.teacher.FullTeacher
+    RET   com.superum.api.teacher.FullTeacher
+
+    Checks if a teacher with specified bounds exists;
+    The simplest use case is to check if a teacher with a particular id exists, or checking if a certain teacher's
+    fields are set to some value;
+
+    It will fail if:
+    a) HTTP 400; no fields were set;
+    b) HTTP 404; no teachers for given fields were found;
+
+    Returned FullTeacher is any single teacher that match all the criteria. The only scenario where uniqueness is
+    guaranteed is when the id field is set.
+
+
 
 
 
