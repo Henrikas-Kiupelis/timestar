@@ -1,7 +1,8 @@
 package com.superum.api.exception;
 
 /**
- * This exception is thrown when an request is made, but no auth token/header was provided with it
+ * This exception is thrown when an request is made, but it is not authorized due to exceptional conditions. i.e.
+ * attempting to change a password of a different user
  */
 public class UnauthorizedRequestException extends RuntimeException {
 

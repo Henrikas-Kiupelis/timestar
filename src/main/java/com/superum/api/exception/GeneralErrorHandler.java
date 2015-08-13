@@ -21,7 +21,7 @@ public class GeneralErrorHandler {
 
     @ExceptionHandler
     void handleUnauthorizedRequestException(UnauthorizedRequestException e, HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Couldn't authenticate user; " + e.getMessage());
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), "You are not authorized to use this request; " + e.getMessage());
     }
 
     @ExceptionHandler
