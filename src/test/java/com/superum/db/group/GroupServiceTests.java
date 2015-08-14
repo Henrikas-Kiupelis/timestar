@@ -1,7 +1,9 @@
 package com.superum.db.group;
 
 import com.superum.TimeStarBackEndApplication;
+import com.superum.db.group.student.Student;
 import com.superum.db.group.student.StudentService;
+import com.superum.db.lesson.Lesson;
 import com.superum.db.lesson.LessonService;
 import com.superum.helper.PartitionAccount;
 import com.superum.utils.FakeUtils;
@@ -85,6 +87,7 @@ public class GroupServiceTests {
                 originalGroup, retrievedGroup);
 
         verify(groupDAO, times(1)).update(updatedGroup, account.partitionId());
+
     }
 
     @Test
@@ -92,15 +95,20 @@ public class GroupServiceTests {
         int id = 1;
         PartitionAccount account = makeFakePartitionAccount();
         Group group = makeFakeGroup(id);
+        List<Student> fakeStudents = makeSomeFakes(2, FakeUtils::makeFakeStudent);
+        List<Lesson> fakeLessons = makeSomeFakes(2, FakeUtils::makeFakeLesson);
 
+        when(studentService.deleteForGroup(id, account.partitionId())).thenReturn(fakeStudents);
+        when(lessonService.deleteForGroup(id, account.partitionId())).thenReturn(fakeLessons);
         when(groupDAO.delete(id, account.partitionId())).thenReturn(group);
-        // TODO too few mocks!
 
         Group retrievedGroup = groupService.deleteGroup(id, account.partitionId());
 
         assertEquals("Original group should be the same as retrieved one",
                 group, retrievedGroup);
 
+        verify(studentService, times(1)).deleteForGroup(id, account.partitionId());
+        verify(lessonService, times(1)).deleteForGroup(id, account.partitionId());
         verify(groupDAO, times(1)).delete(id, account.partitionId());
     }
 
