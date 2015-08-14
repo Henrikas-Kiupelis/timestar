@@ -87,6 +87,7 @@ public class GroupServiceTests {
                 originalGroup, retrievedGroup);
 
         verify(groupDAO, times(1)).update(updatedGroup, account.partitionId());
+
     }
 
     @Test
