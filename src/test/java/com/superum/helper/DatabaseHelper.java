@@ -1,6 +1,7 @@
 package com.superum.helper;
 
 import com.superum.api.customer.FullCustomer;
+import com.superum.api.group.ValidGroupDTO;
 import com.superum.api.teacher.FullTeacher;
 import com.superum.db.account.AccountType;
 import com.superum.db.generated.timestar.tables.records.TeacherLanguageRecord;
@@ -50,10 +51,15 @@ public class DatabaseHelper {
     public FullCustomer readFullCustomerFromDb(int customerId) {
         return sql.selectFrom(CUSTOMER)
                 .where(CUSTOMER.ID.eq(customerId))
-                .fetch().stream()
-                .findFirst()
+                .fetch().stream().findAny()
                 .map(FullCustomer::valueOf)
                 .orElse(null);
+    }
+
+    public void deleteFullCustomerFromDb(int customerId) {
+        sql.deleteFrom(CUSTOMER)
+                .where(CUSTOMER.ID.eq(customerId))
+                .execute();
     }
 
     public Teacher insertTeacherIntoDb(Teacher teacher) {
@@ -77,6 +83,12 @@ public class DatabaseHelper {
         assert insertedTeacher != null; //if this assert fails, database is broken/offline
 
         return insertedTeacher;
+    }
+
+    public void deleteTeacherFromDb(int teacherId) {
+        sql.deleteFrom(TEACHER)
+                .where(TEACHER.ID.eq(teacherId))
+                .execute();
     }
 
     public TeacherLanguages insertTeacherLanguagesIntoDb(TeacherLanguages teacherLanguages) {
@@ -156,6 +168,31 @@ public class DatabaseHelper {
         assert insertedStudent != null; //if this assert fails, database is broken/offline
 
         return insertedStudent;
+    }
+
+    public ValidGroupDTO insertValidGroupIntoDb(ValidGroupDTO group) {
+        ValidGroupDTO insertedGroup = sql.insertInto(GROUP_OF_STUDENTS)
+                .set(GROUP_OF_STUDENTS.PARTITION_ID, TEST_PARTITION)
+                .set(GROUP_OF_STUDENTS.CUSTOMER_ID, group.getCustomerId())
+                .set(GROUP_OF_STUDENTS.TEACHER_ID, group.getTeacherId())
+                .set(GROUP_OF_STUDENTS.USE_HOURLY_WAGE, group.getUsesHourlyWage())
+                .set(GROUP_OF_STUDENTS.LANGUAGE_LEVEL, group.getLanguageLevel())
+                .set(GROUP_OF_STUDENTS.NAME, group.getName())
+                .returning()
+                .fetchOne()
+                .map(ValidGroupDTO::valueOf);
+
+        assert insertedGroup != null; //if this assert fails, database is broken/offline
+
+        return insertedGroup;
+    }
+
+    public ValidGroupDTO readValidGroupFromDb(int groupId) {
+        return sql.selectFrom(GROUP_OF_STUDENTS)
+                .where(GROUP_OF_STUDENTS.ID.eq(groupId))
+                .fetch().stream().findAny()
+                .map(ValidGroupDTO::valueOf)
+                .orElse(null);
     }
 
     // CONSTRUCTORS

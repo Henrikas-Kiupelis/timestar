@@ -1,6 +1,7 @@
 package com.superum.utils;
 
 import com.superum.api.customer.FullCustomer;
+import com.superum.api.group.ValidGroupDTO;
 import com.superum.api.teacher.FullTeacher;
 import com.superum.db.account.Account;
 import com.superum.db.account.AccountType;
@@ -59,6 +60,14 @@ public class FakeUtils {
                 Collections.singletonList(fakeLanguage(id)));
     }
 
+    public static ValidGroupDTO makeFakeValidGroup(int id) {
+        return ValidGroupDTO.jsonInstance(id, id, id, fakeBoolean(id), fakeLanguageLevel(id), fakeName(id));
+    }
+
+    public static ValidGroupDTO makeFakeValidGroup(int id, Integer customerId, Integer teacherId) {
+        return makeFakeValidGroup(id, customerId, teacherId, fakeBoolean(id), fakeLanguageLevel(id), fakeName(id));
+    }
+
     // FULL FAKES
 
     public static FullCustomer makeFakeFullCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
@@ -80,6 +89,10 @@ public class FakeUtils {
                                                   String comment, List<String> languages) {
         return FullTeacher.valueOf(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
                 document, comment, languages);
+    }
+
+    public static ValidGroupDTO makeFakeValidGroup(Integer id, Integer customerid, Integer teacherId, Boolean usesHourlyWage, String languageLevel, String name) {
+        return ValidGroupDTO.jsonInstance(id, customerid, teacherId, usesHourlyWage, languageLevel, name);
     }
 
     // API V1
