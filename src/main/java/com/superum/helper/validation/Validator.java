@@ -35,8 +35,6 @@ import java.util.function.Supplier;
  *          .custom(predicate4)
  *          .ifInvalid(...)
  * testEnd() can be omitted if it's the last call before ifInvalid()
- *
- * At the moment there is no way to negate the next condition, but I'll consider it if it's needed
  * </pre>
  * @param <T> type of the object that is being validated
  * @param <V> validator for type T
@@ -81,16 +79,8 @@ public abstract class Validator<T, V extends Validator<T, V>> {
     /**
      * Adds a predicate which tests if the object being validated is null
      */
-    public final V isNull() {
+    public final V Null() {
         registerCondition(t -> t == null);
-        return thisValidator();
-    }
-
-    /**
-     * Adds a predicate which tests if the object being validated is not null
-     */
-    public final V notNull() {
-        registerCondition(t -> t != null);
         return thisValidator();
     }
 
@@ -126,6 +116,18 @@ public abstract class Validator<T, V extends Validator<T, V>> {
 
         updateMainCondition();
         resetSubConditions();
+        return thisValidator();
+    }
+
+    /**
+     * <pre>
+     * Negates the following predicate
+     *
+     * Using not().not() will cancel itself out
+     * </pre>
+     */
+    public final V not() {
+        notCondition = !notCondition;
         return thisValidator();
     }
 
@@ -219,6 +221,10 @@ public abstract class Validator<T, V extends Validator<T, V>> {
 
     // CONSTRUCTORS
 
+    public static BooleanValidator validate(Boolean bool) {
+        return new BooleanValidator(bool);
+    }
+
     public static CharArrayValidator validate(char[] charArray) {
         return new CharArrayValidator(charArray);
     }
@@ -227,7 +233,7 @@ public abstract class Validator<T, V extends Validator<T, V>> {
         return new StringValidator(string);
     }
 
-    public static IntValidator validate(int integer) {
+    public static IntValidator validate(Integer integer) {
         return new IntValidator(integer);
     }
 
@@ -241,7 +247,6 @@ public abstract class Validator<T, V extends Validator<T, V>> {
 
     protected Validator(T object) {
         this.object = object;
-        this.subConditions = new ArrayList<>();
     }
 
     // PROTECTED
@@ -254,29 +259,15 @@ public abstract class Validator<T, V extends Validator<T, V>> {
      * Adds a predicate to the list of conditions; this list is reduced using && operator when or() is called
      */
     protected void registerCondition(Predicate<T> predicate) {
-        subConditions.add(predicate);
-    }
-
-    /**
-     * <pre>
-     * Adds a negation of predicate to the list of conditions;
-     * this list is reduced using && operator when or() is called
-     *
-     * This method is useful when the predicate can be described by a method reference, i.e.
-     *      String::isEmpty
-     *
-     * Without this method, you would have to use a lambda expression to negate:
-     *      string -> !string.isEmpty()
-     * </pre>
-     */
-    protected void registerConditionNot(Predicate<T> predicate) {
-        subConditions.add(predicate.negate());
+        subConditions.add(notCondition ? predicate.negate() : predicate);
+        notCondition = false;
     }
 
     // PRIVATE
 
     private Predicate<T> condition;
-    private List<Predicate<T>> subConditions;
+    private List<Predicate<T>> subConditions = new ArrayList<>();
+    private boolean notCondition = false;
 
     private void updateMainCondition() {
         if (condition == null)

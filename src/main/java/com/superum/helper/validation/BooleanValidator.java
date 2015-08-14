@@ -1,10 +1,8 @@
 package com.superum.helper.validation;
 
-import java.math.BigDecimal;
-
 /**
  * <pre>
- * Validator implementation for BigDecimals
+ * Validator implementation for Booleans
  *
  * Reasons for using this over @Valid:
  * 1) The validations seem all too basic, requiring either 3rd party annotations or custom made annotations for
@@ -33,32 +31,40 @@ import java.math.BigDecimal;
  * testEnd() can be omitted if it's the last call before ifInvalid()
  * </pre>
  */
-public final class BigDecimalValidator extends Validator<BigDecimal, BigDecimalValidator> {
+public class BooleanValidator extends Validator<Boolean, BooleanValidator> {
 
     /**
-     * Adds a predicate which tests if the BigDecimal being validated is positive
+     * Adds a predicate which tests if the boolean being validated is true
      */
-    public BigDecimalValidator positive() {
-        registerCondition(dec -> dec.signum() == 1);
+    public BooleanValidator True() {
+        registerCondition(bool -> bool);
+        return this;
+    }
+
+    /**
+     * Adds a predicate which tests if the boolean being validated is false
+     */
+    public BooleanValidator False() {
+        registerCondition(bool -> !bool);
         return this;
     }
 
     // CONSTRUCTORS
 
-    public BigDecimalValidator(BigDecimal object) {
+    public BooleanValidator(Boolean object) {
         super(object);
     }
 
     // PROTECTED
 
     @Override
-    protected BigDecimalValidator thisValidator() {
+    protected BooleanValidator thisValidator() {
         return this;
     }
 
     @Override
-    protected BigDecimalValidator newValidator() {
-        return new BigDecimalValidator(object);
+    protected BooleanValidator newValidator() {
+        return new BooleanValidator(object);
     }
 
 }

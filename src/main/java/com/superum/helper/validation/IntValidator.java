@@ -29,8 +29,6 @@ package com.superum.helper.validation;
  *          .custom(predicate4)
  *          .ifInvalid(...)
  * testEnd() can be omitted if it's the last call before ifInvalid()
- *
- * At the moment there is no way to negate the next condition, but I'll consider it if it's needed
  * </pre>
  */
 public final class IntValidator extends Validator<Integer, IntValidator> {
@@ -52,34 +50,10 @@ public final class IntValidator extends Validator<Integer, IntValidator> {
     }
 
     /**
-     * Adds a predicate which tests if the integer being validated is not larger than some amount
-     */
-    public IntValidator notMoreThan(int amount) {
-        registerCondition(i -> i <= amount);
-        return this;
-    }
-
-    /**
-     * Adds a predicate which tests if the integer being validated is not smaller than some amount
-     */
-    public IntValidator notLessThan(int amount) {
-        registerCondition(i -> i >= amount);
-        return this;
-    }
-
-    /**
      * Adds a predicate which tests if the integer being validated is equal to some amount
      */
     public IntValidator equal(int amount) {
         registerCondition(i -> i == amount);
-        return this;
-    }
-
-    /**
-     * Adds a predicate which tests if the integer being validated is not equal to some amount
-     */
-    public IntValidator notEqual(int amount) {
-        registerCondition(i -> i != amount);
         return this;
     }
 

@@ -33,8 +33,6 @@ import java.util.function.Function;
  *          .custom(predicate4)
  *          .ifInvalid(...)
  * testEnd() can be omitted if it's the last call before ifInvalid()
- *
- * At the moment there is no way to negate the next condition, but I'll consider it if it's needed
  * </pre>
  * @param <T> type of object inside the List
  */
@@ -45,14 +43,6 @@ public final class ListValidator<T> extends Validator<List<T>, ListValidator<T>>
      */
     public ListValidator<T> empty() {
         registerCondition(List::isEmpty);
-        return this;
-    }
-
-    /**
-     * Adds a predicate which tests if the list being validated is not empty
-     */
-    public ListValidator<T> notEmpty() {
-        registerConditionNot(List::isEmpty);
         return this;
     }
 

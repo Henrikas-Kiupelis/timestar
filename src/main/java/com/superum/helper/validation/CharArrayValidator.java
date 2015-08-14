@@ -1,5 +1,7 @@
 package com.superum.helper.validation;
 
+import com.google.common.primitives.Chars;
+
 /**
  * <pre>
  * Validator implementation for char arrays
@@ -29,8 +31,6 @@ package com.superum.helper.validation;
  *          .custom(predicate4)
  *          .ifInvalid(...)
  * testEnd() can be omitted if it's the last call before ifInvalid()
- *
- * At the moment there is no way to negate the next condition, but I'll consider it if it's needed
  * </pre>
  */
 public class CharArrayValidator extends Validator<char[], CharArrayValidator> {
@@ -44,18 +44,18 @@ public class CharArrayValidator extends Validator<char[], CharArrayValidator> {
     }
 
     /**
-     * Adds a predicate which tests if the char array being validated is not empty
-     */
-    public CharArrayValidator notEmpty() {
-        registerCondition(array -> array.length > 0);
-        return this;
-    }
-
-    /**
      * Adds a predicate which tests if the char array being validated fits into a limited amount of characters
      */
     public CharArrayValidator fits(int limit) {
         registerCondition(array -> array.length <= limit);
+        return this;
+    }
+
+    /**
+     * Adds a predicate which tests if the char array being validated contains only whitespace
+     */
+    public CharArrayValidator blank() {
+        registerCondition(array -> Chars.asList(array).stream().allMatch(Character::isWhitespace));
         return this;
     }
 

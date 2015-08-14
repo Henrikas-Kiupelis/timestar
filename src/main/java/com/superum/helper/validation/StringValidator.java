@@ -31,8 +31,6 @@ import java.util.Collection;
  *          .custom(predicate4)
  *          .ifInvalid(...)
  * testEnd() can be omitted if it's the last call before ifInvalid()
- *
- * At the moment there is no way to negate the next condition, but I'll consider it if it's needed
  * </pre>
  */
 public final class StringValidator extends Validator<String, StringValidator> {
@@ -42,14 +40,6 @@ public final class StringValidator extends Validator<String, StringValidator> {
      */
     public StringValidator empty() {
         registerCondition(String::isEmpty);
-        return this;
-    }
-
-    /**
-     * Adds a predicate which tests if the string being validated is not empty
-     */
-    public StringValidator notEmpty() {
-        registerConditionNot(String::isEmpty);
         return this;
     }
 
@@ -66,6 +56,14 @@ public final class StringValidator extends Validator<String, StringValidator> {
      */
     public StringValidator matches(Collection<String> values) {
         registerCondition(values::contains);
+        return this;
+    }
+
+    /**
+     * Adds a predicate which tests if the string being validated contains only whitespace
+     */
+    public StringValidator blank() {
+        registerCondition(string -> string.trim().isEmpty());
         return this;
     }
 
