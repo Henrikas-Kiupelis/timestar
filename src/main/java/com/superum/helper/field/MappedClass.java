@@ -22,6 +22,20 @@ import java.util.stream.Stream;
 public abstract class MappedClass<T extends MappedClass<T, ID>, ID> implements Defined<T, ID> {
 
     /**
+     * @return true if ID field is set, false otherwise
+     */
+    public boolean hasId() {
+        return primaryField().isSet();
+    }
+
+    /**
+     * @return ID field value
+     */
+    public ID getId() {
+        return primaryField().getValue();
+    }
+
+    /**
      * <pre>
      * Should be extended to:
      *     return this;
@@ -158,5 +172,6 @@ public abstract class MappedClass<T extends MappedClass<T, ID>, ID> implements D
     // PRIVATE
 
     private Fields<T> fields;
+
 
 }
