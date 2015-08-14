@@ -6,6 +6,8 @@ This file should contain a rough list of ideas/things to be done in the future:
 
 A) Things to definitely do in the future
 
+    Make database automatically delete the account when a teacher is deleted
+
     Fix // TODO in tests
 
     Make FullAttendance a mix of actual objects (i.e. lesson + students) rather than just ids (similar for groups)
