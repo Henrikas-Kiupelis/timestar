@@ -92,7 +92,7 @@ public class DefaultQueryMaker {
          * @return object, created by using mapper on the record returned by the database; Optional.empty if it was
          * null
          */
-        <T extends Defined<T, ID>> Optional<T> create(T body, int partitionId, Function<R, T> mapper);
+        <T extends Defined<T, ID>, Rslt> Optional<Rslt> create(T body, int partitionId, Function<R, Rslt> mapper);
 
         /**
          * Reads a single record from the table using a particular primary key
@@ -196,7 +196,7 @@ public class DefaultQueryMaker {
     private static final class QueryMaker<R extends Record, ID> implements Queries<R, ID> {
 
         @Override
-        public <T extends Defined<T, ID>> Optional<T> create(T body, int partitionId, Function<R, T> mapper) {
+        public <T extends Defined<T, ID>, Rslt> Optional<Rslt> create(T body, int partitionId, Function<R, Rslt> mapper) {
             NullChecker.check(body, mapper).notNull("Body and mapper function cannot be null");
 
             return body.createFields().foldLeft(sql.insertInto(table).set(partitionField, partitionId),
