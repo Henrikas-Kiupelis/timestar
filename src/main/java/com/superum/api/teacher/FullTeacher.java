@@ -129,7 +129,7 @@ import static org.jooq.impl.DSL.groupConcat;
 public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, Integer> {
 
     @JsonProperty(ID_FIELD)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
     /**
@@ -335,27 +335,27 @@ public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, In
         // when id == 0, it simply was not set, so the state is valid, while id is not
         validate(id).equal(0).or().moreThan(0).ifInvalid(() -> new InvalidTeacherException("Teacher id can't be negative: " + id));
         validate(paymentDay).equal(0).or().dayOfMonth().ifInvalid(() -> new InvalidTeacherException("Such payment day for teacher is impossible: " + paymentDay));
-        validate(hourlyWage).isNull().or().positive().ifInvalid(() -> new InvalidTeacherException("Hourly wage for teacher must be positive, not " + hourlyWage));
-        validate(academicWage).isNull().or().positive().ifInvalid(() -> new InvalidTeacherException("Academic wage for teacher must be positive, not " + academicWage));
-        validate(name).isNull().or().notEmpty().fits(NAME_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher name must not exceed " + NAME_SIZE_LIMIT + " chars or be empty: " + name));
-        validate(surname).isNull().or().notEmpty().fits(SURNAME_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher surname must not exceed " + SURNAME_SIZE_LIMIT + " chars or be empty: " + surname));
-        validate(phone).isNull().or().notEmpty().fits(PHONE_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher phone must not exceed " + PHONE_SIZE_LIMIT + " chars or be empty: " + phone));
-        validate(city).isNull().or().notEmpty().fits(CITY_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher city must not exceed " + CITY_SIZE_LIMIT + " chars or be empty: " + city));
-        validate(email).isNull().or().notEmpty().fits(EMAIL_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher email must not exceed " + EMAIL_SIZE_LIMIT + " chars or be empty: " + email));
-        validate(picture).isNull().or().fits(PICTURE_SIZE_LIMIT)
+        validate(hourlyWage).Null().or().positive().ifInvalid(() -> new InvalidTeacherException("Hourly wage for teacher must be positive, not " + hourlyWage));
+        validate(academicWage).Null().or().positive().ifInvalid(() -> new InvalidTeacherException("Academic wage for teacher must be positive, not " + academicWage));
+        validate(name).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher name must not exceed " + NAME_SIZE_LIMIT + " chars or be blank: " + name));
+        validate(surname).Null().or().not().blank().fits(SURNAME_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher surname must not exceed " + SURNAME_SIZE_LIMIT + " chars or be blank: " + surname));
+        validate(phone).Null().or().not().blank().fits(PHONE_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher phone must not exceed " + PHONE_SIZE_LIMIT + " chars or be blank: " + phone));
+        validate(city).Null().or().not().blank().fits(CITY_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher city must not exceed " + CITY_SIZE_LIMIT + " chars or be blank: " + city));
+        validate(email).Null().or().not().blank().fits(EMAIL_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidTeacherException("Teacher email must not exceed " + EMAIL_SIZE_LIMIT + " chars or be blank: " + email));
+        validate(picture).Null().or().fits(PICTURE_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher picture must not exceed " + PICTURE_SIZE_LIMIT + " chars: " + picture));
-        validate(document).isNull().or().fits(DOCUMENT_SIZE_LIMIT)
+        validate(document).Null().or().fits(DOCUMENT_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher document must not exceed " + DOCUMENT_SIZE_LIMIT + " chars: " + document));
-        validate(comment).isNull().or().fits(COMMENT_SIZE_LIMIT)
+        validate(comment).Null().or().fits(COMMENT_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher comment must not exceed " + COMMENT_SIZE_LIMIT + " chars: " + comment));
-        validate(languages).isNull().or().notEmpty()
-                .forEach(Validator::validate, language -> language.notNull().notEmpty().fits(LANGUAGE_CODE_SIZE_LIMIT)
-                        .ifInvalid(() -> new InvalidTeacherException("Specific Teacher languages must not be null, empty or exceed "
+        validate(languages).Null().or().not().empty()
+                .forEach(Validator::validate, language -> language.not().Null().not().blank().fits(LANGUAGE_CODE_SIZE_LIMIT)
+                        .ifInvalid(() -> new InvalidTeacherException("Specific Teacher languages must not be null, blank or exceed "
                                 + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + language.value())))
                 .ifInvalid(() -> new InvalidTeacherException("Teacher must have at least a single language!"));
 
@@ -432,7 +432,7 @@ public final class FullTeacher extends MappedClassWithTimestamps<FullTeacher, In
         this.picture = picture;
         this.document = document;
         this.comment = comment;
-        this.languages = ImmutableList.copyOf(languages);
+        this.languages = languages == null ? null : ImmutableList.copyOf(languages);
 
         registerFields(FIELD_DEFINITIONS);
     }

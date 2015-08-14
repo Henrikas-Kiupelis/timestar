@@ -48,8 +48,8 @@ public class DelegatingAccountController {
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidAccount retrieveInfo(PartitionAccount partitionAccount, @RequestParam(value="username") String username) {
-        validate(username).notNull().notEmpty().fits(usernameSizeLimit())
-                .ifInvalid(() -> new InvalidRequestException("Account username must not be null, empty or exceed " + usernameSizeLimit() + " chars: " + username));
+        validate(username).not().Null().not().blank().fits(usernameSizeLimit())
+                .ifInvalid(() -> new InvalidRequestException("Account username must not be null, blank or exceed " + usernameSizeLimit() + " chars: " + username));
 
         Account account = accountController.retrieveInfo(partitionAccount, username);
         return ValidAccount.valueOf(account);

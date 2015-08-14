@@ -88,7 +88,7 @@ import static com.superum.helper.validation.Validator.validate;
 public final class FullCustomer extends MappedClassWithTimestamps<FullCustomer, Integer> {
 
 	@JsonProperty(ID_FIELD)
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
     /**
@@ -232,15 +232,15 @@ public final class FullCustomer extends MappedClassWithTimestamps<FullCustomer, 
                                        String picture, String comment, Instant createdAt, Instant updatedAt) {
         // when id == 0, it simply was not set, so the state is valid, while id is not
         validate(id).equal(0).or().moreThan(0).ifInvalid(() -> new InvalidCustomerException("Customer id can't be negative: " + id));
-        validate(name).isNull().or().notEmpty().fits(NAME_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars or be empty: " + name));
-        validate(phone).isNull().or().notEmpty().fits(PHONE_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidCustomerException("Customer phone must not exceed " + PHONE_SIZE_LIMIT + " chars or be empty: " + phone));
-        validate(website).isNull().or().notEmpty().fits(WEBSITE_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidCustomerException("Customer website must not exceed " + WEBSITE_SIZE_LIMIT + " chars or be empty: " + website));
-        validate(picture).isNull().or().fits(PICTURE_SIZE_LIMIT)
+        validate(name).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidCustomerException("Customer name must not exceed " + NAME_SIZE_LIMIT + " chars or be blank: " + name));
+        validate(phone).Null().or().not().blank().fits(PHONE_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidCustomerException("Customer phone must not exceed " + PHONE_SIZE_LIMIT + " chars or be blank: " + phone));
+        validate(website).Null().or().not().blank().fits(WEBSITE_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidCustomerException("Customer website must not exceed " + WEBSITE_SIZE_LIMIT + " chars or be blank: " + website));
+        validate(picture).Null().or().fits(PICTURE_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidCustomerException("Customer picture must not exceed " + PICTURE_SIZE_LIMIT + " chars: " + picture));
-        validate(comment).isNull().or().fits(COMMENT_SIZE_LIMIT)
+        validate(comment).Null().or().fits(COMMENT_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidCustomerException("Customer comment must not exceed " + COMMENT_SIZE_LIMIT + " chars: " + comment));
 
         return new FullCustomer(id, startDate, name, phone, website, picture, comment, createdAt, updatedAt);

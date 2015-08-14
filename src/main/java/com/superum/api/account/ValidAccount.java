@@ -125,10 +125,10 @@ public class ValidAccount {
     @JsonCreator
     public static ValidAccount jsonInstance(@JsonProperty("username") String username,
                                             @JsonProperty("password") char[] password) {
-        validate(username).notNull().notEmpty().fits(USERNAME_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidAccountException("Account username must not be null, empty or exceed " + USERNAME_SIZE_LIMIT + " chars: " + username));
-        validate(password).notNull().notEmpty()
-                .ifInvalid(() -> new InvalidAccountException("Account must have a password!"));
+        validate(username).not().Null().not().blank().fits(USERNAME_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidAccountException("Account username must not be null, blank, or exceed " +
+                        USERNAME_SIZE_LIMIT + " chars: " + username));
+        validate(password).not().Null().not().blank().ifInvalid(() -> new InvalidAccountException("Account must have a password!"));
 
         return new ValidAccount(null, username, null, password, null, null);
     }
