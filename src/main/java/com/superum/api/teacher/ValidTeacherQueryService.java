@@ -1,11 +1,17 @@
 package com.superum.api.teacher;
 
-import com.superum.api.exception.InvalidRequestException;
 import com.superum.exception.DatabaseException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * <pre>
+ * Responsible for handling teacher queries
+ *
+ * Uses CQRS model, where queries only read data, but do not have any other side effects
+ * </pre>
+ */
 @Service
 public interface ValidTeacherQueryService {
 
@@ -17,7 +23,6 @@ public interface ValidTeacherQueryService {
      * </pre>
      * @return teacher that was read
      *
-     * @throws InvalidRequestException if id is illegal (<=0)
      * @throws TeacherNotFoundException if no teacher with this id exists
      * @throws DatabaseException if database error occurred
      */

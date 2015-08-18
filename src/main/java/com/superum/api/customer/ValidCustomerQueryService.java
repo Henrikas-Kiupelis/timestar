@@ -1,12 +1,18 @@
 package com.superum.api.customer;
 
-import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.teacher.TeacherNotFoundException;
 import com.superum.exception.DatabaseException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * <pre>
+ * Responsible for handling customer queries
+ *
+ * Uses CQRS model, where queries only read data, but do not have any other side effects
+ * </pre>
+ */
 @Service
 public interface ValidCustomerQueryService {
 
@@ -18,7 +24,6 @@ public interface ValidCustomerQueryService {
      * </pre>
      * @return customer that was read
      *
-     * @throws InvalidRequestException if id is illegal (<=0)
      * @throws CustomerNotFoundException if no customer with this id exists
      * @throws DatabaseException if database error occurred
      */
@@ -41,9 +46,6 @@ public interface ValidCustomerQueryService {
      * </pre>
      * @return customers that were read
      *
-     * @throws InvalidRequestException if id is illegal (<=0)
-     * @throws InvalidRequestException if page is illegal (<0)
-     * @throws InvalidRequestException if amount is illegal (<=0 || >100)
      * @throws TeacherNotFoundException if no teacher with this id exists
      * @throws DatabaseException if database error occurred
      */
@@ -59,9 +61,6 @@ public interface ValidCustomerQueryService {
      * </pre>
      * @return customers that were read
      *
-     * @throws InvalidRequestException if id is illegal (<=0)
-     * @throws InvalidRequestException if page is illegal (<0)
-     * @throws InvalidRequestException if amount is illegal (<=0 || >100)
      * @throws DatabaseException if database error occurred
      */
     List<ValidCustomerDTO> readAll(int page, int amount, int partitionId);
