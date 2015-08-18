@@ -40,20 +40,34 @@ public abstract class MappedClass<T extends MappedClass<T, ID>, ID> implements D
         return primaryField;
     }
 
+    /**
+     * Override this method if needed
+     * @return sequence of all non primary fields
+     */
     @Override
     public Seq<MappedField<?>> createFields() {
         return nonPrimaryFields();
     }
 
+    /**
+     * Override this method if needed
+     * @return sequence of all non primary fields that are set
+     */
     @Override
     public Seq<MappedField<?>> updateFields() {
         return nonPrimaryFields().filter(MappedField::isSet);
     }
 
+    /**
+     * @return sequence of all fields
+     */
     public final Seq<MappedField<?>> allFields() {
         return Seq.seq(fields);
     }
 
+    /**
+     * @return sequence of all non primary fields
+     */
     public final Seq<MappedField<?>> nonPrimaryFields() {
         return allFields().filter(MappedField::isNotPrimary);
     }
@@ -97,6 +111,10 @@ public abstract class MappedClass<T extends MappedClass<T, ID>, ID> implements D
 
     // PROTECTED
 
+    /**
+     * Call this method as the last method in your constructor to avoid invalid states; this will ensure all the
+     * methods of this class work
+     */
     protected void registerFields(List<FieldDef<T, ?>> fieldDefinitions, T thisObject) {
         this.fields = fieldDefinitions.stream().map(fieldDef -> fieldDef.toField(thisObject)).collect(Collectors.toList());
 
