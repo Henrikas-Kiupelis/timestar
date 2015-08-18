@@ -1,6 +1,5 @@
 package com.superum.api.teacher;
 
-import com.superum.helper.field.FieldDefinition;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
 
@@ -192,60 +191,60 @@ public final class ValidTeacher extends MappedClass<ValidTeacher, Integer> {
     // FIELD DEFINITIONS
 
     private static final List<FieldDef<ValidTeacher, ?>> FIELD_DEFINITION_LIST = Arrays.asList(
-            FieldDefinition.steps(ValidTeacher.class, Integer.class)
+            FieldDef.steps(ValidTeacher.class, Integer.class)
                     .fieldName(ID_FIELD).tableField(TEACHER.ID)
                     .getter(teacher -> teacher.fullTeacherDTO.getId())
                     .primaryKey(),
 
-            FieldDefinition.steps(ValidTeacher.class, Integer.class)
+            FieldDef.steps(ValidTeacher.class, Integer.class)
                     .fieldName(PAYMENT_DAY_FIELD).tableField(TEACHER.PAYMENT_DAY)
                     .getter(teacher -> teacher.fullTeacherDTO.getPaymentDay())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidTeacher.class, BigDecimal.class)
+            FieldDef.steps(ValidTeacher.class, BigDecimal.class)
                     .fieldName(HOURLY_WAGE_FIELD).tableField(TEACHER.HOURLY_WAGE)
                     .getter(teacher -> teacher.fullTeacherDTO.getHourlyWage())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidTeacher.class, BigDecimal.class)
+            FieldDef.steps(ValidTeacher.class, BigDecimal.class)
                     .fieldName(ACADEMIC_WAGE_FIELD).tableField(TEACHER.ACADEMIC_WAGE)
                     .getter(teacher -> teacher.fullTeacherDTO.getAcademicWage())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidTeacher.class, String.class)
+            FieldDef.steps(ValidTeacher.class, String.class)
                     .fieldName(NAME_FIELD).tableField(TEACHER.NAME)
                     .getter(teacher -> teacher.fullTeacherDTO.getName())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidTeacher.class, String.class)
+            FieldDef.steps(ValidTeacher.class, String.class)
                     .fieldName(SURNAME_FIELD).tableField(TEACHER.SURNAME)
                     .getter(teacher -> teacher.fullTeacherDTO.getSurname())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidTeacher.class, String.class)
+            FieldDef.steps(ValidTeacher.class, String.class)
                     .fieldName(PHONE_FIELD).tableField(TEACHER.PHONE)
                     .getter(teacher -> teacher.fullTeacherDTO.getPhone())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidTeacher.class, String.class)
+            FieldDef.steps(ValidTeacher.class, String.class)
                     .fieldName(CITY_FIELD).tableField(TEACHER.CITY)
                     .getter(teacher -> teacher.fullTeacherDTO.getCity())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidTeacher.class, String.class)
+            FieldDef.steps(ValidTeacher.class, String.class)
                     .fieldName(EMAIL_FIELD).tableField(TEACHER.EMAIL)
                     .getter(teacher -> teacher.fullTeacherDTO.getEmail())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidTeacher.class, String.class)
+            FieldDef.steps(ValidTeacher.class, String.class)
                     .fieldName(PICTURE_FIELD).tableField(TEACHER.PICTURE)
                     .getter(teacher -> teacher.fullTeacherDTO.getPicture()),
 
-            FieldDefinition.steps(ValidTeacher.class, String.class)
+            FieldDef.steps(ValidTeacher.class, String.class)
                     .fieldName(DOCUMENT_FIELD).tableField(TEACHER.DOCUMENT)
                     .getter(teacher -> teacher.fullTeacherDTO.getDocument()),
 
-            FieldDefinition.steps(ValidTeacher.class, String.class)
+            FieldDef.steps(ValidTeacher.class, String.class)
                     .fieldName(COMMENT_FIELD).tableField(TEACHER.COMMENT)
                     .getter(teacher -> teacher.fullTeacherDTO.getComment())
 

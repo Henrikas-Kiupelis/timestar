@@ -1,6 +1,5 @@
 package com.superum.api.customer;
 
-import com.superum.helper.field.FieldDefinition;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
 import com.superum.helper.time.JodaTimeZoneHandler;
@@ -65,36 +64,36 @@ public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
     // FIELD DEFINITIONS
 
     private static final List<FieldDef<ValidCustomer, ?>> FIELD_DEFINITION_LIST = Arrays.asList(
-            FieldDefinition.steps(ValidCustomer.class, Integer.class)
+            FieldDef.steps(ValidCustomer.class, Integer.class)
                     .fieldName(ID_FIELD).tableField(CUSTOMER.ID)
                     .getter(customer -> customer.validCustomerDTO.getId())
                     .primaryKey(),
 
-            FieldDefinition.steps(ValidCustomer.class, java.sql.Date.class)
+            FieldDef.steps(ValidCustomer.class, java.sql.Date.class)
                     .fieldName(START_DATE_FIELD).tableField(CUSTOMER.START_DATE)
                     .getter(customer -> customer.validCustomerDTO.getStartDate(), date -> date == null ? null : JodaTimeZoneHandler.getDefault().from(date).toJavaSqlDate())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidCustomer.class, String.class)
+            FieldDef.steps(ValidCustomer.class, String.class)
                     .fieldName(NAME_FIELD).tableField(CUSTOMER.NAME)
                     .getter(customer -> customer.validCustomerDTO.getName())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidCustomer.class, String.class)
+            FieldDef.steps(ValidCustomer.class, String.class)
                     .fieldName(PHONE_FIELD).tableField(CUSTOMER.PHONE)
                     .getter(customer -> customer.validCustomerDTO.getPhone())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidCustomer.class, String.class)
+            FieldDef.steps(ValidCustomer.class, String.class)
                     .fieldName(WEBSITE_FIELD).tableField(CUSTOMER.WEBSITE)
                     .getter(customer -> customer.validCustomerDTO.getWebsite())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidCustomer.class, String.class)
+            FieldDef.steps(ValidCustomer.class, String.class)
                     .fieldName(PICTURE_FIELD).tableField(CUSTOMER.PICTURE)
                     .getter(customer -> customer.validCustomerDTO.getPicture()),
 
-            FieldDefinition.steps(ValidCustomer.class, String.class)
+            FieldDef.steps(ValidCustomer.class, String.class)
                     .fieldName(COMMENT_FIELD).tableField(CUSTOMER.COMMENT)
                     .getter(customer -> customer.validCustomerDTO.getComment())
 

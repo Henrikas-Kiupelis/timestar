@@ -1,5 +1,6 @@
 package com.superum.helper.field.steps;
 
+import com.superum.helper.field.FieldDefinition;
 import com.superum.helper.field.core.MappedField;
 
 /**
@@ -30,5 +31,12 @@ public interface FieldDef<T, F> extends ExtraStep<T, F> {
      * @return mapped field created using this field definition from a certain object
      */
     MappedField<F> toField(T t);
+
+    /**
+     * Convenience method to access FieldDefinition.steps()
+     */
+    static <T, F> FieldNameStep<T, F> steps(Class<T> containerClass, Class<F> fieldClass) {
+        return FieldDefinition.steps(containerClass, fieldClass);
+    }
 
 }

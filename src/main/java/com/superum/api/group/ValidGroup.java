@@ -1,6 +1,5 @@
 package com.superum.api.group;
 
-import com.superum.helper.field.FieldDefinition;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
 
@@ -64,36 +63,36 @@ public class ValidGroup extends MappedClass<ValidGroup, Integer> {
     // FIELD DEFINITIONS
 
     private static final List<FieldDef<ValidGroup, ?>> FIELD_DEFINITION_LIST = Arrays.asList(
-            FieldDefinition.steps(ValidGroup.class, Integer.class)
+            FieldDef.steps(ValidGroup.class, Integer.class)
                     .fieldName(ID_FIELD)
                     .tableField(GROUP_OF_STUDENTS.ID)
                     .getter(group -> group.validGroupDTO.getId())
                     .primaryKey(),
 
-            FieldDefinition.steps(ValidGroup.class, Integer.class)
+            FieldDef.steps(ValidGroup.class, Integer.class)
                     .fieldName(CUSTOMER_ID_FIELD)
                     .tableField(GROUP_OF_STUDENTS.CUSTOMER_ID)
                     .getter(group -> group.validGroupDTO.getCustomerId()),
 
-            FieldDefinition.steps(ValidGroup.class, Integer.class)
+            FieldDef.steps(ValidGroup.class, Integer.class)
                     .fieldName(TEACHER_ID_FIELD)
                     .tableField(GROUP_OF_STUDENTS.TEACHER_ID)
                     .getter(group -> group.validGroupDTO.getTeacherId())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidGroup.class, Boolean.class)
+            FieldDef.steps(ValidGroup.class, Boolean.class)
                     .fieldName(USE_HOURLY_WAGE_FIELD)
                     .tableField(GROUP_OF_STUDENTS.USE_HOURLY_WAGE)
                     .getter(group -> group.validGroupDTO.getUsesHourlyWage())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidGroup.class, String.class)
+            FieldDef.steps(ValidGroup.class, String.class)
                     .fieldName(LANGUAGE_LEVEL_FIELD)
                     .tableField(GROUP_OF_STUDENTS.LANGUAGE_LEVEL)
                     .getter(group -> group.validGroupDTO.getLanguageLevel())
                     .mandatory(),
 
-            FieldDefinition.steps(ValidGroup.class, String.class)
+            FieldDef.steps(ValidGroup.class, String.class)
                     .fieldName(NAME_FIELD)
                     .tableField(GROUP_OF_STUDENTS.NAME)
                     .getter(group -> group.validGroupDTO.getName())
