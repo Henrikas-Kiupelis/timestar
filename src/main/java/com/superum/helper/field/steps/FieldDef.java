@@ -1,4 +1,4 @@
-package com.superum.helper.field;
+package com.superum.helper.field.steps;
 
 import com.superum.helper.field.core.MappedField;
 
@@ -24,7 +24,7 @@ import com.superum.helper.field.core.MappedField;
  * @param <T> type of the object this field definition belongs to
  * @param <F> type of the field this definition is defining
  */
-public interface FieldDef<T, F> {
+public interface FieldDef<T, F> extends ExtraStep<T, F> {
 
     /**
      * @return mapped field created using this field definition from a certain object

@@ -9,12 +9,12 @@ public abstract class AbstractMappedField<F> implements MappedField<F> {
 
     @Override
     public final boolean isMandatory() {
-        return mandatory == Mandatory.YES;
+        return isMandatory;
     }
 
     @Override
     public final boolean isPrimary() {
-        return primary == Primary.YES;
+        return isPrimary;
     }
 
     @Override
@@ -24,14 +24,16 @@ public abstract class AbstractMappedField<F> implements MappedField<F> {
 
     @Override
     public final boolean equalsName(MappedField<?> field) {
-        NullChecker.check(field).notNull("Other field cannot be null");
+        if (field == null)
+            throw new IllegalArgumentException("Other field cannot be null");
 
         return name.equals(field.getName());
     }
 
     @Override
     public final boolean nameEquals(String name) {
-        NullChecker.check(name).notNull("Other name cannot be null");
+        if (name == null)
+            throw new IllegalArgumentException("Other name cannot be null");
 
         return this.name.equals(name);
     }
@@ -69,13 +71,23 @@ public abstract class AbstractMappedField<F> implements MappedField<F> {
         return step.set(field, getValue());
     }
 
-    @Override
-    public final Condition eq() {
-        if (field == null)
-            throw new UnsupportedOperationException("This field does not support conditions");
+    // CONSTRUCTORS
 
-        return field.eq(getValue());
+    protected AbstractMappedField(String name, Field<F> field, boolean isMandatory, boolean isPrimary) {
+        NullChecker.check(name, isMandatory, isPrimary).notNull("Name, Mandatory and Primary cannot be null for MappedFields");
+
+        this.name = name;
+        this.field = field;
+        this.isMandatory = isMandatory;
+        this.isPrimary = isPrimary;
     }
+
+    // PRIVATE
+
+    private final String name;
+    private final Field<F> field;
+    private final boolean isMandatory;
+    private final boolean isPrimary;
 
     // OBJECT OVERRIDES
 
@@ -98,22 +110,9 @@ public abstract class AbstractMappedField<F> implements MappedField<F> {
                 && Objects.equals(this.getValue(), other.getValue());
     }
 
-    // CONSTRUCTORS
-
-    protected AbstractMappedField(String name, Field<F> field, Mandatory mandatory, Primary primary) {
-        NullChecker.check(name, mandatory, primary).notNull("Name, Mandatory and Primary cannot be null for MappedFields");
-
-        this.name = name;
-        this.field = field;
-        this.mandatory = mandatory;
-        this.primary = primary;
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name, this.getValue());
     }
-
-    // PRIVATE
-
-    private final String name;
-    private final Field<F> field;
-    private final Mandatory mandatory;
-    private final Primary primary;
 
 }

@@ -1,6 +1,9 @@
 package com.superum.helper.field.core;
 
-import org.jooq.*;
+import org.jooq.InsertSetMoreStep;
+import org.jooq.Record;
+import org.jooq.UpdateSetFirstStep;
+import org.jooq.UpdateSetMoreStep;
 
 /**
  * Defines how a value from a specific object field maps to a table record
@@ -76,11 +79,6 @@ public interface MappedField<F> {
      * </pre>
      */
     <R extends Record> UpdateSetMoreStep<R> update(UpdateSetMoreStep<R> step);
-
-    /**
-     * @return JOOQ condition of field.eq(value);
-     */
-    Condition eq();
 
     // REVERSE BOOLEAN FUNCTIONS
 

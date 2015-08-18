@@ -13,7 +13,7 @@ public interface Defined<T extends Defined<T, ID>, ID> {
     /**
      * @return primary key field
      */
-    MappedField<ID> primaryKey();
+    MappedField<ID> primaryField();
 
     /**
      * @return sequence of fields that should be used when creating a record
@@ -24,10 +24,5 @@ public interface Defined<T extends Defined<T, ID>, ID> {
      * @return sequence of fields that should be used when updating a record
      */
     Seq<MappedField<?>> updateFields();
-
-    /**
-     * @return sequence of fields that should be used in checking if a record exists using an entire object
-     */
-    Seq<MappedField<?>> conditionFields();
 
 }
