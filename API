@@ -66,7 +66,7 @@ Next, there will be a short description of the method, including:
 Customer API:
 
 1)
-    POST  /customer/create
+    PUT   /customer/
     BODY  com.superum.api.customer.ValidCustomerDTO
     RET   com.superum.api.customer.ValidCustomerDTO
 
@@ -89,7 +89,7 @@ Customer API:
     a) HTTP 404; no customer with provided id exists;
 
 3)
-    POST  /customer/update
+    POST  /customer/
     BODY  com.superum.api.customer.ValidCustomerDTO
     RET   com.superum.api.customer.ValidCustomerDTO
 
@@ -103,7 +103,7 @@ Customer API:
     Returned FullCustomer contains all the fields as they were before updating;
 
 4)
-    DELETE  /customer/delete/{customerId}
+    DELETE  /customer/{customerId}
             customerId     int            0 < customerId <= MAX_INT
     RET     com.superum.api.customer.ValidCustomerDTO
 
@@ -115,7 +115,7 @@ Customer API:
     Returned FullCustomer contains all the fields as they were before deleting;
 
 5)
-    GET  customer/for/teacher/{teacherId}
+    GET  /customer/teacher/{teacherId}
          teacherId      int            0 < teacherId <= MAX_INT
     OPT  page           int            0 < page <= MAX_INT; DEF 1
     OPT  per_page       int            0 < per_page <= 100; DEF 25
@@ -136,7 +136,7 @@ Customer API:
     If a customer is deleted, the results of this query will no longer be consistent with the ones before the deletion;
 
 6)
-    GET  customer/all
+    GET  /customer/
     OPT  page           int            0 < page <= MAX_INT; DEF 1
     OPT  per_page       int            0 < per_page <= 100; DEF 25
     RET  List<com.superum.api.customer.ValidCustomerDTO>
@@ -150,7 +150,7 @@ Customer API:
     If a customer is deleted, the results of this query will no longer be consistent with the ones before the deletion;
 
 7)
-    GET  customer/for/teacher/{teacherId}/count
+    GET  /customer/teacher/{teacherId}/count
          teacherId      int            0 < teacherId <= MAX_INT
     RET  int
 
@@ -165,33 +165,17 @@ Customer API:
     a) HTTP 404; no teacher with provided id exists;
 
 8)
-    GET  customer/all/count
+    GET  /customer/count
     RET  int
 
     Counts and returns the amount of all customers;
 
     It shouldn't fail under normal circumstances;
 
-9)
-    POST  customer/exists
-    BODY  com.superum.api.customer.ValidCustomerDTO
-    RET   com.superum.api.customer.ValidCustomerDTO
-
-    Checks if a customer with specified bounds exists;
-    The simplest use case is to check if a customer with a particular id exists, or checking if a certain customer's
-    fields are set to some value;
-
-    It will fail if:
-    a) HTTP 400; no fields were set;
-    b) HTTP 404; no customers for given fields were found;
-
-    Returned FullCustomer is any single customer that match all the criteria. The only scenario where uniqueness is
-    guaranteed is when the id field is set.
-
 Teacher API:
 
 1)
-    POST  /teacher/create
+    PUT   /teacher/
     BODY  com.superum.api.teacher.FullTeacher
     RET   com.superum.api.teacher.FullTeacher
 
@@ -217,7 +201,7 @@ Teacher API:
     a) HTTP 404; no teacher with provided id exists;
 
 3)
-    POST  /teacher/update
+    POST  /teacher/
     BODY  com.superum.api.teacher.FullTeacher
     RET   com.superum.api.teacher.FullTeacher
 
@@ -232,7 +216,7 @@ Teacher API:
     Returned FullTeacher contains all the fields as they were before updating;
 
 4)
-    DELETE  /teacher/delete/{teacherId}
+    DELETE  /teacher/{teacherId}
             teacherId      int            0 < teacherId <= MAX_INT
     RET     com.superum.api.teacher.FullTeacher
 
@@ -245,7 +229,7 @@ Teacher API:
     Returned FullTeacher contains all the fields as they were before deleting;
 
 5)
-    GET  teacher/all
+    GET  /teacher/
     OPT  page           int            0 < page <= MAX_INT; DEF 1
     OPT  per_page       int            0 < per_page <= 100; DEF 25
     RET  List<com.superum.api.teacher.FullTeacher>
@@ -259,33 +243,17 @@ Teacher API:
     If a teacher is deleted, the results of this query will no longer be consistent with the ones before the deletion;
 
 6)
-    GET  teacher/all/count
+    GET  /teacher/count
     RET  int
 
     Counts and returns the amount of all teachers;
 
     It shouldn't fail under normal circumstances;
 
-7)
-    POST  teacher/exists
-    BODY  com.superum.api.teacher.FullTeacher
-    RET   com.superum.api.teacher.FullTeacher
-
-    Checks if a teacher with specified bounds exists;
-    The simplest use case is to check if a teacher with a particular id exists, or checking if a certain teacher's
-    fields are set to some value;
-
-    It will fail if:
-    a) HTTP 400; no fields were set;
-    b) HTTP 404; no teachers for given fields were found;
-
-    Returned FullTeacher is any single teacher that match all the criteria. The only scenario where uniqueness is
-    guaranteed is when the id field is set.
-
 Group API:
 
 1)
-    PUT   group
+    PUT   /group
     BODY  com.superum.api.group.ValidGroupDTO
     RET   com.superum.api.group.ValidGroupDTO
 
@@ -298,7 +266,7 @@ Group API:
     Returned group will have its id field set
 
 2)
-    POST  group
+    POST  /group
     BODY  com.superum.api.group.ValidGroupDTO
     RET   void
 
@@ -312,7 +280,7 @@ Group API:
     Returns HTTP 200 OK if it succeeds
 
 3)
-    DELETE  group/{groupId}
+    DELETE  /group/{groupId}
             groupId        int            0 < groupId <= MAX_INT
     RET     void
 
@@ -325,7 +293,7 @@ Group API:
     Returns HTTP 200 OK if it succeeds
 
 4)
-    GET  group/{groupId}
+    GET  /group/{groupId}
          groupId        int            0 < groupId <= MAX_INT
     RET  com.superum.api.group.ValidGroupDTO
 
@@ -335,7 +303,7 @@ Group API:
     a) HTTP 404; no group with provided id exists;
 
 5)
-    GET  group
+    GET  /group
     OPT  page           int            0 < page <= MAX_INT; DEF 1
     OPT  per_page       int            0 < per_page <= 100; DEF 25
     RET  List<com.superum.api.group.ValidGroupDTO>
@@ -349,7 +317,7 @@ Group API:
     If a group is deleted, the results of this query will no longer be consistent with the ones before the deletion;
 
 6)
-    GET  group/{tableName}/{id}
+    GET  /group/{tableName}/{id}
          tableName      String         teacher or customer
          id             int            0 < id <= MAX_INT
     OPT  page           int            0 < page <= MAX_INT; DEF 1
@@ -368,7 +336,7 @@ Group API:
 Account API:
 
 1)
-    POST  admin/add
+    POST  /admin/add
     BODY  com.superum.api.account.ValidAccount
     RET   com.superum.api.account.ValidAccount
 
@@ -381,7 +349,7 @@ Account API:
     Returned ValidAccount will not contain additional information about the account, or the password
 
 2)
-    POST  update
+    POST  /update
     BODY  com.superum.api.account.ValidAccount
     RET   com.superum.api.account.ValidAccount
 
@@ -397,7 +365,7 @@ Account API:
     Returned ValidAccount contains all the fields as they were before updating, except password;
 
 3)
-    GET  info
+    GET  /info
     REQ  username       String         any, username.length() <= 60
     RET  com.superum.api.account.ValidAccount
 
