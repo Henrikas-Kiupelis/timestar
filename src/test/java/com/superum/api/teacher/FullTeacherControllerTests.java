@@ -30,9 +30,9 @@ public class FullTeacherControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void insertingTeacherWithoutId_shouldCreateNewTeacher() throws Exception {
-        FullTeacher teacher = makeFakeFullTeacher(TEACHER_SEED).withoutId();
+        FullTeacherDTO teacher = makeFakeFullTeacher(TEACHER_SEED).withoutId();
 
-        MvcResult result = mockMvc.perform(post("/timestar/api/v2/teacher/create")
+        MvcResult result = mockMvc.perform(put("/timestar/api/v2/teacher")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", authHeader())
                 .content(convertObjectToJsonBytes(teacher)))
@@ -41,20 +41,20 @@ public class FullTeacherControllerTests extends IntegrationTestEnvironment {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andReturn();
 
-        FullTeacher returnedTeacher = fromResponse(result, FullTeacher.class);
+        FullTeacherDTO returnedTeacher = fromResponse(result, FullTeacherDTO.class);
         int teacherId = returnedTeacher.getId();
         teacher = teacher.withId(teacherId);
 
         assertEquals("The returned teacher should be equal to original teacher, except for id field; ", returnedTeacher, teacher);
 
-        FullTeacher teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
+        FullTeacherDTO teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
 
         assertEquals("The teacher in the database should be equal to the returned teacher; ", teacherFromDB, returnedTeacher);
     }
 
     @Test
     public void readingTeacherWithValidId_shouldReturnATeacher() throws Exception {
-        FullTeacher insertedTeacher = databaseHelper.insertFullTeacherIntoDb(makeFakeFullTeacher(TEACHER_SEED).withoutId());
+        FullTeacherDTO insertedTeacher = databaseHelper.insertFullTeacherIntoDb(makeFakeFullTeacher(TEACHER_SEED).withoutId());
         int teacherId = insertedTeacher.getId();
 
         MvcResult result = mockMvc.perform(get("/timestar/api/v2/teacher/{teacherId}", teacherId)
@@ -65,64 +65,52 @@ public class FullTeacherControllerTests extends IntegrationTestEnvironment {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andReturn();
 
-        FullTeacher returnedTeacher = fromResponse(result, FullTeacher.class);
+        FullTeacherDTO returnedTeacher = fromResponse(result, FullTeacherDTO.class);
 
         assertEquals("The read teacher should be equal to original teacher; ", returnedTeacher, insertedTeacher);
 
-        FullTeacher teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
+        FullTeacherDTO teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
 
         assertEquals("The teacher in the database should be equal to the returned teacher; ", teacherFromDB, returnedTeacher);
     }
 
     @Test
     public void updatingTeacherWithValidData_shouldReturnOldTeacher() throws Exception {
-        FullTeacher insertedTeacher = databaseHelper.insertFullTeacherIntoDb(makeFakeFullTeacher(TEACHER_SEED).withoutId());
+        FullTeacherDTO insertedTeacher = databaseHelper.insertFullTeacherIntoDb(makeFakeFullTeacher(TEACHER_SEED).withoutId());
         int teacherId = insertedTeacher.getId();
 
-        FullTeacher updatedTeacher = makeFakeFullTeacher(TEACHER_SEED + 1).withId(teacherId);
+        FullTeacherDTO updatedTeacher = makeFakeFullTeacher(TEACHER_SEED + 1).withId(teacherId);
 
-        MvcResult result = mockMvc.perform(post("/timestar/api/v2/teacher/update")
+        mockMvc.perform(post("/timestar/api/v2/teacher")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", authHeader())
                 .content(convertObjectToJsonBytes(updatedTeacher)))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andReturn();
+                .andExpect(status().isOk());
 
-        FullTeacher returnedTeacher = fromResponse(result, FullTeacher.class);
-
-        assertEquals("The read teacher should be equal to original teacher; ", returnedTeacher, insertedTeacher);
-
-        FullTeacher teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
+        FullTeacherDTO teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
 
         assertEquals("The teacher in the database should be equal to the updated teacher; ", teacherFromDB, updatedTeacher);
     }
 
     @Test
     public void updatingPartialTeacherWithValidData_shouldReturnOldTeacher() throws Exception {
-        FullTeacher insertedTeacher = databaseHelper.insertFullTeacherIntoDb(makeFakeFullTeacher(TEACHER_SEED).withoutId());
+        FullTeacherDTO insertedTeacher = databaseHelper.insertFullTeacherIntoDb(makeFakeFullTeacher(TEACHER_SEED).withoutId());
         int teacherId = insertedTeacher.getId();
 
-        FullTeacher partialUpdatedTeacher = makeFakeFullTeacher(teacherId, 0, null, null,
+        FullTeacherDTO partialUpdatedTeacher = makeFakeFullTeacher(teacherId, null, null, null,
                 fakeName(TEACHER_SEED + 1), null, fakePhone(TEACHER_SEED + 1),
-                null, null, null, null, null, (List<String>)null);
+                null, null, null, null, null, (List<String>) null);
 
-        MvcResult result = mockMvc.perform(post("/timestar/api/v2/teacher/update")
+        mockMvc.perform(post("/timestar/api/v2/teacher")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", authHeader())
                 .content(convertObjectToJsonBytes(partialUpdatedTeacher)))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andReturn();
+                .andExpect(status().isOk());
 
-        FullTeacher returnedTeacher = fromResponse(result, FullTeacher.class);
-
-        assertEquals("The read teacher should be equal to original teacher; ", returnedTeacher, insertedTeacher);
-
-        FullTeacher teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
-        FullTeacher updatedTeacher = makeFakeFullTeacher(teacherId, insertedTeacher.getPaymentDay(),
+        FullTeacherDTO teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
+        FullTeacherDTO updatedTeacher = makeFakeFullTeacher(teacherId, insertedTeacher.getPaymentDay(),
                 insertedTeacher.getHourlyWage(), insertedTeacher.getAcademicWage(),
                 partialUpdatedTeacher.getName(), insertedTeacher.getSurname(), partialUpdatedTeacher.getPhone(),
                 insertedTeacher.getCity(), insertedTeacher.getEmail(), insertedTeacher.getPicture(),
@@ -133,12 +121,12 @@ public class FullTeacherControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void updatingTeacherWithInvalidId_shouldReturnBadRequest() throws Exception {
-        FullTeacher validTeacher = makeFakeFullTeacher(TEACHER_SEED);
+        FullTeacherDTO validTeacher = makeFakeFullTeacher(TEACHER_SEED);
 
         String json = convertObjectToString(validTeacher);
         String invalidJson = replace(json, "id", -1);
 
-        mockMvc.perform(post("/timestar/api/v2/teacher/update")
+        mockMvc.perform(post("/timestar/api/v2/teacher")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", authHeader())
                 .content(invalidJson))
@@ -148,34 +136,30 @@ public class FullTeacherControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void deletingTeacherWithValidId_shouldReturnDeletedTeacher() throws Exception {
-        FullTeacher insertedTeacher = databaseHelper.insertFullTeacherIntoDb(makeFakeFullTeacher(TEACHER_SEED).withoutId());
+        FullTeacherDTO fullTeacher = makeFakeFullTeacher(TEACHER_SEED).withoutId();
+        FullTeacherDTO insertedTeacher = databaseHelper.insertFullTeacherIntoDb(fullTeacher);
+        databaseHelper.insertAccountIntoDb(fullTeacher);
         int teacherId = insertedTeacher.getId();
 
-        MvcResult result = mockMvc.perform(delete("/timestar/api/v2/teacher/delete/{teacherId}", teacherId)
+        mockMvc.perform(delete("/timestar/api/v2/teacher/{teacherId}", teacherId)
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", authHeader()))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andReturn();
+                .andExpect(status().isOk());
 
-        FullTeacher returnedTeacher = fromResponse(result, FullTeacher.class);
-
-        assertEquals("The read teacher should be equal to original teacher; ", returnedTeacher, insertedTeacher);
-
-        FullTeacher teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
+        FullTeacherDTO teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
 
         assertNull("The teacher from the database should be equal null, since it was deleted; ", teacherFromDB);
     }
 
     @Test
     public void readingAllTeachers_shouldReturnListOfTeachers() throws Exception {
-        List<FullTeacher> allTeachers = makeSomeFakes(2, FakeUtils::makeFakeFullTeacher).stream()
-                .map(FullTeacher::withoutId)
+        List<FullTeacherDTO> allTeachers = makeSomeFakes(2, FakeUtils::makeFakeFullTeacher).stream()
+                .map(FullTeacherDTO::withoutId)
                 .map(databaseHelper::insertFullTeacherIntoDb)
                 .collect(Collectors.toList());
 
-        MvcResult result = mockMvc.perform(get("/timestar/api/v2/teacher/all")
+        MvcResult result = mockMvc.perform(get("/timestar/api/v2/teacher")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", authHeader()))
                 .andDo(print())
@@ -183,26 +167,25 @@ public class FullTeacherControllerTests extends IntegrationTestEnvironment {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andReturn();
 
-        List<FullTeacher> returnedTeachers = fromResponse(result, LIST_OF_TEACHERS);
+        List<FullTeacherDTO> returnedTeachers = fromResponse(result, LIST_OF_TEACHERS);
 
-        assertEquals("The read teachers should be equal to original teachers; ", returnedTeachers, allTeachers);
-
-        List<FullTeacher> teachersFromDb = allTeachers.stream()
-                .mapToInt(FullTeacher::getId)
+        List<FullTeacherDTO> teachersFromDb = allTeachers.stream()
+                .mapToInt(FullTeacherDTO::getId)
                 .mapToObj(databaseHelper::readFullTeacherFromDb)
                 .collect(Collectors.toList());
 
+        assertEquals("The read teachers should be equal to original teachers; ", returnedTeachers, allTeachers);
         assertEquals("The teachers in the database should be equal to the read teachers; ", teachersFromDb, returnedTeachers);
     }
 
     @Test
     public void countingAllTeachers_shouldReturnCount() throws Exception {
-        List<FullTeacher> allTeachers = makeSomeFakes(2, FakeUtils::makeFakeFullTeacher).stream()
-                .map(FullTeacher::withoutId)
+        List<FullTeacherDTO> allTeachers = makeSomeFakes(2, FakeUtils::makeFakeFullTeacher).stream()
+                .map(FullTeacherDTO::withoutId)
                 .map(databaseHelper::insertFullTeacherIntoDb)
                 .collect(Collectors.toList());
 
-        MvcResult result = mockMvc.perform(get("/timestar/api/v2/teacher/all/count")
+        MvcResult result = mockMvc.perform(get("/timestar/api/v2/teacher/count")
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", authHeader()))
                 .andDo(print())
@@ -215,7 +198,7 @@ public class FullTeacherControllerTests extends IntegrationTestEnvironment {
         assertEquals("The amount of read teachers should be equal to original amount of teachers; ", returnedCount, allTeachers.size());
 
         long amountOfTeachersInDb = allTeachers.stream()
-                .mapToInt(FullTeacher::getId)
+                .mapToInt(FullTeacherDTO::getId)
                 .mapToObj(databaseHelper::readFullTeacherFromDb)
                 .filter(teacher -> teacher != null)
                 .count();
@@ -223,32 +206,9 @@ public class FullTeacherControllerTests extends IntegrationTestEnvironment {
         assertEquals("The amount of teachers in the database should be equal to the amount of read teachers; ", amountOfTeachersInDb, returnedCount);
     }
 
-    @Test
-    public void doesTeacherExist_shouldReturnExistingTeacher() throws Exception {
-        FullTeacher insertedTeacher = databaseHelper.insertFullTeacherIntoDb(makeFakeFullTeacher(TEACHER_SEED).withoutId());
-        int teacherId = insertedTeacher.getId();
-
-        MvcResult result = mockMvc.perform(post("/timestar/api/v2/teacher/exists")
-                .contentType(APPLICATION_JSON_UTF8)
-                .header("Authorization", authHeader())
-                .content(convertObjectToJsonBytes(insertedTeacher)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andReturn();
-
-        FullTeacher returnedTeacher = fromResponse(result, FullTeacher.class);
-
-        assertEquals("The read teacher should be equal to original teacher; ", returnedTeacher, insertedTeacher);
-
-        FullTeacher teacherFromDB = databaseHelper.readFullTeacherFromDb(teacherId);
-
-        assertEquals("The teacher in the database should be equal to the returned teacher; ", teacherFromDB, returnedTeacher);
-    }
-
     // PRIVATE
 
-    private static final TypeReference<List<FullTeacher>> LIST_OF_TEACHERS = new TypeReference<List<FullTeacher>>() {};
+    private static final TypeReference<List<FullTeacherDTO>> LIST_OF_TEACHERS = new TypeReference<List<FullTeacherDTO>>() {};
     private static final int TEACHER_SEED = 1;
 
 }

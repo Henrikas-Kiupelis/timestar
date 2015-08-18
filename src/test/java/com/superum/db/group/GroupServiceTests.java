@@ -96,7 +96,7 @@ public class GroupServiceTests {
         PartitionAccount account = makeFakePartitionAccount();
         Group group = makeFakeGroup(id);
         List<Student> fakeStudents = makeSomeFakes(2, FakeUtils::makeFakeStudent);
-        List<Lesson> fakeLessons = makeSomeFakes(2, FakeUtils::makeFakeLesson);
+        List<Lesson> fakeLessons = makeSomeFakesLong(2, FakeUtils::makeFakeLesson);
 
         when(studentService.deleteForGroup(id, account.partitionId())).thenReturn(fakeStudents);
         when(lessonService.deleteForGroup(id, account.partitionId())).thenReturn(fakeLessons);

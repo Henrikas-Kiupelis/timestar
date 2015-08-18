@@ -1,8 +1,8 @@
 package com.superum.utils;
 
-import com.superum.api.customer.FullCustomer;
+import com.superum.api.customer.ValidCustomerDTO;
 import com.superum.api.group.ValidGroupDTO;
-import com.superum.api.teacher.FullTeacher;
+import com.superum.api.teacher.FullTeacherDTO;
 import com.superum.db.account.Account;
 import com.superum.db.account.AccountType;
 import com.superum.db.customer.Customer;
@@ -49,45 +49,45 @@ public class FakeUtils {
         return new PartitionAccount(0, "test");
     }
 
-    public static FullCustomer makeFakeFullCustomer(int id) {
-        return FullCustomer.valueOf(id, fakeLocalDate(id).toString(), fakeName(id), fakePhone(id), fakeWebsite(id), fakePicture(id), fakeComment(id));
+    public static ValidCustomerDTO makeFakeFullCustomer(Integer id) {
+        return ValidCustomerDTO.jsonInstance(id, fakeLocalDate(id).toString(), fakeName(id), fakePhone(id), fakeWebsite(id), fakePicture(id), fakeComment(id));
     }
 
 
-    public static FullTeacher makeFakeFullTeacher(int id) {
-        return FullTeacher.valueOf(id, fakeDay(id), fakeWage(id), fakeWage(id), fakeName(id), fakeSurname(id),
+    public static FullTeacherDTO makeFakeFullTeacher(Integer id) {
+        return FullTeacherDTO.jsonInstance(id, fakeDay(id), fakeWage(id), fakeWage(id), fakeName(id), fakeSurname(id),
                 fakePhone(id), fakeCity(id), fakeEmail(id), fakePicture(id), fakeDocument(id), fakeComment(id),
                 Collections.singletonList(fakeLanguage(id)));
     }
 
-    public static ValidGroupDTO makeFakeValidGroup(int id) {
+    public static ValidGroupDTO makeFakeValidGroup(Integer id) {
         return ValidGroupDTO.jsonInstance(id, id, id, fakeBoolean(id), fakeLanguageLevel(id), fakeName(id));
     }
 
-    public static ValidGroupDTO makeFakeValidGroup(int id, Integer customerId, Integer teacherId) {
+    public static ValidGroupDTO makeFakeValidGroup(Integer id, Integer customerId, Integer teacherId) {
         return makeFakeValidGroup(id, customerId, teacherId, fakeBoolean(id), fakeLanguageLevel(id), fakeName(id));
     }
 
     // FULL FAKES
 
-    public static FullCustomer makeFakeFullCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
-        return FullCustomer.valueOf(id, startDate == null ? null : startDate.toString(), name, phone, website, picture, comment);
+    public static ValidCustomerDTO makeFakeFullCustomer(Integer id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
+        return ValidCustomerDTO.jsonInstance(id, startDate == null ? null : startDate.toString(), name, phone, website, picture, comment);
     }
 
 
-    public static FullTeacher makeFakeFullTeacher(int id, int paymentDay, BigDecimal hourlyWage,
+    public static FullTeacherDTO makeFakeFullTeacher(Integer id, Integer paymentDay, BigDecimal hourlyWage,
                                                   BigDecimal academicWage, String name, String surname, String phone,
                                                   String city, String email, String picture, String document,
                                                   String comment, String... languages) {
-        return FullTeacher.valueOf(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
+        return FullTeacherDTO.jsonInstance(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
                 document, comment, Arrays.asList(languages));
     }
 
-    public static FullTeacher makeFakeFullTeacher(int id, int paymentDay, BigDecimal hourlyWage,
+    public static FullTeacherDTO makeFakeFullTeacher(Integer id, Integer paymentDay, BigDecimal hourlyWage,
                                                   BigDecimal academicWage, String name, String surname, String phone,
                                                   String city, String email, String picture, String document,
                                                   String comment, List<String> languages) {
-        return FullTeacher.valueOf(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
+        return FullTeacherDTO.jsonInstance(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
                 document, comment, languages);
     }
 
@@ -97,72 +97,72 @@ public class FakeUtils {
 
     // API V1
 
-    public static Teacher makeFakeTeacher(int id) {
+    public static Teacher makeFakeTeacher(Integer id) {
         return makeFakeTeacher(id, fakeDay(id), fakeWage(id), fakeWage(id), fakeName(id), fakeSurname(id),
                 fakePhone(id), fakeCity(id), fakeEmail(id), fakePicture(id), fakeDocument(id), fakeComment(id));
     }
 
-    public static Customer makeFakeCustomer(int id) {
+    public static Customer makeFakeCustomer(Integer id) {
         return makeFakeCustomer(id, fakeLocalDate(id), fakeName(id), fakePhone(id), fakeWebsite(id), fakePicture(id), fakeComment(id));
     }
 
-    public static Group makeFakeGroup(int id) {
+    public static Group makeFakeGroup(Integer id) {
         return makeFakeGroup(id, id, id, fakeBoolean(id), fakeLanguageLevel(id), fakeName(id));
     }
 
-    public static Student makeFakeStudent(int id) {
+    public static Student makeFakeStudent(Integer id) {
         return makeFakeStudent(id, id, fakeLocalDate(id), fakeEmail(id), fakeName(id));
     }
 
-    public static Lesson makeFakeLesson(long id) {
+    public static Lesson makeFakeLesson(Long id) {
         return makeFakeLesson(id, fakeId(id), fakeLocalDate(id), fakeHour(id), fakeMinute(id), fakeId(id), fakeComment(id));
     }
 
-    public static Partition makeFakePartition(int id) {
+    public static Partition makeFakePartition(Integer id) {
         return makeFakePartition(-id, fakeName(id));
     }
 
-    public static Account makeFakeAccount(int id, String username, AccountType accountType, String password) {
+    public static Account makeFakeAccount(Integer id, String username, AccountType accountType, String password) {
         return new Account(id, username, accountType.name(), password.toCharArray());
     }
 
-    public static StudentsInGroup makeFakeStudentsInGroup(int groupId, Integer... studentIds) {
+    public static StudentsInGroup makeFakeStudentsInGroup(Integer groupId, Integer... studentIds) {
         return new StudentsInGroup(groupId, Arrays.asList(studentIds));
     }
 
-    public static LessonAttendance makeFakeLessonAttendance(long lessonId, Integer... studentIds) {
+    public static LessonAttendance makeFakeLessonAttendance(Long lessonId, Integer... studentIds) {
         return new LessonAttendance(lessonId, Arrays.asList(studentIds));
     }
 
-    public static TeacherLanguages makeFakeTeacherLanguages(int teacherId, String... languages) {
+    public static TeacherLanguages makeFakeTeacherLanguages(Integer teacherId, String... languages) {
         return new TeacherLanguages(teacherId, Arrays.asList(languages));
     }
 
     // FULL FAKES
 
-    public static Teacher makeFakeTeacher(int id, int paymentDay, BigDecimal hourlyWage,  BigDecimal academicWage,
+    public static Teacher makeFakeTeacher(Integer id, Integer paymentDay, BigDecimal hourlyWage,  BigDecimal academicWage,
                                           String name, String surname, String phone, String city, String email,
                                           String picture, String document, String comment) {
         return new Teacher(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture, document, comment);
     }
 
-    public static Customer makeFakeCustomer(int id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
+    public static Customer makeFakeCustomer(Integer id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
         return new Customer(id, startDate == null ? null : startDate.toString(), name, phone, website, picture, comment);
     }
 
-    public static Group makeFakeGroup(int id, Integer customerId, int teacherId, boolean usesHourlyWage, String languageLevel, String name) {
+    public static Group makeFakeGroup(Integer id, Integer customerId, Integer teacherId, boolean usesHourlyWage, String languageLevel, String name) {
         return new Group(id, customerId, teacherId, usesHourlyWage, languageLevel, name);
     }
 
-    public static Student makeFakeStudent(int id, Integer customerId, LocalDate startDate, String email, String name) {
+    public static Student makeFakeStudent(Integer id, Integer customerId, LocalDate startDate, String email, String name) {
         return new Student(id, customerId, startDate == null ? null : startDate.toString(), email, name);
     }
 
-    public static Lesson makeFakeLesson(long id, int groupId, LocalDate startDate, int startHour, int startMinute, int length, String comment) {
+    public static Lesson makeFakeLesson(Long id, Integer groupId, LocalDate startDate, Integer startHour, Integer startMinute, Integer length, String comment) {
         return Lesson.jsonInstance(id, groupId, null, "UTC", startDate == null ? null : startDate.toString(), startHour, startMinute, length, comment);
     }
 
-    public static Partition makeFakePartition(int id, String name) {
+    public static Partition makeFakePartition(Integer id, String name) {
         if (id >= 0)
             throw new IllegalArgumentException("While testing, only negative partition ids allowed for fake partitions!");
         return new Partition(id, name);

@@ -1,7 +1,7 @@
 package com.superum.api.group;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.superum.api.customer.FullCustomer;
+import com.superum.api.customer.ValidCustomerDTO;
 import com.superum.db.teacher.Teacher;
 import env.IntegrationTestEnvironment;
 import org.jooq.lambda.Seq;
@@ -32,9 +32,9 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void insertingGroupWithoutId_shouldCreateNewGroup() throws Exception {
-        FullCustomer fullCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
-        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, fullCustomer.getId(), teacher.getId()).withoutId();
+        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId()).withoutId();
 
         MvcResult result = mockMvc.perform(put("/timestar/api/v2/group/")
                     .contentType(APPLICATION_JSON_UTF8)
@@ -58,9 +58,9 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupWithValidId_shouldReturnAGroup() throws Exception {
-        FullCustomer fullCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
-        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, fullCustomer.getId(), teacher.getId());
+        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
         ValidGroupDTO insertedGroup = databaseHelper.insertValidGroupIntoDb(group);
         int groupId = insertedGroup.getId();
@@ -84,14 +84,14 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void updatingGroupWithValidData_shouldReturnOldGroup() throws Exception {
-        FullCustomer fullCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
-        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, fullCustomer.getId(), teacher.getId());
+        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
         ValidGroupDTO insertedGroup = databaseHelper.insertValidGroupIntoDb(group);
         int groupId = insertedGroup.getId();
 
-        ValidGroupDTO updatedGroup = makeFakeValidGroup(GROUP_SEED + 1, fullCustomer.getId(), teacher.getId()).withId(groupId);
+        ValidGroupDTO updatedGroup = makeFakeValidGroup(GROUP_SEED + 1, validCustomerDTO.getId(), teacher.getId()).withId(groupId);
 
         mockMvc.perform(post("/timestar/api/v2/group/")
                 .contentType(APPLICATION_JSON_UTF8)
@@ -107,9 +107,9 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void updatingPartialGroupWithValidData_shouldReturnOldGroup() throws Exception {
-        FullCustomer fullCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
-        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, fullCustomer.getId(), teacher.getId());
+        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
         ValidGroupDTO insertedGroup = databaseHelper.insertValidGroupIntoDb(group);
         int groupId = insertedGroup.getId();
@@ -149,9 +149,9 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void deletingGroupWithValidId_shouldReturnDeletedGroup() throws Exception {
-        FullCustomer fullCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
-        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, fullCustomer.getId(), teacher.getId());
+        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
         ValidGroupDTO insertedGroup = databaseHelper.insertValidGroupIntoDb(group);
         int groupId = insertedGroup.getId();
@@ -169,9 +169,9 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void readingAllGroups_shouldReturnListOfGroups() throws Exception {
-        FullCustomer fullCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
-        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, fullCustomer.getId(), teacher.getId());
+        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
         List<ValidGroupDTO> allGroups = Seq.of(group)
                 .map(ValidGroupDTO::withoutId)
@@ -200,9 +200,9 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupForTeacherWithValidId_shouldReturnListOfGroups() throws Exception {
-        FullCustomer fullCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
-        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, fullCustomer.getId(), teacher.getId());
+        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
         ValidGroupDTO insertedGroup = databaseHelper.insertValidGroupIntoDb(group);
         int groupId = insertedGroup.getId();
@@ -228,15 +228,15 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupForCustomerWithValidId_shouldReturnListOfGroups() throws Exception {
-        FullCustomer fullCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
-        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, fullCustomer.getId(), teacher.getId());
+        ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
         ValidGroupDTO insertedGroup = databaseHelper.insertValidGroupIntoDb(group);
         int groupId = insertedGroup.getId();
         List<ValidGroupDTO> validGroups = Collections.singletonList(insertedGroup);
 
-        MvcResult result = mockMvc.perform(get("/timestar/api/v2/group/{tableName}/{customerId}", "customer", fullCustomer.getId())
+        MvcResult result = mockMvc.perform(get("/timestar/api/v2/group/{tableName}/{customerId}", "customer", validCustomerDTO.getId())
                 .contentType(APPLICATION_JSON_UTF8)
                 .header("Authorization", authHeader()))
                 .andDo(print())

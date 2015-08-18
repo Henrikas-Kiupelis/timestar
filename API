@@ -67,8 +67,8 @@ Customer API:
 
 1)
     POST  /customer/create
-    BODY  com.superum.api.customer.FullCustomer
-    RET   com.superum.api.customer.FullCustomer
+    BODY  com.superum.api.customer.ValidCustomerDTO
+    RET   com.superum.api.customer.ValidCustomerDTO
 
     Creates a new customer;
 
@@ -81,7 +81,7 @@ Customer API:
 2)
     GET  /customer/{customerId}
          customerId     int            0 < customerId <= MAX_INT
-    RET  com.superum.api.customer.FullCustomer
+    RET  com.superum.api.customer.ValidCustomerDTO
 
     Reads and returns an existing customer;
 
@@ -90,8 +90,8 @@ Customer API:
 
 3)
     POST  /customer/update
-    BODY  com.superum.api.customer.FullCustomer
-    RET   com.superum.api.customer.FullCustomer
+    BODY  com.superum.api.customer.ValidCustomerDTO
+    RET   com.superum.api.customer.ValidCustomerDTO
 
     Updates an existing customer; only fields that are sent are updated;
 
@@ -105,7 +105,7 @@ Customer API:
 4)
     DELETE  /customer/delete/{customerId}
             customerId     int            0 < customerId <= MAX_INT
-    RET     com.superum.api.customer.FullCustomer
+    RET     com.superum.api.customer.ValidCustomerDTO
 
     Deletes an existing customer;
 
@@ -119,7 +119,7 @@ Customer API:
          teacherId      int            0 < teacherId <= MAX_INT
     OPT  page           int            0 < page <= MAX_INT; DEF 1
     OPT  per_page       int            0 < per_page <= 100; DEF 25
-    RET  List<com.superum.api.customer.FullCustomer>
+    RET  List<com.superum.api.customer.ValidCustomerDTO>
 
     Reads and returns a list of customers for a certain teacher;
     To determine if a certain customer is tied to a teacher, the following examination is made:
@@ -139,7 +139,7 @@ Customer API:
     GET  customer/all
     OPT  page           int            0 < page <= MAX_INT; DEF 1
     OPT  per_page       int            0 < per_page <= 100; DEF 25
-    RET  List<com.superum.api.customer.FullCustomer>
+    RET  List<com.superum.api.customer.ValidCustomerDTO>
 
     Reads and returns a list of all customers;
 
@@ -174,8 +174,8 @@ Customer API:
 
 9)
     POST  customer/exists
-    BODY  com.superum.api.customer.FullCustomer
-    RET   com.superum.api.customer.FullCustomer
+    BODY  com.superum.api.customer.ValidCustomerDTO
+    RET   com.superum.api.customer.ValidCustomerDTO
 
     Checks if a customer with specified bounds exists;
     The simplest use case is to check if a customer with a particular id exists, or checking if a certain customer's
