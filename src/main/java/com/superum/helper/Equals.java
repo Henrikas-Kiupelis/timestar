@@ -3,6 +3,7 @@ package com.superum.helper;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -24,11 +25,12 @@ public final class Equals<T> {
     public boolean equals(T t1, T t2) {
         return !Seq.seq(getters)
                 .map(getter -> Tuple.tuple(getter.apply(t1), getter.apply(t2)))
-                .filter(tuple2 -> !tuple2.map(Objects::equals))
+                .filter(tuple2 -> !tuple2.map(Equals::equalsAdjusted))
                 .findAny().isPresent();
     }
 
     /**
+     * WARNING! BigDecimals can produce inconsistent results for this method
      * @return true if all provided getters return equal objects for every parameter, false otherwise
      */
     @SafeVarargs
@@ -57,5 +59,11 @@ public final class Equals<T> {
     // PRIVATE
 
     private final List<Function<T, ?>> getters;
+
+    private static boolean equalsAdjusted(Object o1, Object o2) {
+        return o1 instanceof BigDecimal && o2 instanceof BigDecimal
+                ? SpecialUtils.equalsJavaMathBigDecimal((BigDecimal)o1, (BigDecimal)o2)
+                : Objects.equals(o1, o2);
+    }
 
 }
