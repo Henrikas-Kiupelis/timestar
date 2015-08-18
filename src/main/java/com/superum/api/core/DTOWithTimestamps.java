@@ -1,4 +1,4 @@
-package com.superum.api.dto;
+package com.superum.api.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,13 +14,13 @@ import org.joda.time.Instant;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public abstract class DTOWithTimestamps {
 
-    @JsonProperty("createdAt")
+    @JsonProperty(CREATED_AT_FIELD)
     @JsonSerialize(using = InstantSerializer.class)
     public Instant getCreatedAt() {
         return createdAt;
     }
 
-    @JsonProperty("updatedAt")
+    @JsonProperty(UPDATED_AT_FIELD)
     @JsonSerialize(using = InstantSerializer.class)
     public Instant getUpdatedAt() {
         return updatedAt;
@@ -32,6 +32,11 @@ public abstract class DTOWithTimestamps {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    // PROTECTED
+
+    protected static final String CREATED_AT_FIELD = "createdAt";
+    protected static final String UPDATED_AT_FIELD = "updatedAt";
 
     // PRIVATE
 
