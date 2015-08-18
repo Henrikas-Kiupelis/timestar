@@ -19,12 +19,12 @@ import java.io.IOException;
 public class GenericErrorHandler {
 
     @ExceptionHandler
-    void handleInvalidCustomerException(DatabaseException e, HttpServletResponse response) throws IOException {
+    void handleDatabaseException(DatabaseException e, HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Database couldn't return value; " + e.getMessage());
     }
 
     @ExceptionHandler
-    void handleDatabaseDuplicationException(DataAccessException e, HttpServletResponse response) throws Exception {
+    void handleDataAccessException(DataAccessException e, HttpServletResponse response) throws Exception {
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error occurred");
     }
 
