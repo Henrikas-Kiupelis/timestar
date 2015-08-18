@@ -206,7 +206,7 @@ public class Customer {
 
     private static final Equals<Customer> EQUALS = new Equals<>(Arrays.asList(Customer::getId,
             Customer::getStartDate,  Customer::getName, Customer::getPhone, Customer::getWebsite,
-            Customer::getPicture, Customer::getPhone));
+            Customer::getPicture, Customer::getComment));
 
     // GENERATED
 
