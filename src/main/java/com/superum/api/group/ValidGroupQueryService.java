@@ -6,7 +6,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * <pre>
@@ -26,9 +25,10 @@ public interface ValidGroupQueryService {
      * </pre>
      * @return group that was read; Optional.empty() if no such group exists
      *
+     * @throws GroupNotFoundException if no group with this id exists
      * @throws DataAccessException if an unexpected database error occurred
      */
-    Optional<ValidGroupDTO> readById(int groupId, int partitionId);
+    ValidGroupDTO readById(int groupId, int partitionId);
 
     /**
      * <pre>

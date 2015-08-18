@@ -1,8 +1,9 @@
 package com.superum.api.group;
 
+import com.superum.db.generated.timestar.tables.records.GroupOfStudentsRecord;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.field.core.MappedField;
-import com.superum.helper.jooq.DefaultQueryMaker;
+import com.superum.helper.jooq.*;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,13 @@ public class ValidGroupCommandServiceImpl implements ValidGroupCommandService {
         ValidGroup group = new ValidGroup(validGroupDTO);
 
         if (group.hasId())
-            throw new InvalidGroupException("Provided group has its id set; please unset it or use PUT instead!");
+            throw new InvalidGroupException("Provided group has its id set; please unset it or use POST instead!");
 
         if (!group.mandatoryFields().allMatch(MappedField::isSet))
             throw new InvalidGroupException("Provided group does not have the following mandatory fields set: "
                     + group.mandatoryFields().filter(MappedField::isNotSet).join(", "));
 
-        return defaultGroupQueries.create(group, partitionId, ValidGroupDTO::valueOf)
+        return defaultGroupCommands.create(group, partitionId, ValidGroupDTO::valueOf)
                 .orElseThrow(() -> new DatabaseException("Couldn't return group after inserting it: " + group));
     }
 
@@ -34,7 +35,7 @@ public class ValidGroupCommandServiceImpl implements ValidGroupCommandService {
         ValidGroup group = new ValidGroup(validGroupDTO);
 
         if (!group.hasId())
-            throw new InvalidGroupException("Provided group doesn't have its id set; please set it or use POST instead!");
+            throw new InvalidGroupException("Provided group doesn't have its id set; please set it or use PUT instead!");
 
         if (!group.updateFields().findAny().isPresent())
             throw new InvalidGroupException("Provided group only has its id set; to update this group, set additional fields!");
@@ -42,7 +43,7 @@ public class ValidGroupCommandServiceImpl implements ValidGroupCommandService {
         if (!defaultGroupQueries.exists(group.getId(), partitionId))
             throw new GroupNotFoundException("Couldn't find group with id " + group.getId());
 
-        if (defaultGroupQueries.update(group, partitionId) == 0)
+        if (defaultGroupCommands.update(group, partitionId) == 0)
             throw new DatabaseException("Couldn't update group: " + group);
     }
 
@@ -52,10 +53,10 @@ public class ValidGroupCommandServiceImpl implements ValidGroupCommandService {
             throw new GroupNotFoundException("Couldn't find group with id " + groupId);
 
         if (foreignGroupQueries.isUsed(groupId))
-            throw new UnsafeGroupDeleteException("Cannot delete group with " + groupId +
+            throw new UnsafeGroupDeleteException("Cannot delete group with id " + groupId +
                     " while it still has entries in other tables");
 
-        if (defaultGroupQueries.delete(groupId, partitionId) == 0)
+        if (defaultGroupCommands.delete(groupId, partitionId) == 0)
             throw new DatabaseException("Couldn't delete group with id: " + groupId);
     }
 
@@ -63,13 +64,16 @@ public class ValidGroupCommandServiceImpl implements ValidGroupCommandService {
 
     @Autowired
     public ValidGroupCommandServiceImpl(DSLContext sql) {
-        defaultGroupQueries = DefaultQueryMaker.forTable(sql, GROUP_OF_STUDENTS, GROUP_OF_STUDENTS.ID, GROUP_OF_STUDENTS.PARTITION_ID);
-        foreignGroupQueries = DefaultQueryMaker.forOtherTables(sql, STUDENTS_IN_GROUPS.GROUP_ID, LESSON.GROUP_ID);
+        this.defaultGroupCommands = new DefaultCommandsImpl<>(sql, GROUP_OF_STUDENTS, GROUP_OF_STUDENTS.ID, GROUP_OF_STUDENTS.PARTITION_ID);
+        this.defaultGroupQueries = new DefaultQueriesImpl<>(sql, GROUP_OF_STUDENTS, GROUP_OF_STUDENTS.ID, GROUP_OF_STUDENTS.PARTITION_ID);
+        //noinspection Convert2Diamond
+        this.foreignGroupQueries = new ForeignQueriesImpl<Integer>(sql, STUDENTS_IN_GROUPS.GROUP_ID, LESSON.GROUP_ID);
     }
 
     // PRIVATE
 
-    private final DefaultQueryMaker.Queries<?, Integer> defaultGroupQueries;
-    private final DefaultQueryMaker.ForeignQueries<Integer> foreignGroupQueries;
+    private final DefaultCommands<GroupOfStudentsRecord, Integer> defaultGroupCommands;
+    private final DefaultQueries<GroupOfStudentsRecord, Integer> defaultGroupQueries;
+    private final ForeignQueries<Integer> foreignGroupQueries;
 
 }

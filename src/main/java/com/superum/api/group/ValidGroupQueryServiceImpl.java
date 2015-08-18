@@ -1,14 +1,16 @@
 package com.superum.api.group;
 
 import com.superum.api.teacher.TeacherNotFoundException;
-import com.superum.helper.jooq.DefaultQueryMaker;
-import org.jooq.Condition;
+import com.superum.db.generated.timestar.tables.records.CustomerRecord;
+import com.superum.db.generated.timestar.tables.records.GroupOfStudentsRecord;
+import com.superum.db.generated.timestar.tables.records.TeacherRecord;
+import com.superum.helper.jooq.DefaultQueries;
+import com.superum.helper.jooq.DefaultQueriesImpl;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.superum.db.generated.timestar.Tables.*;
 
@@ -16,16 +18,14 @@ import static com.superum.db.generated.timestar.Tables.*;
 public class ValidGroupQueryServiceImpl implements ValidGroupQueryService {
 
     @Override
-    public Optional<ValidGroupDTO> readById(int groupId, int partitionId) {
-        return sql.selectFrom(GROUP_OF_STUDENTS)
-                .where(GROUP_OF_STUDENTS.ID.eq(groupId).and(partitionId(partitionId)))
-                .fetch().stream().findAny()
-                .map(ValidGroupDTO::valueOf);
+    public ValidGroupDTO readById(int groupId, int partitionId) {
+        return defaultGroupQueries.read(groupId, partitionId, ValidGroupDTO::valueOf)
+                .orElseThrow(() -> new GroupNotFoundException("Couldn't find group with id " + groupId));
     }
 
     @Override
     public List<ValidGroupDTO> readAll(int page, int amount, int partitionId) {
-        return readForCondition(page, amount, partitionId(partitionId));
+        return defaultGroupQueries.readAll(page, amount, partitionId, ValidGroupDTO::valueOf);
     }
 
     @Override
@@ -33,8 +33,8 @@ public class ValidGroupQueryServiceImpl implements ValidGroupQueryService {
         if (!defaultTeacherQueries.exists(teacherId, partitionId))
             throw new TeacherNotFoundException("No teacher with given id exists: " + teacherId);
 
-        return readForCondition(page, amount,
-                GROUP_OF_STUDENTS.TEACHER_ID.eq(teacherId).and(partitionId(partitionId)));
+        return defaultGroupQueries.readForForeignKey(page, amount, partitionId,
+                GROUP_OF_STUDENTS.TEACHER_ID, teacherId, ValidGroupDTO::valueOf);
     }
 
     @Override
@@ -42,38 +42,23 @@ public class ValidGroupQueryServiceImpl implements ValidGroupQueryService {
         if (!defaultCustomerQueries.exists(customerId, partitionId))
             throw new TeacherNotFoundException("No customer with given id exists: " + customerId);
 
-        return readForCondition(page, amount,
-                GROUP_OF_STUDENTS.CUSTOMER_ID.eq(customerId).and(partitionId(partitionId)));
+        return defaultGroupQueries.readForForeignKey(page, amount, partitionId,
+                GROUP_OF_STUDENTS.CUSTOMER_ID, customerId, ValidGroupDTO::valueOf);
     }
-
 
     // CONSTRUCTORS
 
     @Autowired
     public ValidGroupQueryServiceImpl(DSLContext sql) {
-        this.sql = sql;
-        defaultTeacherQueries = DefaultQueryMaker.forTable(sql, TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
-        defaultCustomerQueries = DefaultQueryMaker.forTable(sql, CUSTOMER, CUSTOMER.ID, CUSTOMER.PARTITION_ID);
+        this.defaultGroupQueries = new DefaultQueriesImpl<>(sql, GROUP_OF_STUDENTS, GROUP_OF_STUDENTS.ID, GROUP_OF_STUDENTS.PARTITION_ID);
+        this.defaultTeacherQueries = new DefaultQueriesImpl<>(sql, TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
+        this.defaultCustomerQueries = new DefaultQueriesImpl<>(sql, CUSTOMER, CUSTOMER.ID, CUSTOMER.PARTITION_ID);
     }
 
     // PRIVATE
 
-    private final DSLContext sql;
-    private final DefaultQueryMaker.Queries<?, Integer> defaultTeacherQueries;
-    private final DefaultQueryMaker.Queries<?, Integer> defaultCustomerQueries;
-
-    private List<ValidGroupDTO> readForCondition(int page, int amount, Condition condition) {
-        return sql.selectFrom(GROUP_OF_STUDENTS)
-                .where(condition)
-                .orderBy(GROUP_OF_STUDENTS.ID)
-                .limit(amount)
-                .offset(page * amount)
-                .fetch()
-                .map(ValidGroupDTO::valueOf);
-    }
-
-    private static Condition partitionId(int partitionId) {
-        return GROUP_OF_STUDENTS.PARTITION_ID.eq(partitionId);
-    }
+    private final DefaultQueries<GroupOfStudentsRecord, Integer> defaultGroupQueries;
+    private final DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries;
+    private final DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries;
 
 }

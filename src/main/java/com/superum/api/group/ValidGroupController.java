@@ -1,5 +1,6 @@
 package com.superum.api.group;
 
+import com.superum.api.core.CommonControllerLogic;
 import com.superum.api.exception.InvalidRequestException;
 import com.superum.db.Table;
 import com.superum.helper.PartitionAccount;
@@ -14,11 +15,11 @@ import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
 
 @RestController
 @RequestMapping(value = "/timestar/api/v2/group")
-public class ValidGroupController {
+public class ValidGroupController extends CommonControllerLogic {
 
     // COMMANDS
 
-    @RequestMapping(value = "/", method = RequestMethod.PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = RequestMethod.PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidGroupDTO create(PartitionAccount account, @RequestBody ValidGroupDTO group) {
         if (group == null)
@@ -27,12 +28,12 @@ public class ValidGroupController {
         LOG.info("User {} is creating a group: {}", account, group);
 
         ValidGroupDTO createdGroup = validGroupCommandService.create(group, account.partitionId());
-        LOG.info("Group {} successfully created", group);
+        LOG.info("Successfully created group: {}", group);
 
         return createdGroup;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidGroupDTO group) {
         if (group == null)
@@ -44,7 +45,7 @@ public class ValidGroupController {
         LOG.info("Group successfully updated");
     }
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.DELETE, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.DELETE)
     @ResponseBody
     public void delete(PartitionAccount account, @PathVariable int id) {
         validateId("Group", id);
@@ -64,14 +65,13 @@ public class ValidGroupController {
 
         LOG.info("User {} is reading group with id: {}", account, id);
 
-        ValidGroupDTO group = validGroupQueryService.readById(id, account.partitionId())
-                .orElseThrow(() -> new GroupNotFoundException("Couldn't find group with id " + id));
+        ValidGroupDTO group = validGroupQueryService.readById(id, account.partitionId());
         LOG.info("Group retrieved: {}", group);
 
         return group;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidGroupDTO> readAll(PartitionAccount account,
                                        @RequestParam(value="page", required=false) Integer page,
@@ -131,60 +131,6 @@ public class ValidGroupController {
 
     private final ValidGroupCommandService validGroupCommandService;
     private final ValidGroupQueryService validGroupQueryService;
-
-    private static void validateId(String source, int id) {
-        if (id <= 0)
-            throw new InvalidRequestException(source + " id must be positive, not: " + id);
-    }
-
-    /**
-     * <pre>
-     * Defaults are set up below rather than in annotation because otherwise
-     *
-     *      ...?page=&per_page=
-     *
-     * would cause a NumberFormatException instead of using default values; this is fixed by:
-     * 1) setting the field to Integer rather than int, causing empty param to default to null rather than
-     *    fail to parse an empty string;
-     * 2) since null would now be a valid value, it would no longer be overridden by @RequestParam(defaultValue)
-     *    and would instead propagate down;
-     * </pre>
-     */
-    private static int validatePage(Integer page) {
-        if (page == null)
-            return DEFAULT_PAGE;
-
-        if (page <= 0)
-            throw new InvalidRequestException("Pages can only be positive, not " + page);
-
-        return page - 1; //Pages start with 1 in the URL, but start with 0 in the app logic
-    }
-
-    /**
-     * <pre>
-     * Defaults are set up below rather than in annotation because otherwise
-     *
-     *      ...?page=&per_page=
-     *
-     * would cause a NumberFormatException instead of using default values; this is fixed by:
-     * 1) setting the field to Integer rather than int, causing empty param to default to null rather than
-     *    fail to parse an empty string;
-     * 2) since null would now be a valid value, it would no longer be overridden by @RequestParam(defaultValue)
-     *    and would instead propagate down;
-     * </pre>
-     */
-    private static int validatePerPage(Integer per_page) {
-        if (per_page == null)
-            return DEFAULT_PER_PAGE;
-
-        if (per_page <= 0 || per_page > 100)
-            throw new InvalidRequestException("You can only request 1-100 items per page, not " + per_page);
-
-        return per_page;
-    }
-
-    private static final int DEFAULT_PAGE = 0;
-    private static final int DEFAULT_PER_PAGE = 25;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidGroupController.class);
 

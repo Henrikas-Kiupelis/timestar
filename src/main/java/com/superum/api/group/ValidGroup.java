@@ -1,13 +1,8 @@
 package com.superum.api.group;
 
-import com.superum.helper.field.FieldDef;
 import com.superum.helper.field.FieldDefinition;
-import com.superum.helper.field.FieldDefinitions;
 import com.superum.helper.field.MappedClass;
-import com.superum.helper.field.core.Mandatory;
-import com.superum.helper.field.core.MappedField;
-import com.superum.helper.field.core.Primary;
-import org.jooq.lambda.Seq;
+import com.superum.helper.field.steps.FieldDef;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,31 +19,6 @@ import static com.superum.helper.validation.Validator.validate;
  * </pre>
  */
 public class ValidGroup extends MappedClass<ValidGroup, Integer> {
-
-    @Override
-    protected ValidGroup thisObject() {
-        return this;
-    }
-
-    @Override
-    public MappedField<Integer> primaryKey() {
-        return primaryField();
-    }
-
-    @Override
-    public Seq<MappedField<?>> createFields() {
-        return nonPrimaryFields();
-    }
-
-    @Override
-    public Seq<MappedField<?>> updateFields() {
-        return allNonPrimarySetFields();
-    }
-
-    @Override
-    public Seq<MappedField<?>> conditionFields() {
-        throw new UnsupportedOperationException("Checking if something exists is deemed pointless for now");
-    }
 
     // CONSTRUCTORS
 
@@ -72,7 +42,7 @@ public class ValidGroup extends MappedClass<ValidGroup, Integer> {
 
         this.validGroupDTO = validGroupDTO;
 
-        registerFields(FIELD_DEFINITIONS);
+        registerFields(FIELD_DEFINITION_LIST, this);
     }
 
     // PRIVATE
@@ -94,24 +64,40 @@ public class ValidGroup extends MappedClass<ValidGroup, Integer> {
     // FIELD DEFINITIONS
 
     private static final List<FieldDef<ValidGroup, ?>> FIELD_DEFINITION_LIST = Arrays.asList(
-            FieldDefinition.of(ID_FIELD, GROUP_OF_STUDENTS.ID,
-                    Mandatory.NO, Primary.YES, group -> group.validGroupDTO.getId()),
+            FieldDefinition.steps(ValidGroup.class, Integer.class)
+                    .fieldName(ID_FIELD)
+                    .tableField(GROUP_OF_STUDENTS.ID)
+                    .getter(group -> group.validGroupDTO.getId())
+                    .primaryKey(),
 
-            FieldDefinition.of(CUSTOMER_ID_FIELD, GROUP_OF_STUDENTS.CUSTOMER_ID,
-                    Mandatory.NO, Primary.NO, group -> group.validGroupDTO.getCustomerId()),
+            FieldDefinition.steps(ValidGroup.class, Integer.class)
+                    .fieldName(CUSTOMER_ID_FIELD)
+                    .tableField(GROUP_OF_STUDENTS.CUSTOMER_ID)
+                    .getter(group -> group.validGroupDTO.getCustomerId()),
 
-            FieldDefinition.of(TEACHER_ID_FIELD, GROUP_OF_STUDENTS.TEACHER_ID,
-                    Mandatory.YES, Primary.NO, group -> group.validGroupDTO.getTeacherId()),
+            FieldDefinition.steps(ValidGroup.class, Integer.class)
+                    .fieldName(TEACHER_ID_FIELD)
+                    .tableField(GROUP_OF_STUDENTS.TEACHER_ID)
+                    .getter(group -> group.validGroupDTO.getTeacherId())
+                    .mandatory(),
 
-            FieldDefinition.of(USE_HOURLY_WAGE_FIELD, GROUP_OF_STUDENTS.USE_HOURLY_WAGE,
-                    Mandatory.YES, Primary.NO, group -> group.validGroupDTO.getUsesHourlyWage()),
+            FieldDefinition.steps(ValidGroup.class, Boolean.class)
+                    .fieldName(USE_HOURLY_WAGE_FIELD)
+                    .tableField(GROUP_OF_STUDENTS.USE_HOURLY_WAGE)
+                    .getter(group -> group.validGroupDTO.getUsesHourlyWage())
+                    .mandatory(),
 
-            FieldDefinition.of(LANGUAGE_LEVEL_FIELD, GROUP_OF_STUDENTS.LANGUAGE_LEVEL,
-                    Mandatory.YES, Primary.NO, group -> group.validGroupDTO.getLanguageLevel()),
+            FieldDefinition.steps(ValidGroup.class, String.class)
+                    .fieldName(LANGUAGE_LEVEL_FIELD)
+                    .tableField(GROUP_OF_STUDENTS.LANGUAGE_LEVEL)
+                    .getter(group -> group.validGroupDTO.getLanguageLevel())
+                    .mandatory(),
 
-            FieldDefinition.of(NAME_FIELD, GROUP_OF_STUDENTS.NAME,
-                    Mandatory.YES, Primary.NO, group -> group.validGroupDTO.getName())
+            FieldDefinition.steps(ValidGroup.class, String.class)
+                    .fieldName(NAME_FIELD)
+                    .tableField(GROUP_OF_STUDENTS.NAME)
+                    .getter(group -> group.validGroupDTO.getName())
+                    .mandatory()
     );
-    private static final FieldDefinitions<ValidGroup> FIELD_DEFINITIONS = new FieldDefinitions<>(FIELD_DEFINITION_LIST);
 
 }
