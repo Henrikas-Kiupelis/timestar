@@ -8,12 +8,16 @@ import org.jooq.TableField;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Contains methods for queries on other tables
+ * @param <ID> foreign key type
+ */
 public class ForeignQueriesImpl<ID> implements ForeignQueries<ID> {
 
     /**
      * @return true if a record with foreign key value id exists in given partition; false otherwise
      *
-     * @throws NullPointerException if key is null
+     * @throws IllegalArgumentException if key is null
      */
     @Override
     public boolean isUsed(ID id) {

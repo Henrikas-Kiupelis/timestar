@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * Contains methods to create queries on a table
+ * Contains methods for commands on tables
  * @param <R> JOOQ generated table record for a table
  * @param <ID> primary key field type for this table
  */

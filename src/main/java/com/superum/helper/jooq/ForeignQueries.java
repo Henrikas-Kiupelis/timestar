@@ -1,7 +1,7 @@
 package com.superum.helper.jooq;
 
 /**
- * Contains methods to create queries on other tables
+ * Contains methods for queries on other tables
  * @param <ID> foreign key type
  */
 public interface ForeignQueries<ID> {

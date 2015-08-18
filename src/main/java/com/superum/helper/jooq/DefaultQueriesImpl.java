@@ -1,15 +1,23 @@
 package com.superum.helper.jooq;
 
+import com.superum.helper.NullChecker;
 import org.jooq.*;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Contains methods for commands on tables
+ * @param <R> JOOQ generated table record for a table
+ * @param <ID> primary key field type for this table
+ */
 public class DefaultQueriesImpl<R extends Record, ID> extends DefaultSqlImpl<R, ID> implements DefaultQueries<R, ID> {
 
     @Override
     public <T> Optional<T> read(ID id, int partitionId, Function<R, T> mapper) {
+        NullChecker.check(id, mapper).notNull("Primary key or mapper cannot be null");
+
         return sql.selectFrom(table)
                 .where(idAndPartition(id, partitionId))
                 .fetch().stream().findAny()
@@ -26,6 +34,8 @@ public class DefaultQueriesImpl<R extends Record, ID> extends DefaultSqlImpl<R, 
 
     @Override
     public <T> List<T> readForCondition(int page, int amount, Condition condition, RecordMapper<R, T> mapper) {
+        NullChecker.check(condition, mapper).notNull("Condition or mapper cannot be null");
+
         return sql.selectFrom(table)
                 .where(condition)
                 .orderBy(keyField)
@@ -37,6 +47,9 @@ public class DefaultQueriesImpl<R extends Record, ID> extends DefaultSqlImpl<R, 
 
     @Override
     public int countForCondition(Condition condition) {
+        if (condition == null)
+            throw new IllegalArgumentException("Condition cannot be null");
+
         return sql.fetchCount(table, condition);
     }
 

@@ -11,6 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Contains methods for commands on tables
+ * @param <R> JOOQ generated table record for a table
+ * @param <ID> primary key field type for this table
+ */
 @Transactional
 public class DefaultCommandsImpl<R extends Record, ID> extends DefaultSqlImpl<R, ID> implements DefaultCommands<R, ID> {
 

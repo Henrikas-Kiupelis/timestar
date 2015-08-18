@@ -4,6 +4,15 @@ import com.superum.helper.field.ManyDefined;
 import org.jooq.*;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Contains methods for commands on many-to-many tables
+ * @param <R> JOOQ generated table record for a table
+ * @param <Primary> one of the fields, which is usually less prevalent when creating; i.e. when creating
+ *                 group-to-student relationship, group would be primary, because it is more likely that a lot of
+ *                 students join a group, rather than a student joins a lot of groups
+ * @param <Secondary> one of the fields, which is usually less prevalent when creating; using the above example,
+ *                   student would be secondary
+ */
 @Transactional
 public class CommandsForManyImpl<R extends Record, Primary, Secondary> extends DefaultSqlImpl<R, Primary>
         implements CommandsForMany<Primary, Secondary> {
