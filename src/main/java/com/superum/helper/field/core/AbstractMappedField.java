@@ -5,6 +5,14 @@ import org.jooq.*;
 
 import java.util.Objects;
 
+/**
+ * <pre>
+ * Generic implementation of MappedField
+ *
+ * Takes care of all non-value methods and Object method overrides
+ * </pre>
+ * @param <F> type of the value in this field
+ */
 public abstract class AbstractMappedField<F> implements MappedField<F> {
 
     @Override

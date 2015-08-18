@@ -4,7 +4,7 @@ import com.superum.helper.field.core.MappedField;
 import org.jooq.lambda.Seq;
 
 /**
- * Allows defining class to table record mapping, and therefore automatic query creation using DefaultQueryMaker
+ * Allows defining class to table record mapping, and therefore automatic sql creation using DefaultSql
  * @param <T> type of class that is mapped
  * @param <ID> type of primary key field
  */

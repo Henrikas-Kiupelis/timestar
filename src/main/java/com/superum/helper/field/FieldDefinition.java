@@ -15,6 +15,12 @@ import java.util.function.Function;
 
 import static com.superum.helper.validation.Validator.validate;
 
+/**
+ * Builder class to define how to create a MappedField; uses step builder pattern
+ * @param <T> the class containing the field being defined
+ * @param <F> the type of the field inside the database (i.e. java.sql.Date for DATE); class can contain any field, so
+ *           long as it can be converted
+ */
 public class FieldDefinition<T, F> implements FieldNameStep<T, F>, TableFieldStep<T, F>, GetterStep<T, F>, FieldDef<T, F> {
 
     @Override
@@ -82,7 +88,7 @@ public class FieldDefinition<T, F> implements FieldNameStep<T, F>, TableFieldSte
 
     // CONSTRUCTORS
 
-    public static <T, F> FieldNameStep<T, F> steps(Class<T> class1, Class<F> class2) {
+    public static <T, F> FieldNameStep<T, F> steps(Class<T> containerClass, Class<F> fieldClass) {
         return new FieldDefinition<>();
     }
 

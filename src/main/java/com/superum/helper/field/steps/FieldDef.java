@@ -22,8 +22,9 @@ import com.superum.helper.field.core.MappedField;
  * Only relevant fields should be defined, i.e. fields that are used in SQL write operations, equality comparisons
  * and so on
  * </pre>
- * @param <T> type of the object this field definition belongs to
- * @param <F> type of the field this definition is defining
+ * @param <T> the class containing the field being defined
+ * @param <F> the type of the field inside the database (i.e. java.sql.Date for DATE); class can contain any field, so
+ *           long as it can be converted
  */
 public interface FieldDef<T, F> extends ExtraStep<T, F> {
 

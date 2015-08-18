@@ -5,6 +5,10 @@ import org.jooq.Field;
 
 import java.math.BigDecimal;
 
+/**
+ * AbstractMappedField implementation which handles the value of the field
+ * @param <F> type of the value in this field
+ */
 public class SimpleMappedField<F> extends AbstractMappedField<F> {
 
     @Override
@@ -33,7 +37,7 @@ public class SimpleMappedField<F> extends AbstractMappedField<F> {
         return new BigDecimalField(name, field, isMandatory, isPrimary, value);
     }
 
-    private static <F> SimpleMappedField<F> empty(String name, Field<F> field, boolean isMandatory, boolean isPrimary) {
+    public static <F> SimpleMappedField<F> empty(String name, Field<F> field, boolean isMandatory, boolean isPrimary) {
         return new SimpleMappedField<>(name, field, isMandatory, isPrimary, null);
     }
 

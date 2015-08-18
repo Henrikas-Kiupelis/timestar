@@ -6,7 +6,13 @@ import org.jooq.UpdateSetFirstStep;
 import org.jooq.UpdateSetMoreStep;
 
 /**
+ * <pre>
  * Defines how a value from a specific object field maps to a table record
+ *
+ * Primitives are no longer supported! Use boxed values instead for field mappings
+ *
+ * Lists are also no longer supported! Use a different abstraction (specifically ManyDefined)
+ * </pre>
  * @param <F> type of the value in this field
  */
 public interface MappedField<F> {
@@ -18,8 +24,7 @@ public interface MappedField<F> {
 
     /**
      * @return true if this field is set; false otherwise; for most objects this is equivalent to
-     * getValue() != null; however, for primitives a default value check should be done instead, i.e.
-     * getValue() != 0
+     * getValue() != null;
      */
     boolean isSet();
 
