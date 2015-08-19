@@ -5,14 +5,12 @@ import com.superum.db.generated.timestar.tables.records.CustomerRecord;
 import com.superum.db.generated.timestar.tables.records.GroupOfStudentsRecord;
 import com.superum.db.generated.timestar.tables.records.TeacherRecord;
 import com.superum.helper.jooq.DefaultQueries;
-import com.superum.helper.jooq.DefaultQueriesImpl;
-import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.superum.db.generated.timestar.Tables.*;
+import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
 
 @Service
 public class ValidGroupQueryServiceImpl implements ValidGroupQueryService {
@@ -49,10 +47,12 @@ public class ValidGroupQueryServiceImpl implements ValidGroupQueryService {
     // CONSTRUCTORS
 
     @Autowired
-    public ValidGroupQueryServiceImpl(DSLContext sql) {
-        this.defaultGroupQueries = new DefaultQueriesImpl<>(sql, GROUP_OF_STUDENTS, GROUP_OF_STUDENTS.ID, GROUP_OF_STUDENTS.PARTITION_ID);
-        this.defaultTeacherQueries = new DefaultQueriesImpl<>(sql, TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
-        this.defaultCustomerQueries = new DefaultQueriesImpl<>(sql, CUSTOMER, CUSTOMER.ID, CUSTOMER.PARTITION_ID);
+    public ValidGroupQueryServiceImpl(DefaultQueries<GroupOfStudentsRecord, Integer> defaultGroupQueries,
+                                      DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries,
+                                      DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries) {
+        this.defaultGroupQueries = defaultGroupQueries;
+        this.defaultTeacherQueries = defaultTeacherQueries;
+        this.defaultCustomerQueries = defaultCustomerQueries;
     }
 
     // PRIVATE

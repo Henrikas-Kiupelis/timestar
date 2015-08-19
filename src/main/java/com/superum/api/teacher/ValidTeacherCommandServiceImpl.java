@@ -9,9 +9,11 @@ import com.superum.db.partition.PartitionService;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.PartitionAccount;
 import com.superum.helper.Random;
-import com.superum.helper.jooq.*;
+import com.superum.helper.jooq.CommandsForMany;
+import com.superum.helper.jooq.DefaultCommands;
+import com.superum.helper.jooq.DefaultQueries;
+import com.superum.helper.jooq.ForeignQueries;
 import com.superum.helper.mail.GMail;
-import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.mail.MessagingException;
 import java.util.Arrays;
 
-import static com.superum.db.generated.timestar.Tables.*;
+import static com.superum.db.generated.timestar.Tables.TEACHER;
 
 @Service
 @Transactional
@@ -133,14 +135,17 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
     // CONSTRUCTORS
 
     @Autowired
-    public ValidTeacherCommandServiceImpl(DSLContext sql, PasswordEncoder encoder, GMail mail, AccountDAO accountDAO,
-                                          PartitionService partitionService, ValidTeacherQueryService validTeacherQueryService) {
-        this.defaultTeacherCommands = new DefaultCommandsImpl<>(sql, TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
-        this.teacherLanguagesCommands = new CommandsForManyImpl<>(sql, TEACHER_LANGUAGE, TEACHER_LANGUAGE.TEACHER_ID,
-                TEACHER_LANGUAGE.CODE, TEACHER_LANGUAGE.PARTITION_ID);
-        this.defaultTeacherQueries = new DefaultQueriesImpl<>(sql, TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
-        //noinspection Convert2Diamond
-        this.foreignTeacherQueries = new ForeignQueriesImpl<Integer>(sql, GROUP_OF_STUDENTS.TEACHER_ID, LESSON.TEACHER_ID);
+    public ValidTeacherCommandServiceImpl(DefaultCommands<TeacherRecord, Integer> defaultTeacherCommands,
+                                          CommandsForMany<Integer, String> teacherLanguagesCommands,
+                                          DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries,
+                                          ForeignQueries<Integer> foreignTeacherQueries,
+                                          PasswordEncoder encoder, GMail mail, AccountDAO accountDAO,
+                                          PartitionService partitionService,
+                                          ValidTeacherQueryService validTeacherQueryService) {
+        this.defaultTeacherCommands = defaultTeacherCommands;
+        this.teacherLanguagesCommands = teacherLanguagesCommands;
+        this.defaultTeacherQueries = defaultTeacherQueries;
+        this.foreignTeacherQueries = foreignTeacherQueries;
 
         this.encoder = encoder;
         this.mail = mail;

@@ -4,7 +4,6 @@ import com.superum.api.teacher.TeacherNotFoundException;
 import com.superum.db.generated.timestar.tables.records.CustomerRecord;
 import com.superum.db.generated.timestar.tables.records.TeacherRecord;
 import com.superum.helper.jooq.DefaultQueries;
-import com.superum.helper.jooq.DefaultQueriesImpl;
 import org.jooq.DSLContext;
 import org.jooq.SelectHavingStep;
 import org.jooq.SelectSelectStep;
@@ -59,10 +58,11 @@ public class ValidCustomerQueryServiceImpl implements ValidCustomerQueryService 
     // CONSTRUCTORS
 
     @Autowired
-    public ValidCustomerQueryServiceImpl(DSLContext sql) {
+    public ValidCustomerQueryServiceImpl(DSLContext sql, DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries,
+                                         DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries) {
         this.sql = sql;
-        this.defaultCustomerQueries = new DefaultQueriesImpl<>(sql, CUSTOMER, CUSTOMER.ID, CUSTOMER.PARTITION_ID);
-        this.defaultTeacherQueries = new DefaultQueriesImpl<>(sql, TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
+        this.defaultCustomerQueries = defaultCustomerQueries;
+        this.defaultTeacherQueries = defaultTeacherQueries;
     }
 
     // PRIVATE

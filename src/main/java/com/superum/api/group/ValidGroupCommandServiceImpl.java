@@ -3,13 +3,12 @@ package com.superum.api.group;
 import com.superum.db.generated.timestar.tables.records.GroupOfStudentsRecord;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.field.core.MappedField;
-import com.superum.helper.jooq.*;
-import org.jooq.DSLContext;
+import com.superum.helper.jooq.DefaultCommands;
+import com.superum.helper.jooq.DefaultQueries;
+import com.superum.helper.jooq.ForeignQueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.superum.db.generated.timestar.Tables.*;
 
 @Service
 @Transactional
@@ -63,11 +62,12 @@ public class ValidGroupCommandServiceImpl implements ValidGroupCommandService {
     // CONSTRUCTORS
 
     @Autowired
-    public ValidGroupCommandServiceImpl(DSLContext sql) {
-        this.defaultGroupCommands = new DefaultCommandsImpl<>(sql, GROUP_OF_STUDENTS, GROUP_OF_STUDENTS.ID, GROUP_OF_STUDENTS.PARTITION_ID);
-        this.defaultGroupQueries = new DefaultQueriesImpl<>(sql, GROUP_OF_STUDENTS, GROUP_OF_STUDENTS.ID, GROUP_OF_STUDENTS.PARTITION_ID);
-        //noinspection Convert2Diamond
-        this.foreignGroupQueries = new ForeignQueriesImpl<Integer>(sql, STUDENTS_IN_GROUPS.GROUP_ID, LESSON.GROUP_ID);
+    public ValidGroupCommandServiceImpl(DefaultCommands<GroupOfStudentsRecord, Integer> defaultGroupCommands,
+                                        DefaultQueries<GroupOfStudentsRecord, Integer> defaultGroupQueries,
+                                        ForeignQueries<Integer> foreignGroupQueries) {
+        this.defaultGroupCommands = defaultGroupCommands;
+        this.defaultGroupQueries = defaultGroupQueries;
+        this.foreignGroupQueries = foreignGroupQueries;
     }
 
     // PRIVATE

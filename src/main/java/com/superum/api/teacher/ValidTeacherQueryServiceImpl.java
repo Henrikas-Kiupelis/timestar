@@ -3,7 +3,6 @@ package com.superum.api.teacher;
 import com.google.common.collect.ObjectArrays;
 import com.superum.db.generated.timestar.tables.records.TeacherRecord;
 import com.superum.helper.jooq.DefaultQueries;
-import com.superum.helper.jooq.DefaultQueriesImpl;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -51,9 +50,9 @@ public class ValidTeacherQueryServiceImpl implements ValidTeacherQueryService {
     // CONSTRUCTORS
 
     @Autowired
-    public ValidTeacherQueryServiceImpl(DSLContext sql) {
+    public ValidTeacherQueryServiceImpl(DSLContext sql, DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries) {
         this.sql = sql;
-        this.defaultTeacherQueries = new DefaultQueriesImpl<>(sql, TEACHER, TEACHER.ID, TEACHER.PARTITION_ID);
+        this.defaultTeacherQueries = defaultTeacherQueries;
     }
 
     // PRIVATE

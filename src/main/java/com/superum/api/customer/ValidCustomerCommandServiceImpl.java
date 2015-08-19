@@ -2,13 +2,12 @@ package com.superum.api.customer;
 
 import com.superum.db.generated.timestar.tables.records.CustomerRecord;
 import com.superum.exception.DatabaseException;
-import com.superum.helper.jooq.*;
-import org.jooq.DSLContext;
+import com.superum.helper.jooq.DefaultCommands;
+import com.superum.helper.jooq.DefaultQueries;
+import com.superum.helper.jooq.ForeignQueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.superum.db.generated.timestar.Tables.*;
 
 @Service
 @Transactional
@@ -62,11 +61,12 @@ public class ValidCustomerCommandServiceImpl implements ValidCustomerCommandServ
     // CONSTRUCTORS
 
     @Autowired
-    public ValidCustomerCommandServiceImpl(DSLContext sql) {
-        this.defaultCustomerCommands = new DefaultCommandsImpl<>(sql, CUSTOMER, CUSTOMER.ID, CUSTOMER.PARTITION_ID);
-        this.defaultCustomerQueries = new DefaultQueriesImpl<>(sql, CUSTOMER, CUSTOMER.ID, CUSTOMER.PARTITION_ID);
-        //noinspection Convert2Diamond
-        this.foreignCustomerQueries = new ForeignQueriesImpl<Integer>(sql, STUDENT.CUSTOMER_ID, GROUP_OF_STUDENTS.CUSTOMER_ID);
+    public ValidCustomerCommandServiceImpl(DefaultCommands<CustomerRecord, Integer> defaultCustomerCommands,
+                                           DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries,
+                                           ForeignQueries<Integer> foreignCustomerQueries) {
+        this.defaultCustomerCommands = defaultCustomerCommands;
+        this.defaultCustomerQueries = defaultCustomerQueries;
+        this.foreignCustomerQueries = foreignCustomerQueries;
     }
 
     // PRIVATE
