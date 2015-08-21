@@ -1,8 +1,6 @@
 package com.superum.config;
 
-import com.superum.db.generated.timestar.tables.records.CustomerRecord;
-import com.superum.db.generated.timestar.tables.records.GroupOfStudentsRecord;
-import com.superum.db.generated.timestar.tables.records.TeacherRecord;
+import com.superum.db.generated.timestar.tables.records.*;
 import com.superum.helper.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +33,16 @@ public class DefaultSqlConfig {
         return new DefaultCommandsImpl<>(persistenceContext.dsl(), GROUP_OF_STUDENTS, GROUP_OF_STUDENTS.ID, GROUP_OF_STUDENTS.PARTITION_ID);
     }
 
+    @Bean
+    public DefaultCommands<LessonRecord, Long> defaultLessonCommands() {
+        return new DefaultCommandsImpl<>(persistenceContext.dsl(), LESSON, LESSON.ID, LESSON.PARTITION_ID);
+    }
+
+    @Bean
+    public DefaultCommands<StudentRecord, Integer> defaultStudentCommands() {
+        return new DefaultCommandsImpl<>(persistenceContext.dsl(), STUDENT, STUDENT.ID, STUDENT.PARTITION_ID);
+    }
+
     // QUERIES
 
     @Bean
@@ -50,6 +58,16 @@ public class DefaultSqlConfig {
     @Bean
     public DefaultQueries<GroupOfStudentsRecord, Integer> defaultGroupQueries() {
         return new DefaultQueriesImpl<>(persistenceContext.dsl(), GROUP_OF_STUDENTS, GROUP_OF_STUDENTS.ID, GROUP_OF_STUDENTS.PARTITION_ID);
+    }
+
+    @Bean
+    public DefaultQueries<LessonRecord, Long> defaultLessonQueries() {
+        return new DefaultQueriesImpl<>(persistenceContext.dsl(), LESSON, LESSON.ID, LESSON.PARTITION_ID);
+    }
+
+    @Bean
+    public DefaultQueries<StudentRecord, Integer> defaultStudentQueries() {
+        return new DefaultQueriesImpl<>(persistenceContext.dsl(), STUDENT, STUDENT.ID, STUDENT.PARTITION_ID);
     }
 
     // FOREIGN
@@ -70,6 +88,18 @@ public class DefaultSqlConfig {
     public ForeignQueries<Integer> foreignGroupQueries() {
         //noinspection Convert2Diamond
         return new ForeignQueriesImpl<Integer>(persistenceContext.dsl(), STUDENTS_IN_GROUPS.GROUP_ID, LESSON.GROUP_ID);
+    }
+
+    @Bean
+    public ForeignQueries<Long> foreignLessonQueries() {
+        //noinspection Convert2Diamond
+        return new ForeignQueriesImpl<Long>(persistenceContext.dsl(), LESSON_ATTENDANCE.LESSON_ID);
+    }
+
+    @Bean
+    public ForeignQueries<Integer> foreignStudentQueries() {
+        //noinspection Convert2Diamond
+        return new ForeignQueriesImpl<Integer>(persistenceContext.dsl(), LESSON_ATTENDANCE.STUDENT_ID, STUDENTS_IN_GROUPS.STUDENT_ID);
     }
 
     // MANY
