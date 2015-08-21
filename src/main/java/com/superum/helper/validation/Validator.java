@@ -237,6 +237,10 @@ public abstract class Validator<T, V extends Validator<T, V>> {
         return new IntValidator(integer);
     }
 
+    public static LongValidator validate(Long longNumber) {
+        return new LongValidator(longNumber);
+    }
+
     public static BigDecimalValidator validate(BigDecimal bigDecimal) {
         return new BigDecimalValidator(bigDecimal);
     }
