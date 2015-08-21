@@ -49,6 +49,12 @@ public class PersistenceContext {
         dataSource.setJdbcUrl(env.getRequiredProperty("db.url"));
         dataSource.setUser(env.getRequiredProperty("db.username"));
         dataSource.setPassword(env.getRequiredProperty("db.password"));
+        dataSource.setMaxIdleTime(14400);
+        dataSource.setMaxConnectionAge(25200);
+        dataSource.setPreferredTestQuery("SELECT 1");
+        dataSource.setTestConnectionOnCheckin(true);
+        dataSource.setTestConnectionOnCheckout(false);
+        dataSource.setIdleConnectionTestPeriod(300);
         return dataSource;
     }
  
