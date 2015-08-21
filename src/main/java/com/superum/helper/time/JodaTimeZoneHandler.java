@@ -160,7 +160,9 @@ public final class JodaTimeZoneHandler {
     }
 
     public static JodaTimeZoneHandler forTimeZoneId(String timeZoneId) {
-        return forTimeZone(DateTimeZone.forID(timeZoneId));
+        return timeZoneId == null
+                ? getDefault()
+                : forTimeZone(DateTimeZone.forID(timeZoneId));
     }
 
     public static JodaTimeZoneHandler forJavaTimeZone(TimeZone timeZone) {
