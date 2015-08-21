@@ -28,6 +28,14 @@ public class SpecialUtils {
         return bigDecimal1 == null ? bigDecimal2 == null : bigDecimal1.compareTo(bigDecimal2) == 0;
     }
 
+    public static int compareNullableIntegers(Integer i1, Integer i2) {
+        return i1 == null
+                        ? 1
+                        : i2 == null
+                                ? -1
+                                : Integer.compare(i1, i2);
+    }
+
     // PRIVATE
 
     private SpecialUtils() {
