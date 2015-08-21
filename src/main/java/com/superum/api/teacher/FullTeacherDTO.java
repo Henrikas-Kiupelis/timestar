@@ -18,7 +18,7 @@ import static com.superum.helper.Constants.MYSQL_GROUP_CONCAT_SEPARATOR;
 
 /**
  * <pre>
- * Data Transport Object for groups
+ * Data Transport Object for teachers
  *
  * This object is used to de-serialize and serialize JSON that is coming in and out of the back end;
  * it should contain minimal logic, if any at all; a good example would be conversion between a choice of optional
@@ -26,7 +26,6 @@ import static com.superum.helper.Constants.MYSQL_GROUP_CONCAT_SEPARATOR;
  *
  * When creating an instance of FullTeacher with JSON, these fields are required:
  *      FIELD_NAME   : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
- *
  *      paymentDay   : day, at which the teacher is to be paid                  1 <= paymentDay <= 31
  *      hourlyWage   : the amount of euros paid per hour                        0 < hourlyWage;
  *                                                                              BigDecimal of up to 4 numbers after comma
@@ -81,18 +80,8 @@ import static com.superum.helper.Constants.MYSQL_GROUP_CONCAT_SEPARATOR;
  *      "languages": ["ENG"]
  * }
  *
- * When returning an instance of FullTeacher with JSON, these fields will be present:
+ * When returning an instance of FullTeacher with JSON, these additional fields will be present:
  *      FIELD_NAME   : FIELD_DESCRIPTION
- *      id           : number representation of this teacher in the system
- *      paymentDay   : day, at which the teacher is to be paid
- *      hourlyWage   : the amount of euros paid per hour
- *      academicWage : the amount of euros paid per academic hour; this is not necessarily equal to 3/4 * hourlyWage!
- *      name         : name
- *      surname      : surname
- *      phone        : phone number
- *      city         : city
- *      email        : email
- *      languages    : list of languages the teacher teaches; uses codes, such as "ENG" to identity a language
  *      createdAt    : timestamp, taken by the database at the time of creation
  *      updatedAt    : timestamp, taken by the database at the time of creation and updating
  *

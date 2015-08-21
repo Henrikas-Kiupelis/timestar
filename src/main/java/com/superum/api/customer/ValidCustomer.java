@@ -10,11 +10,20 @@ import java.util.List;
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
 import static com.superum.helper.validation.Validator.validate;
 
+/**
+ * <pre>
+ * Domain object for customers
+ *
+ * This object should be used to validate DTO data and use it in a meaningful manner; it encapsulates only the
+ * specific version of DTO, which is used for commands
+ * </pre>
+ */
 public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
 
     public ValidCustomer(ValidCustomerDTO validCustomerDTO) {
         validate(validCustomerDTO.getId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidCustomerException("Customer id must be positive, not: " + validCustomerDTO.getId()));
+                .ifInvalid(() -> new InvalidCustomerException("Customer id must be positive, not: "+
+                        validCustomerDTO.getId()));
 
         validate(validCustomerDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidCustomerException("Customer name must not exceed " +

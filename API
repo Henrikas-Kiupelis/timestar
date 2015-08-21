@@ -80,7 +80,7 @@ Customer API:
 
 2)
     GET  /customer/{customerId}
-         customerId     int            0 < customerId <= MAX_INT
+         customerId     int            1 <= customerId <= MAX_INT
     RET  com.superum.api.customer.ValidCustomerDTO
 
     Reads and returns an existing customer;
@@ -104,7 +104,7 @@ Customer API:
 
 4)
     DELETE  /customer/{customerId}
-            customerId     int            0 < customerId <= MAX_INT
+            customerId     int            1 <= customerId <= MAX_INT
     RET     com.superum.api.customer.ValidCustomerDTO
 
     Deletes an existing customer;
@@ -116,9 +116,9 @@ Customer API:
 
 5)
     GET  /customer/teacher/{teacherId}
-         teacherId      int            0 < teacherId <= MAX_INT
-    OPT  page           int            0 < page <= MAX_INT; DEF 1
-    OPT  per_page       int            0 < per_page <= 100; DEF 25
+         teacherId      int            1 <= teacherId <= MAX_INT
+    OPT  page           int            1 <= page <= MAX_INT; DEF 1
+    OPT  per_page       int            1 <= per_page <= 100; DEF 25
     RET  List<com.superum.api.customer.ValidCustomerDTO>
 
     Reads and returns a list of customers for a certain teacher;
@@ -137,8 +137,8 @@ Customer API:
 
 6)
     GET  /customer/
-    OPT  page           int            0 < page <= MAX_INT; DEF 1
-    OPT  per_page       int            0 < per_page <= 100; DEF 25
+    OPT  page           int            1 <= page <= MAX_INT; DEF 1
+    OPT  per_page       int            1 <= per_page <= 100; DEF 25
     RET  List<com.superum.api.customer.ValidCustomerDTO>
 
     Reads and returns a list of all customers;
@@ -151,7 +151,7 @@ Customer API:
 
 7)
     GET  /customer/teacher/{teacherId}/count
-         teacherId      int            0 < teacherId <= MAX_INT
+         teacherId      int            1 <= teacherId <= MAX_INT
     RET  int
 
     Counts and returns the amount of all customers for a certain teacher;
@@ -192,7 +192,7 @@ Teacher API:
 
 2)
     GET  /teacher/{teacherId}
-         teacherId      int            0 < teacherId <= MAX_INT
+         teacherId      int            1 <= teacherId <= MAX_INT
     RET  com.superum.api.teacher.FullTeacher
 
     Reads and returns an existing teacher;
@@ -217,7 +217,7 @@ Teacher API:
 
 4)
     DELETE  /teacher/{teacherId}
-            teacherId      int            0 < teacherId <= MAX_INT
+            teacherId      int            1 <= teacherId <= MAX_INT
     RET     com.superum.api.teacher.FullTeacher
 
     Deletes an existing teacher;
@@ -230,8 +230,8 @@ Teacher API:
 
 5)
     GET  /teacher/
-    OPT  page           int            0 < page <= MAX_INT; DEF 1
-    OPT  per_page       int            0 < per_page <= 100; DEF 25
+    OPT  page           int            1 <= page <= MAX_INT; DEF 1
+    OPT  per_page       int            1 <= per_page <= 100; DEF 25
     RET  List<com.superum.api.teacher.FullTeacher>
 
     Reads and returns a list of all teachers;
@@ -281,7 +281,7 @@ Group API:
 
 3)
     DELETE  /group/{groupId}
-            groupId        int            0 < groupId <= MAX_INT
+            groupId        int            1 <= groupId <= MAX_INT
     RET     void
 
     Deletes a group
@@ -294,7 +294,7 @@ Group API:
 
 4)
     GET  /group/{groupId}
-         groupId        int            0 < groupId <= MAX_INT
+         groupId        int            1 <= groupId <= MAX_INT
     RET  com.superum.api.group.ValidGroupDTO
 
     Reads and returns a group by id
@@ -304,8 +304,8 @@ Group API:
 
 5)
     GET  /group
-    OPT  page           int            0 < page <= MAX_INT; DEF 1
-    OPT  per_page       int            0 < per_page <= 100; DEF 25
+    OPT  page           int            1 <= page <= MAX_INT; DEF 1
+    OPT  per_page       int            1 <= per_page <= 100; DEF 25
     RET  List<com.superum.api.group.ValidGroupDTO>
 
     Reads and returns a list of all groups
@@ -319,9 +319,9 @@ Group API:
 6)
     GET  /group/{tableName}/{id}
          tableName      String         teacher or customer
-         id             int            0 < id <= MAX_INT
-    OPT  page           int            0 < page <= MAX_INT; DEF 1
-    OPT  per_page       int            0 < per_page <= 100; DEF 25
+         id             int            1 <= id <= MAX_INT
+    OPT  page           int            1 <= page <= MAX_INT; DEF 1
+    OPT  per_page       int            1 <= per_page <= 100; DEF 25
     RET  List<com.superum.api.group.ValidGroupDTO>
 
     Reads and returns a list of groups for teacher or customer
@@ -332,6 +332,38 @@ Group API:
     Returned List is paged; using DEF parameter values, only first 25 groups will be returned; to access the rest,
     the page parameter must be incremented, or per_page value raised;
     If a group is deleted, the results of this query will no longer be consistent with the ones before the deletion;
+
+Lesson table API:
+
+1)
+    GET   /lesson/table
+    OPT  per_page       int            1 <= page <= 12; DEF 6
+    OPT  time_zone      String         any time zone; DEF UTC
+    OPT  start_date     String         any Date; DEF today evaluated at time_zone
+    OPT  end_date       String         any Date; DEF start_date
+    OPT  start          long           0 <= page <= MAX_LONG; DEF start_date evaluated at 00:00:00 for time_zone
+    OPT  end            long           0 <= page <= MAX_LONG; DEF (end_date + 1) evaluated at 00:00:00 for time_zone
+    RET  com.superum.api.table.core.OptimizedLessonTableDTO
+
+    Delegates the call to /lesson/table/1 using same parameters
+
+2)
+    GET  /lesson/table/{page}
+         page           int            1 <= page <= MAX_INT
+    OPT  per_page       int            1 <= page <= 12; DEF 6
+    OPT  time_zone      String         any time zone; DEF UTC
+    OPT  start_date     String         any Date; DEF today evaluated at time_zone
+    OPT  end_date       String         any Date; DEF start_date
+    OPT  start          long           0 <= page <= MAX_LONG; DEF start_date evaluated at 00:00:00 for time_zone
+    OPT  end            long           0 <= page <= MAX_LONG; DEF (end_date + 1) evaluated at 00:00:00 for time_zone
+    RET  com.superum.api.table.core.OptimizedLessonTableDTO
+
+    Returns the lesson table for given parameters;
+    The parameters are evaluated as such:
+    a) If start and end values are given, they are used;
+    b) If any of them is not given, they are calculated from other parameters, then used;
+
+    It shouldn't fail under normal circumstances;
 
 Account API:
 

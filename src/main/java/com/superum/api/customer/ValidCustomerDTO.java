@@ -25,16 +25,13 @@ import static com.superum.db.generated.timestar.Tables.CUSTOMER;
  *
  * When creating an instance of ValidCustomerDTO with JSON, these fields are required:
  *      FIELD_NAME  : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
- *
  *      startDate   : date when a contract was signed                           date String, "yyyy-MM-dd"
  *      name        : name                                                      any String, max 30 chars
  *      phone       : phone number                                              any String, max 30 chars
  *      website     : website                                                   any String, max 30 chars
- *
  * These fields are optional:
  *      picture     : link to a picture of this customer, stored somewhere      any String, max 100 chars
  *      comment     : comment, made by the app client                           any String, max 500 chars
- *
  * These fields should only be specified if they are known:
  *      id          : number representation of this customer in the system      1 <= id
  *
@@ -46,7 +43,7 @@ import static com.superum.db.generated.timestar.Tables.CUSTOMER;
  *
  * Example of JSON to send:
  * {
- *      "id": "1",
+ *      "id": 1,
  *      "startDate": "2015-07-22",
  *      "name": "SUPERUM",
  *      "phone": "+37069900001",
@@ -55,15 +52,8 @@ import static com.superum.db.generated.timestar.Tables.CUSTOMER;
  *      "comment": "What a company"
  * }
  *
- * When returning an instance of ValidCustomerDTO with JSON, these fields will be present:
+ * When returning an instance of ValidCustomerDTO with JSON, these additional fields will be present:
  *      FIELD_NAME  : FIELD_DESCRIPTION
- *      id          : number representation of this customer in the system
- *      startDate   : string containing the date when a contract was signed; yyyy-MM-dd format
- *      name        : name
- *      phone       : phone number
- *      website     : website
- *      picture     : link to a picture of this customer, stored somewhere
- *      comment     : comment, made by the app client
  *      createdAt   : timestamp, taken by the database at the time of creation
  *      updatedAt   : timestamp, taken by the database at the time of creation and updating
  *
@@ -224,7 +214,7 @@ public final class ValidCustomerDTO extends DTOWithTimestamps {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper("Customer")
+        return MoreObjects.toStringHelper("ValidCustomer")
                 .add(ID_FIELD, id)
                 .add(START_DATE_FIELD, startDate)
                 .add(NAME_FIELD, name)

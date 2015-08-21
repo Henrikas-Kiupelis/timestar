@@ -177,7 +177,7 @@ public class ValidGroupDTO extends DTOWithTimestamps {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper("Group")
+        return MoreObjects.toStringHelper("ValidGroup")
                 .add(ID_FIELD, id)
                 .add(CUSTOMER_ID_FIELD, customerId)
                 .add(TEACHER_ID_FIELD, teacherId)
