@@ -54,7 +54,6 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
 
     private static final String ID_FIELD = "id";
     private static final String GROUP_ID_FIELD = "groupId";
-    private static final String TEACHER_ID_FIELD = "teacherId";
     private static final String START_TIME_FIELD = "startTime";
     private static final String END_TIME_FIELD = "endTime";
     private static final String LENGTH_FIELD = "length";
@@ -74,11 +73,6 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
                     .tableField(LESSON.GROUP_ID)
                     .getter(lesson -> lesson.validLessonDTO.getGroupId())
                     .mandatory(),
-
-            FieldDef.steps(ValidLesson.class, Integer.class)
-                    .fieldName(TEACHER_ID_FIELD)
-                    .tableField(LESSON.TEACHER_ID)
-                    .getter(lesson -> lesson.validLessonDTO.getTeacherId()),
 
             FieldDef.steps(ValidLesson.class, Long.class)
                     .fieldName(START_TIME_FIELD)
