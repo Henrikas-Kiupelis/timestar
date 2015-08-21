@@ -78,7 +78,7 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 		BigDecimal cost = sql.select(TEACHER.HOURLY_WAGE.mul(LESSON.DURATION_IN_MINUTES).as("cost"))
                 .from(LESSON)
                 .join(TEACHER).onKey(LESSON_IBFK_1)
-                .where(condition.and(condition))
+                .where(condition)
                 .groupBy(LESSON.ID)
                 .orderBy(LESSON.ID)
                 .fetch()
@@ -86,7 +86,7 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
                 .map(object -> (BigDecimal) object)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        LocalDate endDate = JodaTimeZoneHandler.getDefault().from(timeResolver.getEndTime()).toOrgJodaTimeLocalDate();
+        LocalDate endDate = JodaTimeZoneHandler.getDefault().from(timeResolver.getEndTime()).toOrgJodaTimeLocalDate().minusDays(1);
 		return new PaymentData(endDate, cost.divide(BigDecimal.valueOf(60), 4, BigDecimal.ROUND_HALF_EVEN));
 	}
 
@@ -101,7 +101,7 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 				.map(record -> record.getValue(CUSTOMER.START_DATE))
 				.orElseThrow(() -> new DatabaseException("Couldn't find customer with id " + customerId));
 
-        LocalDate contractDate = JodaTimeZoneHandler.getDefault().from(contractStartDate).toOrgJodaTimeLocalDate();
+        LocalDate contractDate = JodaTimeZoneHandler.getDefault().from(contractStartDate).toOrgJodaTimeLocalDate().minusDays(1);
         TimeResolver timeResolver = TimeResolver.from(contractDate);
         Condition condition = GROUP_OF_STUDENTS.CUSTOMER_ID.eq(customerId)
                 .and(LESSON.PARTITION_ID.eq(partitionId))
@@ -111,7 +111,7 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 				.from(LESSON)
                 .join(TEACHER).onKey(LESSON_IBFK_1)
                 .join(GROUP_OF_STUDENTS).onKey(LESSON_IBFK_2)
-                .where(condition.and(condition))
+                .where(condition)
                 .groupBy(LESSON.ID)
                 .orderBy(LESSON.ID)
                 .fetch()
