@@ -184,13 +184,18 @@ FOR EACH ROW
     SET NEW.updated_at = NEW.created_at;
   END; //
 
-CREATE TRIGGER update_timestamp_ensure_create_immutable_group
+CREATE TRIGGER update_timestamp_ensure_create_immutable_group_update_lesson
 BEFORE UPDATE ON group_of_students
 FOR EACH ROW
   BEGIN
     SET NEW.updated_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
     IF NEW.created_at != OLD.created_at THEN
       SET NEW.created_at = OLD.created_at;
+    END IF;
+    IF NEW.teacher_id != OLD.teacher_id THEN
+      UPDATE lesson
+      SET lesson.teacher_id = NEW.teacher_id
+      WHERE lesson.group_id = OLD.id;
     END IF;
   END; //
 DELIMITER ;
