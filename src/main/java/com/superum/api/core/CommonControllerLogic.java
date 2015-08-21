@@ -1,6 +1,7 @@
 package com.superum.api.core;
 
 import com.superum.api.exception.InvalidRequestException;
+import com.superum.helper.time.TimeResolver;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -55,6 +56,23 @@ public abstract class CommonControllerLogic {
             throw new InvalidRequestException("You can only request 1-100 items per page, not " + per_page);
 
         return per_page;
+    }
+
+    protected TimeResolver validateTime(String timeZone, String startDate, String endDate, Long start, Long end) {
+        TimeResolver timeResolver = TimeResolver.from(timeZone, startDate, endDate, start, end);
+        start = timeResolver.getStartTime();
+        end = timeResolver.getEndTime();
+
+        if (start < 0)
+            throw new InvalidRequestException("Negative epoch milliseconds not allowed for start: " + start);
+
+        if (end < 0)
+            throw new InvalidRequestException("Negative epoch milliseconds not allowed for end: " + end);
+
+        if (start >= end)
+            throw new InvalidRequestException("End time should be after start time: " + start + " >=" + end);
+
+        return timeResolver;
     }
 
     private static final int DEFAULT_PAGE = 0;
