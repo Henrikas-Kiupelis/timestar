@@ -45,7 +45,7 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
 
         /*
          * The table data which we get from the DB is linear, meaning that it contains no empty data; however,
-         * the lesson table can certainly have empty fields (i.e. when lessons are 0)
+         * the lesson table has 2 dimensions and can certainly have empty fields (i.e. when lessons are 0)
          *
          * To simplify upcoming queries (essentially reducing some to a grouping statement), the data which was omitted
          * is created in the form of "empty" TeacherLessonDataDTO objects
