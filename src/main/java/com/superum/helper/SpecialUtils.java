@@ -28,6 +28,10 @@ public class SpecialUtils {
         return bigDecimal1 == null ? bigDecimal2 == null : bigDecimal1.compareTo(bigDecimal2) == 0;
     }
 
+    /**
+     * @return -1 if i1 < i2; 0 if i1 == i2; 1 if i1 > i2; null is considered to be the LARGEST number in this case
+     * which will cause any collection, which is sorted using this comparator to put null to the very end
+     */
     public static int compareNullableIntegers(Integer i1, Integer i2) {
         return i1 == null
                         ? 1
