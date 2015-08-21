@@ -18,7 +18,11 @@ import static com.superum.helper.Constants.MYSQL_GROUP_CONCAT_SEPARATOR;
 
 /**
  * <pre>
- * Contains all information about a teacher in one place
+ * Data Transport Object for groups
+ *
+ * This object is used to de-serialize and serialize JSON that is coming in and out of the back end;
+ * it should contain minimal logic, if any at all; a good example would be conversion between a choice of optional
+ * JSON fields;
  *
  * When creating an instance of FullTeacher with JSON, these fields are required:
  *      FIELD_NAME   : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
@@ -321,7 +325,7 @@ public final class FullTeacherDTO extends DTOWithTimestamps {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper("Teacher")
+        return MoreObjects.toStringHelper("FullTeacher")
                 .add(ID_FIELD, id)
                 .add(PAYMENT_DAY_FIELD, paymentDay)
                 .add(HOURLY_WAGE_FIELD, hourlyWage)
