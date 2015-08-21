@@ -26,7 +26,7 @@ public interface ValidTeacherQueryService {
      * @throws TeacherNotFoundException if no teacher with this id exists
      * @throws DataAccessException if an unexpected database error occurred
      */
-    FullTeacherDTO read(int teacherId, int partitionId);
+    FullTeacherDTO readById(int teacherId, int partitionId);
 
     /**
      * <pre>

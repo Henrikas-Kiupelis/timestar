@@ -27,7 +27,7 @@ public interface ValidCustomerQueryService {
      * @throws CustomerNotFoundException if no customer with this id exists
      * @throws DataAccessException if an unexpected database error occurred
      */
-    ValidCustomerDTO read(int customerId, int partitionId);
+    ValidCustomerDTO readById(int customerId, int partitionId);
 
     /**
      * <pre>

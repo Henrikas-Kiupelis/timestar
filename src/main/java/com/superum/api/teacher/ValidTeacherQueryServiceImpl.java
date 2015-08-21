@@ -21,7 +21,7 @@ import static org.jooq.impl.DSL.groupConcat;
 public class ValidTeacherQueryServiceImpl implements ValidTeacherQueryService {
 
     @Override
-    public FullTeacherDTO read(int teacherId, int partitionId) {
+    public FullTeacherDTO readById(int teacherId, int partitionId) {
         return fullTeachers()
                 .where(defaultTeacherQueries.idAndPartition(teacherId, partitionId))
                 .groupBy(TEACHER.ID)

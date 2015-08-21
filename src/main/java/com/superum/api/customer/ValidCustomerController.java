@@ -72,7 +72,7 @@ public class ValidCustomerController extends CommonControllerLogic {
 
         LOG.info("User {} is reading customer with id {}", account, id);
 
-        ValidCustomerDTO customer = validCustomerQueryService.read(id, account.partitionId());
+        ValidCustomerDTO customer = validCustomerQueryService.readById(id, account.partitionId());
         LOG.info("Customer retrieved: {}", customer);
 
         return customer;

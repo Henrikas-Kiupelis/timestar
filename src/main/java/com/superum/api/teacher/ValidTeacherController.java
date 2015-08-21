@@ -72,7 +72,7 @@ public class ValidTeacherController extends CommonControllerLogic {
 
         LOG.info("User {} is reading teacher with id {}", account, id);
 
-        FullTeacherDTO teacher = validTeacherQueryService.read(id, account.partitionId());
+        FullTeacherDTO teacher = validTeacherQueryService.readById(id, account.partitionId());
         LOG.info("Teacher retrieved: {}", teacher);
 
         return teacher;

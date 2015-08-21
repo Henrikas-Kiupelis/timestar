@@ -19,7 +19,7 @@ import static com.superum.db.generated.timestar.Tables.*;
 public class ValidCustomerQueryServiceImpl implements ValidCustomerQueryService {
 
     @Override
-    public ValidCustomerDTO read(int customerId, int partitionId) {
+    public ValidCustomerDTO readById(int customerId, int partitionId) {
         return defaultCustomerQueries.read(customerId, partitionId, ValidCustomerDTO::valueOf)
                 .orElseThrow(() -> new CustomerNotFoundException("Couldn't find customer with id " + customerId));
     }

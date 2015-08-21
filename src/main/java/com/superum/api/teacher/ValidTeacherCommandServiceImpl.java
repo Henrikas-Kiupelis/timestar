@@ -52,7 +52,7 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
         if (teacherLanguagesCommands.create(validTeacherLanguages, account.partitionId()) == 0)
             throw new DatabaseException("Couldn't create teacher languages: " + validTeacherLanguages);
 
-        FullTeacherDTO insertedTeacher = validTeacherQueryService.read(teacherId, account.partitionId());
+        FullTeacherDTO insertedTeacher = validTeacherQueryService.readById(teacherId, account.partitionId());
 
         createAccountAsync(insertedTeacher, account);
 
@@ -89,7 +89,7 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
             throw new UnsafeTeacherDeleteException("Cannot delete teacher with id " + teacherId +
                     " while it still has entries in other tables");
 
-        FullTeacherDTO deletedTeacher = validTeacherQueryService.read(teacherId, account.partitionId());
+        FullTeacherDTO deletedTeacher = validTeacherQueryService.readById(teacherId, account.partitionId());
 
         teacherLanguagesCommands.deletePrimary(teacherId, account.partitionId());
 
