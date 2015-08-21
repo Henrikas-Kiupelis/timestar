@@ -20,31 +20,37 @@ public class GenericErrorHandler {
 
     @ExceptionHandler
     void handleDatabaseException(DatabaseException e, HttpServletResponse response) throws IOException {
+        e.printStackTrace();
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Database couldn't return value; " + e.getMessage());
     }
 
     @ExceptionHandler
     void handleDataAccessException(DataAccessException e, HttpServletResponse response) throws Exception {
+        e.printStackTrace();
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error occurred");
     }
 
     @ExceptionHandler
     void handleAssertionError(AssertionError e, HttpServletResponse response) throws Exception {
+        e.printStackTrace();
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Something has gone terribly wrong. REALLY TERRIBLY!");
     }
 
     @ExceptionHandler
     void handleIllegalStateException(IllegalStateException e, HttpServletResponse response) throws Exception {
+        e.printStackTrace();
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Something wrong happened in the server");
     }
 
     @ExceptionHandler
     void handleIllegalArgumentException(IllegalArgumentException e, HttpServletResponse response) throws Exception {
+        e.printStackTrace();
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Someone put something where they shouldn't; " + e.getMessage());
     }
 
     @ExceptionHandler
     void handleNullPointerException(NullPointerException e, HttpServletResponse response) throws Exception {
+        e.printStackTrace();
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Someone somewhere a null pointer");
     }
 
