@@ -324,7 +324,7 @@ Group API:
     OPT  per_page       int            1 <= per_page <= 100; DEF 25
     RET  List<com.superum.api.group.ValidGroupDTO>
 
-    Reads and returns a list of groups for teacher or customer
+    Reads and returns a list of groups for teacher, customer or student
 
     It will fail if:
     a) HTTP 404; no teacher or customer with provided id exists;

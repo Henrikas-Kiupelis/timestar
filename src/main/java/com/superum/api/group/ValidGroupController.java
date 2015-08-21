@@ -87,7 +87,7 @@ public class ValidGroupController extends CommonControllerLogic {
         return groups;
     }
 
-    @RequestMapping(value = "/{tableName:teacher|customer}/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{tableName:teacher|customer|student}/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidGroupDTO> readForTable(PartitionAccount account, @PathVariable String tableName, @PathVariable int id,
                                               @RequestParam(value="page", required=false) Integer page,
@@ -109,6 +109,9 @@ public class ValidGroupController extends CommonControllerLogic {
                 break;
             case customer:
                 groups = validGroupQueryService.readForCustomer(id, page, per_page, account.partitionId());
+                break;
+            case student:
+                groups = validGroupQueryService.readForStudent(id, page, per_page, account.partitionId());
                 break;
             default:
                 throw new AssertionError("The regex filter should have filtered out invalid names");

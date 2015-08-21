@@ -1,6 +1,7 @@
 package com.superum.api.group;
 
 import com.superum.api.customer.CustomerNotFoundException;
+import com.superum.api.student.StudentNotFoundException;
 import com.superum.api.teacher.TeacherNotFoundException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -73,5 +74,20 @@ public interface ValidGroupQueryService {
      * @throws DataAccessException if an unexpected database error occurred
      */
     List<ValidGroupDTO> readForCustomer(int customerId, int page, int amount, int partitionId);
+
+    /**
+     * <pre>
+     * Reads groups for a student with specified id; reading is paged;
+     *
+     * Pages start at 0, whereas the maximum amount is 100
+     *
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
+     * </pre>
+     * @return groups that were read; empty list if no such groups exist
+     *
+     * @throws StudentNotFoundException if no student with this id exists
+     * @throws DataAccessException if an unexpected database error occurred
+     */
+    List<ValidGroupDTO> readForStudent(int studentId, int page, int amount, int partitionId);
 
 }
