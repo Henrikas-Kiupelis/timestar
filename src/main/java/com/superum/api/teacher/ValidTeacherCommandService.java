@@ -2,6 +2,7 @@ package com.superum.api.teacher;
 
 import com.superum.exception.DatabaseException;
 import com.superum.helper.PartitionAccount;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,7 +23,7 @@ public interface ValidTeacherCommandService {
      * <pre>
      * Creates a new teacher
      *
-     * The id fields must not be set, but all the other mandatory fields must be set
+     * The id field must not be set, but all the other mandatory fields must be set
      *
      * After the teacher is created, an account is created for him (using the partitionId and email address),
      * and an email, containing his credentials is sent, both asynchronously to avoid delays
@@ -33,6 +34,7 @@ public interface ValidTeacherCommandService {
      *
      * @throws InvalidTeacherException if id field was set or a mandatory field was not set
      * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     FullTeacherDTO create(FullTeacherDTO fullTeacherDTO, PartitionAccount account);
 
@@ -40,14 +42,14 @@ public interface ValidTeacherCommandService {
      * <pre>
      * Updates an existing teacher
      *
-     * The id fields must be set, and at least one more field must be set
+     * The id field must be set, and at least one more field must be set
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
-     *
      * @throws InvalidTeacherException if id field was not set, or no other fields were set
      * @throws TeacherNotFoundException if a teacher with specified id does not exist
      * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     void update(FullTeacherDTO fullTeacherDTO, int partitionId);
 
@@ -59,9 +61,10 @@ public interface ValidTeacherCommandService {
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
-     *
      * @throws TeacherNotFoundException if no teacher with this id exists
+     * @throws UnsafeTeacherDeleteException if this teacher cannot be deleted due to being used in other objects
      * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     void delete(int teacherId, PartitionAccount account);
 

@@ -23,7 +23,7 @@ public interface ValidGroupQueryService {
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
-     * @return group that was read; Optional.empty() if no such group exists
+     * @return group that was read;
      *
      * @throws GroupNotFoundException if no group with this id exists
      * @throws DataAccessException if an unexpected database error occurred

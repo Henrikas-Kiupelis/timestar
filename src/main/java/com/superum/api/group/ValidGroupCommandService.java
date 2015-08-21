@@ -57,7 +57,7 @@ public interface ValidGroupCommandService {
      * </pre>
      *
      * @throws GroupNotFoundException if no group with this id exists
-     * @throws UnsafeGroupDeleteException if this group cannot be deleted due to
+     * @throws UnsafeGroupDeleteException if this group cannot be deleted due to being used in other objects
      * @throws DatabaseException if database error occurred
      * @throws DataAccessException if an unexpected database error occurred
      */

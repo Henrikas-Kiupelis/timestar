@@ -1,7 +1,7 @@
 package com.superum.api.customer;
 
 import com.superum.api.teacher.TeacherNotFoundException;
-import com.superum.exception.DatabaseException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public interface ValidCustomerQueryService {
      * @return customer that was read
      *
      * @throws CustomerNotFoundException if no customer with this id exists
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     ValidCustomerDTO read(int customerId, int partitionId);
 
@@ -47,7 +47,7 @@ public interface ValidCustomerQueryService {
      * @return customers that were read
      *
      * @throws TeacherNotFoundException if no teacher with this id exists
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     List<ValidCustomerDTO> readForTeacher(int teacherId, int page, int amount, int partitionId);
 
@@ -61,7 +61,7 @@ public interface ValidCustomerQueryService {
      * </pre>
      * @return customers that were read
      *
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     List<ValidCustomerDTO> readAll(int page, int amount, int partitionId);
 
@@ -81,7 +81,7 @@ public interface ValidCustomerQueryService {
      * @return count of customers for a teacher with specified id
      *
      * @throws TeacherNotFoundException if no teacher with this id exists
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     int countForTeacher(int teacherId, int partitionId);
 
@@ -96,7 +96,7 @@ public interface ValidCustomerQueryService {
      * </pre>
      * @return total count of customers
      *
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     int countAll(int partitionId);
 

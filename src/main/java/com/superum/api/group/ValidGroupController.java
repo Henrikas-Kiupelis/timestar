@@ -89,7 +89,7 @@ public class ValidGroupController extends CommonControllerLogic {
 
     @RequestMapping(value = "/{tableName:teacher|customer}/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public List<ValidGroupDTO> readForTeacher(PartitionAccount account, @PathVariable String tableName, @PathVariable int id,
+    public List<ValidGroupDTO> readForTable(PartitionAccount account, @PathVariable String tableName, @PathVariable int id,
                                               @RequestParam(value="page", required=false) Integer page,
                                               @RequestParam(value="per_page", required=false) Integer per_page) {
         validateId(tableName, id);

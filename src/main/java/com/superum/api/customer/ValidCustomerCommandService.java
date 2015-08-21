@@ -1,6 +1,7 @@
 package com.superum.api.customer;
 
 import com.superum.exception.DatabaseException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,7 +22,7 @@ public interface ValidCustomerCommandService {
      * <pre>
      * Creates a new customer
      *
-     * The id fields must not be set, but all the other mandatory fields must be set
+     * The id field must not be set, but all the other mandatory fields must be set
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
@@ -29,6 +30,7 @@ public interface ValidCustomerCommandService {
      *
      * @throws InvalidCustomerException if id field was set or a mandatory field was not set
      * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     ValidCustomerDTO create(ValidCustomerDTO validCustomerDTO, int partitionId);
 
@@ -36,14 +38,14 @@ public interface ValidCustomerCommandService {
      * <pre>
      * Updates an existing customer
      *
-     * The id fields must be set, and at least one more field must be set
+     * The id field must be set, and at least one more field must be set
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
-     *
      * @throws InvalidCustomerException if id field was not set, or no other fields were set
      * @throws CustomerNotFoundException if a customer with specified id does not exist
      * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     void update(ValidCustomerDTO validCustomerDTO, int partitionId);
 
@@ -53,9 +55,10 @@ public interface ValidCustomerCommandService {
      *
      * partitionId separates different app partitions (please refer to the API file or PartitionController)
      * </pre>
-     *
      * @throws CustomerNotFoundException if no customer with this id exists
+     * @throws UnsafeCustomerDeleteException if this customer cannot be deleted due to being used in other objects
      * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     void delete(int customerId, int partitionId);
 

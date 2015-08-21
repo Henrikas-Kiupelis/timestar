@@ -1,6 +1,6 @@
 package com.superum.api.teacher;
 
-import com.superum.exception.DatabaseException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public interface ValidTeacherQueryService {
      * @return teacher that was read
      *
      * @throws TeacherNotFoundException if no teacher with this id exists
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     FullTeacherDTO read(int teacherId, int partitionId);
 
@@ -38,7 +38,7 @@ public interface ValidTeacherQueryService {
      * </pre>
      * @return teachers that were read
      *
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     List<FullTeacherDTO> readAll(int page, int amount, int partitionId);
 
@@ -53,7 +53,7 @@ public interface ValidTeacherQueryService {
      * </pre>
      * @return total count of teachers
      *
-     * @throws DatabaseException if database error occurred
+     * @throws DataAccessException if an unexpected database error occurred
      */
     int countAll(int partitionId);
 
