@@ -32,13 +32,11 @@ public class CustomerServiceTests {
     public CustomerDAO customerDAO;
 
     @Before
-    public void itit() {
-
+    public void init() {
         customerQuaries = mock(CustomerQueries.class);
         studentService = mock(StudentService.class);
         customerDAO = mock(CustomerDAO.class);
         customerService = new CustomerServiceImpl(customerDAO, customerQuaries, studentService);
-
     }
 
     @Test
