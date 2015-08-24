@@ -84,6 +84,7 @@ public class TeacherServiceTests {
         Teacher teacher = makeFakeTeacher(id);
 
         when(teacherDAO.delete(id, account.partitionId())).thenReturn(teacher);
+
         // TODO too few mocks!
 
         Teacher retrievedTeacher = teacherService.deleteTeacher(id, account);
