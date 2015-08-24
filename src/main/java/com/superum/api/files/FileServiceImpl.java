@@ -1,4 +1,10 @@
-package com.superum.db.files;
+package com.superum.api.files;
+
+import com.superum.api.files.exception.FileNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -6,13 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.superum.db.files.exception.FileNotFoundException;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -68,27 +67,27 @@ public class FileServiceImpl implements FileService {
 	}
 	
 	@Override
-	public String deletePicture(String pictureName) {
+	public void deletePicture(String pictureName) {
 		LOG.debug("Trying to delete file '{}' in folder '{}'", pictureName, PICTURE_FOLDER);
 		
-		return deleteFile(PICTURE_FOLDER, pictureName);
+		deleteFile(PICTURE_FOLDER, pictureName);
 	}
 
 	@Override
-	public String deleteDocument(String documentName) {
+	public void deleteDocument(String documentName) {
 		LOG.debug("Trying to delete file '{}' in folder '{}'", documentName, DOCUMENT_FOLDER);
 		
-		return deleteFile(DOCUMENT_FOLDER, documentName);
+		deleteFile(DOCUMENT_FOLDER, documentName);
 	}
 
 	// PRIVATE
 	
 	private File makeFile(String folder, String name) {
 		Path path = Paths.get(folder, name);
-		LOG.debug("Path constructred: {}", path);
+		LOG.debug("Path constructed: {}", path);
 		
 		File file = path.toFile();
-		LOG.debug("File constructred: {}", file);
+		LOG.debug("File constructed: {}", file);
 		
 		return file;
 	}
@@ -102,9 +101,9 @@ public class FileServiceImpl implements FileService {
 		throw new FileNotFoundException("Couldn't find file: " + name);
 	}
 	
-	private String deleteFile(String folder, String name) {
-		getFile(folder, name).delete();
-		return name;
+	private void deleteFile(String folder, String name) {
+		if (!getFile(folder, name).delete())
+			throw new AssertionError("Deletion of file has failed for no explicable reason");
 	}
 	
 	private static final String PICTURE_FOLDER = "pictures";

@@ -318,7 +318,7 @@ Group API:
 
 6)
     GET  /group/{tableName}/{id}
-         tableName      String         teacher or customer
+         tableName      String         teacher, customer or student
          id             int            1 <= id <= MAX_INT
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
     OPT  per_page       int            1 <= per_page <= 100; DEF 25
@@ -409,7 +409,7 @@ Lesson API:
 
 6)
     GET  /lesson/{tableName}/{id}
-         tableName      String         teacher or customer
+         tableName      String         teacher, customer, group or student
          id             int            1 <= id <= MAX_INT
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
     OPT  per_page       int            1 <= per_page <= 100; DEF 25
@@ -513,9 +513,55 @@ Partition API:
 
 Files API:
 
+THIS API DOES NOT USE THE DEFAULT PREFIX!
+Instead, the prefix is
+
+    http://{IP}:{PORT}
+
 1)
+    POST  /{folder}/upload
+          folder         String         documents or pictures
+    REQ   name           String         basic name of the file (should not contain extension, i.e. .txt)
+    REQ   file           MultipartFile  file being uploaded
+    RET   String
 
+    Uploads a file to the folder and returns its name, adjusted like this:
 
+        name + "current epoch millis" + "file extension from MultipartFile"
+
+    If it fails, it will return an error message; it will fail if:
+    a) "documents" folder file exceeds 5MB;
+    b) "pictures" folder file exceeds 1MB;
+    c) couldn't save the file for some reason;
+
+2)
+    GET  /{folder}/{fileName}
+         folder         String         documents or pictures
+         fileName       String         name of the file
+    RET  org.springframework.core.io.FileSystemResource
+
+    Returns the file from the folder; full file name is required;
+
+    It will fail if:
+    a) HTTP 404; a file with given name does not exist in the folder;
+
+    Pictures are returned in a way they can be displayed, whereas documents use
+
+        "application/octet-stream"
+
+    which allows them to be downloaded
+
+3)
+    DELETE  /{folder}/{fileName}
+            folder         String         documents or pictures
+            fileName       String         name of the file
+    RET     void
+
+    Deletes the file from the folder; full file name is required;
+
+    It will fail if:
+    a) HTTP 404; a file with given name does not exist in the folder;
+    b) HTTP 500; file deletion failed for some reason;
 
 API V1:
 

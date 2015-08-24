@@ -1,11 +1,15 @@
-package com.superum.db.files;
+package com.superum.api.files;
+
+import com.superum.api.files.exception.FileNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
+/**
+ * Manages file methods, such as uploading, deleting, reading, etc
+ */
 @Service
 public interface FileService {
 
@@ -46,18 +50,16 @@ public interface FileService {
 	 * Deletes a file from pictures folder, by its name
 	 * 
 	 * @param pictureName - name of the file to be deleted
-	 * @return name of the deleted file
 	 * @throws FileNotFoundException if no such file was found
 	 */
-	String deletePicture(String pictureName);
+    void deletePicture(String pictureName);
 
 	/**
 	 * Deletes a file from documents folder, by its name
 	 * 
 	 * @param documentName - name of the file to be deleted
-	 * @return name of the deleted file
 	 * @throws FileNotFoundException if no such file was found
 	 */
-	String deleteDocument(String documentName);
+    void deleteDocument(String documentName);
 
 }

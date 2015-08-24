@@ -1,22 +1,17 @@
-package com.superum.db.files;
-
-import java.io.IOException;
+package com.superum.api.files;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 public class FileController {
 
-	@RequestMapping(value="/{folder}/upload", method=RequestMethod.POST)
+	@RequestMapping(value="/{folder:pictures|documents}/upload", method=RequestMethod.POST)
 	@ResponseBody 
 	public String addPicture(@PathVariable String folder, @RequestParam("name") String name, @RequestParam("file") MultipartFile file) {
 		if (file.isEmpty())
@@ -26,7 +21,7 @@ public class FileController {
              return fileService.saveFile(folder, name, file);
          } catch (IOException e) {
         	 e.printStackTrace();
-             return "Picture upload failed. Please try again!";
+             return folder + " upload failed. Please try again!";
          }
 	}
 	
@@ -44,14 +39,14 @@ public class FileController {
 	
 	@RequestMapping(value = "/pictures/delete/{pictureName:.+}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public String deletePicture(@PathVariable String pictureName) {
-	    return fileService.deletePicture(pictureName); 
+	public void deletePicture(@PathVariable String pictureName) {
+	    fileService.deletePicture(pictureName);
 	}
 	
 	@RequestMapping(value = "/documents/delete/{documentName:.+}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public String deleteDocument(@PathVariable String documentName) {
-	    return fileService.deleteDocument(documentName); 
+	public void deleteDocument(@PathVariable String documentName) {
+	    fileService.deleteDocument(documentName);
 	}
 	
 	// CONSTRUCTORS
