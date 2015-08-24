@@ -536,7 +536,35 @@ Partition API:
 Misc API:
 
 1)
+    GET  misc/time/zones
+    RET  Set<String>
 
+    Returns the set of valid timezones, used by JodaTime;
+
+    It shouldn't fail under normal circumstances;
+
+2)
+    GET  misc/time
+    RET  long
+
+    Returns current epoch milliseconds
+
+    It shouldn't fail under normal circumstances;
+
+3)
+    GET  misc/time/convert
+    OPT  time_zone      String          any time zone; DEF UTC
+    OPT  date           String          any Date; DEF today evaluated at time_zone
+    OPT  hour           int             0 <= hour; DEF 0
+    OPT  minute         int             0 <= minute; DEF 0
+    OPT  second         int             0 <= second; DEF 0
+    OPT  millisecond    int             0 <= millisecond; DEF 0
+    RET  long
+
+    Returns epoch milliseconds evaluated for given parameters, using JodaTime;
+
+    It will fail if:
+    a) HTTP 500; hour, minute, second and millisecond add up to more than a day;
 
 Files API:
 

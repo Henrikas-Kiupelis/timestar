@@ -32,7 +32,7 @@ public class MiscController extends CommonControllerLogic {
 
     @RequestMapping(value = "/time/convert", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public long convert(@RequestParam(value = "timeZone", required = false) String timeZone,
+    public long convert(@RequestParam(value = "time_zone", required = false) String time_zone,
                         @RequestParam(value = "date", required = false) String date,
                         @RequestParam(value = "hour", required = false) Integer hour,
                         @RequestParam(value = "minute", required = false) Integer minute,
@@ -42,10 +42,10 @@ public class MiscController extends CommonControllerLogic {
         if (minute == null) minute = 0;
         if (second == null) second = 0;
         if (millisecond == null) millisecond = 0;
-        DateTimeZone dateTimeZone = timeZone == null ? JodaTimeZoneHandler.defaultTimeZone() : DateTimeZone.forID(timeZone);
+        DateTimeZone dateTimeZone = time_zone == null ? JodaTimeZoneHandler.defaultTimeZone() : DateTimeZone.forID(time_zone);
         LocalDate localDate = date == null ? LocalDate.now(dateTimeZone) : LocalDate.parse(date);
 
-        return JodaTimeZoneHandler.forTimeZoneId(timeZone).from(localDate, hour, minute, second, millisecond).toEpochMillis();
+        return JodaTimeZoneHandler.forTimeZoneId(time_zone).from(localDate, hour, minute, second, millisecond).toEpochMillis();
     }
 
 }
