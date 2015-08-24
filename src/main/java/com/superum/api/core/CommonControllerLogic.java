@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public abstract class CommonControllerLogic {
 
-    protected void validateId(String source, int id) {
+    protected void validateId(String source, long id) {
         if (id <= 0)
             throw new InvalidRequestException(source + " id must be positive, not: " + id);
     }
