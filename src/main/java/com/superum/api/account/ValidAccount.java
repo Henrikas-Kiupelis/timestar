@@ -20,7 +20,6 @@ import static com.superum.helper.validation.Validator.validate;
  *
  * When creating an instance of ValidAccount with JSON, these fields are required:
  *      FIELD_NAME  : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
- *
  *      username    : username used by this account                             any String, max 60 chars
  *      password    : password used by this account                             any String/char array
  *
@@ -92,33 +91,10 @@ public class ValidAccount {
         return new Account(id, username, accountType == null ? null : accountType.name(), password, createdAt, updatedAt);
     }
 
-    public static int usernameSizeLimit() {
-        return USERNAME_SIZE_LIMIT;
-    }
-
-    // OBJECT OVERRIDES
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper("ValidAccount")
-                .add("Account id", id)
-                .add("Username", username)
-                .add("Account Type", accountType)
-                .addValue("Password: [PROTECTED]")
-                .add("Created at", createdAt)
-                .add("Updated at", updatedAt)
-                .toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return this == o || o instanceof ValidAccount && EQUALS.equals(this, (ValidAccount) o)
-                && Arrays.equals(this.password, ((ValidAccount) o).password);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username, accountType, password);
+    public static void validateUsername(String username) {
+        validate(username).not().Null().not().blank().fits(USERNAME_SIZE_LIMIT)
+                .ifInvalid(() -> new InvalidAccountException("Account username must not be null, blank, or exceed " +
+                        USERNAME_SIZE_LIMIT + " chars: " + username));
     }
 
     // CONSTRUCTORS
@@ -126,10 +102,10 @@ public class ValidAccount {
     @JsonCreator
     public static ValidAccount jsonInstance(@JsonProperty("username") String username,
                                             @JsonProperty("password") char[] password) {
-        validate(username).not().Null().not().blank().fits(USERNAME_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidAccountException("Account username must not be null, blank, or exceed " +
-                        USERNAME_SIZE_LIMIT + " chars: " + username));
-        validate(password).not().Null().not().blank().ifInvalid(() -> new InvalidAccountException("Account must have a password!"));
+        validateUsername(username);
+
+        validate(password).not().Null().not().blank()
+                .ifInvalid(() -> new InvalidAccountException("Account must have a password!"));
 
         return new ValidAccount(null, username, null, password, null, null);
     }
@@ -167,6 +143,31 @@ public class ValidAccount {
     private final Instant updatedAt;
 
     private static final int USERNAME_SIZE_LIMIT = 60;
+
+    // OBJECT OVERRIDES
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper("ValidAccount")
+                .add("Account id", id)
+                .add("Username", username)
+                .add("Account Type", accountType)
+                .addValue("Password: [PROTECTED]")
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof ValidAccount && EQUALS.equals(this, (ValidAccount) o)
+                && Arrays.equals(this.password, ((ValidAccount) o).password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, accountType, password);
+    }
 
     private static final Equals<ValidAccount> EQUALS = new Equals<>(Arrays.asList(ValidAccount::getId,
             ValidAccount::getUsername, ValidAccount::getAccountType));

@@ -7,9 +7,7 @@ import com.superum.helper.PartitionAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import static com.superum.api.account.ValidAccount.usernameSizeLimit;
 import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
-import static com.superum.helper.validation.Validator.validate;
 
 /**
  * <pre>
@@ -25,7 +23,7 @@ import static com.superum.helper.validation.Validator.validate;
 @RequestMapping(value = "/timestar/api/v2/account")
 public class DelegatingAccountController {
 
-    @RequestMapping(value = "/admin/add", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = RequestMethod.PUT, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidAccount createNewAdmin(PartitionAccount partitionAccount, @RequestBody ValidAccount validAccount) {
         if (validAccount == null)
@@ -35,7 +33,7 @@ public class DelegatingAccountController {
         return ValidAccount.valueOf(account);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidAccount updateAccount(PartitionAccount partitionAccount, @RequestBody ValidAccount validAccount) {
         if (validAccount == null)
@@ -45,12 +43,10 @@ public class DelegatingAccountController {
         return ValidAccount.valueOf(account);
     }
 
-    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidAccount retrieveInfo(PartitionAccount partitionAccount, @RequestParam(value="username") String username) {
-        validate(username).not().Null().not().blank().fits(usernameSizeLimit())
-                .ifInvalid(() -> new InvalidRequestException("Account username must not be null, blank or exceed "
-                        + usernameSizeLimit() + " chars: " + username));
+        ValidAccount.validateUsername(username);
 
         Account account = accountController.retrieveInfo(partitionAccount, username);
         return ValidAccount.valueOf(account);
