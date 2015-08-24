@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class TotalLessonDataDTO {
+public final class TotalLessonDataDTO {
 
     @JsonProperty("count")
     public int getCount() {

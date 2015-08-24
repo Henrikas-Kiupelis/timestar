@@ -92,7 +92,7 @@ import static com.superum.db.generated.timestar.Tables.LESSON;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class ValidLessonDTO extends DTOWithTimestamps {
+public final class ValidLessonDTO extends DTOWithTimestamps {
 
     @JsonProperty(ID_FIELD)
     public Long getId() {

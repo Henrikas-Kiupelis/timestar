@@ -18,7 +18,7 @@ import static com.superum.helper.validation.Validator.validate;
  * <pre>
  * Describes an account, used to manage authentication and authorization internally
  *
- * When creating an instance of ValidAccount with JSON, these fields are required:
+ * When creating an instance of ValidAccountDTO with JSON, these fields are required:
  *      FIELD_NAME  : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
  *      username    : username used by this account                             any String, max 60 chars
  *      password    : password used by this account                             any String/char array
@@ -35,7 +35,7 @@ import static com.superum.helper.validation.Validator.validate;
  *      "password": "nimda"
  * }
  *
- * When returning an instance of ValidAccount with JSON, these additional fields will be present:
+ * When returning an instance of ValidAccountDTO with JSON, these additional fields will be present:
  *      FIELD_NAME  : FIELD_DESCRIPTION
  *      id          : id of this account, if one is associated;
  *                    this only applies to teacher accounts; for admins it is null
@@ -57,7 +57,7 @@ import static com.superum.helper.validation.Validator.validate;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class ValidAccount {
+public final class ValidAccountDTO {
 
     @JsonProperty("id")
     public Integer getId() {
@@ -100,17 +100,17 @@ public class ValidAccount {
     // CONSTRUCTORS
 
     @JsonCreator
-    public static ValidAccount jsonInstance(@JsonProperty("username") String username,
+    public static ValidAccountDTO jsonInstance(@JsonProperty("username") String username,
                                             @JsonProperty("password") char[] password) {
         validateUsername(username);
 
         validate(password).not().Null().not().blank()
                 .ifInvalid(() -> new InvalidAccountException("Account must have a password!"));
 
-        return new ValidAccount(null, username, null, password, null, null);
+        return new ValidAccountDTO(null, username, null, password, null, null);
     }
 
-    public ValidAccount(Integer id, String username, String accountType, char[] password, Instant createdAt, Instant updatedAt) {
+    public ValidAccountDTO(Integer id, String username, String accountType, char[] password, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.username = username;
         this.accountType = accountType == null ? null : AccountType.valueOf(accountType);
@@ -119,8 +119,8 @@ public class ValidAccount {
         this.updatedAt = updatedAt;
     }
 
-    public static ValidAccount valueOf(Account account) {
-        return new ValidAccount(account.getId(), account.getUsername(), account.getAccountType(),
+    public static ValidAccountDTO valueOf(Account account) {
+        return new ValidAccountDTO(account.getId(), account.getUsername(), account.getAccountType(),
                 account.getPasswordArray(), account.getCreatedAt(), account.getUpdatedAt());
     }
 
@@ -148,7 +148,7 @@ public class ValidAccount {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper("ValidAccount")
+        return MoreObjects.toStringHelper("ValidAccountDTO")
                 .add("Account id", id)
                 .add("Username", username)
                 .add("Account Type", accountType)
@@ -160,8 +160,8 @@ public class ValidAccount {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ValidAccount && EQUALS.equals(this, (ValidAccount) o)
-                && Arrays.equals(this.password, ((ValidAccount) o).password);
+        return this == o || o instanceof ValidAccountDTO && EQUALS.equals(this, (ValidAccountDTO) o)
+                && Arrays.equals(this.password, ((ValidAccountDTO) o).password);
     }
 
     @Override
@@ -169,8 +169,8 @@ public class ValidAccount {
         return Objects.hash(id, username, accountType, password);
     }
 
-    private static final Equals<ValidAccount> EQUALS = new Equals<>(Arrays.asList(ValidAccount::getId,
-            ValidAccount::getUsername, ValidAccount::getAccountType));
+    private static final Equals<ValidAccountDTO> EQUALS = new Equals<>(Arrays.asList(ValidAccountDTO::getId,
+            ValidAccountDTO::getUsername, ValidAccountDTO::getAccountType));
 
     // GENERATED
 
@@ -196,7 +196,7 @@ public class ValidAccount {
         BuildStep createdAt(long createdAt);
         BuildStep updatedAt(Instant updatedAt);
         BuildStep updatedAt(long updatedAt);
-        ValidAccount build();
+        ValidAccountDTO build();
     }
 
     public static class Builder implements IdStep, UsernameStep, AccountTypeStep, PasswordStep, BuildStep {
@@ -265,8 +265,8 @@ public class ValidAccount {
         }
 
         @Override
-        public ValidAccount build() {
-            return new ValidAccount(id, username, accountType, password, createdAt, updatedAt);
+        public ValidAccountDTO build() {
+            return new ValidAccountDTO(id, username, accountType, password, createdAt, updatedAt);
         }
     }
 

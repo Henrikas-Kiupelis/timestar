@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class PaymentDataDTO {
+public final class PaymentDataDTO {
 
     @JsonProperty("paymentDate")
     public String getPaymentDateString() {

@@ -48,7 +48,7 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class CustomerLessonDataDTO {
+public final class CustomerLessonDataDTO {
 
     @JsonProperty("customer")
     public ValidCustomerDTO getCustomer() {

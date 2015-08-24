@@ -49,7 +49,7 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class OptimizedLessonTableDTO {
+public final class OptimizedLessonTableDTO {
 
     @JsonProperty("teachers")
     public List<FullTeacherDTO> getTeachers() {

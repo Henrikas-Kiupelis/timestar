@@ -35,7 +35,7 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class TeacherLessonDataDTO {
+public final class TeacherLessonDataDTO {
 
     @JsonProperty("lessonIds")
     public List<Long> getLessonIds() {

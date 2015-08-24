@@ -25,31 +25,31 @@ public class DelegatingAccountController {
 
     @RequestMapping(method = RequestMethod.PUT, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public ValidAccount createNewAdmin(PartitionAccount partitionAccount, @RequestBody ValidAccount validAccount) {
-        if (validAccount == null)
+    public ValidAccountDTO createNewAdmin(PartitionAccount partitionAccount, @RequestBody ValidAccountDTO validAccountDTO) {
+        if (validAccountDTO == null)
             throw new InvalidRequestException("Account cannot be null");
 
-        Account account = accountController.createNewAdmin(partitionAccount, validAccount.toAccount());
-        return ValidAccount.valueOf(account);
+        Account account = accountController.createNewAdmin(partitionAccount, validAccountDTO.toAccount());
+        return ValidAccountDTO.valueOf(account);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public ValidAccount updateAccount(PartitionAccount partitionAccount, @RequestBody ValidAccount validAccount) {
-        if (validAccount == null)
+    public ValidAccountDTO updateAccount(PartitionAccount partitionAccount, @RequestBody ValidAccountDTO validAccountDTO) {
+        if (validAccountDTO == null)
             throw new InvalidRequestException("Account cannot be null");
 
-        Account account = accountController.updateAccount(partitionAccount, validAccount.toAccount());
-        return ValidAccount.valueOf(account);
+        Account account = accountController.updateAccount(partitionAccount, validAccountDTO.toAccount());
+        return ValidAccountDTO.valueOf(account);
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public ValidAccount retrieveInfo(PartitionAccount partitionAccount, @RequestParam(value="username") String username) {
-        ValidAccount.validateUsername(username);
+    public ValidAccountDTO retrieveInfo(PartitionAccount partitionAccount, @RequestParam(value="username") String username) {
+        ValidAccountDTO.validateUsername(username);
 
         Account account = accountController.retrieveInfo(partitionAccount, username);
-        return ValidAccount.valueOf(account);
+        return ValidAccountDTO.valueOf(account);
     }
 
     // CONSTRUCTORS

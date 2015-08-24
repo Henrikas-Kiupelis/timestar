@@ -337,6 +337,7 @@ Student API:
 
 1)
 
+
 Grouping API:
 
 1)
@@ -482,8 +483,8 @@ Account API:
 
 1)
     PUT   /account
-    BODY  com.superum.api.account.ValidAccount
-    RET   com.superum.api.account.ValidAccount
+    BODY  com.superum.api.account.ValidAccountDTO
+    RET   com.superum.api.account.ValidAccountDTO
 
     Creates a new admin account in the same partition as the request;
 
@@ -495,8 +496,8 @@ Account API:
 
 2)
     POST  /account
-    BODY  com.superum.api.account.ValidAccount
-    RET   com.superum.api.account.ValidAccount
+    BODY  com.superum.api.account.ValidAccountDTO
+    RET   com.superum.api.account.ValidAccountDTO
 
     Updates an existing account; only password field is updated;
     you can only update the account using the credentials of the account being updated;
@@ -512,7 +513,7 @@ Account API:
 3)
     GET  /account
     REQ  username       String         any, username.length() <= 60
-    RET  com.superum.api.account.ValidAccount
+    RET  com.superum.api.account.ValidAccountDTO
 
     Reads and returns an existing account;
 

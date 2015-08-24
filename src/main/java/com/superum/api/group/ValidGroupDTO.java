@@ -69,7 +69,7 @@ import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class ValidGroupDTO extends DTOWithTimestamps {
+public final class ValidGroupDTO extends DTOWithTimestamps {
 
     @JsonProperty(ID_FIELD)
     public Integer getId() {
