@@ -1,12 +1,12 @@
 package com.superum.helper.validation;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * <pre>
- * Validator implementation for Lists
+ * Validator implementation for collections
  *
  * Reasons for using this over @Valid:
  * 1) The validations seem all too basic, requiring either 3rd party annotations or custom made annotations for
@@ -36,25 +36,25 @@ import java.util.function.Function;
  * </pre>
  * @param <T> type of object inside the List
  */
-public final class ListValidator<T> extends Validator<List<T>, ListValidator<T>> {
+public final class CollectionValidator<T> extends Validator<Collection<T>, CollectionValidator<T>> {
 
     /**
-     * Adds a predicate which tests if the list being validated is empty
+     * Adds a predicate which tests if the collection being validated is empty
      */
-    public ListValidator<T> empty() {
-        registerCondition(List::isEmpty);
+    public CollectionValidator<T> empty() {
+        registerCondition(Collection::isEmpty);
         return this;
     }
 
     /**
-     * Adds a predicate which tests if every element in the list is valid
+     * Adds a predicate which tests if every element in the collection is valid
      * @param validatorCreator function which creates a Validator for type T (usually Validator::validate);
      * @param invalidAction validation statement, for example:
-     *      stringValidator -> stringValidator.notNull().notEmpty().ifInvalid(...);
+     *      string -> string.notNull().notEmpty().ifInvalid(...);
      */
-    public <V extends Validator<T, V>> ListValidator<T> forEach(Function<T, V> validatorCreator, Consumer<V> invalidAction) {
-        registerCondition(list -> {
-            list.stream()
+    public <V extends Validator<T, V>> CollectionValidator<T> forEach(Function<T, V> validatorCreator, Consumer<V> invalidAction) {
+        registerCondition(collection -> {
+            collection.stream()
                     .map(validatorCreator::apply)
                     .forEach(invalidAction);
             return true;
@@ -64,20 +64,20 @@ public final class ListValidator<T> extends Validator<List<T>, ListValidator<T>>
 
     // CONSTRUCTORS
 
-    protected ListValidator(List<T> object) {
+    protected CollectionValidator(Collection<T> object) {
         super(object);
     }
 
     // PROTECTED
 
     @Override
-    protected ListValidator<T> thisValidator() {
+    protected CollectionValidator<T> thisValidator() {
         return this;
     }
 
     @Override
-    protected ListValidator<T> newValidator() {
-        return new ListValidator<>(object);
+    protected CollectionValidator<T> newValidator() {
+        return new CollectionValidator<>(object);
     }
 
 }

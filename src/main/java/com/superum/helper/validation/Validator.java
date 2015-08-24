@@ -2,6 +2,7 @@ package com.superum.helper.validation;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -245,8 +246,8 @@ public abstract class Validator<T, V extends Validator<T, V>> {
         return new BigDecimalValidator(bigDecimal);
     }
 
-    public static <T> ListValidator<T> validate(List<T> list) {
-        return new ListValidator<>(list);
+    public static <T> CollectionValidator<T> validate(Collection<T> collection) {
+        return new CollectionValidator<>(collection);
     }
 
     protected Validator(T object) {
