@@ -3,10 +3,8 @@ package com.superum.api.customer;
 import com.superum.exception.DatabaseException;
 
 /**
- * <pre>
- * This exception is thrown when the a request to delete a Customer fails because this Customer still has
+ * This exception is thrown when the a request to delete a customer fails because this customer still has
  * references in other database objects
- * </pre>
  */
 public class UnsafeCustomerDeleteException extends DatabaseException {
 

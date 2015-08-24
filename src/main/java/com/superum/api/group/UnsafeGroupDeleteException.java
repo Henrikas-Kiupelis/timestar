@@ -3,10 +3,8 @@ package com.superum.api.group;
 import com.superum.exception.DatabaseException;
 
 /**
- * <pre>
  * This exception is thrown when the a request to delete a group fails because this group still has
  * references in other database objects
- * </pre>
  */
 public class UnsafeGroupDeleteException extends DatabaseException {
 

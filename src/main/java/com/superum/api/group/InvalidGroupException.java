@@ -3,10 +3,8 @@ package com.superum.api.group;
 import com.superum.api.exception.InvalidRequestException;
 
 /**
- * <pre>
- * This exception is thrown when an invalid request is made, specifically when the format of Group
+ * This exception is thrown when an invalid request is made, specifically when the format of group
  * does not match any of the use cases
- * </pre>
  */
 public class InvalidGroupException extends InvalidRequestException {
 

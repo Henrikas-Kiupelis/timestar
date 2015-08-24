@@ -3,10 +3,8 @@ package com.superum.api.teacher;
 import com.superum.exception.DatabaseException;
 
 /**
- * <pre>
- * This exception is thrown when the a request to delete a Teacher fails because this Teacher still has
+ * This exception is thrown when the a request to delete a teacher fails because this teacher still has
  * references in other database objects
- * </pre>
  */
 public class UnsafeTeacherDeleteException extends DatabaseException {
 

@@ -3,10 +3,8 @@ package com.superum.api.group;
 import com.superum.exception.DatabaseException;
 
 /**
- * <pre>
- * This exception is thrown when the a request for a Group fails because the id used in the request
- * does not refer to any Groups
- * </pre>
+ * This exception is thrown when the a request for a group fails because the id used in the request
+ * does not refer to any groups
  */
 public class GroupNotFoundException extends DatabaseException {
 
