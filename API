@@ -333,6 +333,15 @@ Group API:
     the page parameter must be incremented, or per_page value raised;
     If a group is deleted, the results of this query will no longer be consistent with the ones before the deletion;
 
+Student API:
+
+1)
+
+Grouping API:
+
+1)
+
+
 Lesson API:
 
 1)
@@ -432,6 +441,11 @@ Lesson API:
     the page parameter must be incremented, or per_page value raised;
     If a lesson is deleted, the results of this query will no longer be consistent with the ones before the deletion;
 
+Attendance API:
+
+1)
+
+
 Lesson table API:
 
 1)
@@ -467,7 +481,7 @@ Lesson table API:
 Account API:
 
 1)
-    POST  /admin/add
+    PUT   /account
     BODY  com.superum.api.account.ValidAccount
     RET   com.superum.api.account.ValidAccount
 
@@ -480,7 +494,7 @@ Account API:
     Returned ValidAccount will not contain additional information about the account, or the password
 
 2)
-    POST  /update
+    POST  /account
     BODY  com.superum.api.account.ValidAccount
     RET   com.superum.api.account.ValidAccount
 
@@ -496,7 +510,7 @@ Account API:
     Returned ValidAccount contains all the fields as they were before updating, except password;
 
 3)
-    GET  /info
+    GET  /account
     REQ  username       String         any, username.length() <= 60
     RET  com.superum.api.account.ValidAccount
 
@@ -510,6 +524,19 @@ Account API:
 Partition API:
 
 1)
+    PUT   /partition
+    BODY  com.superum.api.partition.ValidPartition
+    RET   com.superum.api.partition.ValidPartition
+
+    Creates a new partition; it is also returned;
+
+    It will fail if:
+    a) HTTP 500; the id or name of partition is already taken;
+
+Misc API:
+
+1)
+
 
 Files API:
 
