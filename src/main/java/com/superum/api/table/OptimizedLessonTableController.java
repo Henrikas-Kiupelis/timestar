@@ -5,6 +5,8 @@ import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.table.dto.OptimizedLessonTableDTO;
 import com.superum.helper.PartitionAccount;
 import com.superum.helper.time.TimeResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -46,10 +48,18 @@ public class OptimizedLessonTableController extends CommonControllerLogic {
                                       @RequestParam(value = "end", required = false) Long end) {
         page = validatePage(page);
         per_page = validatePerPage(per_page);
+        TimeResolver timeResolver = validateTime(time_zone, start_date, end_date, start, end);
+        start = timeResolver.getStartTime();
+        end = timeResolver.getEndTime();
+        LOG.info("User {} is reading lesson table, from {} to {}, page {}, with {} entries per page",
+                account, start, end, page, per_page);
 
-        TimeResolver timeResolver = TimeResolver.from(time_zone, start_date, end_date, start, end);
-        return optimizedLessonTableService.getLessonTable(page, per_page,
-                timeResolver.getStartTime(), timeResolver.getEndTime(), account.partitionId());
+        OptimizedLessonTableDTO lessonTable = optimizedLessonTableService.getLessonTable(page, per_page,
+                start, end, account.partitionId());
+        LOG.info("Table successfully read; please enable DEBUG logging to see its contents");
+        LOG.debug("Table contents: {}", lessonTable);
+
+        return lessonTable;
     }
 
     // CONSTRUCTORS
@@ -78,5 +88,7 @@ public class OptimizedLessonTableController extends CommonControllerLogic {
 
     private static final int DEFAULT_HOME_PAGE = 1;
     private static final Integer DEFAULT_PER_PAGE = 6;
+
+    private static final Logger LOG = LoggerFactory.getLogger(OptimizedLessonTableController.class);
 
 }
