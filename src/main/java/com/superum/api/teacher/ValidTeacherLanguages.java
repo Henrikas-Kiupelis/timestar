@@ -1,10 +1,12 @@
 package com.superum.api.teacher;
 
+import com.google.common.base.MoreObjects;
 import com.superum.helper.field.ManyDefined;
 import com.superum.helper.validation.Validator;
 import org.jooq.lambda.Seq;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.superum.helper.validation.Validator.validate;
 
@@ -66,5 +68,29 @@ public final class ValidTeacherLanguages implements ManyDefined<Integer, String>
     private final List<String> languages;
 
     private static final int LANGUAGE_CODE_SIZE_LIMIT = 3;
+
+    // OBJECT OVERRIDES
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper("ValidTeacherLanguages")
+                .add("id", id)
+                .add("languages", languages)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ValidTeacherLanguages)) return false;
+        ValidTeacherLanguages that = (ValidTeacherLanguages) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(languages, that.languages);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, languages);
+    }
 
 }
