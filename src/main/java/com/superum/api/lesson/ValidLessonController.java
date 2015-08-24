@@ -85,9 +85,9 @@ public class ValidLessonController extends CommonControllerLogic {
     public List<ValidLessonDTO> readAll(PartitionAccount account,
                                         @RequestParam(value="page", required=false) Integer page,
                                         @RequestParam(value="per_page", required=false) Integer per_page,
-                                        @RequestParam(value="timeZone", required=false) String timeZone,
-                                        @RequestParam(value="startDate", required=false) String startDate,
-                                        @RequestParam(value="endDate", required=false) String endDate,
+                                        @RequestParam(value="time_zone", required=false) String timeZone,
+                                        @RequestParam(value="start_date", required=false) String startDate,
+                                        @RequestParam(value="end_date", required=false) String endDate,
                                         @RequestParam(value="start", required=false) Long start,
                                         @RequestParam(value="end", required=false) Long end) {
         page = validatePage(page);
@@ -109,15 +109,15 @@ public class ValidLessonController extends CommonControllerLogic {
     public List<ValidLessonDTO> readForTable(PartitionAccount account, @PathVariable String tableName, @PathVariable int id,
                                              @RequestParam(value="page", required=false) Integer page,
                                              @RequestParam(value="per_page", required=false) Integer per_page,
-                                             @RequestParam(value="timeZone", required=false) String timeZone,
-                                             @RequestParam(value="startDate", required=false) String startDate,
-                                             @RequestParam(value="endDate", required=false) String endDate,
+                                             @RequestParam(value="time_zone", required=false) String time_zone,
+                                             @RequestParam(value="start_date", required=false) String start_date,
+                                             @RequestParam(value="end_date", required=false) String end_date,
                                              @RequestParam(value="start", required=false) Long start,
                                              @RequestParam(value="end", required=false) Long end) {
         validateId(tableName, id);
         page = validatePage(page);
         per_page = validatePerPage(per_page);
-        TimeResolver timeResolver = validateTime(timeZone, startDate, endDate, start, end);
+        TimeResolver timeResolver = validateTime(time_zone, start_date, end_date, start, end);
         start = timeResolver.getStartTime();
         end = timeResolver.getEndTime();
         LOG.info("User {} is reading lessons for {} with id {}, from {} to {}, page {}, with {} entries per page",
