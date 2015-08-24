@@ -14,5 +14,5 @@ if at all possible. I encountered a similar bug where a static initializer would
 when working on a different project.
 
 Additional files:
-Stack trace 1 - the exception thrown when running tests
-Stack trace 2 - the exception thrown when running the app normally
+Stack trace 4 - the exception thrown when running tests
+Stack trace 5 - the exception thrown when running the app normally

@@ -1,0 +1,46 @@
+Detailed bug description:
+When trying to use the API of back end server, errors would be thrown which would result in inability to use the server.
+Looking at the stack trace, it was revealed that the connection pool was getting stale and throwing an exception.
+
+Solutions:
+1) The following solution seems to work when NOT using Spring: c3p0.properties file on classpath. This file should
+contain relevant customization options, i.e.:
+preferredTestQuery = SELECT 1
+testConnectionOnCheckout = false
+testConnectionOnCheckin = true
+idleConnectionTestPeriod = 300
+They may need to be changed if your database is not MySQL.
+2) On Spring, however, the problem persist anyway; it may have had to do with the initialization of objects with @Bean,
+which tends to be completely non-deterministic (at least without knowing the inner workings of Spring). I've changed
+the bean itself to work with the configuration programmatically:
+
+    @Bean(destroyMethod = "close")
+    public ComboPooledDataSource comboPooledDataSource() {
+    	ComboPooledDataSource dataSource = new ComboPooledDataSource();
+
+        try {
+			dataSource.setDriverClass(env.getRequiredProperty("db.driver"));
+		} catch (PropertyVetoException e) {
+			throw new RuntimeException("Failed to load database driver.", e);
+		}
+        dataSource.setJdbcUrl(env.getRequiredProperty("db.url"));
+        dataSource.setUser(env.getRequiredProperty("db.username"));
+        dataSource.setPassword(env.getRequiredProperty("db.password"));
+        // CHANGES START
+            dataSource.setMaxIdleTime(14400);
+            dataSource.setMaxConnectionAge(25200);
+            dataSource.setPreferredTestQuery("SELECT 1");
+            dataSource.setTestConnectionOnCheckin(true);
+            dataSource.setTestConnectionOnCheckout(false);
+            dataSource.setIdleConnectionTestPeriod(300);
+        // CHANGES END
+        return dataSource;
+    }
+
+On top of the simple options, I make connections expire after a certain amount of time.
+
+Additional comments:
+MySQL connection  timeout is set to 8 hours. Base your options around that (or a similar setting in a different DB)
+
+Additional files:
+Stack trace 6 - example stack trace of exception thrown

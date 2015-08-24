@@ -1,0 +1,14 @@
+Detailed bug description:
+I tried to autowire DSLContext (inside DefaultSqlQuery) and use it multiple times to make DefaultSqlQueries inner classes.
+This resulted in DSLContext being null in one (possibly two?) of DefaultQueries after the first one. Making the inner
+classes static had no effect.
+
+Solutions:
+1) I've managed to re-purpose the DefaultQueries classes in a way that allows autowiring them directly; before that, I
+simply did not autowire DefaultSqlQueries anymore and just used DSLContext which was autowired into the service/DAO instead.
+
+Additional comments:
+N/A
+
+Additional files:
+N/A
