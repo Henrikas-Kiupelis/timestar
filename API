@@ -186,7 +186,7 @@ Teacher API:
     It will fail if:
     a) HTTP 400; the id field was set;
     b) HTTP 400; a mandatory field was not set;
-    c) HTTP 500; the email is already taken in the partition of the request;
+    c) HTTP 409; the email is already taken in the partition of the request;
 
     Returned FullTeacher will have its id field set;
 
@@ -211,7 +211,7 @@ Teacher API:
     a) HTTP 400; the id field was not set;
     b) HTTP 400; only the id field was set and no other fields were;
     c) HTTP 404; no teacher with provided id exists;
-    d) HTTP 500; the email is already taken in the partition of the request;
+    d) HTTP 409; the email is already taken in the partition of the request;
 
     Returned FullTeacher contains all the fields as they were before updating;
 
@@ -647,4 +647,3 @@ optional: ?per_page={int}&start={Date}&end={Date}
 /lesson/table/0?per_page=100
 /lesson/table/1?start=2015-06-26
 /lesson/table/100?start=2015-06-26&end=2015-07-26
-

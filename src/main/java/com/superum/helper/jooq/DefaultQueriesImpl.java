@@ -25,11 +25,11 @@ public class DefaultQueriesImpl<R extends Record, ID> extends DefaultSqlImpl<R, 
     }
 
     @Override
-    public boolean exists(ID id, int partitionId) {
-        if (id == null)
-            throw new IllegalArgumentException("Primary key value cannot be null");
+    public boolean existsForCondition(Condition condition) {
+        if (condition == null)
+            throw new IllegalArgumentException("Condition cannot be null");
 
-        return sql.fetchExists(sql.selectOne().from(table).where(idAndPartition(id, partitionId)));
+        return sql.fetchExists(sql.selectOne().from(table).where(condition).limit(1));
     }
 
     @Override

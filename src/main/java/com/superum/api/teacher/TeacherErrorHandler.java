@@ -28,4 +28,9 @@ public class TeacherErrorHandler {
         response.sendError(HttpStatus.BAD_REQUEST.value(), "Cannot delete the specified Teacher because it is still being used; " + e.getMessage());
     }
 
+    @ExceptionHandler
+    void handleDuplicateTeacherException(DuplicateTeacherException e, HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.CONFLICT.value(), "A teacher with specified email already exists; " + e.getMessage());
+    }
+
 }

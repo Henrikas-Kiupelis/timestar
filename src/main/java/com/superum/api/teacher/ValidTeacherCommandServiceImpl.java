@@ -43,6 +43,10 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
                     + validTeacher.missingMandatoryFieldNames().join(", ")
                     + (validTeacherLanguages.hasLanguages() ? "" : ", languages"));
 
+        if (defaultTeacherQueries.existsForKey(account.partitionId(), TEACHER.EMAIL, fullTeacherDTO.getEmail()))
+            throw new DuplicateTeacherException("Cannot create teacher using this email, because it is duplicate: "
+                    + fullTeacherDTO.getEmail());
+
         Integer teacherId = defaultTeacherCommands.create(validTeacher, account.partitionId(),
                 record -> record.getValue(TEACHER.ID))
                 .orElseThrow(() -> new DatabaseException("Couldn't return teacher after inserting it: " + validTeacher));
@@ -72,6 +76,10 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
 
         if (!defaultTeacherQueries.exists(validTeacher.getId(), partitionId))
             throw new TeacherNotFoundException("Couldn't find teacher with id " + validTeacher.getId());
+
+        if (defaultTeacherQueries.existsForKey(partitionId, TEACHER.EMAIL, fullTeacherDTO.getEmail()))
+            throw new DuplicateTeacherException("Cannot update teacher using this email, because it is duplicate: "
+                    + fullTeacherDTO.getEmail());
 
         if (validTeacher.updateFields().findAny().isPresent() && defaultTeacherCommands.update(validTeacher, partitionId) == 0)
             throw new DatabaseException("Couldn't update teacher: " + validTeacher);

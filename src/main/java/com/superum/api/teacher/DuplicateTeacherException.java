@@ -1,15 +1,9 @@
 package com.superum.api.teacher;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 /**
- * <pre>
- * This exception is thrown when an invalid Teacher creation request is made, specifically when the email of the given
+ * This exception is thrown when an invalid teacher creation request is made, specifically when the email of the given
  * teacher is already taken
- * </pre>
  */
-@ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="A teacher with specified email already exists")
 public class DuplicateTeacherException extends InvalidTeacherException {
 
 	public DuplicateTeacherException() {
