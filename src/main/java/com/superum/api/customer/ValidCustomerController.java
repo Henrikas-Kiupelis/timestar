@@ -28,7 +28,7 @@ public class ValidCustomerController extends CommonControllerLogic {
 
 	@RequestMapping(method = RequestMethod.PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
 	@ResponseBody
-	public ValidCustomerDTO createCustomer(PartitionAccount account, @RequestBody ValidCustomerDTO customer) {
+	public ValidCustomerDTO create(PartitionAccount account, @RequestBody ValidCustomerDTO customer) {
         if (customer == null)
             throw new InvalidRequestException("Customer cannot be null");
 
@@ -42,7 +42,7 @@ public class ValidCustomerController extends CommonControllerLogic {
 
     @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public void updateCustomer(PartitionAccount account, @RequestBody ValidCustomerDTO customer) {
+    public void update(PartitionAccount account, @RequestBody ValidCustomerDTO customer) {
         if (customer == null)
             throw new InvalidRequestException("Customer cannot be null");
 
@@ -54,7 +54,7 @@ public class ValidCustomerController extends CommonControllerLogic {
 
     @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void deleteCustomer(PartitionAccount account, @PathVariable int id) {
+    public void delete(PartitionAccount account, @PathVariable int id) {
         validateId("Customer", id);
 
         LOG.info("User {} is deleting customer with id {}", account, id);
@@ -67,7 +67,7 @@ public class ValidCustomerController extends CommonControllerLogic {
 
     @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-	public ValidCustomerDTO readCustomer(PartitionAccount account, @PathVariable int id) {
+	public ValidCustomerDTO read(PartitionAccount account, @PathVariable int id) {
         validateId("Customer", id);
 
         LOG.info("User {} is reading customer with id {}", account, id);
@@ -80,9 +80,9 @@ public class ValidCustomerController extends CommonControllerLogic {
 
     @RequestMapping(value = "/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public List<ValidCustomerDTO> readCustomersForTeacher(PartitionAccount account, @PathVariable int teacherId,
-                                                      @RequestParam(value="page", required=false) Integer page,
-                                                      @RequestParam(value="per_page", required=false) Integer per_page) {
+    public List<ValidCustomerDTO> readForTeacher(PartitionAccount account, @PathVariable int teacherId,
+                                                 @RequestParam(value="page", required=false) Integer page,
+                                                 @RequestParam(value="per_page", required=false) Integer per_page) {
         validateId("Teacher", teacherId);
         page = validatePage(page);
         per_page = validatePerPage(per_page);
@@ -98,9 +98,9 @@ public class ValidCustomerController extends CommonControllerLogic {
 
     @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public List<ValidCustomerDTO> readCustomersAll(PartitionAccount account,
-                                               @RequestParam(value="page", required=false) Integer page,
-                                               @RequestParam(value="per_page", required=false) Integer per_page) {
+    public List<ValidCustomerDTO> readAll(PartitionAccount account,
+                                          @RequestParam(value="page", required=false) Integer page,
+                                          @RequestParam(value="per_page", required=false) Integer per_page) {
         page = validatePage(page);
         per_page = validatePerPage(per_page);
 
@@ -115,7 +115,7 @@ public class ValidCustomerController extends CommonControllerLogic {
 
     @RequestMapping(value = "/teacher/{teacherId:[\\d]+}/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public int countCustomersForTeacher(PartitionAccount account, @PathVariable int teacherId) {
+    public int countForTeacher(PartitionAccount account, @PathVariable int teacherId) {
         validateId("Teacher", teacherId);
 
         LOG.info("User {} is counting customers for teacher with id {}", account, teacherId);
@@ -128,7 +128,7 @@ public class ValidCustomerController extends CommonControllerLogic {
 
     @RequestMapping(value = "/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public int countCustomers(PartitionAccount account) {
+    public int countAll(PartitionAccount account) {
         LOG.info("User {} is counting all customers", account);
 
         int count = validCustomerQueryService.countAll(account.partitionId());

@@ -25,7 +25,7 @@ public class DelegatingAccountController {
 
     @RequestMapping(method = RequestMethod.PUT, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public ValidAccountDTO createNewAdmin(PartitionAccount partitionAccount, @RequestBody ValidAccountDTO validAccountDTO) {
+    public ValidAccountDTO createAdmin(PartitionAccount partitionAccount, @RequestBody ValidAccountDTO validAccountDTO) {
         if (validAccountDTO == null)
             throw new InvalidRequestException("Account cannot be null");
 
@@ -35,7 +35,7 @@ public class DelegatingAccountController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public ValidAccountDTO updateAccount(PartitionAccount partitionAccount, @RequestBody ValidAccountDTO validAccountDTO) {
+    public ValidAccountDTO update(PartitionAccount partitionAccount, @RequestBody ValidAccountDTO validAccountDTO) {
         if (validAccountDTO == null)
             throw new InvalidRequestException("Account cannot be null");
 
@@ -45,7 +45,7 @@ public class DelegatingAccountController {
 
     @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public ValidAccountDTO retrieveInfo(PartitionAccount partitionAccount, @RequestParam(value="username") String username) {
+    public ValidAccountDTO read(PartitionAccount partitionAccount, @RequestParam(value="username") String username) {
         ValidAccountDTO.validateUsername(username);
 
         Account account = accountController.retrieveInfo(partitionAccount, username);

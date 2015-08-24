@@ -24,7 +24,7 @@ public class DelegatingPartitionController {
 
     @RequestMapping(method = RequestMethod.PUT, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public ValidPartition addPartition(@RequestBody ValidPartition validPartition) {
+    public ValidPartition create(@RequestBody ValidPartition validPartition) {
         if (validPartition == null)
             throw new InvalidRequestException("Partition cannot be null");
 

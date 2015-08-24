@@ -27,19 +27,19 @@ public class OptimizedLessonTableController extends CommonControllerLogic {
 
     @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public OptimizedLessonTableDTO getLessonTable(PartitionAccount account,
+    public OptimizedLessonTableDTO read(PartitionAccount account,
                                       @RequestParam(value = "per_page", required = false) Integer per_page,
                                       @RequestParam(value = "time_zone", required = false) String time_zone,
                                       @RequestParam(value = "start_date", required = false) String start_date,
                                       @RequestParam(value = "end_date", required = false) String end_date,
                                       @RequestParam(value = "start", required = false) Long start,
                                       @RequestParam(value = "end", required = false) Long end) {
-        return getLessonTable(account, DEFAULT_HOME_PAGE, per_page, time_zone, start_date, end_date, start, end);
+        return read(account, DEFAULT_HOME_PAGE, per_page, time_zone, start_date, end_date, start, end);
     }
 
     @RequestMapping(value = "/{page:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public OptimizedLessonTableDTO getLessonTable(PartitionAccount account, @PathVariable int page,
+    public OptimizedLessonTableDTO read(PartitionAccount account, @PathVariable int page,
                                       @RequestParam(value = "per_page", required = false) Integer per_page,
                                       @RequestParam(value = "time_zone", required = false) String time_zone,
                                       @RequestParam(value = "start_date", required = false) String start_date,
