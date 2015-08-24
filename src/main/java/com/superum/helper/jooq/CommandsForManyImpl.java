@@ -14,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
  *                   student would be secondary
  */
 @Transactional
-public class CommandsForManyImpl<R extends Record, Primary, Secondary> extends DefaultSqlImpl<R, Primary>
+public class CommandsForManyImpl<R extends Record, Primary, Secondary>
+        extends DefaultSqlImplForMany<R, Primary, Secondary>
         implements CommandsForMany<Primary, Secondary> {
 
     @Override
@@ -53,30 +54,8 @@ public class CommandsForManyImpl<R extends Record, Primary, Secondary> extends D
     // CONSTRUCTORS
 
     public CommandsForManyImpl(DSLContext sql, Table<R> table, TableField<R, Primary> primaryField,
-                               TableField<R, Secondary> secondaryField, TableField<R, Integer> partitionField) {
-        super(sql, table, primaryField, partitionField);
-
-        this.secondaryField = secondaryField;
-    }
-
-    // PRIVATE
-
-    private final TableField<R, Secondary> secondaryField;
-
-    private TableField<R, Primary> primaryField() {
-        return keyField;
-    }
-
-    private Condition primaryAndPartition(Primary value, int partitionId) {
-        return idAndPartition(value, partitionId);
-    }
-
-    private Condition secondary(Secondary value) {
-        return secondaryField.eq(value);
-    }
-
-    private Condition secondaryAndPartition(Secondary value, int partitionId) {
-        return secondary(value).and(partitionId(partitionId));
+                              TableField<R, Secondary> secondaryField, TableField<R, Integer> partitionField) {
+        super(sql, table, primaryField, secondaryField, partitionField);
     }
 
 }

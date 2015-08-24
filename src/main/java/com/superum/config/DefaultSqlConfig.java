@@ -110,4 +110,30 @@ public class DefaultSqlConfig {
                 TEACHER_LANGUAGE.TEACHER_ID, TEACHER_LANGUAGE.CODE, TEACHER_LANGUAGE.PARTITION_ID);
     }
 
+    @Bean
+    public CommandsForMany<Long, Integer> lessonAttendanceCommands() {
+        return new CommandsForManyImpl<>(persistenceContext.dsl(), LESSON_ATTENDANCE,
+                LESSON_ATTENDANCE.LESSON_ID, LESSON_ATTENDANCE.STUDENT_ID, LESSON_ATTENDANCE.PARTITION_ID);
+    }
+
+    @Bean
+    public CommandsForMany<Integer, Integer> groupingCommands() {
+        return new CommandsForManyImpl<>(persistenceContext.dsl(), STUDENTS_IN_GROUPS,
+                STUDENTS_IN_GROUPS.GROUP_ID, STUDENTS_IN_GROUPS.STUDENT_ID, STUDENTS_IN_GROUPS.PARTITION_ID);
+    }
+
+    // QUERIES MANY
+
+    @Bean
+    public QueriesForMany<Long, Integer> defaultLessonAttendanceQueries() {
+        return new QueriesForManyImpl<>(persistenceContext.dsl(), LESSON_ATTENDANCE,
+                LESSON_ATTENDANCE.LESSON_ID, LESSON_ATTENDANCE.STUDENT_ID, LESSON_ATTENDANCE.PARTITION_ID);
+    }
+
+    @Bean
+    public QueriesForMany<Integer, Integer> defaultGroupingQueries() {
+        return new QueriesForManyImpl<>(persistenceContext.dsl(), STUDENTS_IN_GROUPS,
+                STUDENTS_IN_GROUPS.GROUP_ID, STUDENTS_IN_GROUPS.STUDENT_ID, STUDENTS_IN_GROUPS.PARTITION_ID);
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.superum.helper.field;
 
+import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.lambda.Seq;
 
 /**
@@ -21,5 +23,12 @@ public interface ManyDefined<Primary, Secondary> {
      * @return sequence of values of secondary field
      */
     Seq<Secondary> secondaryValues();
+
+    default Condition secondaryValuesEq(Field<Secondary> field) {
+        return secondaryValues()
+                .map(field::eq)
+                .reduce(Condition::or)
+                .orElseThrow(() -> new AssertionError("There should be at least one secondary value at all times"));
+    }
 
 }
