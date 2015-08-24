@@ -52,8 +52,8 @@ public final class ValidTeacherLanguages implements ManyDefined<Integer, String>
         validate(id).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher id can't be negative: " + id));
 
-        validate(languages).Null().or().not().empty()
-                .forEach(Validator::validate, language -> language.not().Null().not().blank().fits(LANGUAGE_CODE_SIZE_LIMIT)
+        validate(languages).Null().or().not().empty().forEach(Validator::validate,
+                language -> language.not().Null().not().blank().fits(LANGUAGE_CODE_SIZE_LIMIT)
                         .ifInvalid(() -> new InvalidTeacherException("Specific Teacher languages must not be null, blank or exceed "
                                 + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + language.value())))
                 .ifInvalid(() -> new InvalidTeacherException("Teacher must have at least a single language!"));
