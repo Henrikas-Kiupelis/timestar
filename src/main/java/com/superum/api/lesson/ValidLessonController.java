@@ -160,7 +160,7 @@ public class ValidLessonController extends CommonControllerLogic {
     // PRIVATE
 
     private final ValidLessonCommandService validLessonCommandService;
-    private final  ValidLessonQueryService validLessonQueryService;
+    private final ValidLessonQueryService validLessonQueryService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidLessonController.class);
 
