@@ -118,12 +118,6 @@ public abstract class MappedClass<T extends MappedClass<T, ID>, ID> implements D
     protected void registerFields(List<FieldDef<T, ?>> fieldDefinitions, T thisObject) {
         this.fields = fieldDefinitions.stream().map(fieldDef -> fieldDef.toField(thisObject)).collect(Collectors.toList());
 
-        // This class is immutable, and it will almost always be turned into a string at least once (logs); it makes sense to cache the value
-        this.fieldString = Seq.seq(fields).map(MappedField::toString).join(", ");
-
-        // Caching for hashCode(), just like toString()
-        this.hash = fields.hashCode();
-
         @SuppressWarnings("unchecked")
         MappedField<ID> primaryField = (MappedField<ID>) Seq.seq(fields).filter(MappedField::isPrimary).findAny().get();
         this.primaryField = primaryField;
@@ -132,17 +126,13 @@ public abstract class MappedClass<T extends MappedClass<T, ID>, ID> implements D
     // PRIVATE
 
     private List<MappedField<?>> fields;
-
-    private String fieldString;
-    private int hash;
-
     private MappedField<ID> primaryField;
 
     // OBJECT OVERRIDES
 
     @Override
     public String toString() {
-        return fieldString;
+        return Seq.seq(fields).map(MappedField::toString).join(", ");
     }
 
     @Override
@@ -160,7 +150,7 @@ public abstract class MappedClass<T extends MappedClass<T, ID>, ID> implements D
 
     @Override
     public int hashCode() {
-        return hash;
+        return fields.hashCode();
     }
 
 }
