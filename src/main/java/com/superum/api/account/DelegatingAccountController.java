@@ -49,7 +49,8 @@ public class DelegatingAccountController {
     @ResponseBody
     public ValidAccount retrieveInfo(PartitionAccount partitionAccount, @RequestParam(value="username") String username) {
         validate(username).not().Null().not().blank().fits(usernameSizeLimit())
-                .ifInvalid(() -> new InvalidRequestException("Account username must not be null, blank or exceed " + usernameSizeLimit() + " chars: " + username));
+                .ifInvalid(() -> new InvalidRequestException("Account username must not be null, blank or exceed "
+                        + usernameSizeLimit() + " chars: " + username));
 
         Account account = accountController.retrieveInfo(partitionAccount, username);
         return ValidAccount.valueOf(account);

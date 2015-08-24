@@ -36,14 +36,15 @@ import static com.superum.helper.validation.Validator.validate;
  *      "password": "nimda"
  * }
  *
- * When returning an instance of ValidAccount with JSON, these fields will be present:
+ * When returning an instance of ValidAccount with JSON, these additional fields will be present:
  *      FIELD_NAME  : FIELD_DESCRIPTION
  *      id          : id of this account, if one is associated;
  *                    this only applies to teacher accounts; for admins it is null
- *      username    : username used by this account
  *      accountType : "ADMIN" or "TEACHER"
  *      createdAt   : timestamp, taken by the database at the time of creation
  *      updatedAt   : timestamp, taken by the database at the time of creation and updating
+ *
+ * Password field will be omitted for security
  *
  * Example of JSON to expect:
  * {
