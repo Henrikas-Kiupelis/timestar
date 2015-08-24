@@ -72,6 +72,14 @@ public final class LongValidator extends Validator<Long, LongValidator> {
         return this;
     }
 
+    /**
+     * Adds a predicate which tests if the long being validated is between some two numbers, both inclusive
+     */
+    public LongValidator between(long lowBound, long highBound) {
+        registerCondition(i -> i >= lowBound && i <= highBound);
+        return this;
+    }
+
     // CONSTRUCTORS
 
     public LongValidator(Long object) {

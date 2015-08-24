@@ -58,6 +58,14 @@ public final class IntValidator extends Validator<Integer, IntValidator> {
     }
 
     /**
+     * Adds a predicate which tests if the integer being validated is between some two numbers, both inclusive
+     */
+    public IntValidator between(int lowBound, int highBound) {
+        registerCondition(i -> i >= lowBound && i <= highBound);
+        return this;
+    }
+
+    /**
      * <pre>
      * Adds a predicate which tests if the integer can describe a day of the month
      *
@@ -89,4 +97,5 @@ public final class IntValidator extends Validator<Integer, IntValidator> {
     protected IntValidator newValidator() {
         return new IntValidator(object);
     }
+
 }
