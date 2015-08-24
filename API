@@ -100,7 +100,7 @@ Customer API:
     b) HTTP 400; only the id field was set and no other fields were;
     c) HTTP 404; no customer with provided id exists;
 
-    Returned FullCustomer contains all the fields as they were before updating;
+    Returns HTTP 200 OK if it succeeds
 
 4)
     DELETE  /customer/{customerId}
@@ -112,7 +112,7 @@ Customer API:
     It will fail if:
     a) HTTP 404; no customer with provided id exists;
 
-    Returned FullCustomer contains all the fields as they were before deleting;
+    Returns HTTP 200 OK if it succeeds
 
 5)
     GET  /customer/teacher/{teacherId}
@@ -213,7 +213,7 @@ Teacher API:
     c) HTTP 404; no teacher with provided id exists;
     d) HTTP 409; the email is already taken in the partition of the request;
 
-    Returned FullTeacher contains all the fields as they were before updating;
+    Returns HTTP 200 OK if it succeeds
 
 4)
     DELETE  /teacher/{teacherId}
@@ -226,7 +226,7 @@ Teacher API:
     It will fail if:
     a) HTTP 404; no teacher with provided id exists;
 
-    Returned FullTeacher contains all the fields as they were before deleting;
+    Returns HTTP 200 OK if it succeeds
 
 5)
     GET  /teacher
@@ -374,7 +374,7 @@ Lesson API:
 
 3)
     DELETE  /lesson/{lessonId}
-            lessonId        int            1 <= lessonId <= MAX_INT
+            lessonId        long           1 <= lessonId <= MAX_LONG
     RET     void
 
     Deletes a lesson
@@ -387,7 +387,7 @@ Lesson API:
 
 4)
     GET  /lesson/{lessonId}
-         lessonId        int            1 <= lessonId <= MAX_INT
+         lessonId        long           1 <= lessonId <= MAX_LONG
     RET  com.superum.api.lesson.ValidLessonDTO
 
     Reads and returns a lesson by id
@@ -420,7 +420,7 @@ Lesson API:
 6)
     GET  /lesson/{tableName}/{id}
          tableName      String         teacher, customer, group or student
-         id             int            1 <= id <= MAX_INT
+         id             long           1 <= id <= MAX_LONG
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
     OPT  per_page       int            1 <= per_page <= 100; DEF 25
     OPT  time_zone      String         any time zone; DEF UTC
@@ -445,7 +445,46 @@ Lesson API:
 Attendance API:
 
 1)
+    PUT   /lesson/attendance
+    BODY  com.superum.api.attendance.ValidLessonAttendanceDTO
+    RET   void
 
+    Creates attendance record for a lesson;
+
+    It will fail if:
+    a) HTTP 400; if any of the students do not belong to the group this lesson was for;
+    b) HTTP 404; if a record for given lesson/student ids doesn't exist;
+    c) HTTP 409; if this lesson already has an attendance record
+
+    Returns HTTP 200 OK if it succeeds
+
+2)
+    POST  /lesson/attendance
+    BODY  com.superum.api.attendance.ValidLessonAttendanceDTO
+    RET   void
+
+    Updates attendance record for a lesson;
+
+    It will fail if:
+    a) HTTP 400; if any of the students do not belong to the group this lesson was for;
+    b) HTTP 404; if a record for given lesson/student ids doesn't exist,
+                 or this lesson doesn't have an attendance record yet;
+
+    Returns HTTP 200 OK if it succeeds
+
+3)
+    DELETE   /lesson/attendance/{field}/{id}
+             field      String      lesson or student
+             id         long        1 <= id <= MAX_LONG
+    RET      void
+
+    Deletes all records of attendance for given field;
+
+    It will fail if:
+    b) HTTP 404; if a record for given lesson/student ids doesn't exist,
+                 or this lesson/student doesn't have an attendance record;
+
+    Returns HTTP 200 OK if it succeeds
 
 Lesson table API:
 
