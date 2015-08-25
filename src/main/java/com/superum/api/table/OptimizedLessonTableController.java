@@ -54,11 +54,16 @@ public class OptimizedLessonTableController extends CommonControllerLogic {
         LOG.info("User {} is reading lesson table, from {} to {}, page {}, with {} entries per page",
                 account, start, end, page, per_page);
 
+        OptimizedLessonTableDTO cached = TableCache.get(page, per_page, start, end);
+        if (cached != null)
+            return cached;
+
         OptimizedLessonTableDTO lessonTable = optimizedLessonTableService.getLessonTable(page, per_page,
                 start, end, account.partitionId());
         LOG.info("Table successfully read; please enable DEBUG logging to see its contents");
         LOG.debug("Table contents: {}", lessonTable);
 
+        TableCache.put(page, per_page, start, end, lessonTable);
         return lessonTable;
     }
 
