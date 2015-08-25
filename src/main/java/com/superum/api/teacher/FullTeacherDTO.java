@@ -50,8 +50,7 @@ import static com.superum.helper.Constants.MYSQL_GROUP_CONCAT_SEPARATOR;
  * When building JSON, use format
  *      for single objects:  "FIELD_NAME":"VALUE"
  *      for lists:           "FIELD_NAME":["VALUE1", "VALUE2", ...]
- * If you omit a field, it will assume default value (null for objects, 0/false for primitives),
- * all of which are assumed to be allowed unless stated otherwise (check FIELD_CONSTRAINTS)
+ * If you omit a field, it will use null;
  *
  * A couple of notes in regards to certain fields:
  *  1) payment days, in the case of non existent dates, such as 31st of February, are pushed forward to the next

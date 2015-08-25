@@ -42,7 +42,15 @@ import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
  * Example of JSON to send:
  * {
  *      "id": 1,
- *      "customerId": null,
+ *      "teacherId": 1,
+ *      "usesHourlyWage": false,
+ *      "languageLevel": "English: C1",
+ *      "name": "My Group"
+ * }
+ * or:
+ * {
+ *      "id": 1,
+ *      "customerId": 1,
  *      "teacherId": 1,
  *      "usesHourlyWage": false,
  *      "languageLevel": "English: C1",
@@ -58,6 +66,17 @@ import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
  * {
  *      "id": 1,
  *      "customerId": null,
+ *      "teacherId": 1,
+ *      "usesHourlyWage": false,
+ *      "languageLevel": "English: C1",
+ *      "name": "My Group",
+ *      "createdAt": 1439499600000,
+ *      "updatedAt": 1439551184130
+ * }
+ * or:
+ * {
+ *      "id": 1,
+ *      "customerId": 1,
  *      "teacherId": 1,
  *      "usesHourlyWage": false,
  *      "languageLevel": "English: C1",

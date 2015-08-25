@@ -10,6 +10,14 @@ import java.util.Set;
 
 import static com.superum.helper.validation.Validator.validate;
 
+/**
+ * <pre>
+ * Domain object for lesson attendance
+ *
+ * This object should be used to validate DTO data and use it in a meaningful manner; it encapsulates only the
+ * specific version of DTO, which is used for commands
+ * </pre>
+ */
 public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
 
     @Override

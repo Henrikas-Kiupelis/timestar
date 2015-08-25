@@ -11,6 +11,33 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * <pre>
+ * Data Transport Object for lesson attendance
+ *
+ * This object is used to de-serialize JSON that is coming into the back end; it should never be used in serialization;
+ * it should contain minimal logic, if any at all; a good example would be conversion between a choice of optional
+ * JSON fields;
+ *
+ * When parsing an instance of ValidLessonAttendanceDTO with JSON, these fields are considered mandatory:
+ *      FIELD_NAME     : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
+ *      id             : id of a lesson                                            1 <= id
+ *      studentIds     : ids of the students that are attending this lesson        any set of ids, for each id; 1 <= id
+ *
+ * When building JSON, use format
+ *      for single objects:  "FIELD_NAME":"VALUE"
+ *      for lists:           "FIELD_NAME":["VALUE1", "VALUE2", ...]
+ * If you omit a field, it will use null;
+ *
+ * Example of JSON to send:
+ * {
+ *      "id": 1,
+ *      "studentIds": [
+ *          1, 2, 3
+ *      ]
+ * }
+ * </pre>
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public final class ValidLessonAttendanceDTO {

@@ -9,7 +9,6 @@ import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
 
-import java.sql.Date;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -38,8 +37,7 @@ import static com.superum.db.generated.timestar.Tables.CUSTOMER;
  * When building JSON, use format
  *      for single objects:  "FIELD_NAME":"VALUE"
  *      for lists:           "FIELD_NAME":["VALUE1", "VALUE2", ...]
- * If you omit a field, it will assume default value (null for objects, 0/false for primitives),
- * all of which are assumed to be allowed unless stated otherwise (check FIELD_CONSTRAINTS)
+ * If you omit a field, it will use null;
  *
  * Example of JSON to send:
  * {
@@ -293,7 +291,7 @@ public final class ValidCustomerDTO extends DTOWithTimestamps {
         }
 
         @Override
-        public Builder startDate(Date startDate) {
+        public Builder startDate(java.sql.Date startDate) {
             this.startDate = JodaTimeZoneHandler.getDefault().from(startDate).toOrgJodaTimeLocalDate();
             return this;
         }
