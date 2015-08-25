@@ -67,6 +67,15 @@ public final class StringValidator extends Validator<String, StringValidator> {
         return this;
     }
 
+    /**
+     * Adds a predicate which tests if the string being validated is e-mail; this check is not conclusive, but should
+     * get rid of most obvious mistakes
+     */
+    public StringValidator email() {
+        registerCondition(this::emailCheck);
+        return this;
+    }
+
     // CONSTRUCTORS
 
     public StringValidator(String object) {
@@ -85,5 +94,26 @@ public final class StringValidator extends Validator<String, StringValidator> {
         return new StringValidator(object);
     }
 
+    // PRIVATE
+
+    /**
+     * <pre>
+     * Does some basic checking to filter out non e-mails; the following form is considered:
+     *      PREFIX@DOMAIN
+     * both PREFIX and DOMAIN cannot start with a dot, end with a dot, or contain multiple dots in a row
+     * </pre>
+     */
+    private boolean emailCheck(String email) {
+        int index = email.indexOf('@');
+        return index >= 0 && dotCheck(email.substring(0, index).trim()) && dotCheck(email.substring(index + 1).trim());
+    }
+
+    /**
+     * @return true if the string is not empry, doesn't start or end with a dot, and doesn't contain multiple dots in
+     * a row; false otherwise
+     */
+    private boolean dotCheck(String string) {
+        return !(string.isEmpty() || string.startsWith(".") || string.endsWith(".") || string.contains(".."));
+    }
 
 }

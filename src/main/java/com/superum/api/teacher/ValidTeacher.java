@@ -51,9 +51,10 @@ public final class ValidTeacher extends MappedClass<ValidTeacher, Integer> {
                 .ifInvalid(() -> new InvalidTeacherException("Teacher city must not exceed " +
                         CITY_SIZE_LIMIT + " chars or be blank: " + fullTeacherDTO.getCity()));
 
-        validate(fullTeacherDTO.getEmail()).Null().or().not().blank().fits(EMAIL_SIZE_LIMIT)
+        validate(fullTeacherDTO.getEmail()).Null().or().not().blank().fits(EMAIL_SIZE_LIMIT).email()
                 .ifInvalid(() -> new InvalidTeacherException("Teacher email must not exceed " +
-                        EMAIL_SIZE_LIMIT + " chars or be blank: " + fullTeacherDTO.getEmail()));
+                        EMAIL_SIZE_LIMIT + " chars, be blank or be of invalid format: " +
+                        fullTeacherDTO.getEmail()));
 
         validate(fullTeacherDTO.getPicture()).Null().or().fits(PICTURE_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher picture must not exceed " +
