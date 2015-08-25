@@ -78,7 +78,8 @@ public final class OptimizedLessonTableDTO {
     }
 
     public OptimizedLessonTableDTO(List<FullTeacherDTO> teachers,
-                                   List<CustomerLessonDataDTO> customerLessonData, List<TotalLessonDataDTO> totalLessonData,
+                                   List<CustomerLessonDataDTO> customerLessonData,
+                                   List<TotalLessonDataDTO> totalLessonData,
                                    List<PaymentDataDTO> paymentData) {
         this.teachers = teachers;
         this.customerLessonData = customerLessonData;
