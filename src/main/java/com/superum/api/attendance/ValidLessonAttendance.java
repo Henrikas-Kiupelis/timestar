@@ -14,15 +14,14 @@ import static com.superum.helper.validation.Validator.validate;
  * <pre>
  * Domain object for lesson attendance
  *
- * This object should be used to validate DTO data and use it in a meaningful manner; it encapsulates only the
- * specific version of DTO, which is used for commands
+ * This object should be used to validate DTO data and use it in a meaningful manner;
  * </pre>
  */
 public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
 
     @Override
     public Long primaryValue() {
-        return id;
+        return lessonId;
     }
 
     @Override
@@ -33,11 +32,11 @@ public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
     // CONSTRUCTORS
 
     public ValidLessonAttendance(ValidLessonAttendanceDTO validLessonAttendanceDTO) {
-        this.id = validLessonAttendanceDTO.getId();
+        this.lessonId = validLessonAttendanceDTO.getLessonId();
         this.studentIds = validLessonAttendanceDTO.getStudentIds();
 
-        validate(id).not().Null().moreThan(0)
-                .ifInvalid(() -> new InvalidLessonAttendanceException("Lesson id for attendance must be set and positive, not " + id));
+        validate(lessonId).not().Null().moreThan(0)
+                .ifInvalid(() -> new InvalidLessonAttendanceException("Lesson id for attendance must be set and positive, not " + lessonId));
 
         validate(studentIds).not().Null().not().empty().forEach(Validator::validate,
                 studentId -> studentId.not().Null().moreThan(0)
@@ -48,7 +47,7 @@ public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
 
     // PRIVATE
 
-    private final Long id;
+    private final Long lessonId;
     private final Set<Integer> studentIds;
 
     // OBJECT OVERRIDES
@@ -56,7 +55,7 @@ public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper("ValidLessonAttendance")
-                .add("id", id)
+                .add("lessonId", lessonId)
                 .add("studentIds", studentIds)
                 .toString();
     }
@@ -66,13 +65,13 @@ public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
         if (this == o) return true;
         if (!(o instanceof ValidLessonAttendance)) return false;
         ValidLessonAttendance that = (ValidLessonAttendance) o;
-        return Objects.equals(id, that.id) &&
+        return Objects.equals(lessonId, that.lessonId) &&
                 Objects.equals(studentIds, that.studentIds);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, studentIds);
+        return Objects.hash(lessonId, studentIds);
     }
 
 }

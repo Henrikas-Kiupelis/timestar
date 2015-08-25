@@ -1,8 +1,6 @@
 package com.superum.api.student;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.superum.api.core.DTOWithTimestamps;
 import com.superum.helper.Equals;
@@ -86,6 +84,8 @@ import static com.superum.db.generated.timestar.Tables.STUDENT;
  * }
  * </pre>
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class ValidStudentDTO extends DTOWithTimestamps {
 
     @JsonProperty(ID_FIELD)

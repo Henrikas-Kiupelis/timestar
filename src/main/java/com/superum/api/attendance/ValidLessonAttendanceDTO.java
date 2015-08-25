@@ -21,8 +21,8 @@ import java.util.Set;
  *
  * When parsing an instance of ValidLessonAttendanceDTO with JSON, these fields are considered mandatory:
  *      FIELD_NAME     : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
- *      id             : id of a lesson                                            1 <= id
- *      studentIds     : ids of the students that are attending this lesson        any set of ids, for each id; 1 <= id
+ *      lessonId       : id of a lesson                                            1 <= lessonId
+ *      studentIds     : ids of the students that are attending this lesson        any set of ints, for each id: 1 <= id
  *
  * When building JSON, use format
  *      for single objects:  "FIELD_NAME":"VALUE"
@@ -31,7 +31,7 @@ import java.util.Set;
  *
  * Example of JSON to send:
  * {
- *      "id": 1,
+ *      "lessonId": 1,
  *      "studentIds": [
  *          1, 2, 3
  *      ]
@@ -43,8 +43,8 @@ import java.util.Set;
 public final class ValidLessonAttendanceDTO {
 
     @JsonProperty(ID_FIELD)
-    public Long getId() {
-        return id;
+    public Long getLessonId() {
+        return lessonId;
     }
 
     @JsonProperty(STUDENTS_FIELD)
@@ -55,22 +55,22 @@ public final class ValidLessonAttendanceDTO {
     // CONSTRUCTORS
 
     @JsonCreator
-    public static ValidLessonAttendanceDTO jsonInstance(@JsonProperty(ID_FIELD) Long id,
+    public static ValidLessonAttendanceDTO jsonInstance(@JsonProperty(ID_FIELD) Long lessonId,
                                                         @JsonProperty(STUDENTS_FIELD) Set<Integer> studentIds) {
-        return new ValidLessonAttendanceDTO(id, studentIds);
+        return new ValidLessonAttendanceDTO(lessonId, studentIds);
     }
 
-    public ValidLessonAttendanceDTO(Long id, Set<Integer> studentIds) {
-        this.id = id;
+    public ValidLessonAttendanceDTO(Long lessonId, Set<Integer> studentIds) {
+        this.lessonId = lessonId;
         this.studentIds = studentIds;
     }
 
     // PRIVATE
 
-    private final Long id;
+    private final Long lessonId;
     private final Set<Integer> studentIds;
 
-    private static final String ID_FIELD = "id";
+    private static final String ID_FIELD = "lessonId";
     private static final String STUDENTS_FIELD = "studentIds";
 
     // OBJECT OVERRIDES
@@ -78,7 +78,7 @@ public final class ValidLessonAttendanceDTO {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper("ValidLessonAttendance")
-                .add(ID_FIELD, id)
+                .add(ID_FIELD, lessonId)
                 .add(STUDENTS_FIELD, studentIds)
                 .toString();
     }
@@ -90,10 +90,10 @@ public final class ValidLessonAttendanceDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, studentIds);
+        return Objects.hash(lessonId, studentIds);
     }
 
     private static final Equals<ValidLessonAttendanceDTO> EQUALS = new Equals<>(Arrays.asList(
-            ValidLessonAttendanceDTO::getId, ValidLessonAttendanceDTO::getStudentIds));
+            ValidLessonAttendanceDTO::getLessonId, ValidLessonAttendanceDTO::getStudentIds));
 
 }

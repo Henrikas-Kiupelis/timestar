@@ -8,6 +8,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+/**
+ * <pre>
+ * API v2
+ * Manages all requests for files
+ * Please refer to API file for documentation of particular methods
+ * (you should not be calling these methods directly unless you know what you're doing)
+ * </pre>
+ */
 @RestController
 public class FileController {
 

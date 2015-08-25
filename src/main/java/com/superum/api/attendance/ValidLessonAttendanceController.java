@@ -10,6 +10,14 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
 
+/**
+ * <pre>
+ * API v2
+ * Manages all requests for lesson attendance
+ * Please refer to API file for documentation of particular methods
+ * (you should not be calling these methods directly unless you know what you're doing)
+ * </pre>
+ */
 @RestController
 @RequestMapping(value = "/timestar/api/v2/lesson/attendance")
 public class ValidLessonAttendanceController extends CommonControllerLogic {
