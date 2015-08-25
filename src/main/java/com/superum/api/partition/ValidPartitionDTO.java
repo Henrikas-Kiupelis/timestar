@@ -14,7 +14,7 @@ import static com.superum.helper.validation.Validator.validate;
  * <pre>
  * Describes a partition, used to manage the database split
  *
- * When creating an instance of ValidPartition with JSON, these fields are required:
+ * When creating an instance of ValidPartitionDTO with JSON, these fields are required:
  *      FIELD_NAME  : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
  *      id          : id of this partition                                      -99999999 <= id <= 999999999
  *                    this is used in authentication process, as prefix for
@@ -32,12 +32,12 @@ import static com.superum.helper.validation.Validator.validate;
  *      "name": "test"
  * }
  *
- * When returning an instance of ValidPartition with JSON, no additional fields will be present;
+ * When returning an instance of ValidPartitionDTO with JSON, no additional fields will be present;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class ValidPartition {
+public class ValidPartitionDTO {
 
     @JsonProperty(ID_FIELD)
     public Integer getId() {
@@ -57,12 +57,12 @@ public class ValidPartition {
     // CONSTRUCTORS
 
     @JsonCreator
-    public static ValidPartition jsonInstance(@JsonProperty(ID_FIELD) Integer id,
+    public static ValidPartitionDTO jsonInstance(@JsonProperty(ID_FIELD) Integer id,
                                               @JsonProperty(NAME_FIELD) String name) {
-        return new ValidPartition(id, name);
+        return new ValidPartitionDTO(id, name);
     }
 
-    public ValidPartition(Integer id, String name) {
+    public ValidPartitionDTO(Integer id, String name) {
         validate(id).not().Null().between(MIN_PARTITION_ID, MAX_PARTITION_ID)
                 .ifInvalid(() -> new InvalidPartitionException("Partition id cannot be null, and must be between " +
                         MIN_PARTITION_ID + " and " + MAX_PARTITION_ID + ", not: " + id));
@@ -75,8 +75,8 @@ public class ValidPartition {
         this.name = name;
     }
 
-    public static ValidPartition from(Partition partition) {
-        return new ValidPartition(partition.getId(), partition.getName());
+    public static ValidPartitionDTO from(Partition partition) {
+        return new ValidPartitionDTO(partition.getId(), partition.getName());
     }
 
     // PRIVATE
@@ -104,7 +104,7 @@ public class ValidPartition {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ValidPartition && EQUALS.equals(this, (ValidPartition) o);
+        return this == o || o instanceof ValidPartitionDTO && EQUALS.equals(this, (ValidPartitionDTO) o);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class ValidPartition {
         return Objects.hash(id, name);
     }
 
-    private static final Equals<ValidPartition> EQUALS = new Equals<>(Arrays.asList(ValidPartition::getId,
-            ValidPartition::getName));
+    private static final Equals<ValidPartitionDTO> EQUALS = new Equals<>(Arrays.asList(ValidPartitionDTO::getId,
+            ValidPartitionDTO::getName));
 
 }

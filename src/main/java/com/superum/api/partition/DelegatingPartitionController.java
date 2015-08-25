@@ -24,12 +24,12 @@ public class DelegatingPartitionController {
 
     @RequestMapping(method = RequestMethod.PUT, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public ValidPartition create(@RequestBody ValidPartition validPartition) {
-        if (validPartition == null)
+    public ValidPartitionDTO create(@RequestBody ValidPartitionDTO validPartitionDTO) {
+        if (validPartitionDTO == null)
             throw new InvalidRequestException("Partition cannot be null");
 
-        Partition partition = partitionController.addPartition(validPartition.toPartition());
-        return ValidPartition.from(partition);
+        Partition partition = partitionController.addPartition(validPartitionDTO.toPartition());
+        return ValidPartitionDTO.from(partition);
     }
 
     // CONSTRUCTORS

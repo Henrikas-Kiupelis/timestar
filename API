@@ -682,8 +682,8 @@ Partition API:
 
 1)
     PUT   /partition
-    BODY  com.superum.api.partition.ValidPartition
-    RET   com.superum.api.partition.ValidPartition
+    BODY  com.superum.api.partition.ValidPartitionDTO
+    RET   com.superum.api.partition.ValidPartitionDTO
 
     Creates a new partition; it is also returned;
 
