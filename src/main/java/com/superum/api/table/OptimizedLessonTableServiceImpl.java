@@ -170,7 +170,7 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
     }
 
     private Table<Record5<Integer, Integer, String, BigDecimal, BigDecimal>> nestedWageTable(Condition condition) {
-        SelectConditionStep<Record5<Integer, Integer, String, BigDecimal, BigDecimal>> union1 =
+        SelectHavingStep<Record5<Integer, Integer, String, BigDecimal, BigDecimal>> union1 =
                 sql.select(GROUP_OF_STUDENTS.CUSTOMER_ID, GROUP_OF_STUDENTS.TEACHER_ID,
                         groupConcat(LESSON.ID).as(ID_FIELD),
                         sum(LESSON.DURATION_IN_MINUTES).as(DURATION_FIELD),
@@ -178,9 +178,10 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
                         .from(LESSON)
                         .join(TEACHER).onKey(LESSON_IBFK_1)
                         .join(GROUP_OF_STUDENTS).onKey(LESSON_IBFK_2)
-                        .where(condition.andNot(GROUP_OF_STUDENTS.USE_HOURLY_WAGE));
+                        .where(condition.andNot(GROUP_OF_STUDENTS.USE_HOURLY_WAGE))
+                        .groupBy(GROUP_OF_STUDENTS.CUSTOMER_ID, GROUP_OF_STUDENTS.TEACHER_ID);
 
-        SelectConditionStep<Record5<Integer, Integer, String, BigDecimal, BigDecimal>> union2 =
+        SelectHavingStep<Record5<Integer, Integer, String, BigDecimal, BigDecimal>> union2 =
                 sql.select(GROUP_OF_STUDENTS.CUSTOMER_ID, GROUP_OF_STUDENTS.TEACHER_ID,
                         groupConcat(LESSON.ID).as(ID_FIELD),
                         sum(LESSON.DURATION_IN_MINUTES).as(DURATION_FIELD),
@@ -188,7 +189,8 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
                         .from(LESSON)
                         .join(TEACHER).onKey(LESSON_IBFK_1)
                         .join(GROUP_OF_STUDENTS).onKey(LESSON_IBFK_2)
-                        .where(condition.and(GROUP_OF_STUDENTS.USE_HOURLY_WAGE));
+                        .where(condition.and(GROUP_OF_STUDENTS.USE_HOURLY_WAGE))
+                        .groupBy(GROUP_OF_STUDENTS.CUSTOMER_ID, GROUP_OF_STUDENTS.TEACHER_ID);
 
         return union1.unionAll(union2).asTable("nested");
     }
@@ -214,7 +216,6 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
         Table<Record5<Integer, Integer, String, BigDecimal, BigDecimal>> nested = nestedWageTable(condition);
 
         return sql.selectFrom(nested)
-                .groupBy(nested.field(GROUP_OF_STUDENTS.CUSTOMER_ID), nested.field(GROUP_OF_STUDENTS.TEACHER_ID))
                 .fetch().stream()
                 .map(this::toData)
                 .filter(data -> data != null)
@@ -265,7 +266,6 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
 
         BigDecimal cost = sql.select(sumField.as("totalCost"))
                 .from(nested)
-                .groupBy(nested.field(GROUP_OF_STUDENTS.TEACHER_ID))
                 .fetch().stream()
                 .map(record -> (BigDecimal) record.getValue("totalCost"))
                 .filter(value -> value != null)
@@ -298,7 +298,6 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
 
         BigDecimal cost = sql.select(sumField.as("totalCost"))
                 .from(nested)
-                .groupBy(nested.field(GROUP_OF_STUDENTS.CUSTOMER_ID))
                 .fetch().stream().findAny()
                 .map(record -> (BigDecimal) record.getValue("totalCost"))
                 .orElse(ZERO);
