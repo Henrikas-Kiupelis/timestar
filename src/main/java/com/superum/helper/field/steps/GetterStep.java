@@ -16,8 +16,12 @@ public interface GetterStep<T, F> {
     FieldDef<T, F> getter(Function<T, F> getter);
 
     /**
+     * <pre>
      * Sets this field's value to converter.apply(getter.apply(t)) for any T t; useful when the object in the class
      * is of different type than the table field, i.e. org.joda.time.LocalDate vs java.sql.Date
+     *
+     * Converter method does not need to do a null check; it is implicitly done when chaining functions
+     * </pre>
      */
     <U> FieldDef<T, F> getter(Function<T, U> getter, Function<U, F> converter);
 

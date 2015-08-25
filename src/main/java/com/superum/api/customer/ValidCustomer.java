@@ -80,7 +80,8 @@ public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
 
             FieldDef.steps(ValidCustomer.class, java.sql.Date.class)
                     .fieldName(START_DATE_FIELD).tableField(CUSTOMER.START_DATE)
-                    .getter(customer -> customer.validCustomerDTO.getStartDate(), date -> date == null ? null : JodaTimeZoneHandler.getDefault().from(date).toJavaSqlDate())
+                    .getter(customer -> customer.validCustomerDTO.getStartDate(),
+                            date -> JodaTimeZoneHandler.getDefault().from(date).toJavaSqlDate())
                     .mandatory(),
 
             FieldDef.steps(ValidCustomer.class, String.class)

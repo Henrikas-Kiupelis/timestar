@@ -70,7 +70,7 @@ public class FieldDefinition<T, F> implements FieldNameStep<T, F>, TableFieldSte
     public <U> FieldDef<T, F> getter(Function<T, U> getter, Function<U, F> converter) {
         NullChecker.check(getter, converter).notNull("Defined field can't have null getter or converter");
 
-        this.getter = getter.andThen(converter);
+        this.getter = getter.andThen(u -> u == null ? null : converter.apply(u));
         return this;
     }
 
