@@ -51,20 +51,20 @@ import static com.superum.db.generated.timestar.Tables.LESSON;
  * Example of JSON to send:
  * {
  *      "id": 1,
- *      "groupId": 1
+ *      "groupId": 1,
  *      "startDate": "2015-08-21",
  *      "startHour": 15,
  *      "startMinute": 46,
  *      "timeZone" : "EET",
- *      "duration" : 45,
+ *      "length" : 45,
  *      "comment": "What a lesson"
  * }
  * or
  * {
  *      "id": 1,
- *      "groupId": 1
+ *      "groupId": 1,
  *      "startTime": 1440161160000,
- *      "duration" : 45,
+ *      "length" : 45,
  *      "comment": "What a lesson"
  * }
  *
@@ -78,12 +78,12 @@ import static com.superum.db.generated.timestar.Tables.LESSON;
  * Example of JSON to expect:
  * {
  *      "id": 1,
- *      "groupId": 1
- *      "teacherId": 1
+ *      "groupId": 1,
+ *      "teacherId": 1,
  *      "startTime": 1440161160000,
  *      "endTime": 1440163860000,
- *      "duration" : 45,
- *      "comment": "What a lesson"
+ *      "length" : 45,
+ *      "comment": "What a lesson",
  *      "createdAt":1440104400000,
  *      "updatedAt":1440161945223
  * }
