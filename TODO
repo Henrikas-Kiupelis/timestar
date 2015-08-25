@@ -1,5 +1,5 @@
 For many-to-many tables implement only commands, and use queries from appropriate classes to retrieve otherwise
 
-CHECK IF STUDENTS FROM LESSON ATTENDANCE ACTUALLY BELONG TO APPROPRIATE GROUP
+Implement/document grouping classes
 
-Document MiscController API
+Write tests for some of the controllers
