@@ -210,8 +210,8 @@ public class Student {
     // GENERATED
 
     public interface CustomerIdStep {
-        NameStep customerId(Integer customerId);
-        EmailStep noCustomer();
+        EmailStep customerId(Integer customerId);
+        StartDateStep noCustomer();
     }
 
     public interface StartDateStep {
