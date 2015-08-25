@@ -1,5 +1,1 @@
-For many-to-many tables implement only commands, and use queries from appropriate classes to retrieve otherwise
-
-Implement/document grouping classes
-
 Write tests for some of the controllers
