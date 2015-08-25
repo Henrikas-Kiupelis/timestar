@@ -121,7 +121,7 @@ public class ValidStudentDTO extends DTOWithTimestamps {
 
     @JsonProperty(START_DATE_FIELD)
     public String getStartDateString() {
-        return startDate.toString();
+        return startDate == null ? null : startDate.toString();
     }
     @JsonIgnore
     public LocalDate getStartDate() {
@@ -312,7 +312,7 @@ public class ValidStudentDTO extends DTOWithTimestamps {
 
         @Override
         public Builder startDate(java.sql.Date startDate) {
-            this.startDate = JodaTimeZoneHandler.getDefault().from(startDate).toOrgJodaTimeLocalDate();
+            this.startDate = startDate == null ? null : JodaTimeZoneHandler.getDefault().from(startDate).toOrgJodaTimeLocalDate();
             return this;
         }
 

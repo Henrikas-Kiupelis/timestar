@@ -292,7 +292,7 @@ public final class ValidCustomerDTO extends DTOWithTimestamps {
 
         @Override
         public Builder startDate(java.sql.Date startDate) {
-            this.startDate = JodaTimeZoneHandler.getDefault().from(startDate).toOrgJodaTimeLocalDate();
+            this.startDate = startDate == null ? null : JodaTimeZoneHandler.getDefault().from(startDate).toOrgJodaTimeLocalDate();
             return this;
         }
 
