@@ -6,6 +6,8 @@ import java.security.SecureRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.superum.helper.validation.Validator.validate;
+
 /**
  * SecureRandom wrapper, which provides some extra methods, i.e. String/char/etc
  */
@@ -26,7 +28,7 @@ public final class Random {
     }
 
     /**
-     * @return random number from lowBound to highBound; i.e. number(10, 100) returns a number from 10 to 99
+     * @return random number from lowBound to highBound-1; i.e. number(10, 100) returns a number from 10 to 99
      */
     public static int number(int lowBound, int highBound) {
         if (lowBound < 1 || highBound < 1)
@@ -73,8 +75,8 @@ public final class Random {
      * @return random char from a given string
      */
     public static char from(String string) {
-        if (string == null || string.isEmpty())
-            throw new IllegalArgumentException("Empty or null string nor allowed");
+        validate(string).not().Null().not().blank()
+                .ifInvalid(() -> new IllegalArgumentException("Null or blank string not allowed"));
 
         return fromChecked(string);
     }
@@ -91,8 +93,8 @@ public final class Random {
      * @return random string from chars of a given string; length of returned string is equal to amount
      */
     public static String from(String string, int amount) {
-        if (string == null || string.isEmpty())
-            throw new IllegalArgumentException("Empty or null string nor allowed");
+        validate(string).not().Null().not().blank()
+                .ifInvalid(() -> new IllegalArgumentException("Null or blank string not allowed"));
 
         return fromChecked(string, amount);
     }
