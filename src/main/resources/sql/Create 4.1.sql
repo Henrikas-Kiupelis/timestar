@@ -208,7 +208,7 @@ CREATE TABLE student (
 
   code INT,
   customer_id INT,
-  start_date DATE NOT NULL,
+  start_date DATE,
   email VARCHAR(60) NOT NULL,
   name VARCHAR(60) NOT NULL,
   PRIMARY KEY(id),
