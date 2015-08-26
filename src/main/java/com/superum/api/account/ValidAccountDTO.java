@@ -100,7 +100,7 @@ public final class ValidAccountDTO {
 
     @JsonCreator
     public static ValidAccountDTO jsonInstance(@JsonProperty("username") String username,
-                                            @JsonProperty("password") char[] password) {
+                                               @JsonProperty("password") char[] password) {
         validateUsername(username);
 
         validate(password).not().Null().not().blank()
