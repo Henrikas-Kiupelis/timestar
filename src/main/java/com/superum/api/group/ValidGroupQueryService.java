@@ -90,4 +90,18 @@ public interface ValidGroupQueryService {
      */
     List<ValidGroupDTO> readForStudent(int studentId, int page, int amount, int partitionId);
 
+    /**
+     * <pre>
+     * Reads groups which have no customer; reading is paged;
+     *
+     * Pages start at 0, whereas the maximum amount is 100
+     *
+     * partitionId separates different app partitions (please refer to the API file or PartitionController)
+     * </pre>
+     * @return groups that were read; empty list if no such groups exist
+     *
+     * @throws DataAccessException if an unexpected database error occurred
+     */
+    List<ValidGroupDTO> readWithoutCustomer(int page, int amount, int partitionId);
+
 }

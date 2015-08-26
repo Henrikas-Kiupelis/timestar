@@ -69,6 +69,14 @@ public class ValidGroupQueryServiceImpl implements ValidGroupQueryService {
                 .map(ValidGroupDTO::valueOf);
     }
 
+    @Override
+    public List<ValidGroupDTO> readWithoutCustomer(int page, int amount, int partitionId) {
+        Condition condition = defaultGroupQueries.partitionId(partitionId)
+                .and(GROUP_OF_STUDENTS.CUSTOMER_ID.isNull());
+
+        return defaultGroupQueries.readForCondition(page, amount, condition, ValidGroupDTO::valueOf);
+    }
+
     // CONSTRUCTORS
 
     @Autowired

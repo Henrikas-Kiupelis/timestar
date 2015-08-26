@@ -333,6 +333,20 @@ Group API:
     the page parameter must be incremented, or per_page value raised;
     If a group is deleted, the results of this query will no longer be consistent with the ones before the deletion;
 
+7)
+    GET  /customer/none
+    OPT  page           int            1 <= page <= MAX_INT; DEF 1
+    OPT  per_page       int            1 <= per_page <= 100; DEF 25
+    RET  List<com.superum.api.group.ValidGroupDTO>
+
+    Reads and returns a list of groups that have no customer
+
+    It shouldn't fail under normal circumstances;
+
+    Returned List is paged; using DEF parameter values, only first 25 groups will be returned; to access the rest,
+    the page parameter must be incremented, or per_page value raised;
+    If a group is deleted, the results of this query will no longer be consistent with the ones before the deletion;
+
 Student API:
 
 1)

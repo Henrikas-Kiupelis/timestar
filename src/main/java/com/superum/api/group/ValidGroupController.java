@@ -129,6 +129,23 @@ public class ValidGroupController extends CommonControllerLogic {
         return groups;
     }
 
+    @RequestMapping(value = "/customer/none", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @ResponseBody
+    public List<ValidGroupDTO> readForTable(PartitionAccount account,
+                                            @RequestParam(value="page", required=false) Integer page,
+                                            @RequestParam(value="per_page", required=false) Integer per_page) {
+        page = validatePage(page);
+        per_page = validatePerPage(per_page);
+
+        LOG.info("User {} is reading groups without a customer, page {}, with {} entries per page",
+                account, page, per_page);
+
+        List<ValidGroupDTO> groups = validGroupQueryService.readWithoutCustomer(page, per_page, account.partitionId());
+        LOG.info("Groups retrieved: {}", groups);
+
+        return groups;
+    }
+
     // CONSTRUCTORS
 
     @Autowired
