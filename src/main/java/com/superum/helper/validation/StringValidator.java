@@ -76,6 +76,15 @@ public final class StringValidator extends Validator<String, StringValidator> {
         return this;
     }
 
+    /**
+     * Adds a predicate which tests if the string being validated is a comma separated list of positive numbers; it is
+     * assumed that string itself was tested for blankness before calling this predicate
+     */
+    public StringValidator commaSeparatedListOfIntegers() {
+        registerCondition(this::commasAndIntegers);
+        return this;
+    }
+
     // CONSTRUCTORS
 
     public StringValidator(String object) {
@@ -109,11 +118,25 @@ public final class StringValidator extends Validator<String, StringValidator> {
     }
 
     /**
-     * @return true if the string is not empry, doesn't start or end with a dot, and doesn't contain multiple dots in
+     * @return true if the string is not empty, doesn't start or end with a dot, and doesn't contain multiple dots in
      * a row; false otherwise
      */
     private boolean dotCheck(String string) {
         return !(string.isEmpty() || string.startsWith(".") || string.endsWith(".") || string.contains(".."));
+    }
+
+    /**
+     * @return true if string is a comma separated list of positive integers, false otherwise
+     */
+    private boolean commasAndIntegers(String string) {
+        if (string.startsWith(",") || string.endsWith(",") || string.contains(",,"))
+            return false;
+
+        for (char c : string.toCharArray())
+            if (!(Character.isDigit(c) || c == ','))
+                return false;
+
+        return true;
     }
 
 }
