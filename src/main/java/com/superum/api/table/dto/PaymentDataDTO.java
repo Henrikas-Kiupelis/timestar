@@ -83,4 +83,5 @@ public final class PaymentDataDTO {
 
     private static final Equals<PaymentDataDTO> EQUALS = new Equals<>(Arrays.asList(
             PaymentDataDTO::getPaymentDate, PaymentDataDTO::getCost));
+
 }

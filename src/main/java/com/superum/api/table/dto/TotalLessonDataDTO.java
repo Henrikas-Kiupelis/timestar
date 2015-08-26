@@ -89,5 +89,4 @@ public final class TotalLessonDataDTO {
             TotalLessonDataDTO::getCount, TotalLessonDataDTO::getDuration,
             TotalLessonDataDTO::getCost));
 
-
 }

@@ -105,5 +105,4 @@ public final class TeacherLessonDataDTO {
             TeacherLessonDataDTO::getLessonIds, TeacherLessonDataDTO::getCost,
             TeacherLessonDataDTO::getDuration));
 
-
 }
