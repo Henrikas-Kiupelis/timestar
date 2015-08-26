@@ -53,11 +53,12 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
          * This is not a very efficient solution (quite some network overhead when parsing to JSON) but a simple one;
          * consider changing it if network performance will become a critical concern
          */
-        Set<Integer> customerIds = Seq.seq(customers).map(ValidCustomerDTO::getId).toSet();
+        Set<Integer> customerIds = Seq.seq(customers).map(c -> c == null ? 0 : c.getId()).toSet();
         Set<Integer> teacherIds = Seq.seq(teachers).map(FullTeacherDTO::getId).toSet();
         ensureDataUsage(customerIds, teacherIds, tableData);
 
-        List<CustomerLessonDataDTO> customerLessonData = getCustomerLessonData(customers, customerIds, tableData, partitionId);
+        List<CustomerLessonDataDTO> customerLessonData = getCustomerLessonData(Seq.seq(customers).filter(c -> c != null).toList(),
+                customerIds, tableData, partitionId);
         List<TotalLessonDataDTO> totalLessonData = getTotalLessonDataTeachers(tableData);
 
         /*
@@ -128,7 +129,9 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
                 .fetch()
                 .map(ValidGroupDTO::valueOf);
 
-        Map<Integer, List<ValidGroupDTO>> groupsByCustomerId = Seq.seq(allGroups).groupBy(ValidGroupDTO::getCustomerId);
+        Map<Integer, List<ValidGroupDTO>> groupsByCustomerId = Seq.seq(allGroups)
+                .map(group -> group.getCustomerId() == null ? group.withCustomerId(0) : group)
+                .groupBy(ValidGroupDTO::getCustomerId);
         /*
          * This ensures that if the customer does not have groups,
          * the map will return an empty list rather than null (which might throw NullPointerException)
@@ -174,7 +177,7 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
                 sql.select(GROUP_OF_STUDENTS.CUSTOMER_ID, GROUP_OF_STUDENTS.TEACHER_ID,
                         groupConcat(LESSON.ID).as(ID_FIELD),
                         sum(LESSON.DURATION_IN_MINUTES).as(DURATION_FIELD),
-                        TEACHER.ACADEMIC_WAGE.mul(LESSON.DURATION_IN_MINUTES).div(45).as(COST_FIELD))
+                        TEACHER.ACADEMIC_WAGE.mul(sum(LESSON.DURATION_IN_MINUTES)).div(45).as(COST_FIELD))
                         .from(LESSON)
                         .join(TEACHER).onKey(LESSON_IBFK_1)
                         .join(GROUP_OF_STUDENTS).onKey(LESSON_IBFK_2)
@@ -185,7 +188,7 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
                 sql.select(GROUP_OF_STUDENTS.CUSTOMER_ID, GROUP_OF_STUDENTS.TEACHER_ID,
                         groupConcat(LESSON.ID).as(ID_FIELD),
                         sum(LESSON.DURATION_IN_MINUTES).as(DURATION_FIELD),
-                        TEACHER.HOURLY_WAGE.mul(LESSON.DURATION_IN_MINUTES).div(60).as(COST_FIELD))
+                        TEACHER.HOURLY_WAGE.mul(sum(LESSON.DURATION_IN_MINUTES)).div(60).as(COST_FIELD))
                         .from(LESSON)
                         .join(TEACHER).onKey(LESSON_IBFK_1)
                         .join(GROUP_OF_STUDENTS).onKey(LESSON_IBFK_2)
@@ -226,7 +229,6 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
         if (record == null)
             return null;
 
-        Integer customerId = record.getValue(GROUP_OF_STUDENTS.CUSTOMER_ID);
         Integer teacherId = record.getValue(GROUP_OF_STUDENTS.TEACHER_ID);
         if (teacherId == null)
             /*
@@ -234,6 +236,10 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
               * is returned; teacherId is the only field that cannot be null under normal circumstances
               */
             return null;
+
+        Integer customerId = record.getValue(GROUP_OF_STUDENTS.CUSTOMER_ID);
+        if (customerId == null)
+            customerId = 0;
 
         String ids = (String) record.getValue(ID_FIELD);
         List<Long> lessonIds = ids == null

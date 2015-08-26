@@ -105,6 +105,9 @@ public final class ValidGroupDTO extends DTOWithTimestamps {
     public Integer getCustomerId() {
         return customerId;
     }
+    public ValidGroupDTO withCustomerId(Integer customerId) {
+        return new ValidGroupDTO(id, customerId, teacherId, usesHourlyWage, languageLevel, name, getCreatedAt(), getUpdatedAt());
+    }
 
     @JsonProperty(TEACHER_ID_FIELD)
     public Integer getTeacherId() {

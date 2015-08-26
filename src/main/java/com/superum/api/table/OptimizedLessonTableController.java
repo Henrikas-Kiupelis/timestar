@@ -55,8 +55,12 @@ public class OptimizedLessonTableController extends CommonControllerLogic {
                 account, start, end, page, per_page);
 
         OptimizedLessonTableDTO cached = TableCache.get(page, per_page, start, end);
-        if (cached != null)
+        if (cached != null) {
+            LOG.info("Returning cached table; please enable DEBUG logging to see its contents");
+            LOG.debug("Table contents: {}", cached);
+
             return cached;
+        }
 
         OptimizedLessonTableDTO lessonTable = optimizedLessonTableService.getLessonTable(page, per_page,
                 start, end, account.partitionId());
