@@ -28,7 +28,7 @@ public class AccountDAOImpl implements AccountDAO {
 
             account.erasePassword();
 
-            return account;
+            return read(account.getUsername());
 		} catch (DataAccessException e) {
             throw new DatabaseException("Couldn't insert account: " + account +
                     "; please refer to the nested exception for more info.", e);
