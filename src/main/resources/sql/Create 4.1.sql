@@ -10,13 +10,13 @@ CREATE TABLE partitions (
   PRIMARY KEY (id));
 
 CREATE TABLE account (
-  id INT,
+  username VARCHAR(70) NOT NULL UNIQUE,
   enabled BIT NOT NULL DEFAULT 1,
+  id INT,
   created_at BIGINT,
   updated_at BIGINT,
   password CHAR(60) NOT NULL,
   account_type VARCHAR(10) NOT NULL,
-  username VARCHAR(70) NOT NULL UNIQUE,
   PRIMARY KEY(username));
 
 DELIMITER //
@@ -76,19 +76,20 @@ INSERT INTO account (username, password, account_type)
 VALUES ('1.goodlike', '$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.', 'ADMIN');
 
 CREATE TABLE teacher (
-  partition_id INT NOT NULL,
   id INT NOT NULL AUTO_INCREMENT,
+  partition_id INT NOT NULL,
+
   created_at BIGINT,
   updated_at BIGINT,
 
   payment_day INT NOT NULL,
   hourly_wage DECIMAL(19, 4) NOT NULL,
   academic_wage DECIMAL(19, 4) NOT NULL,
+  email VARCHAR(60) NOT NULL,
   name VARCHAR(30) NOT NULL,
   surname VARCHAR(30) NOT NULL,
   phone VARCHAR(30) NOT NULL,
   city VARCHAR(30) NOT NULL,
-  email VARCHAR(60) NOT NULL,
   picture VARCHAR(100),
   document VARCHAR(100),
   comment VARCHAR(500),
@@ -125,8 +126,9 @@ CREATE TABLE teacher_language (
   UNIQUE KEY (teacher_id, code));
 
 CREATE TABLE customer (
-  partition_id INT NOT NULL,
   id INT NOT NULL AUTO_INCREMENT,
+  partition_id INT NOT NULL,
+
   created_at BIGINT,
   updated_at BIGINT,
 
@@ -160,13 +162,14 @@ FOR EACH ROW
 DELIMITER ;
 
 CREATE TABLE group_of_students (
-  partition_id INT NOT NULL,
   id INT NOT NULL AUTO_INCREMENT,
+  customer_id INT,
+  teacher_id INT NOT NULL,
+  partition_id INT NOT NULL,
+
   created_at BIGINT,
   updated_at BIGINT,
 
-  customer_id INT,
-  teacher_id INT NOT NULL,
   use_hourly_wage BIT NOT NULL,
   language_level VARCHAR(20) NOT NULL,
   name VARCHAR(30) NOT NULL,
@@ -201,13 +204,14 @@ FOR EACH ROW
 DELIMITER ;
 
 CREATE TABLE student (
-  partition_id INT NOT NULL,
   id INT NOT NULL AUTO_INCREMENT,
+  customer_id INT,
+  partition_id INT NOT NULL,
+
   created_at BIGINT,
   updated_at BIGINT,
 
   code INT,
-  customer_id INT,
   start_date DATE,
   email VARCHAR(60) NOT NULL,
   name VARCHAR(60) NOT NULL,
@@ -237,21 +241,23 @@ FOR EACH ROW
 DELIMITER ;
 
 CREATE TABLE students_in_groups (
-  partition_id INT NOT NULL,
   student_id INT NOT NULL,
   group_id INT NOT NULL,
+  partition_id INT NOT NULL,
   FOREIGN KEY(student_id) REFERENCES student(id),
   FOREIGN KEY(group_id) REFERENCES group_of_students(id),
+  FOREIGN KEY(partition_id) REFERENCES partitions(id),
   UNIQUE KEY (student_id, group_id));
 
 CREATE TABLE lesson (
-  partition_id INT NOT NULL,
   id BIGINT NOT NULL AUTO_INCREMENT,
+  teacher_id INT,
+  group_id INT NOT NULL,
+  partition_id INT NOT NULL,
+
   created_at BIGINT,
   updated_at BIGINT,
 
-  teacher_id INT,
-  group_id INT NOT NULL,
   time_of_start BIGINT NOT NULL,
   time_of_end BIGINT NOT NULL,
   duration_in_minutes INT NOT NULL,
@@ -288,9 +294,9 @@ FOR EACH ROW
 DELIMITER ;
 
 CREATE TABLE lesson_attendance (
-  partition_id INT NOT NULL,
   lesson_id BIGINT NOT NULL,
   student_id INT NOT NULL,
+  partition_id INT NOT NULL,
   FOREIGN KEY(lesson_id) REFERENCES lesson(id),
   FOREIGN KEY(student_id) REFERENCES student(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id),
