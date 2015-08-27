@@ -25,7 +25,6 @@ The API might switch to HTTPS eventually.
 
 All the methods will be given in this format (example):
 
-
     (1)    GET  /lesson/table/{pageId}
     (2)         pageId      int            0 < pageId <= MAX_INT
     (3)    OPT  per_page    int            0 < per_page <= 100; DEF 6
@@ -33,29 +32,29 @@ All the methods will be given in this format (example):
     (5)    OPT  end_date    java.sql.Date  any; DEF start_date
     (6)    RET  LessonTable
 
-[LessonTable](https://github.com/Henrikas-Kiupelis/timestar/blob/master/src/main/java/com/superum/db/lesson/table/core/LessonTable.java)
+The relevant non-standard classes will be found at the top of the API page like this: [LessonTable](https://github.com/Henrikas-Kiupelis/timestar/blob/master/src/main/java/com/superum/db/lesson/table/core/LessonTable.java)
 
-GET refers to the HTTP method the request expects;
-/lesson/table are constant mappings, which should always be in the request;
-/{pageId} is a mutable mapping; it must also always be in the request, but just like a normal parameter,
+`GET` refers to the HTTP method the request expects;
+`/lesson/table` are constant mappings, which should always be in the request;
+`/{pageId}` is a mutable mapping; it must also always be in the request, but just like a normal parameter,
     it can have different values and has certain limitations;
-(2) shows what the limitations for {pageId} are; specifically, that it is an integer and must be positive;
-(3) to (5) show parameters; REQ means that the parameter must be in the request, whereas OPT means that
+`(2)` shows what the limitations for `{pageId}` are; specifically, that it is an integer and must be positive;
+`(3)` to `(5)` show parameters; `REQ` means that the parameter must be in the request, whereas `OPT` means that
 this parameter can be skipped; finally, if the parameter is optional, then it WILL provide the default value
 using the
 
     ; DEF
 
-modifier; in this case, if per_page is not present, it defaults to 6; if start_date is not present, it defaults to
-today's date; if end_date is not present, it defaults to start_date
-(which will be today's date, if it also was not present)
-(6) shows what kind of Class object is returned by the request, assuming it is successful; JSON format is used in all
+modifier; in this case, if `per_page` is not present, it defaults to 6; if `start_date` is not present, it defaults to
+today`s date; if `end_date` is not present, it defaults to `start_date`
+(which will be today`s date, if it also was not present)
+`(6)` shows what kind of Class object is returned by the request, assuming it is successful; JSON format is used in all
 methods, unless stated otherwise; please refer to the appropriate Class documentation
 One more modifier exists:
 
     BODY
 
-which means that the method expects HTTP Body part; it also specifies a particular Class, just like RET.
+which means that the method expects HTTP Body part; it also specifies a particular Class, just like `RET`.
 
 Finally, all API methods expect an auth header, unless stated otherwise;
 Currently (2015-07-20) a BASIC auth header is used:

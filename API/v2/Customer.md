@@ -1,19 +1,21 @@
-Customer API:
+# Customer API:
 
-1)
+## Relevant classes
+
+[ValidCustomerDTO](https://github.com/Henrikas-Kiupelis/timestar/blob/master/src/main/java/com/superum/api/customer/ValidCustomerDTO.java)
+
     PUT   /customer
-    BODY  com.superum.api.customer.ValidCustomerDTO
-    RET   com.superum.api.customer.ValidCustomerDTO
+    BODY  ValidCustomerDTO
+    RET   ValidCustomerDTO
 
-    Creates a new customer;
+Creates a new customer;
 
-    It will fail if:
-    a) HTTP 400; the id field was set;
-    b) HTTP 400; a mandatory field was not set;
+It will fail if:
+* HTTP 400; the id field was set;
+* HTTP 400; a mandatory field was not set;
 
-    Returned FullCustomer will have its id field set;
+Returned FullCustomer will have its id field set;
 
-2)
     GET  /customer/{customerId}
          customerId     int            1 <= customerId <= MAX_INT
     RET  com.superum.api.customer.ValidCustomerDTO
