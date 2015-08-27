@@ -20,6 +20,8 @@ It will fail if:
 
 Returned FullCustomer will have its id field set;
 
+------
+
 ```
     GET  /customer/{customerId}
          customerId     int            1 <= customerId <= MAX_INT
@@ -30,6 +32,8 @@ Reads and returns an existing customer;
 
 It will fail if:
 * HTTP 404; no customer with provided id exists;
+
+------
 
 ```
     POST  /customer
@@ -46,6 +50,8 @@ It will fail if:
 
 Returns HTTP 200 OK if it succeeds
 
+------
+
 ```
     DELETE  /customer/{customerId}
             customerId     int            1 <= customerId <= MAX_INT
@@ -58,6 +64,8 @@ It will fail if:
 * HTTP 404; no customer with provided id exists;
 
 Returns HTTP 200 OK if it succeeds
+
+------
 
 ```
     GET  /customer/teacher/{teacherId}
@@ -81,6 +89,8 @@ It will fail if:
 Returned List is paged; using DEF parameter values, only first 25 customers will be returned; to access the rest,
 the page parameter must be incremented, or per_page value raised
 
+------
+
 ```
     GET  /customer
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
@@ -94,6 +104,8 @@ It shouldn't fail under normal circumstances;
 
 Returned List is paged; using DEF parameter values, only first 25 customers will be returned; to access the rest,
 the page parameter must be incremented, or per_page value raised
+
+------
 
 ```
     GET  /customer/teacher/{teacherId}/count
@@ -110,6 +122,8 @@ To determine if a certain customer is tied to a teacher, the following examinati
 
 It will fail if:
 * HTTP 404; no teacher with provided id exists;
+
+------
 
 ```
     GET  /customer/count
