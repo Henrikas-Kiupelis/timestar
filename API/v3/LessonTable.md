@@ -2,7 +2,7 @@
 
 ## Relevant classes
 
-[Table](/src/main/java/com/superum/v3/table/Table.java) - basic table; has teachers/customers/fields
+[Table](../../src/main/java/com/superum/v3/table/Table.java) - basic table; has teachers/customers/fields
 
 [TableField](../../src/main/java/com/superum/v3/table/TableField.java) - contains the data found in one of the table's fields
 
@@ -23,11 +23,11 @@ The following optimizations have been made:
 
 1. Group information is no longer retrieved; it is NOT visible on the table, and should be therefore AJAX'd instead;
 2. The table is no longer formatted in back end; only calculated data is sent, that is:
-  a. customerId
-  b. teacherId
-  c. lessons for those ids
-  d. duration of those lessons
-  e. cost of those lessons
+  1. customerId
+  2. teacherId
+  3. lessons for those ids
+  4. duration of those lessons
+  5. cost of those lessons
 this means no more empty fields (i.e. with empty lesson id lists, 0 duration/cost) and thus less JSON serialization
 and less network bandwidth used; also, slightly reduced amount of calculations;
 3. Sums of columns and rows no longer appear; since the data is not formatted anyway, it makes more sense to sum
