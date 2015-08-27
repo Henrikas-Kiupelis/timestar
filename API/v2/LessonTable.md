@@ -37,7 +37,7 @@ N/A
     OPT  end_date       String         any Date; DEF start_date
     OPT  start          long           0 <= page <= MAX_LONG; DEF start_date evaluated at 00:00:00 for time_zone
     OPT  end            long           0 <= page <= MAX_LONG; DEF (end_date + 1) evaluated at 00:00:00 for time_zone
-    RET  com.superum.api.table.core.OptimizedLessonTableDTO
+    RET  OptimizedLessonTableDTO
 ```
 
 Delegates the call to /lesson/table/1 using same parameters
@@ -54,7 +54,7 @@ Delegates the call to /lesson/table/1 using same parameters
     OPT  end_date       String         any Date; DEF start_date
     OPT  start          long           0 <= page <= MAX_LONG; DEF start_date evaluated at 00:00:00 for time_zone
     OPT  end            long           0 <= page <= MAX_LONG; DEF (end_date + 1) evaluated at 00:00:00 for time_zone
-    RET  com.superum.api.table.core.OptimizedLessonTableDTO
+    RET  OptimizedLessonTableDTO
 ```
 
 Returns the lesson table for given parameters;
