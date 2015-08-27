@@ -1,10 +1,8 @@
 # API links
 
-## [APIv1](/API/v1/APIv1.md) - deprecated, not updated, poorly documented
+## [APIv2](/API/v2/APIv2.md)
 
-## [APIv2](/API/v2/APIv2.md) - documented and updated
-
-## [APIv3](/API/v3/APIv3.md) - documented and updated; only contains a few extensions to [APIv2](/API/v2/APIv2.md)
+## [APIv3](/API/v3/APIv3.md) - only contains a few extensions to [APIv2](/API/v2/APIv2.md)
 
 # Dev instructions
 
