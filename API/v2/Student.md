@@ -94,7 +94,7 @@ the page parameter must be incremented, or per_page value raised
 
 ------
 
-<a name="update"><a>
+<a name="read-for-table"><a>
 ```
     GET  /student/{tableName}/{id}
          tableName      String         group, lesson or customer
