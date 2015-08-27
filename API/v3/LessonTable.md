@@ -24,7 +24,7 @@ N/A
 ```
 
 Returns the width of the table; in this case it refers to the amount of teachers in the system;
-the call is delegated to [/v2/teacher/count](../v2/Customer.md#queries)
+the call is delegated to [/v2/teacher/count](../v2/Customer.md#c1)
 
 ------
 
