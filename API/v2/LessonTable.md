@@ -1,4 +1,4 @@
-# Lesson Table API
+# Lesson Table APIv2
 
 [Back to APIv2](./APIv2.md)
 
