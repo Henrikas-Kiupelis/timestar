@@ -1,16 +1,16 @@
 # API V2
 
-[Back to README](/README.md)
+[Back to README](/README.md#api-links)
 
 ## Links
 
-### [Customer](./Customer.md) [Group](./Group.md) [Lesson](./Lesson.md) [Student](./Student.md) [Teacher](./Teacher.md)
+### [Customer](./Customer.md#customer-api) [Group](./Group.md#group-api) [Lesson](./Lesson.md#lesson-api) [Student](./Student.md#student-api) [Teacher](./Teacher.md#teacher-api)
 
-[Grouping/attendance](./Multi.md) - for putting students into groups/describing which students attended a lesson
+[Grouping/attendance](./Multi.md#groupingattendance-api) - for putting students into groups/describing which students attended a lesson
 
-[LessonTable](./LessonTable.md) - for the primary table of the application
+[LessonTable](./LessonTable.md#lesson-table-apiv2) - for the primary table of the application
 
-[Miscellaneous](./Misc.md) - for partitions, accounts, files and other misc stuff
+[Miscellaneous](./Misc.md#misc-api) - for partitions, accounts, files and other misc stuff
 
 ## Description
 

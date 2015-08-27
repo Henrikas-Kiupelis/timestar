@@ -1,10 +1,10 @@
 # Lesson Table APIv2
 
-[Back to APIv2](./APIv2.md)
+[Back to APIv2](./APIv2.md#api-v2)
 
 ## Info
 
-[APIv3 version](../v3/LessonTable.md) - updated/optimized version
+[APIv3 version](../v3/LessonTable.md#lesson-table-apiv3) - updated/optimized version
 
 This version was created as an attempt to optimize the table while retaining the general structure of JSON requests;
 also, changes such as checking for hourly vs academic wages for groups was implemented; unfortunately, this version

@@ -1,6 +1,6 @@
 # API V1
 
-[Back to README](/README.md)
+[Back to README](/README.md#api-links)
 
 ## Below is a rough explanation of v1 API; this is not being updated and is deprecated/doesn't work anymore
 

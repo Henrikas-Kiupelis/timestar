@@ -1,6 +1,6 @@
 # Grouping/attendance API
 
-[Back to APIv2](./APIv2.md)
+[Back to APIv2](./APIv2.md#api-v2)
 
 [Grouping API](#grouping-api)
 

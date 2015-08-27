@@ -1,10 +1,10 @@
 # Lesson Table APIv3
 
-[Back to APIv3](./APIv3.md)
+[Back to APIv3](./APIv3.md#api-v3)
 
 ## Info
 
-[APIv2 version](../v2/LessonTable.md) - deprecated version
+[APIv2 version](../v2/LessonTable.md#lesson-table-apiv2) - deprecated version
 
 This extension was created for 2 reasons:
 * optimize the lesson table even further

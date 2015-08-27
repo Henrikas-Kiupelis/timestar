@@ -1,12 +1,12 @@
 # API V3
 
-[Back to README](/README.md)
+[Back to README](/README.md#api-links)
 
 ## Links
 
-[APIv2](../v2/APIv2.md)
+[APIv2](../v2/APIv2.md#api-v2)
 
-[LessonTable](./LessonTable.md) - for the primary table of the application
+[LessonTable](./LessonTable.md#lesson-table-apiv3) - for the primary table of the application
 
 ## Description
 

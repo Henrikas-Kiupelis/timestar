@@ -1,8 +1,8 @@
 # API links
 
-## [APIv2](/API/v2/APIv2.md)
+## [APIv2](/API/v2/APIv2.md#api-v2)
 
-## [APIv3](/API/v3/APIv3.md) - only contains a few extensions to [APIv2](/API/v2/APIv2.md)
+## [APIv3](/API/v3/APIv3.md#api-v3) - only contains a few extensions to [APIv2](/API/v2/APIv2.md#api-v2)
 
 # Dev instructions
 
