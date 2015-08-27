@@ -1,6 +1,6 @@
 # API V2
 
-[Back to README](README.md)
+[Back to README](/README.md)
 
 ## Links
 
