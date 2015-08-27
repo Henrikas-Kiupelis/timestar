@@ -55,7 +55,7 @@ the call is delegated to [/v2/teacher/count](../v2/Teacher.md#count-all)
 
 ------
 
-
+------
 
 <a name="table-data-default"><a>
 ```
@@ -73,7 +73,7 @@ Delegates the call to [/lesson/table/data/1](#table-data) using same parameters
 
 ------
 
-
+------
 
 <a name="table-data"><a>
 ```
@@ -98,7 +98,7 @@ It shouldn't fail under normal circumstances
 
 ------
 
-
+------
 
 <a name="table-report"><a>
 ```
@@ -115,7 +115,7 @@ It will fail if:
 
 ------
 
-
+------
 
 <a name="table-data-full-default"><a>
 ```
@@ -133,7 +133,7 @@ Delegates the call to [/lesson/table/data/full/1](#table-data-full) using same p
 
 ------
 
-
+------
 
 <a name="table-data-full"><a>
 ```
