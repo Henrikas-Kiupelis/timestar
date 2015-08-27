@@ -10,7 +10,7 @@
 
 [FullTable](../../src/main/java/com/superum/v3/table/FullTable.java) - combines basic table and reports into one
 
-## Usage
+## Info
 
 This extension was created for 2 reasons:
 * optimize the lesson table even further
@@ -55,8 +55,6 @@ the call is delegated to [/v2/teacher/count](../v2/Teacher.md#count-all)
 
 ------
 
-------
-
 <a name="table-data-default"><a>
 ```
     GET  /lesson/table/data
@@ -70,8 +68,6 @@ the call is delegated to [/v2/teacher/count](../v2/Teacher.md#count-all)
 ```
 
 Delegates the call to [/lesson/table/data/1](#table-data) using same parameters
-
-------
 
 ------
 
@@ -98,8 +94,6 @@ It shouldn't fail under normal circumstances
 
 ------
 
-------
-
 <a name="table-report"><a>
 ```
     GET  /lesson/table/report/{source}
@@ -112,8 +106,6 @@ Returns lesson table reports for teacher or customer with given ids
 
 It will fail if:
 * HTTP 404; teacher or customer for any of the provided ids doesn't exist;
-
-------
 
 ------
 
@@ -130,8 +122,6 @@ It will fail if:
 ```
 
 Delegates the call to [/lesson/table/data/full/1](#table-data-full) using same parameters
-
-------
 
 ------
 
