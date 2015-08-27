@@ -46,8 +46,8 @@ using the
     ; DEF
 
 modifier; in this case, if `per_page` is not present, it defaults to 6; if `start_date` is not present, it defaults to
-today`s date; if `end_date` is not present, it defaults to `start_date`
-(which will be today`s date, if it also was not present)
+today's date; if `end_date` is not present, it defaults to `start_date`
+(which will be today's date, if it also was not present)
 `(6)` shows what kind of Class object is returned by the request, assuming it is successful; JSON format is used in all
 methods, unless stated otherwise; please refer to the appropriate Class documentation
 One more modifier exists:

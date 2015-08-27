@@ -25,11 +25,11 @@ Reads and returns an existing customer;
 It will fail if:
 * HTTP 404; no customer with provided id exists;
 
-'''
+```
 POST  /customer
 BODY  com.superum.api.customer.ValidCustomerDTO
 RET   void
-'''
+```
 
 Updates an existing customer; only fields that are sent are updated;
 
