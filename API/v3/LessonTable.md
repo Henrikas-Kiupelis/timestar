@@ -2,7 +2,7 @@
 
 ## Relevant classes
 
-[Table](../../src/main/java/com/superum/v3/table/Table.java) - basic table; has teachers/customers/fields
+[Table](/src/main/java/com/superum/v3/table/Table.java) - basic table; has teachers/customers/fields
 
 [TableField](../../src/main/java/com/superum/v3/table/TableField.java) - contains the data found in one of the table's fields
 
