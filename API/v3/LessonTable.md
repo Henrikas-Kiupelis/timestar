@@ -33,7 +33,8 @@ The following optimizations have been made:
   and less network bandwidth used; also, slightly reduced amount of calculations;
 3. Sums of columns and rows no longer appear; since the data is not formatted anyway, it makes more sense to sum
 in front end, because it's a simple operation (no domain logic needed here);
-4. SQL queries have been simplified across the board; no more nested tables or the like. ~10-20ms per call! (was ~30-40ms);
+4. SQL queries have been simplified across the board; no more nested tables or the like. ~10-20ms per call!
+(was ~30-40ms); not to mention the amount of calls has been also reduced (total of 5-6 calls per request!)
 
 ## Methods
 
@@ -54,6 +55,8 @@ the call is delegated to [/v2/teacher/count](../v2/Teacher.md#count-all)
 
 ------
 
+
+
 <a name="table-data-default"><a>
 ```
     GET  /lesson/table/data
@@ -69,6 +72,8 @@ the call is delegated to [/v2/teacher/count](../v2/Teacher.md#count-all)
 Delegates the call to [/lesson/table/data/1](#table-data) using same parameters
 
 ------
+
+
 
 <a name="table-data"><a>
 ```
@@ -93,6 +98,8 @@ It shouldn't fail under normal circumstances
 
 ------
 
+
+
 <a name="table-report"><a>
 ```
     GET  /lesson/table/report/{source}
@@ -107,6 +114,8 @@ It will fail if:
 * HTTP 404; teacher or customer for any of the provided ids doesn't exist;
 
 ------
+
+
 
 <a name="table-data-full-default"><a>
 ```
@@ -123,6 +132,8 @@ It will fail if:
 Delegates the call to [/lesson/table/data/full/1](#table-data-full) using same parameters
 
 ------
+
+
 
 <a name="table-data-full"><a>
 ```
