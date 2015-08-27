@@ -2,13 +2,13 @@
 
 ## Links
 
-### [Customer](/Customer.md) [Group](/Group.md) [Lesson](/Lesson.md) [Student](/Student.md) [Teacher](/Teacher.md)
+### [Customer](./Customer.md) [Group](./Group.md) [Lesson](./Lesson.md) [Student](./Student.md) [Teacher](./Teacher.md)
 
-[Grouping/attendance](/Multi.md) - for putting students into groups/describing which students attended a lesson
+[Grouping/attendance](./Multi.md) - for putting students into groups/describing which students attended a lesson
 
-[LessonTable](/LessonTable.md) - for the primary table of the application
+[LessonTable](./LessonTable.md) - for the primary table of the application
 
-[Miscellaneous](/Misc.md) - for partitions, accounts, files and other misc stuff
+[Miscellaneous](./Misc.md) - for partitions, accounts, files and other misc stuff
 
 ## Description
 
