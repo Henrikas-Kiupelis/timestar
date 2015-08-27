@@ -58,7 +58,7 @@ This will be changed into a more secure scheme at a later date, when the basic f
 realized and somewhat tested.
 
 Next, there will be a short description of the method, including:
-1) what the method does; if there's any special behaviour it is necessarily described here;
-2) when will the method fail, and what error response you can expect as a result;
-   obvious failures, such as breaking the limitations of parameters or failing to provide requires ones are omitted;
-3) the structure/meaning of the returned value; this can be described in 1) if it makes sense to do so;
+
+    what the method does; if there's any special behaviour it is necessarily described here;
+    when will the method fail, and what error response you can expect as a result; obvious failures, such as breaking the limitations of parameters or failing to provide requires ones are omitted;
+    the structure/meaning of the returned value; this can be described in 1) if it makes sense to do so;
