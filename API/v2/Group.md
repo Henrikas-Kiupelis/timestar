@@ -65,6 +65,7 @@ Returns HTTP 200 OK if it succeeds
     GET  /group/{groupId}
          groupId        int            1 <= groupId <= MAX_INT
     RET  ValidGroupDTO
+```
 
 Reads and returns a group by id
 

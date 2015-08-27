@@ -111,6 +111,8 @@ Returns the set of valid timezones, used by JodaTime
 
 It shouldn't fail under normal circumstances
 
+------
+
 <a name="read-time"><a>
 ```
     GET  misc/time
@@ -120,6 +122,8 @@ It shouldn't fail under normal circumstances
 Returns current epoch milliseconds
 
 It shouldn't fail under normal circumstances
+
+------
 
 <a name="convert-time"><a>
 ```
@@ -166,6 +170,8 @@ If it fails, it will return an error message; it will fail if:
   * "documents" folder file exceeds 5MB;
   * "pictures" folder file exceeds 1MB;
   * couldn't save the file for some reason;
+  
+------
     
 <a name="delete-file"><a>
 ```
