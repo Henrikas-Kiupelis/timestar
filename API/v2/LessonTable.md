@@ -40,7 +40,7 @@ N/A
     RET  OptimizedLessonTableDTO
 ```
 
-Delegates the call to /lesson/table/1 using same parameters
+Delegates the call to [/lesson/table/1](#table) using same parameters
     
 ------
 
