@@ -1,6 +1,6 @@
-# API V2:
+# API V2
 
-## Links:
+## Links
 
 ### [Customer](/Customer.md) [Group](/Group.md) [Lesson](/Lesson.md) [Student](/Student.md) [Teacher](/Teacher.md)
 
@@ -8,7 +8,7 @@
 
 [LessonTable](/LessonTable.md) - for the primary table of the application
 
-## Description:
+## Description
 
 First of all, the API is partitioned. This basically means that depending on the user who is accessing the API,
 a different portion of the database will be used. All API calls are available only for the user's partition, with
