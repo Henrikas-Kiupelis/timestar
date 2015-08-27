@@ -32,8 +32,7 @@ this means no more empty fields (i.e. with empty lesson id lists, 0 duration/cos
 and less network bandwidth used; also, slightly reduced amount of calculations;
 3. Sums of columns and rows no longer appear; since the data is not formatted anyway, it makes more sense to sum
 in front end, because it's a simple operation (no domain logic needed here);
-4. SQL queries have been simplified across the board; no more nested tables or the like. ~10-20ms per table call!
-(was ~30-40ms before);
+4. SQL queries have been simplified across the board; no more nested tables or the like. ~10-20ms per call! (was ~30-40ms);
 
 ## Methods
 
@@ -66,7 +65,7 @@ the call is delegated to [/v2/teacher/count](../v2/Teacher.md#count-all)
     RET  FullTable
 ```
 
-Delegates the call to [/lesson/table/data/1](./LessonTable.md#table-data) using same parameters
+Delegates the call to [/lesson/table/data/1](#table-data) using same parameters
 
 ------
 
@@ -120,7 +119,7 @@ It will fail if:
     RET  FullTable
 ```
 
-Delegates the call to [/lesson/table/data/full/1](./LessonTable.md#table-data-full) using same parameters
+Delegates the call to [/lesson/table/data/full/1](#table-data-full) using same parameters
 
 ------
 
@@ -145,5 +144,5 @@ The parameters are evaluated as such:
 
 It shouldn't fail under normal circumstances
 
-The returned table is a combination of [/lesson/table/data](./LessonTable.md#table-data) and 
-both teacher and customer reports from [/lesson/table/report/{teacher|customer}](./LessonTable.md#table-report)
+The returned table is a combination of [/lesson/table/data](#table-data) and 
+both teacher and customer reports from [/lesson/table/report/{teacher|customer}](#table-report)
