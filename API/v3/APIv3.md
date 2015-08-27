@@ -6,7 +6,7 @@
 
 [APIv2](../v2/APIv2.md)
 
-[LessonTable](/LessonTable.md) - for the primary table of the application
+[LessonTable](./LessonTable.md) - for the primary table of the application
 
 ## Description
 
