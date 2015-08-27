@@ -2,10 +2,13 @@
 
 ## Relevant classes
 
-[ValidCustomerDTO](https://github.com/Henrikas-Kiupelis/timestar/blob/master/src/main/java/com/superum/api/customer/ValidCustomerDTO.java)
+[ValidCustomerDTO](../../src/main/java/com/superum/api/customer/ValidCustomerDTO.java)
 
 ## Methods
 
+### Commands
+
+#### 1)
 ```
     PUT   /customer
     BODY  ValidCustomerDTO
@@ -19,19 +22,6 @@ It will fail if:
 * HTTP 400; a mandatory field was not set;
 
 Returned FullCustomer will have its id field set;
-
-------
-
-```
-    GET  /customer/{customerId}
-         customerId     int            1 <= customerId <= MAX_INT
-    RET  ValidCustomerDTO
-```
-
-Reads and returns an existing customer;
-
-It will fail if:
-* HTTP 404; no customer with provided id exists;
 
 ------
 
@@ -64,6 +54,19 @@ It will fail if:
 * HTTP 404; no customer with provided id exists;
 
 Returns HTTP 200 OK if it succeeds
+
+### Queries
+
+```
+    GET  /customer/{customerId}
+         customerId     int            1 <= customerId <= MAX_INT
+    RET  ValidCustomerDTO
+```
+
+Reads and returns an existing customer;
+
+It will fail if:
+* HTTP 404; no customer with provided id exists;
 
 ------
 
@@ -115,6 +118,7 @@ the page parameter must be incremented, or per_page value raised
 
 Counts and returns the amount of all customers for a certain teacher;
 To determine if a certain customer is tied to a teacher, the following examination is made:
+
 1) customers have students;
 2) students are in groups;
 3) teachers are responsible for groups;
