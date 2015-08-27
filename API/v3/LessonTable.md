@@ -28,8 +28,9 @@ The following optimizations have been made:
   3. lessons for those ids
   4. duration of those lessons
   5. cost of those lessons
-this means no more empty fields (i.e. with empty lesson id lists, 0 duration/cost) and thus less JSON serialization
-and less network bandwidth used; also, slightly reduced amount of calculations;
+  
+  this means no more empty fields (i.e. with empty lesson id lists, 0 duration/cost) and thus less JSON serialization
+  and less network bandwidth used; also, slightly reduced amount of calculations;
 3. Sums of columns and rows no longer appear; since the data is not formatted anyway, it makes more sense to sum
 in front end, because it's a simple operation (no domain logic needed here);
 4. SQL queries have been simplified across the board; no more nested tables or the like. ~10-20ms per call! (was ~30-40ms);
