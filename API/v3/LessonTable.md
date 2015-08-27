@@ -2,17 +2,9 @@
 
 [Back to APIv3](./APIv3.md)
 
-## Relevant classes
-
-[Table](../../src/main/java/com/superum/v3/table/Table.java) - basic table; has teachers/customers/fields
-
-[TableField](../../src/main/java/com/superum/v3/table/TableField.java) - contains the data found in one of the table's fields
-
-[TableReport](../../src/main/java/com/superum/v3/table/TableReport.java) - contains a report on the amount required to pay and deadline
-
-[FullTable](../../src/main/java/com/superum/v3/table/FullTable.java) - combines basic table and reports into one
-
 ## Info
+
+[APIv2 version](../v2/LessonTable.md) - deprecated version
 
 This extension was created for 2 reasons:
 * optimize the lesson table even further
@@ -38,7 +30,15 @@ in front end, because it's a simple operation (no domain logic needed here);
 4. SQL queries have been simplified across the board; no more nested tables or the like. ~10-20ms per call!
 (was ~30-40ms); not to mention the amount of calls has been also reduced (total of 5-6 calls per request!)
 
-## Methods
+## Relevant classes
+
+[Table](../../src/main/java/com/superum/v3/table/Table.java) - basic table; has teachers/customers/fields
+
+[TableField](../../src/main/java/com/superum/v3/table/TableField.java) - contains the data found in one of the table's fields
+
+[TableReport](../../src/main/java/com/superum/v3/table/TableReport.java) - contains a report on the amount required to pay and deadline
+
+[FullTable](../../src/main/java/com/superum/v3/table/FullTable.java) - combines basic table and reports into one
 
 ### Commands
 

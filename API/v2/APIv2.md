@@ -78,4 +78,5 @@ Next, there will be a short description of the method, including:
 * what the method does; if there's any special behaviour it is necessarily described here;
 * when will the method fail, and what error response you can expect as a result; obvious failures,
     such as breaking the limitations of parameters or failing to provide required ones are omitted;
-* the structure/meaning of the returned value; this can be described in the first statement if it makes sense to do so
+* the structure/meaning of the returned value; this can be described at the same time as method behaviour
+    if it makes sense to do so

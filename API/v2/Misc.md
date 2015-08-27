@@ -25,13 +25,13 @@
     RET   ValidAccountDTO
 ```
 
-    Creates a new admin account in the same partition as the request;
+Creates a new admin account in the same partition as the request
 
-    It will fail if:
+It will fail if:
   * HTTP 400; username or password were not set;
   * HTTP 500; the username is already taken;
 
-    Returned ValidAccount will not contain additional information about the account, or the password
+Returned ValidAccount will not contain the password
 
 ------
 
@@ -42,16 +42,16 @@
     RET   ValidAccountDTO
 ```
 
-    Updates an existing account; only password field is updated;
-    you can only update the account using the credentials of the account being updated;
+Updates an existing account; only password field is updated;
+you can only update the account using the credentials of the account being updated
 
-    It will fail if:
+It will fail if:
   * HTTP 400; username or password were not set;
   * HTTP 401; the request was made using another account's credentials;
   * HTTP 404; an account with given username does not exist;
   * HTTP 500; the username is already taken;
 
-    Returned ValidAccount contains all the fields as they were before updating, except password;
+Returned ValidAccount contains all the fields as they were before updating, except password
 
 ### Queries
 
@@ -62,12 +62,12 @@
     RET  ValidAccountDTO
 ```
 
-    Reads and returns an existing account;
+Reads and returns an existing account
 
-    It will fail if:
+It will fail if:
   * HTTP 404; an account with given username does not exist;
 
-    Returned ValidAccount contains all the fields, except password;
+Returned ValidAccount contains all the fields, except password
 
 # Partition API
 
@@ -84,9 +84,9 @@
     RET   ValidPartitionDTO
 ```
 
-    Creates a new partition; it is also returned;
+Creates a new partition; it is also returned
 
-    It will fail if:
+It will fail if:
   * HTTP 500; the id or name of partition is already taken;
 
 ### Queries
@@ -107,9 +107,9 @@ N/A
     RET  Set<String>
 ```
 
-    Returns the set of valid timezones, used by JodaTime;
+Returns the set of valid timezones, used by JodaTime
 
-    It shouldn't fail under normal circumstances;
+It shouldn't fail under normal circumstances
 
 <a name="read-time"><a>
 ```
@@ -117,9 +117,9 @@ N/A
     RET  long
 ```
 
-    Returns current epoch milliseconds
+Returns current epoch milliseconds
 
-    It shouldn't fail under normal circumstances;
+It shouldn't fail under normal circumstances
 
 <a name="convert-time"><a>
 ```
@@ -133,9 +133,9 @@ N/A
     RET  long
 ```
 
-    Returns epoch milliseconds evaluated for given parameters, using JodaTime;
+Returns epoch milliseconds evaluated for given parameters, using JodaTime
 
-    It will fail if:
+It will fail if:
   * HTTP 500; hour, minute, second and millisecond add up to more than a day;
 
 # Files API
@@ -158,11 +158,11 @@ Instead, the prefix is
     RET   String
 ```
 
-    Uploads a file to the folder and returns its name, adjusted like this:
+Uploads a file to the folder and returns its name, adjusted like this:
 
-        name + "current epoch millis" + "file extension from MultipartFile"
+    name + "current epoch millis" + "file extension from MultipartFile"
 
-    If it fails, it will return an error message; it will fail if:
+If it fails, it will return an error message; it will fail if:
   * "documents" folder file exceeds 5MB;
   * "pictures" folder file exceeds 1MB;
   * couldn't save the file for some reason;
@@ -175,9 +175,9 @@ Instead, the prefix is
     RET     void
 ```
 
-    Deletes the file from the folder; full file name is required;
+Deletes the file from the folder; full file name is required;
 
-    It will fail if:
+It will fail if:
   * HTTP 404; a file with given name does not exist in the folder;
   * HTTP 500; file deletion failed for some reason;
 

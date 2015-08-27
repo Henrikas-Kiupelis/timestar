@@ -11,8 +11,8 @@
 ## Description
 
 This API is an extension of APIv2; it is intended to extend v2 by optimizing some of the methods, from both performance
-and usability standpoints; it uses same format as APIv2, however, there might be more detailed descriptions of
-endpoints; the prefix for the API is
+and usability (front end) standpoints; it uses same format as APIv2, however, there might be additional info;
+the prefix for the API is
 
     http://{IP}:{PORT}/timestar/api/v3/
     

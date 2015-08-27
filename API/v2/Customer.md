@@ -9,11 +9,11 @@
 ### Commands
 
 <a name="create"><a>
-**```
+```
     PUT   /customer
     BODY  ValidCustomerDTO
     RET   ValidCustomerDTO
-```**
+```
 
 Creates a new customer
 

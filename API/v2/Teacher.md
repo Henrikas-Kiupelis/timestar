@@ -1,77 +1,105 @@
-Teacher API:
+# Teacher API
 
-1)
+[Back to APIv2](./APIv2.md)
+
+## Relevant classes
+
+[FullTeacherDTO](../../src/main/java/com/superum/api/teacher/FullTeacherDTO.java)
+
+### Commands
+
+<a name="create"><a>
+```
     PUT   /teacher
-    BODY  com.superum.api.teacher.FullTeacher
-    RET   com.superum.api.teacher.FullTeacher
+    BODY  FullTeacherDTO
+    RET   FullTeacherDTO
+```
 
-    Creates a new teacher;
-    also creates an Account for this teacher, with a randomly generated password, which is sent to the e-mail
-    specified inside the FullTeacher
+Creates a new teacher;
+also creates an Account for this teacher, with a randomly generated password, which is sent to the given e-mail
 
-    It will fail if:
-    a) HTTP 400; the id field was set;
-    b) HTTP 400; a mandatory field was not set;
-    c) HTTP 409; the email is already taken in the partition of the request;
+It will fail if:
+  * HTTP 400; the id field was set;
+  * HTTP 400; a mandatory field was not set;
+  * HTTP 409; the email is already taken in the partition of the request;
 
-    Returned FullTeacher will have its id field set;
+Returned FullTeacher will have its id field set;
 
-2)
-    GET  /teacher/{teacherId}
-         teacherId      int            1 <= teacherId <= MAX_INT
-    RET  com.superum.api.teacher.FullTeacher
+------
 
-    Reads and returns an existing teacher;
-
-    It will fail if:
-    a) HTTP 404; no teacher with provided id exists;
-
-3)
+<a name="update"><a>
+```
     POST  /teacher
-    BODY  com.superum.api.teacher.FullTeacher
+    BODY  FullTeacherDTO
     RET   void
+```
 
-    Updates an existing teacher; only fields that are sent are updated;
+Updates an existing teacher; only fields that are sent are updated;
 
-    It will fail if:
-    a) HTTP 400; the id field was not set;
-    b) HTTP 400; only the id field was set and no other fields were;
-    c) HTTP 404; no teacher with provided id exists;
-    d) HTTP 409; the email is already taken in the partition of the request;
+It will fail if:
+  * HTTP 400; the id field was not set;
+  * HTTP 400; only the id field was set and no other fields were;
+  * HTTP 404; no teacher with provided id exists;
+  * HTTP 409; the email is already taken in the partition of the request;
 
-    Returns HTTP 200 OK if it succeeds
+Returns HTTP 200 OK if it succeeds
 
-4)
+------
+
+<a name="delete"><a>
+```
     DELETE  /teacher/{teacherId}
             teacherId      int            1 <= teacherId <= MAX_INT
     RET     void
+```
 
-    Deletes an existing teacher;
-    also deletes the Account of this teacher;
+Deletes an existing teacher;
+also deletes the Account of this teacher
 
-    It will fail if:
-    a) HTTP 404; no teacher with provided id exists;
+It will fail if:
+  * HTTP 404; no teacher with provided id exists;
 
-    Returns HTTP 200 OK if it succeeds
+Returns HTTP 200 OK if it succeeds
 
-5)
+### Queries
+
+<a name="read"><a>
+```
+    GET  /teacher/{teacherId}
+         teacherId      int            1 <= teacherId <= MAX_INT
+    RET  FullTeacherDTO
+```
+
+Reads and returns an existing teacher
+
+It will fail if:
+  * HTTP 404; no teacher with provided id exists;
+
+------
+
+<a name="read-all"><a>
+```
     GET  /teacher
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
     OPT  per_page       int            1 <= per_page <= 100; DEF 25
-    RET  List<com.superum.api.teacher.FullTeacher>
+    RET  List<FullTeacherDTO>
+```
 
-    Reads and returns a list of all teachers;
+Reads and returns a list of all teachers
 
-    It shouldn't fail under normal circumstances;
+It shouldn't fail under normal circumstances
 
-    Returned List is paged; using DEF parameter values, only first 25 teachers will be returned; to access the rest,
-    the page parameter must be incremented, or per_page value raised;
-    If a teacher is deleted, the results of this query will no longer be consistent with the ones before the deletion;
+Returned List is paged; using DEF parameter values, only first 25 teachers will be returned; to access the rest,
+the page parameter must be incremented, or per_page value raised
     
+------
+
 <a name="count-all"><a>
+```
     GET  /teacher/count
     RET  int
+```
 
-    Counts and returns the amount of all teachers;
+Counts and returns the amount of all teachers
 
-    It shouldn't fail under normal circumstances;
+It shouldn't fail under normal circumstances

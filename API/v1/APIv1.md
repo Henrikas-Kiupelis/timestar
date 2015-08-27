@@ -26,7 +26,8 @@ PREFIX:
     /all - rodyti visus
     /{table}/{id} - rodyti visus tam tikram apribojimui, pvz /teacher/customer/1 - rodo visus mokytojus įmonei, kurios ID = 1
 
-------------------------------------------------------------------------------------
+------
+
 Teacher:
 
     POST /teacher/add
@@ -35,7 +36,8 @@ Teacher:
     DELETE /teacher/delete/{id}
     GET /teacher/all
 
-------------------------------------------------------------------------------------
+------
+
 Teacher language:
 
     POST /teacher/lang/add
@@ -44,7 +46,8 @@ Teacher language:
     GET /teacher/lang/delete/{teacherId}
     POST /teacher/lang/delete
 
-------------------------------------------------------------------------------------
+------
+
 Teacher contract:
 
     POST /teacher/contract/add
@@ -52,7 +55,8 @@ Teacher contract:
     POST /teacher/contract/update
     GET /teacher/contract/delete/{teacherId}
 
-------------------------------------------------------------------------------------
+------
+
 Customer:
 
     POST /customer/add
@@ -62,7 +66,8 @@ Customer:
     GET /customer/teacher/{teacherId}
     GET /customer/all
 
-------------------------------------------------------------------------------------
+------
+
 Customer contract:
 
     POST /customer/contract/add
@@ -70,7 +75,8 @@ Customer contract:
     POST /customer/contract/update
     GET /customer/contract/delete/{customerId}
 
-------------------------------------------------------------------------------------
+------
+
 Group:
 
     POST /group/add
@@ -82,7 +88,8 @@ Group:
     GET /group/customer/{customerId}/teacher/{teacherId}
     GET /group/all
 
-------------------------------------------------------------------------------------
+------
+
 Student:
 
     POST /student/add
@@ -93,7 +100,8 @@ Student:
     GET /student/group/{groupId}
     GET /student/lesson/{lessonId}
 
-------------------------------------------------------------------------------------
+------
+
 Lesson:
 
     POST /lesson/add
@@ -110,7 +118,8 @@ Lesson:
     /lesson/group/1?end=2015-06-30
     /lesson/teacher/1?start=2015-06-01&end=2015-06-30
 
-------------------------------------------------------------------------------------
+------
+
 Attendance:
 
     POST lesson/attendance/add
@@ -119,7 +128,8 @@ Attendance:
     GET lesson/attendance/delete/{lessonId}
     POST lesson/attendance/delete
 
-------------------------------------------------------------------------------------
+------
+
 Lesson table:
 
     GET /lesson/table
