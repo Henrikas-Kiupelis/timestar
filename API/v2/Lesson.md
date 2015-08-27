@@ -62,8 +62,6 @@ Returns HTTP 200 OK if it succeeds
 
 ### Queries
 
-------
-
 <a name="read"><a>
 ```
     GET  /lesson/{lessonId}
