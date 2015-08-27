@@ -6,6 +6,7 @@ import com.superum.helper.field.core.MappedField;
 import com.superum.helper.jooq.DefaultCommands;
 import com.superum.helper.jooq.DefaultQueries;
 import com.superum.helper.jooq.ForeignQueries;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,9 @@ public class ValidLessonCommandServiceImpl implements ValidLessonCommandService 
             throw new InvalidLessonException("Provided lesson does not have the following mandatory fields set: "
                     + lesson.mandatoryFields().filter(MappedField::isNotSet).join(", "));
 
+        if (lesson.isOverlapping(sql, partitionId))
+            throw new OverlappingLessonException("This teacher already has a lesson during this time, cannot create!");
+
         return defaultLessonCommands.create(lesson, partitionId, ValidLessonDTO::valueOf)
                 .orElseThrow(() -> new DatabaseException("Couldn't return lesson after inserting it: " + lesson));
     }
@@ -41,6 +45,9 @@ public class ValidLessonCommandServiceImpl implements ValidLessonCommandService 
 
         if (!defaultLessonQueries.exists(lesson.getId(), partitionId))
             throw new LessonNotFoundException("Couldn't find lesson with id " + lesson.getId());
+
+        if (lesson.isOverlapping(sql, partitionId))
+            throw new OverlappingLessonException("This teacher already has a lesson during this time, cannot update!");
 
         if (defaultLessonCommands.update(lesson, partitionId) == 0)
             throw new DatabaseException("Couldn't update lesson: " + lesson);
@@ -62,9 +69,10 @@ public class ValidLessonCommandServiceImpl implements ValidLessonCommandService 
     // CONSTRUCTORS
 
     @Autowired
-    public ValidLessonCommandServiceImpl(DefaultCommands<LessonRecord, Long> defaultLessonCommands,
+    public ValidLessonCommandServiceImpl(DSLContext sql, DefaultCommands<LessonRecord, Long> defaultLessonCommands,
                                          DefaultQueries<LessonRecord, Long> defaultLessonQueries,
                                          ForeignQueries<Long> foreignLessonQueries) {
+        this.sql = sql;
         this.defaultLessonCommands = defaultLessonCommands;
         this.defaultLessonQueries = defaultLessonQueries;
         this.foreignLessonQueries = foreignLessonQueries;
@@ -72,6 +80,7 @@ public class ValidLessonCommandServiceImpl implements ValidLessonCommandService 
 
     // PRIVATE
 
+    private final DSLContext sql;
     private final DefaultCommands<LessonRecord, Long> defaultLessonCommands;
     private final DefaultQueries<LessonRecord, Long> defaultLessonQueries;
     private final ForeignQueries<Long> foreignLessonQueries;

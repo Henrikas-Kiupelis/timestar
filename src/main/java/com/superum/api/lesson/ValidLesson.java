@@ -1,12 +1,16 @@
 package com.superum.api.lesson;
 
 import com.superum.api.customer.InvalidCustomerException;
+import com.superum.exception.DatabaseException;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
 import static com.superum.db.generated.timestar.Tables.LESSON;
 import static com.superum.helper.validation.Validator.validate;
 
@@ -19,6 +23,34 @@ import static com.superum.helper.validation.Validator.validate;
  * </pre>
  */
 public class ValidLesson extends MappedClass<ValidLesson, Long> {
+
+    public boolean isOverlapping(DSLContext sql, int partitionId) {
+        Integer teacherId = getTeacherId(sql);
+
+        long startTime = validLessonDTO.getStartTime();
+        long endTime = validLessonDTO.getEndTime();
+
+        Condition aLessonForSameTeacher = LESSON.TEACHER_ID.eq(teacherId)
+                .and(LESSON.PARTITION_ID.eq(partitionId));
+
+        Condition aLessonStartsBetweenThisLesson = LESSON.TIME_OF_START.between(startTime, endTime);
+        Condition aLessonEndsBetweenThisLesson = LESSON.TIME_OF_END.between(startTime, endTime);
+        Condition thisLessonStartsBetweenALesson = LESSON.TIME_OF_START.le(startTime)
+                .and(LESSON.TIME_OF_END.ge(startTime));
+        // No need to check for end time, because it is automatically caught by the first two conditions as well
+
+        Condition lessonIsOverlapping = aLessonForSameTeacher
+                .and(aLessonStartsBetweenThisLesson
+                        .or(aLessonEndsBetweenThisLesson)
+                        .or(thisLessonStartsBetweenALesson));
+
+        if (hasId())
+            lessonIsOverlapping = LESSON.ID.ne(getId()).and(lessonIsOverlapping);
+
+        return sql.fetchExists(LESSON, lessonIsOverlapping);
+    }
+
+    // CONSTRUCTORS
 
     public ValidLesson(ValidLessonDTO validLessonDTO) {
         validate(validLessonDTO.getId()).Null().or().moreThan(0)
@@ -47,6 +79,21 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
     }
 
     private final ValidLessonDTO validLessonDTO;
+
+    private Integer getTeacherId(DSLContext sql) {
+        Integer teacherId = validLessonDTO.getTeacherId();
+        if (teacherId == null)
+            teacherId = sql.select(GROUP_OF_STUDENTS.TEACHER_ID)
+                    .from(GROUP_OF_STUDENTS)
+                    .where(GROUP_OF_STUDENTS.ID.eq(validLessonDTO.getGroupId()))
+                    .fetch().stream()
+                    .findFirst()
+                    .map(record -> record.getValue(GROUP_OF_STUDENTS.TEACHER_ID))
+                    .orElseThrow(() -> new DatabaseException("Problem retrieving teacher for specified group: "
+                            + validLessonDTO.getGroupId()));
+
+        return teacherId;
+    }
 
     private static final int COMMENT_SIZE_LIMIT = 500;
 

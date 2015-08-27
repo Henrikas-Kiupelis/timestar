@@ -28,4 +28,9 @@ public class LessonErrorHandler {
         response.sendError(HttpStatus.BAD_REQUEST.value(), "Cannot delete the specified lesson because it is still being used; " + e.getMessage());
     }
 
+    @ExceptionHandler
+    void handleOverlappingLessonException(OverlappingLessonException e, HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.CONFLICT.value(), "Provided lesson is overlapping; " + e.getMessage());
+    }
+
 }
