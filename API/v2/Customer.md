@@ -59,6 +59,7 @@ Returns HTTP 200 OK if it succeeds
 
 Reads and returns a list of customers for a certain teacher;
 To determine if a certain customer is tied to a teacher, the following examination is made:
+
 1. customers have students;
 2. students are in groups;
 3. teachers are responsible for groups;
