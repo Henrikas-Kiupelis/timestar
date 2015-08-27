@@ -32,7 +32,7 @@ All the methods will be given in this format (example):
     (5)    OPT  end_date    java.sql.Date  any; DEF start_date
     (6)    RET  LessonTable
 
-The relevant non-standard classes will be found at the top of the API page like this: [LessonTable](https://github.com/Henrikas-Kiupelis/timestar/blob/master/src/main/java/com/superum/db/lesson/table/core/LessonTable.java)
+The relevant non-standard classes will be found at the top of the API page like this: [LessonTable](../../src/main/java/com/superum/db/lesson/table/core/LessonTable.java)
 
 `GET` refers to the HTTP method the request expects;
 `/lesson/table` are constant mappings, which should always be in the request;

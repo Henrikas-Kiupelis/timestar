@@ -1,6 +1,6 @@
-API V1:
+# API V1
 
-Below is a rough explanation of v1 API; it is not being updated and is deprecated!
+## Below is a rough explanation of v1 API; it is not being updated and is deprecated!
 
 PREFIX:
 

@@ -8,14 +8,13 @@
 
 ### Commands
 
-#### 1)
 ```
     PUT   /customer
     BODY  ValidCustomerDTO
     RET   ValidCustomerDTO
 ```
 
-Creates a new customer;
+Creates a new customer
 
 It will fail if:
 * HTTP 400; the id field was set;
