@@ -25,14 +25,15 @@ The API might switch to HTTPS eventually.
 
 All the methods will be given in this format (example):
 
-```
-        (1)    GET  /lesson/table/{pageId}
-        (2)         pageId      int            0 < pageId <= MAX_INT
-        (3)    OPT  per_page    int            0 < per_page <= 100; DEF 6
-        (4)    OPT  start_date  java.sql.Date  any; DEF today
-        (5)    OPT  end_date    java.sql.Date  any; DEF start_date
-        (6)    RET  [com.superum.db.lesson.table.core.LessonTable](/src/com/superum/db/lesson/table/core/LessonTable)
-```
+
+    (1)    GET  /lesson/table/{pageId}
+    (2)         pageId      int            0 < pageId <= MAX_INT
+    (3)    OPT  per_page    int            0 < per_page <= 100; DEF 6
+    (4)    OPT  start_date  java.sql.Date  any; DEF today
+    (5)    OPT  end_date    java.sql.Date  any; DEF start_date
+    (6)    RET  LessonTable
+
+[LessonTable](https://github.com/Henrikas-Kiupelis/timestar/blob/master/src/main/java/com/superum/db/lesson/table/core/LessonTable.java)
 
 GET refers to the HTTP method the request expects;
 /lesson/table are constant mappings, which should always be in the request;
