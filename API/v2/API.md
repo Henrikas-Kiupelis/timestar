@@ -1,4 +1,14 @@
-API V2:
+# API V2:
+
+## Links:
+
+### [Customer](/Customer.md) [Group](/Group.md) [Lesson](/Lesson.md) [Student](/Student.md) [Teacher](/Teacher.md)
+
+[Grouping/attendance](/Multi.md) - for putting students into groups/describing which students attended a lesson
+
+[LessonTable](/LessonTable.md) - for the primary table of the application
+
+## Description:
 
 First of all, the API is partitioned. This basically means that depending on the user who is accessing the API,
 a different portion of the database will be used. All API calls are available only for the user's partition, with
@@ -15,12 +25,14 @@ The API might switch to HTTPS eventually.
 
 All the methods will be given in this format (example):
 
-    (1)    GET  /lesson/table/{pageId}
-    (2)         pageId      int            0 < pageId <= MAX_INT
-    (3)    OPT  per_page    int            0 < per_page <= 100; DEF 6
-    (4)    OPT  start_date  java.sql.Date  any; DEF today
-    (5)    OPT  end_date    java.sql.Date  any; DEF start_date
-    (6)    RET  com.superum.db.lesson.table.core.LessonTable
+```
+        (1)    GET  /lesson/table/{pageId}
+        (2)         pageId      int            0 < pageId <= MAX_INT
+        (3)    OPT  per_page    int            0 < per_page <= 100; DEF 6
+        (4)    OPT  start_date  java.sql.Date  any; DEF today
+        (5)    OPT  end_date    java.sql.Date  any; DEF start_date
+        (6)    RET  [com.superum.db.lesson.table.core.LessonTable](/src/com/superum/db/lesson/table/core/LessonTable)
+```
 
 GET refers to the HTTP method the request expects;
 /lesson/table are constant mappings, which should always be in the request;
@@ -59,6 +71,7 @@ realized and somewhat tested.
 
 Next, there will be a short description of the method, including:
 
-    what the method does; if there's any special behaviour it is necessarily described here;
-    when will the method fail, and what error response you can expect as a result; obvious failures, such as breaking the limitations of parameters or failing to provide requires ones are omitted;
-    the structure/meaning of the returned value; this can be described in 1) if it makes sense to do so;
+* what the method does; if there's any special behaviour it is necessarily described here;
+* when will the method fail, and what error response you can expect as a result; obvious failures,
+    such as breaking the limitations of parameters or failing to provide required ones are omitted;
+* the structure/meaning of the returned value; this can be described in the first statement if it makes sense to do so
