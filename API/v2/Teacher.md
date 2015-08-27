@@ -67,8 +67,8 @@ Teacher API:
     Returned List is paged; using DEF parameter values, only first 25 teachers will be returned; to access the rest,
     the page parameter must be incremented, or per_page value raised;
     If a teacher is deleted, the results of this query will no longer be consistent with the ones before the deletion;
-
-6)
+    
+<a name="count-all"><a>
     GET  /teacher/count
     RET  int
 

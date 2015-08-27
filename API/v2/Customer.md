@@ -8,7 +8,7 @@
 
 ### Commands
 
-<a name="c1"><a>
+<a name="create"><a>
 ```
     PUT   /customer
     BODY  ValidCustomerDTO
@@ -25,13 +25,14 @@ Returned FullCustomer will have its id field set;
 
 ------
 
+<a name="update"><a>
 ```
     POST  /customer
     BODY  ValidCustomerDTO
     RET   void
 ```
 
-Updates an existing customer; only fields that are sent are updated;
+Updates an existing customer; only fields that are sent are updated
 
 It will fail if:
 * HTTP 400; the id field was not set;
@@ -42,13 +43,14 @@ Returns HTTP 200 OK if it succeeds
 
 ------
 
+<a name="delete"><a>
 ```
     DELETE  /customer/{customerId}
             customerId     int            1 <= customerId <= MAX_INT
     RET     void
 ```
 
-Deletes an existing customer;
+Deletes an existing customer
 
 It will fail if:
 * HTTP 404; no customer with provided id exists;
@@ -57,19 +59,21 @@ Returns HTTP 200 OK if it succeeds
 
 ### Queries
 
+<a name="read"><a>
 ```
     GET  /customer/{customerId}
          customerId     int            1 <= customerId <= MAX_INT
     RET  ValidCustomerDTO
 ```
 
-Reads and returns an existing customer;
+Reads and returns an existing customer
 
 It will fail if:
 * HTTP 404; no customer with provided id exists;
 
 ------
 
+<a name="read-for-teacher"><a>
 ```
     GET  /customer/teacher/{teacherId}
          teacherId      int            1 <= teacherId <= MAX_INT
@@ -94,6 +98,7 @@ the page parameter must be incremented, or per_page value raised
 
 ------
 
+<a name="read-all"><a>
 ```
     GET  /customer
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
@@ -101,15 +106,16 @@ the page parameter must be incremented, or per_page value raised
     RET  List<ValidCustomerDTO>
 ```
 
-Reads and returns a list of all customers;
+Reads and returns a list of all customers
 
-It shouldn't fail under normal circumstances;
+It shouldn't fail under normal circumstances
 
 Returned List is paged; using DEF parameter values, only first 25 customers will be returned; to access the rest,
 the page parameter must be incremented, or per_page value raised
 
 ------
 
+<a name="count-for-teacher"><a>
 ```
     GET  /customer/teacher/{teacherId}/count
          teacherId      int            1 <= teacherId <= MAX_INT
@@ -129,11 +135,12 @@ It will fail if:
 
 ------
 
+<a name="count-all"><a>
 ```
     GET  /customer/count
     RET  int
 ```
 
-Counts and returns the amount of all customers;
+Counts and returns the amount of all customers
 
-It shouldn't fail under normal circumstances;
+It shouldn't fail under normal circumstances

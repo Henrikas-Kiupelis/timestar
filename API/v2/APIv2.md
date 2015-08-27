@@ -8,6 +8,8 @@
 
 [LessonTable](/LessonTable.md) - for the primary table of the application
 
+[Miscellaneous](/Misc.md) - for partitions, accounts, files and other misc stuff
+
 ## Description
 
 First of all, the API is partitioned. This basically means that depending on the user who is accessing the API,
