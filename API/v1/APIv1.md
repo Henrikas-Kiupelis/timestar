@@ -1,5 +1,7 @@
 # API V1
 
+[Back to README](README.md)
+
 ## Below is a rough explanation of v1 API; it is not being updated and is deprecated!
 
 PREFIX:

@@ -1,5 +1,7 @@
 # Customer API
 
+[Back to APIv2](./APIv2.md)
+
 ## Relevant classes
 
 [ValidCustomerDTO](../../src/main/java/com/superum/api/customer/ValidCustomerDTO.java)

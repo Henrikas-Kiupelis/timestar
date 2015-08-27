@@ -1,5 +1,7 @@
 # Lesson Table API
 
+[Back to APIv3](./APIv3.md)
+
 ## Relevant classes
 
 [Table](../../src/main/java/com/superum/v3/table/Table.java) - basic table; has teachers/customers/fields
