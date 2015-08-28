@@ -11,6 +11,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * <pre>
+ * Data Transport Object for a field of lesson table
+ *
+ * This object is responsible for serialization; the table is a read-only construct, therefore de-serialization
+ * logic is not necessary
+ *
+ * When returning an instance of TableField with JSON, these fields will be present:
+ *      FIELD_NAME          : FIELD_DESCRIPTION
+ *      customerId          : id of a customer
+ *      teacherId           : id of a teacher
+ *      count               : amount of lessons this teacher had for this customer
+ *      duration            : the total length of those lessons in minutes
+ *      cost                : the total cost of those lessons (hourly/academic wage is considered in calculation)
+ *
+ * If customerId is null, the lessons are for groups without any customer (student groups)
+ *
+ * Example of JSON to expect:
+ * {
+ *      "customerId": 1,
+ *      "teacherId": 1,
+ *      "count": 5,
+ *      "duration": 225,
+ *      "cost": 150.2597
+ * }
+ * </pre>
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public class TableField {

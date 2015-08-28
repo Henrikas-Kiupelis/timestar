@@ -111,6 +111,10 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
     private final DSLContext sql;
     private final ValidTeacherQueryService validTeacherQueryService;
 
+    /**
+     * @return list of all customers; unlike the normal method call, there is no limit in this case; also, null
+     * customer is fetched at the tail of this list if and only if there are groups which do not have a customer
+     */
     private List<ValidCustomerDTO> getAllCustomers(int partitionId) {
         List<ValidCustomerDTO> customers =  sql.selectFrom(CUSTOMER)
                 .where(CUSTOMER.PARTITION_ID.eq(partitionId))
@@ -125,12 +129,22 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
         return customers;
     }
 
+    /**
+     * @return the field data (customerId, teacherId, lesson ids for both of them, the duration of those lessons
+     * and cost of those lessons); the cost must consider whether the group uses teacher's hourly or academic wage
+     */
     private List<TableField> getFieldData(List<FullTeacherDTO> teachers, long start, long end, int partitionId) {
         return select(fullCondition(teachers, start, end, partitionId))
                 .fetch()
                 .map(this::toField);
     }
 
+    /**
+     * @return an SQL condition which gives: lessons in the correct partition; lessons that started between start and
+     * end variables; only lessons that are assigned to the given list of teachers
+     * @throws AssertionError if teacher's list is empty; this method should NEVER be called if there are no
+     * teachers, because in that scenario the program can exit early.
+     */
     private Condition fullCondition(List<FullTeacherDTO> teachers, long start, long end, int partitionId) {
         Condition partitionCondition = LESSON.PARTITION_ID.eq(partitionId);
         Condition timeCondition = LESSON.TIME_OF_START.between(start, end);
@@ -144,6 +158,9 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
         return partitionCondition.and(timeCondition).and(teacherCondition);
     }
 
+    /**
+     * @return the SQL records representing a TableField; the condition is usually some form of fullCondition()
+     */
     private SelectHavingStep<Record5<Integer, Integer, String, BigDecimal, BigDecimal>> select(Condition condition) {
         return sql.select(GROUP_OF_STUDENTS.CUSTOMER_ID, GROUP_OF_STUDENTS.TEACHER_ID,
                 groupConcat(LESSON.ID).as(LESSON_IDS_FIELD),
@@ -156,6 +173,9 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
                 .groupBy(GROUP_OF_STUDENTS.CUSTOMER_ID, GROUP_OF_STUDENTS.TEACHER_ID);
     }
 
+    /**
+     * @return TableField from a Record returned by select(Condition)
+     */
     private TableField toField(Record record) {
         if (record == null)
             return null;
@@ -171,15 +191,22 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
         BigDecimal durationSum = record.getValue(DURATION_FIELD, BigDecimal.class);
         int duration = durationSum.intValueExact();
 
-        BigDecimal cost = record.getValue(COST_FIELD, BigDecimal.class).divide(PADDING, BigDecimal.ROUND_HALF_EVEN);
+        BigDecimal cost = record.getValue(COST_FIELD, BigDecimal.class)
+                // please refer to paddedSumField() documentation for the reason of this division
+                .divide(PADDING, BigDecimal.ROUND_HALF_EVEN);
 
         return new TableField(customerId, teacherId, lessonIds, duration, cost);
     }
 
+    /**
+     * Gets TimeResolvers using an SQL function for given ids; if the amount of resolvers is less than given ids, it
+     * means that SQL query resulted in fewer rows than given ids and thus at least one of ids doesn't exist; exception
+     * provider handles this scenario;
+     */
     private <T extends Throwable> List<TableReport> reportsFor(Field<Integer> idField, List<Integer> ids, int partitionId,
-                                         BiFunction<List<Integer>, Integer, Map<Integer, TimeResolver>> timeResolverGetter,
+                                         BiFunction<List<Integer>, Integer, Map<Integer, TimeResolver>> timeResolverGetterSQL,
                                          Function<String, T> exceptionProvider) throws T {
-        Map<Integer, TimeResolver> timeResolvers = timeResolverGetter.apply(ids, partitionId);
+        Map<Integer, TimeResolver> timeResolvers = timeResolverGetterSQL.apply(ids, partitionId);
         if (timeResolvers.values().size() < ids.size())
             throw exceptionProvider.apply("Couldn't find these ids: " +
                     Sets.difference(Seq.seq(ids).toSet(), Sets.newHashSet(timeResolvers.keySet())));
@@ -187,6 +214,9 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
         return reportsFor(idField, ids, partitionId, timeResolvers);
     }
 
+    /**
+     * Evaluates the amount which the teacher must be paid/customer must pay and the deadline of this payment
+     */
     private List<TableReport> reportsFor(Field<Integer> idField, List<Integer> ids, int partitionId,
                                          Map<Integer, TimeResolver> timeResolvers) {
         Condition condition = forReport(idField, timeResolvers)
@@ -194,21 +224,31 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
         List<TableReport> reports = new ArrayList<>();
         for (Record record : report(idField, condition).fetch()) {
             int id = record.getValue(ID_FIELD, Integer.class);
-            BigDecimal cost = record.getValue(COST_FIELD, BigDecimal.class).divide(PADDING, BigDecimal.ROUND_HALF_EVEN);
+            BigDecimal cost = record.getValue(COST_FIELD, BigDecimal.class)
+                    // please refer to paddedSumField() documentation for the reason of this division
+                    .divide(PADDING, BigDecimal.ROUND_HALF_EVEN);
             LocalDate endDate = JodaTimeZoneHandler.getDefault()
                     .from(timeResolvers.get(id).getEndTime())
-                    .toOrgJodaTimeLocalDate().minusDays(1);
+                    .toOrgJodaTimeLocalDate()
+                    // endTime is inclusive, which means it points to the next day at 00:00:00
+                    .minusDays(1);
             reports.add(new TableReport(id, endDate, cost));
         }
+        // since we have the deadline even in the scenario where the amount to pay is 0, we add it to this list
         for (int id : Sets.difference(Seq.seq(ids).toSet(), Seq.seq(reports).map(TableReport::getId).toSet())) {
             LocalDate endDate = JodaTimeZoneHandler.getDefault()
                     .from(timeResolvers.get(id).getEndTime())
-                    .toOrgJodaTimeLocalDate().minusDays(1);
+                    .toOrgJodaTimeLocalDate()
+                    // endTime is inclusive, which means it points to the next day at 00:00:00
+                    .minusDays(1);
             reports.add(new TableReport(id, endDate, ZERO));
         }
         return reports;
     }
 
+    /**
+     * SQL function to retrieve the deadline for customers using their id
+     */
     private Map<Integer, TimeResolver> fromStartDates(List<Integer> customerIds, int partitionId) {
         return sql.select(CUSTOMER.ID, CUSTOMER.START_DATE)
                 .from(CUSTOMER)
@@ -221,6 +261,9 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
                                 .toOrgJodaTimeLocalDate())));
     }
 
+    /**
+     * SQL function to retrieve the deadline for teachers using their id
+     */
     private Map<Integer, TimeResolver> fromPaymentDates(List<Integer> teacherIds, int partitionId) {
         return sql.select(TEACHER.ID, TEACHER.PAYMENT_DAY)
                 .from(TEACHER)
@@ -231,6 +274,10 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
                         r -> TimeResolver.from(r.getValue(TEACHER.PAYMENT_DAY))));
     }
 
+    /**
+     * @return an SQL condition which checks if a field is equal to any of given ids
+     * @throws AssertionError if id list is empty; this should be filtered out at a much higher level than this
+     */
     private Condition forField(Field<Integer> idField, List<Integer> ids) {
         return ids.stream()
                 .map(idField::eq)
@@ -238,6 +285,11 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
                 .orElseThrow(() -> new AssertionError("Empty list of ids should fail at the controller level"));
     }
 
+    /**
+     * @return an SQL condition which is used by reports; it enforces unique time constraints for every id, because
+     * the deadline (and thus the period which is to be paid for) varies for every customer/teacher
+     * @throws AssertionError if id list is empty; this should be filtered out at a much higher level than this
+     */
     private Condition forReport(Field<Integer> idField, Map<Integer, TimeResolver> timeResolvers) {
         return Seq.seq(timeResolvers)
                 .map(t2 -> idField.eq(t2.v1).and(t2.v2.isBetween(LESSON.TIME_OF_START)))
@@ -245,6 +297,9 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
                 .orElseThrow(() -> new AssertionError("Empty list of ids should fail at the controller level"));
     }
 
+    /**
+     * @return the SQL records representing a TableReport; the condition is usually some form of forReport()
+     */
     private SelectHavingStep<Record2<Integer, BigDecimal>> report(Field<Integer> idField, Condition condition) {
         return sql.select(idField.as(ID_FIELD), paddedSumField())
                 .from(LESSON)
@@ -254,6 +309,39 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
                 .groupBy(idField);
     }
 
+    /**
+     * <pre>
+     * Explanation:
+     *  if hourly wage is used, let's say X euros per hour, then the amount that must be paid for is
+     *      cost = (T / 60) * X, where T is the amount of minutes the lesson lasted;
+     *  if academic wage is used, let's say Y euros per academic hour, then the amount that must be paid for is
+     *      cost = (T / 45) * Y, where T is the amount of minutes the lesson lasted;
+     *  also, the table field will evaluate a sum of these costs:
+     *      SUM for all i : cost(i); cost(i) = (Ti / [45|60]) * [Y|X]
+     *  normally this would be fine, but we are using BigDecimal fields, which have limited accuracy (in our case,
+     *  4 digits after the comma); also, notice that:
+     *      45 = 3 * 3 * 5
+     *      60 = 2 * 2 * 3 * 5
+     *  both numbers have a prime factor of 3, which will result in inaccurate divisions when Ti is not divisible by 3
+     *  (i.e. 50 / 3 = 16 + 2/3) and thus lose accuracy; the best way to avoid this is to do the division after all
+     *  other operations (i.e. SUM) have taken place, because then the accuracy will only have a single chance to be
+     *  lost; this proves to be difficult to achieve in our situation, because the amount that we need to divide by
+     *  is conditional, based on which wage is used; the problem, however, can be solved by using LCM (least common
+     *  multiple) of the divisors 45 and 60; from the previous factoring we can see that GCD(45, 60) is 3 * 5 = 15;
+     *  then LCM(45, 60) = 60 * 45 / 15 = 60 * 3 = 180; using this we can evaluate
+     *      cost * 180 = T * X / 60 * 180 = T * X * 3
+     *      cost * 180 = T * Y / 45 * 180 = T * Y * 4
+     *  then
+     *      SUM for all i : cost(i) ->
+     *          180 * SUM for all i : 180 * cost(i) ->
+     *              180 * SUM for all i : Ti * [3X|4Y]
+     *  this formula allows us to evaluate the sum times an integer without using any division for every cost(i), and
+     *  then divide the resulting "padded" sum by said integer to get the actual sum we are looking for
+     *  </pre>
+     * @return SQL field, to be used in a SELECT statement; it pads the resulting cost like this:
+     *  1) if hourly wage is used, then the resulting cost is multiplied by 3;
+     *  2) if academic wage is used, then the resulting cost is multiplied by 4;
+     */
     private Field<BigDecimal> paddedSumField() {
         return sum(DSL.when(DSL.condition(GROUP_OF_STUDENTS.USE_HOURLY_WAGE),
                 TEACHER.HOURLY_WAGE.mul(LESSON.DURATION_IN_MINUTES).mul(3))
@@ -262,12 +350,12 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
                 .as(COST_FIELD);
     }
 
+    // LCM(45, 60) = 60 * 45 / GCD(45, 60) = 60 * 45 / 15 = 60 * 3 = 180
+    private static final BigDecimal PADDING = BigDecimal.valueOf(180);
+
     private static final String ID_FIELD = "id";
     private static final String LESSON_IDS_FIELD = "lessonIds";
     private static final String DURATION_FIELD = "duration";
     private static final String COST_FIELD = "cost * 180";
-
-    // 3 * 60 or 4 * 45
-    private static final BigDecimal PADDING = BigDecimal.valueOf(180);
 
 }

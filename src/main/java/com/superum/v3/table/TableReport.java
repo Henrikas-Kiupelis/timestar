@@ -12,6 +12,27 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * <pre>
+ * Data Transport Object for the report part of lesson table
+ *
+ * This object is responsible for serialization; the table is a read-only construct, therefore de-serialization
+ * logic is not necessary
+ *
+ * When returning an instance of TableReport with JSON, these fields will be present:
+ *      FIELD_NAME          : FIELD_DESCRIPTION
+ *      id                  : id of a teacher or customer
+ *      paymentDate         : date string; refers to the time when the next payment should happen
+ *      cost                : the amount that needs to be paid for teacher/by customer up to the payment date
+ *
+ * Example of JSON to expect:
+ * {
+ *      "id": 1,
+ *      "paymentDate": "2015-08-28",
+ *      "cost": 150.2597
+ * }
+ * </pre>
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public class TableReport {
@@ -78,6 +99,5 @@ public class TableReport {
 
     private static final Equals<TableReport> EQUALS = new Equals<>(Arrays.asList(TableReport::getId,
             TableReport::getPaymentDate, TableReport::getCost));
-
 
 }
