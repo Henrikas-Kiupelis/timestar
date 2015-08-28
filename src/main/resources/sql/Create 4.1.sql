@@ -163,9 +163,9 @@ DELIMITER ;
 
 CREATE TABLE group_of_students (
   id INT NOT NULL AUTO_INCREMENT,
+  partition_id INT NOT NULL,
   customer_id INT,
   teacher_id INT NOT NULL,
-  partition_id INT NOT NULL,
 
   created_at BIGINT,
   updated_at BIGINT,
@@ -205,8 +205,8 @@ DELIMITER ;
 
 CREATE TABLE student (
   id INT NOT NULL AUTO_INCREMENT,
-  customer_id INT,
   partition_id INT NOT NULL,
+  customer_id INT,
 
   created_at BIGINT,
   updated_at BIGINT,
@@ -251,9 +251,9 @@ CREATE TABLE students_in_groups (
 
 CREATE TABLE lesson (
   id BIGINT NOT NULL AUTO_INCREMENT,
+  partition_id INT NOT NULL,
   teacher_id INT,
   group_id INT NOT NULL,
-  partition_id INT NOT NULL,
 
   created_at BIGINT,
   updated_at BIGINT,
