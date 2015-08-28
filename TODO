@@ -1,1 +1,3 @@
-Write tests for some of the controllers
+Complete DatabaseInitializer
+
+Make FakeUtils use builder() and fill the object COMPLETELY!

@@ -28,11 +28,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @TransactionConfiguration(defaultRollback = true)
 @Transactional
-public class ValidGroupControllerTests extends IntegrationTestEnvironment {
+public class ValidGroupControllerTestsIT extends IntegrationTestEnvironment {
 
     @Test
     public void insertingGroupWithoutId_shouldCreateNewGroup() throws Exception {
-        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
         ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId()).withoutId();
 
@@ -58,7 +58,7 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupWithValidId_shouldReturnAGroup() throws Exception {
-        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
         ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
@@ -84,7 +84,7 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void updatingGroupWithValidData_shouldReturnOldGroup() throws Exception {
-        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
         ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
@@ -107,7 +107,7 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void updatingPartialGroupWithValidData_shouldReturnOldGroup() throws Exception {
-        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
         ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
@@ -149,7 +149,7 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void deletingGroupWithValidId_shouldReturnDeletedGroup() throws Exception {
-        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
         ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
@@ -169,7 +169,7 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void readingAllGroups_shouldReturnListOfGroups() throws Exception {
-        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
         ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
@@ -200,7 +200,7 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupForTeacherWithValidId_shouldReturnListOfGroups() throws Exception {
-        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
         ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 
@@ -228,7 +228,7 @@ public class ValidGroupControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupForCustomerWithValidId_shouldReturnListOfGroups() throws Exception {
-        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(GROUP_SEED));
+        ValidCustomerDTO validCustomerDTO = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(GROUP_SEED));
         Teacher teacher = databaseHelper.insertTeacherIntoDb(makeFakeTeacher(GROUP_SEED));
         ValidGroupDTO group = makeFakeValidGroup(GROUP_SEED, validCustomerDTO.getId(), teacher.getId());
 

@@ -103,6 +103,10 @@ public class FakeFieldUtils {
         return "canYouGuessMe?nah";
     }
 
+    public static int fakeDuration(long id) {
+        return (int)(45 * id);
+    }
+
     // PRIVATE
 
     private FakeFieldUtils() {

@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @TransactionConfiguration(defaultRollback = true)
 @Transactional
-public class FullTeacherControllerTests extends IntegrationTestEnvironment {
+public class FullTeacherControllerTestsIT extends IntegrationTestEnvironment {
 
     @Test
     public void insertingTeacherWithoutId_shouldCreateNewTeacher() throws Exception {

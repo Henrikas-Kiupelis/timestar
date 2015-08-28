@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static com.superum.utils.FakeFieldUtils.fakeName;
 import static com.superum.utils.FakeFieldUtils.fakePhone;
-import static com.superum.utils.FakeUtils.makeFakeFullCustomer;
+import static com.superum.utils.FakeUtils.makeFakeValidCustomer;
 import static com.superum.utils.FakeUtils.makeSomeFakes;
 import static com.superum.utils.JsonUtils.*;
 import static com.superum.utils.MockMvcUtils.fromResponse;
@@ -26,11 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @TransactionConfiguration(defaultRollback = true)
 @Transactional
-public class FullCustomerControllerTests extends IntegrationTestEnvironment {
+public class FullCustomerControllerTestsIT extends IntegrationTestEnvironment {
 
     @Test
     public void insertingCustomerWithoutId_shouldCreateNewCustomer() throws Exception {
-        ValidCustomerDTO customer = makeFakeFullCustomer(CUSTOMER_SEED).withoutId();
+        ValidCustomerDTO customer = makeFakeValidCustomer(CUSTOMER_SEED).withoutId();
 
         MvcResult result = mockMvc.perform(put("/timestar/api/v2/customer/")
                     .contentType(APPLICATION_JSON_UTF8)
@@ -54,7 +54,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void readingCustomerWithValidId_shouldReturnACustomer() throws Exception {
-        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
 
         MvcResult result = mockMvc.perform(get("/timestar/api/v2/customer/{customerId}", customerId)
@@ -76,10 +76,10 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void updatingCustomerWithValidData_shouldReturnOldCustomer() throws Exception {
-        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
 
-        ValidCustomerDTO updatedCustomer = makeFakeFullCustomer(CUSTOMER_SEED + 1).withId(customerId);
+        ValidCustomerDTO updatedCustomer = makeFakeValidCustomer(CUSTOMER_SEED + 1).withId(customerId);
 
         mockMvc.perform(post("/timestar/api/v2/customer")
                 .contentType(APPLICATION_JSON_UTF8)
@@ -95,10 +95,10 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void updatingPartialCustomerWithValidData_shouldReturnOldCustomer() throws Exception {
-        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
 
-        ValidCustomerDTO partialUpdatedCustomer = makeFakeFullCustomer(customerId, null,
+        ValidCustomerDTO partialUpdatedCustomer = makeFakeValidCustomer(customerId, null,
                 fakeName(CUSTOMER_SEED + 1), fakePhone(CUSTOMER_SEED + 1),
                 null, null, null);
 
@@ -110,7 +110,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
                 .andExpect(status().isOk());
 
         ValidCustomerDTO customerFromDB = databaseHelper.readFullCustomerFromDb(customerId);
-        ValidCustomerDTO updatedCustomer = makeFakeFullCustomer(customerId, insertedCustomer.getStartDate(),
+        ValidCustomerDTO updatedCustomer = makeFakeValidCustomer(customerId, insertedCustomer.getStartDate(),
                 partialUpdatedCustomer.getName(), partialUpdatedCustomer.getPhone(),
                 insertedCustomer.getWebsite(), insertedCustomer.getPicture(), insertedCustomer.getComment());
 
@@ -119,7 +119,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void updatingCustomerWithInvalidId_shouldReturnBadReques() throws Exception {
-        ValidCustomerDTO validCustomer = makeFakeFullCustomer(CUSTOMER_SEED);
+        ValidCustomerDTO validCustomer = makeFakeValidCustomer(CUSTOMER_SEED);
 
         String json = convertObjectToString(validCustomer);
         String invalidJson = replace(json, "id", -1);
@@ -134,7 +134,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void deletingCustomerWithValidId_shouldReturnDeletedCustomer() throws Exception {
-        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
 
         mockMvc.perform(delete("/timestar/api/v2/customer/{customerId}", customerId)
@@ -152,7 +152,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
     public void readingCustomerForTeacherWithValidId_shouldReturnListOfCustomers() throws Exception {
         // THIS TEST NEEDS TO BE REWRITTEN DUE TO SCHEMA CHANGES
         /*
-        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
         List<ValidCustomerDTO> validCustomers = Collections.singletonList(insertedCustomer);
 
@@ -184,7 +184,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void readingAllCustomers_shouldReturnListOfCustomers() throws Exception {
-        List<ValidCustomerDTO> allCustomers = makeSomeFakes(2, FakeUtils::makeFakeFullCustomer).stream()
+        List<ValidCustomerDTO> allCustomers = makeSomeFakes(2, FakeUtils::makeFakeValidCustomer).stream()
                 .map(ValidCustomerDTO::withoutId)
                 .map(databaseHelper::insertFullCustomerIntoDb)
                 .collect(Collectors.toList());
@@ -213,7 +213,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
     public void countingCustomersForTeacherWithValidId_shouldReturnCount() throws Exception {
         // THIS TEST NEEDS TO BE REWRITTEN DUE TO SCHEMA CHANGES
         /*
-        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeFullCustomer(CUSTOMER_SEED).withoutId());
+        ValidCustomerDTO insertedCustomer = databaseHelper.insertFullCustomerIntoDb(makeFakeValidCustomer(CUSTOMER_SEED).withoutId());
         int customerId = insertedCustomer.getId();
         List<ValidCustomerDTO> validCustomers = Collections.singletonList(insertedCustomer);
 
@@ -245,7 +245,7 @@ public class FullCustomerControllerTests extends IntegrationTestEnvironment {
 
     @Test
     public void countingAllCustomers_shouldReturnCount() throws Exception {
-        List<ValidCustomerDTO> allCustomers = makeSomeFakes(2, FakeUtils::makeFakeFullCustomer).stream()
+        List<ValidCustomerDTO> allCustomers = makeSomeFakes(2, FakeUtils::makeFakeValidCustomer).stream()
                 .map(ValidCustomerDTO::withoutId)
                 .map(databaseHelper::insertFullCustomerIntoDb)
                 .collect(Collectors.toList());

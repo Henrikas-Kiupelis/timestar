@@ -1,7 +1,11 @@
 package com.superum.utils;
 
+import com.superum.api.attendance.ValidLessonAttendanceDTO;
 import com.superum.api.customer.ValidCustomerDTO;
 import com.superum.api.group.ValidGroupDTO;
+import com.superum.api.grouping.ValidGroupingDTO;
+import com.superum.api.lesson.ValidLessonDTO;
+import com.superum.api.student.ValidStudentDTO;
 import com.superum.api.teacher.FullTeacherDTO;
 import com.superum.db.account.Account;
 import com.superum.db.account.AccountType;
@@ -49,10 +53,9 @@ public class FakeUtils {
         return new PartitionAccount(0, "test");
     }
 
-    public static ValidCustomerDTO makeFakeFullCustomer(Integer id) {
+    public static ValidCustomerDTO makeFakeValidCustomer(Integer id) {
         return ValidCustomerDTO.jsonInstance(id, fakeLocalDate(id).toString(), fakeName(id), fakePhone(id), fakeWebsite(id), fakePicture(id), fakeComment(id));
     }
-
 
     public static FullTeacherDTO makeFakeFullTeacher(Integer id) {
         return FullTeacherDTO.jsonInstance(id, fakeDay(id), fakeWage(id), fakeWage(id), fakeName(id), fakeSurname(id),
@@ -68,9 +71,25 @@ public class FakeUtils {
         return makeFakeValidGroup(id, customerId, teacherId, fakeBoolean(id), fakeLanguageLevel(id), fakeName(id));
     }
 
+    public static ValidStudentDTO makeFakeValidStudent(Integer id) {
+        return ValidStudentDTO.jsonInstance(id, id, fakeLocalDate(id).toString(), fakeEmail(id), fakeName(id));
+    }
+
+    public static ValidGroupingDTO makeFakeValidGrouping(Integer id) {
+        return ValidGroupingDTO.jsonInstance(id, Collections.singleton(id));
+    }
+
+    public static ValidLessonDTO makeFakeValidLesson(Long id) {
+        return ValidLessonDTO.jsonInstance(id, id.intValue(), System.currentTimeMillis(), null, null, null, null, fakeDuration(id), fakeComment(id));
+    }
+
+    public static ValidLessonAttendanceDTO makeFakeValidAttendance(Long id) {
+        return ValidLessonAttendanceDTO.jsonInstance(id, Collections.singleton(id.intValue()));
+    }
+
     // FULL FAKES
 
-    public static ValidCustomerDTO makeFakeFullCustomer(Integer id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
+    public static ValidCustomerDTO makeFakeValidCustomer(Integer id, LocalDate startDate, String name, String phone, String website, String picture, String comment) {
         return ValidCustomerDTO.jsonInstance(id, startDate == null ? null : startDate.toString(), name, phone, website, picture, comment);
     }
 
@@ -91,8 +110,8 @@ public class FakeUtils {
                 document, comment, languages);
     }
 
-    public static ValidGroupDTO makeFakeValidGroup(Integer id, Integer customerid, Integer teacherId, Boolean usesHourlyWage, String languageLevel, String name) {
-        return ValidGroupDTO.jsonInstance(id, customerid, teacherId, usesHourlyWage, languageLevel, name);
+    public static ValidGroupDTO makeFakeValidGroup(Integer id, Integer customerId, Integer teacherId, Boolean usesHourlyWage, String languageLevel, String name) {
+        return ValidGroupDTO.jsonInstance(id, customerId, teacherId, usesHourlyWage, languageLevel, name);
     }
 
     // API V1
