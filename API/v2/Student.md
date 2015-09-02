@@ -39,7 +39,7 @@ Updates a student
 It will fail if:
   * HTTP 400; the id field was not set;
   * HTTP 400; only the id field was set and no other fields were;
-  * HTTP 400; both or neither of customerId and startDate were set;
+  * HTTP 400; both of customerId and startDate were set;
   * HTTP 404; no student with provided id exists;
 
 Returns HTTP 200 OK if it succeeds
