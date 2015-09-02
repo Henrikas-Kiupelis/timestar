@@ -21,7 +21,7 @@ also generates a student code which can be loosely used to identify a student (t
 It will fail if:
   * HTTP 400; the id field was set;
   * HTTP 400; a mandatory field was not set;
-	c) HTTP 400; both or neither of customerId and startDate were set;
+  * HTTP 400; both or neither of customerId and startDate were set;
 
 Returned student will have its id field set
 
@@ -39,7 +39,7 @@ Updates a student
 It will fail if:
   * HTTP 400; the id field was not set;
   * HTTP 400; only the id field was set and no other fields were;
-	c) HTTP 400; both or neither of customerId and startDate were set;
+  * HTTP 400; both or neither of customerId and startDate were set;
   * HTTP 404; no student with provided id exists;
 
 Returns HTTP 200 OK if it succeeds
