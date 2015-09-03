@@ -5,6 +5,7 @@ import com.superum.db.group.student.Student;
 import com.superum.db.group.student.StudentService;
 import com.superum.db.lesson.Lesson;
 import com.superum.db.lesson.LessonService;
+import com.superum.helper.Fake;
 import com.superum.helper.PartitionAccount;
 import com.superum.utils.FakeUtils;
 import org.junit.Before;
@@ -42,7 +43,7 @@ public class GroupServiceTests {
     @Test
     public void testAddingGroup(){
         int id = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         Group addedGroup = makeFakeGroup(id);
         Group originalGroup = addedGroup.withoutId();
 
@@ -59,7 +60,7 @@ public class GroupServiceTests {
     @Test
     public void testFindingGroup(){
         int id = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         Group group = makeFakeGroup(id);
 
         when(groupDAO.read(id, account.partitionId())).thenReturn(group);
@@ -75,7 +76,7 @@ public class GroupServiceTests {
     @Test
     public void testUpdatingGroup(){
         int id = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         Group originalGroup = makeFakeGroup(id);
         Group updatedGroup = makeFakeGroup(id + 1).withId(id);
 
@@ -93,7 +94,7 @@ public class GroupServiceTests {
     @Test
     public void testDeletingGroup(){
         int id = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         Group group = makeFakeGroup(id);
         List<Student> fakeStudents = makeSomeFakes(2, FakeUtils::makeFakeStudent);
         List<Lesson> fakeLessons = makeSomeFakesLong(2, FakeUtils::makeFakeLesson);
@@ -115,7 +116,7 @@ public class GroupServiceTests {
     @Test
     public void testFindingGroupForCustomer(){
         int customerId = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         List<Group> fakeGroups = Collections.singletonList(makeFakeGroup(customerId));
 
         when(groupDAO.readAllForCustomer(customerId, account.partitionId())).thenReturn(fakeGroups);
@@ -131,7 +132,7 @@ public class GroupServiceTests {
     @Test
     public void testFindingGroupForTeacher(){
         int teacherId = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         List<Group> fakeGroups = Collections.singletonList(makeFakeGroup(teacherId));
 
         when(groupDAO.readAllForTeacher(teacherId, account.partitionId())).thenReturn(fakeGroups);
@@ -148,7 +149,7 @@ public class GroupServiceTests {
     public void testFindingGroupForCustomerAndTeacher(){
         int teacherId = 1;
         int customerId = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         List<Group> fakeGroups = Collections.singletonList(makeFakeGroup(customerId));
 
         when(groupDAO.readAllForCustomerAndTeacher(customerId, teacherId, account.partitionId())).thenReturn(fakeGroups);
@@ -163,7 +164,7 @@ public class GroupServiceTests {
 
     @Test
     public void testAll() {
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         List<Group> fakeGroups = makeSomeFakes(2, FakeUtils::makeFakeGroup);
 
         when(groupDAO.all(account.partitionId())).thenReturn(fakeGroups);

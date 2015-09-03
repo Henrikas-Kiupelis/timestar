@@ -1,3 +1,5 @@
-Complete DatabaseInitializer
+Change all DB string limits to 255 or more (where it makes sense)
 
-Make FakeUtils use builder() and fill the object COMPLETELY!
+Make all foreign keys checked where appropriate and return 404 as a result
+
+Make existsAllSecondary() for ManyDefined and check that as well (use count inside the check?)

@@ -5,6 +5,7 @@ import com.superum.TimeStarBackEndApplication;
 import com.superum.db.group.student.Student;
 import com.superum.db.group.student.StudentService;
 import com.superum.exception.DatabaseException;
+import com.superum.helper.Fake;
 import com.superum.helper.PartitionAccount;
 import com.superum.utils.FakeUtils;
 import org.junit.Before;
@@ -16,7 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Collections;
 import java.util.List;
 
-import static com.superum.utils.FakeUtils.*;
+import static com.superum.utils.FakeUtils.makeFakeCustomer;
+import static com.superum.utils.FakeUtils.makeSomeFakes;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -42,7 +44,7 @@ public class CustomerServiceTests {
     @Test
     public void testAddingCustomer() {
         int id = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         Customer customer = makeFakeCustomer(id);
         Customer addedCustomer = customer.withoutId();
 
@@ -61,7 +63,7 @@ public class CustomerServiceTests {
     @Test
     public void testFindingCustomer() {
         int id = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         Customer customer = makeFakeCustomer(id);
 
         when(customerDAO.read(id, account.partitionId())).thenReturn(customer);
@@ -80,7 +82,7 @@ public class CustomerServiceTests {
     public void testUpdatingCustomer() {
 
         int id = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         Customer customer = makeFakeCustomer(id);
         Customer updatedCustomer = makeFakeCustomer(id + 1).withId(id);
 
@@ -99,7 +101,7 @@ public class CustomerServiceTests {
     public void testUpdatingNonExistingTeacher() {
 
         int id = Integer.MAX_VALUE;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         Customer nonExistentCustomer = makeFakeCustomer(id);
 
         when(customerDAO.update(nonExistentCustomer, account.partitionId())).thenThrow(new DatabaseException());
@@ -111,7 +113,7 @@ public class CustomerServiceTests {
     public void testDeletingCustomer() {
 
         int id = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         Customer customer = makeFakeCustomer(id);
         List<Student> fakeStudents = makeSomeFakes(2, FakeUtils::makeFakeStudent);
 
@@ -130,7 +132,7 @@ public class CustomerServiceTests {
     @Test
     public void testFindingCustomersForTeacher(){
         int teacherId = 1;
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         List<Customer> fakeCustomers = Collections.singletonList(makeFakeCustomer(teacherId));
 
         when(customerQuaries.readAllForTeacher(teacherId, account.partitionId())).thenReturn(fakeCustomers);
@@ -145,7 +147,7 @@ public class CustomerServiceTests {
 
     @Test
     public void testGettingAllCustomers(){
-        PartitionAccount account = makeFakePartitionAccount();
+        PartitionAccount account = Fake.partitionAccount();
         List<Customer> fakeCustomers = makeSomeFakes(2, FakeUtils::makeFakeCustomer);
 
         when(customerDAO.readAll(account.partitionId())).thenReturn(fakeCustomers);
