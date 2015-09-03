@@ -18,8 +18,8 @@
 Creates a new customer
 
 It will fail if:
-* HTTP 400; the id field was set;
-* HTTP 400; a mandatory field was not set;
+  * HTTP 400; the id field was set;
+  * HTTP 400; a mandatory field was not set;
 
 Returned FullCustomer will have its id field set;
 
@@ -35,9 +35,9 @@ Returned FullCustomer will have its id field set;
 Updates an existing customer; only fields that are sent are updated
 
 It will fail if:
-* HTTP 400; the id field was not set;
-* HTTP 400; only the id field was set and no other fields were;
-* HTTP 404; no customer with provided id exists;
+  * HTTP 400; the id field was not set;
+  * HTTP 400; only the id field was set and no other fields were;
+  * HTTP 404; no customer with provided id exists;
 
 Returns HTTP 200 OK if it succeeds
 
@@ -53,8 +53,8 @@ Returns HTTP 200 OK if it succeeds
 Deletes an existing customer
 
 It will fail if:
-* HTTP 400; customer cannot be deleted because it is still used;
-* HTTP 404; no customer with provided id exists;
+  * HTTP 400; customer cannot be deleted because it is still used;
+  * HTTP 404; no customer with provided id exists;
 
 Returns HTTP 200 OK if it succeeds
 
@@ -70,7 +70,7 @@ Returns HTTP 200 OK if it succeeds
 Reads and returns an existing customer
 
 It will fail if:
-* HTTP 404; no customer with provided id exists;
+  * HTTP 404; no customer with provided id exists;
 
 ------
 
@@ -92,7 +92,7 @@ To determine if a certain customer is tied to a teacher, the following examinati
 4. so, a customer is tied to a teacher if they have any students in any groups that the teacher is responsible for;
 
 It will fail if:
-* HTTP 404; no teacher with provided id exists;
+  * HTTP 404; no teacher with provided id exists;
 
 Returned List is paged; using DEF parameter values, only first 25 customers will be returned; to access the rest,
 the page parameter must be incremented, or per_page value raised
@@ -132,7 +132,7 @@ To determine if a certain customer is tied to a teacher, the following examinati
 4. so, a customer is tied to a teacher if they have any students in any groups that the teacher is responsible for;
 
 It will fail if:
-* HTTP 404; no teacher with provided id exists;
+  * HTTP 404; no teacher with provided id exists;
 
 ------
 
