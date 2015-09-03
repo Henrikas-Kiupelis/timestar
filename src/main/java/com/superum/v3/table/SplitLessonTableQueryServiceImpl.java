@@ -113,7 +113,7 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
 
     /**
      * @return list of all customers; unlike the normal method call, there is no limit in this case; also, null
-     * customer is fetched at the tail of this list if and only if there are groups which do not have a customer
+     * customer is attached to the tail of this list if and only if there are groups which do not have a customer
      */
     private List<ValidCustomerDTO> getAllCustomers(int partitionId) {
         List<ValidCustomerDTO> customers =  sql.selectFrom(CUSTOMER)
@@ -336,7 +336,10 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
      *          180 * SUM for all i : 180 * cost(i) ->
      *              180 * SUM for all i : Ti * [3X|4Y]
      *  this formula allows us to evaluate the sum times an integer without using any division for every cost(i), and
-     *  then divide the resulting "padded" sum by said integer to get the actual sum we are looking for
+     *  then divide the resulting "padded" sum by said integer to get the actual sum we are looking for;
+     *  while we could do the division operation directly in the SQL statement, the rounding mechanism used by SQL is
+     *  a little too simplistic; I prefer using ROUND_HALF_EVEN, which supposedly minimizes the error;
+     *  good enough for me!
      *  </pre>
      * @return SQL field, to be used in a SELECT statement; it pads the resulting cost like this:
      *  1) if hourly wage is used, then the resulting cost is multiplied by 3;
@@ -351,11 +354,12 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
     }
 
     // LCM(45, 60) = 60 * 45 / GCD(45, 60) = 60 * 45 / 15 = 60 * 3 = 180
-    private static final BigDecimal PADDING = BigDecimal.valueOf(180);
+    private static final int PADDING_INT = 180;
+    private static final BigDecimal PADDING = BigDecimal.valueOf(PADDING_INT);
 
     private static final String ID_FIELD = "id";
     private static final String LESSON_IDS_FIELD = "lessonIds";
     private static final String DURATION_FIELD = "duration";
-    private static final String COST_FIELD = "cost * 180";
+    private static final String COST_FIELD = "cost * " + PADDING_INT;
 
 }
