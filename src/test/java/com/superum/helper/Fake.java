@@ -10,7 +10,6 @@ import com.superum.api.teacher.FullTeacherDTO;
 import org.joda.time.LocalDate;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -182,7 +181,7 @@ public class Fake {
      */
     @Deprecated
     public static Date date(long id) {
-        return Date.from(Instant.parse("2015-01-" + dayString(id) + "T00:00:00.00Z"));
+        return Date.from(java.time.Instant.parse("2015-01-" + dayString(id) + "T00:00:00.00Z"));
     }
 
     public static String website(long id) {
