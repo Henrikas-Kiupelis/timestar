@@ -4,6 +4,8 @@ import com.superum.api.customer.InvalidCustomerException;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
+import org.joda.time.Duration;
+import org.joda.time.Instant;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 
@@ -24,11 +26,30 @@ import static com.superum.helper.validation.Validator.validate;
  */
 public class ValidLesson extends MappedClass<ValidLesson, Long> {
 
-    public boolean isOverlapping(DSLContext sql, int partitionId) {
-        Integer teacherId = getTeacherId(sql);
+    public Long calculateEndTime() {
+        Long startTime = validLessonDTO.getStartTime();
+        Integer length = validLessonDTO.getLength();
+        return startTime == null || length == null
+                ? null
+                : calculateEndTime(startTime, length);
+    }
 
-        long startTime = validLessonDTO.getStartTime();
-        long endTime = validLessonDTO.getEndTime();
+    public boolean isOverlapping(DSLContext sql, int partitionId) {
+        Long startTime = validLessonDTO.getStartTime();
+        Integer length = validLessonDTO.getLength();
+        if (startTime == null && length == null)
+            return false;
+
+        if (startTime == null)
+            startTime = findStartTime(sql, partitionId);
+        if (length == null)
+            length = findLength(sql, partitionId);
+
+        Long endTime = calculateEndTime(startTime, length);
+
+        Integer teacherId = validLessonDTO.getTeacherId();
+        if (teacherId == null)
+            teacherId = findTeacherId(sql, partitionId);
 
         Condition aLessonForSameTeacher = LESSON.TEACHER_ID.eq(teacherId)
                 .and(LESSON.PARTITION_ID.eq(partitionId));
@@ -80,19 +101,41 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
 
     private final ValidLessonDTO validLessonDTO;
 
-    private Integer getTeacherId(DSLContext sql) {
-        Integer teacherId = validLessonDTO.getTeacherId();
-        if (teacherId == null)
-            teacherId = sql.select(GROUP_OF_STUDENTS.TEACHER_ID)
-                    .from(GROUP_OF_STUDENTS)
-                    .where(GROUP_OF_STUDENTS.ID.eq(validLessonDTO.getGroupId()))
-                    .fetch().stream()
-                    .findFirst()
-                    .map(record -> record.getValue(GROUP_OF_STUDENTS.TEACHER_ID))
-                    .orElseThrow(() -> new DatabaseException("Problem retrieving teacher for specified group: "
-                            + validLessonDTO.getGroupId()));
+    private long findStartTime(DSLContext sql, int partitionId) {
+        return sql.select(LESSON.TIME_OF_START)
+                .from(LESSON)
+                .where(LESSON.ID.eq(validLessonDTO.getId())
+                        .and(LESSON.PARTITION_ID.eq(partitionId)))
+                .fetch().stream().findAny()
+                .map(record -> record.getValue(LESSON.TIME_OF_START))
+                .orElseThrow(() -> new DatabaseException("Problem retrieving lesson start time for id: "
+                        + validLessonDTO.getId()));
+    }
 
-        return teacherId;
+    private int findLength(DSLContext sql, int partitionId) {
+        return sql.select(LESSON.DURATION_IN_MINUTES)
+                .from(LESSON)
+                .where(LESSON.ID.eq(validLessonDTO.getId())
+                        .and(LESSON.PARTITION_ID.eq(partitionId)))
+                .fetch().stream().findAny()
+                .map(record -> record.getValue(LESSON.DURATION_IN_MINUTES))
+                .orElseThrow(() -> new DatabaseException("Problem retrieving lesson duration for id: "
+                        + validLessonDTO.getId()));
+    }
+
+    private int findTeacherId(DSLContext sql, int partitionId) {
+        return sql.select(GROUP_OF_STUDENTS.TEACHER_ID)
+                .from(GROUP_OF_STUDENTS)
+                .where(GROUP_OF_STUDENTS.ID.eq(validLessonDTO.getGroupId())
+                        .and(GROUP_OF_STUDENTS.PARTITION_ID.eq(partitionId)))
+                .fetch().stream().findAny()
+                .map(record -> record.getValue(GROUP_OF_STUDENTS.TEACHER_ID))
+                .orElseThrow(() -> new DatabaseException("Problem retrieving teacher id for specified group id: "
+                        + validLessonDTO.getGroupId()));
+    }
+
+    private static long calculateEndTime(long startTime, int length) {
+        return new Instant(startTime).plus(Duration.standardMinutes(length)).getMillis();
     }
 
     private static final int COMMENT_SIZE_LIMIT = 500;
@@ -130,7 +173,7 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
             FieldDef.steps(ValidLesson.class, Long.class)
                     .fieldName(END_TIME_FIELD)
                     .tableField(LESSON.TIME_OF_END)
-                    .getter(lesson -> lesson.validLessonDTO.getEndTime())
+                    .getter(ValidLesson::calculateEndTime)
                     .mandatory(),
 
             FieldDef.steps(ValidLesson.class, Integer.class)
@@ -140,7 +183,8 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
                     .mandatory(),
 
             FieldDef.steps(ValidLesson.class, String.class)
-                    .fieldName(COMMENT_FIELD).tableField(LESSON.COMMENT)
+                    .fieldName(COMMENT_FIELD)
+                    .tableField(LESSON.COMMENT)
                     .getter(lesson -> lesson.validLessonDTO.getComment())
     );
 

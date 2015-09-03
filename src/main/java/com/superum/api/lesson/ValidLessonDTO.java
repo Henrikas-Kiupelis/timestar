@@ -3,12 +3,9 @@ package com.superum.api.lesson;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.superum.api.core.DTOWithTimestamps;
-import com.superum.api.exception.InvalidRequestException;
 import com.superum.helper.Equals;
-import com.superum.helper.NullChecker;
 import com.superum.helper.time.JodaTimeZoneHandler;
 import org.joda.time.DateTimeZone;
-import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
@@ -149,27 +146,20 @@ public final class ValidLessonDTO extends DTOWithTimestamps {
                                               @JsonProperty(LENGTH_FIELD) Integer length,
                                               @JsonProperty(COMMENT_FIELD) String comment) {
         if (startTime == null) {
-            NullChecker.check(timeZone, startDate, startHour, startMinute)
-                    .notNull(() -> new InvalidRequestException("Must provide either startTime or timeZone, " +
-                            "startDate, startHour and startMinute"));
+            if (timeZone == null || startDate  == null || startHour == null || startMinute == null)
+                return new ValidLessonDTO(id, groupId, null, null, null, length, comment, null, null);
 
             return fromTimeZone(id, groupId, null, DateTimeZone.forID(timeZone), LocalDate.parse(startDate),
                     startHour, startMinute, length, comment, null, null);
         }
-        return fromStartTime(id, groupId, null, startTime, length, comment, null, null);
-    }
-
-    public static ValidLessonDTO fromStartTime(Long id, Integer groupId, Integer teacherId, Long startTime, Integer length,
-                                       String comment, Instant createdAt, Instant updatedAt) {
-        Long endTime = new Instant(startTime).plus(Duration.standardMinutes(length)).getMillis();
-        return new ValidLessonDTO(id, groupId, teacherId, startTime, endTime, length, comment, createdAt, updatedAt);
+        return new ValidLessonDTO(id, groupId, null, startTime, null, length, comment, null, null);
     }
 
     public static ValidLessonDTO fromTimeZone(Long id, Integer groupId, Integer teacherId, DateTimeZone timeZone,
                                       LocalDate startDate, Integer startHour, Integer startMinute, Integer length,
                                       String comment, Instant createdAt, Instant updatedAt) {
         Long startTime = JodaTimeZoneHandler.forTimeZone(timeZone).from(startDate, startHour, startMinute).toEpochMillis();
-        return fromStartTime(id, groupId, teacherId, startTime, length, comment, createdAt, updatedAt);
+        return new ValidLessonDTO(id, groupId, teacherId, startTime, null, length, comment, createdAt, updatedAt);
     }
 
     public ValidLessonDTO(Long id, Integer groupId, Integer teacherId, Long startTime, Long endTime, Integer length, String comment,
@@ -408,11 +398,10 @@ public final class ValidLessonDTO extends DTOWithTimestamps {
 
         @Override
         public ValidLessonDTO build() {
-            if (startTime == null)
-                return ValidLessonDTO.fromTimeZone(id, groupId, teacherId, timeZone, startDate, startHour,
-                        startMinute, length, comment, createdAt, updatedAt);
-
-            return ValidLessonDTO.fromStartTime(id, groupId, teacherId, startTime, length, comment, createdAt, updatedAt);
+            return startTime == null
+                    ?fromTimeZone(id, groupId, teacherId, timeZone, startDate, startHour, startMinute, length,
+                    comment, createdAt, updatedAt)
+                    : new ValidLessonDTO(id, groupId, teacherId, startTime, null, length, comment, createdAt, updatedAt);
         }
 
     }
