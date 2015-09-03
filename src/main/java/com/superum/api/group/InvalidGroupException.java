@@ -1,12 +1,12 @@
 package com.superum.api.group;
 
-import com.superum.api.exception.InvalidRequestException;
+import com.superum.exception.DatabaseException;
 
 /**
  * This exception is thrown when an invalid request is made, specifically when the format of group
  * does not match any of the use cases
  */
-public class InvalidGroupException extends InvalidRequestException {
+public class InvalidGroupException extends DatabaseException {
 
 	public InvalidGroupException() {
 		super();

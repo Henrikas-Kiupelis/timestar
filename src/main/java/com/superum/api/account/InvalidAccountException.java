@@ -1,12 +1,12 @@
 package com.superum.api.account;
 
-import com.superum.api.exception.InvalidRequestException;
+import com.superum.exception.DatabaseException;
 
 /**
  * This exception is thrown when an invalid request is made, specifically when the format of Account
  * does not match any of the use cases
  */
-public class InvalidAccountException extends InvalidRequestException {
+public class InvalidAccountException extends DatabaseException {
 
 	public InvalidAccountException() {
 		super();

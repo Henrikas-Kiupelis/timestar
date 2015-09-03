@@ -1,6 +1,6 @@
 package com.superum.api.grouping;
 
-import com.superum.api.exception.InvalidRequestException;
+import com.superum.exception.DatabaseException;
 
 /**
  * <pre>
@@ -8,7 +8,7 @@ import com.superum.api.exception.InvalidRequestException;
  * does not match any of the use cases
  * </pre>
  */
-public class InvalidGroupingException extends InvalidRequestException {
+public class InvalidGroupingException extends DatabaseException {
 
 	public InvalidGroupingException() {
 		super();

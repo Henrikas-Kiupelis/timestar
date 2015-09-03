@@ -1,12 +1,12 @@
 package com.superum.api.teacher;
 
-import com.superum.api.exception.InvalidRequestException;
+import com.superum.exception.DatabaseException;
 
 /**
  * This exception is thrown when an invalid request is made, specifically when the format of teacher
  * does not match any of the use cases
  */
-public class InvalidTeacherException extends InvalidRequestException {
+public class InvalidTeacherException extends DatabaseException {
 
 	public InvalidTeacherException() {
 		super();

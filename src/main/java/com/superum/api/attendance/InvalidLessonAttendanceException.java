@@ -1,6 +1,6 @@
 package com.superum.api.attendance;
 
-import com.superum.api.exception.InvalidRequestException;
+import com.superum.exception.DatabaseException;
 
 /**
  * <pre>
@@ -8,7 +8,7 @@ import com.superum.api.exception.InvalidRequestException;
  * does not match any of the use cases
  * </pre>
  */
-public class InvalidLessonAttendanceException extends InvalidRequestException {
+public class InvalidLessonAttendanceException extends DatabaseException {
 
 	public InvalidLessonAttendanceException() {
 		super();

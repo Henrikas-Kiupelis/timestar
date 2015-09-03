@@ -56,6 +56,8 @@ public class GenericErrorHandler {
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Someone somewhere a null pointer");
     }
 
+    // PRIVATE
+
     private static final Logger LOG = LoggerFactory.getLogger(GenericErrorHandler.class);
 
 }
