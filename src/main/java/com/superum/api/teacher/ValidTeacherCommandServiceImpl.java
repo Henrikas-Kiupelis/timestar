@@ -77,7 +77,8 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
         if (!defaultTeacherQueries.exists(validTeacher.getId(), partitionId))
             throw new TeacherNotFoundException("Couldn't find teacher with id " + validTeacher.getId());
 
-        if (defaultTeacherQueries.existsForKey(partitionId, TEACHER.EMAIL, fullTeacherDTO.getEmail()))
+        if (fullTeacherDTO.getEmail() != null &&
+                defaultTeacherQueries.existsForKey(partitionId, TEACHER.EMAIL, fullTeacherDTO.getEmail()))
             throw new DuplicateTeacherException("Cannot update teacher using this email, because it is duplicate: "
                     + fullTeacherDTO.getEmail());
 
