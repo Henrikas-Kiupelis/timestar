@@ -5,6 +5,7 @@ import com.superum.api.attendance.ValidLessonAttendanceDTO;
 import com.superum.api.customer.ValidCustomerDTO;
 import com.superum.api.group.ValidGroupDTO;
 import com.superum.api.grouping.ValidGroupingDTO;
+import com.superum.api.lesson.ValidLesson;
 import com.superum.api.lesson.ValidLessonDTO;
 import com.superum.api.student.ValidStudentDTO;
 import com.superum.api.teacher.FullTeacherDTO;
@@ -42,6 +43,13 @@ public class DB {
         insertGrouping();
         insertLessons();
         insertAttendance();
+    }
+
+    /**
+     * Occasionally some straggler accounts remain in the DB despite transaction rollback... needs investigation!
+     */
+    public void clean() {
+        cleanAccounts();
     }
 
     // CREATE
@@ -124,7 +132,7 @@ public class DB {
                 .set(LESSON.ID, lesson.getId())
                 .set(LESSON.GROUP_ID, lesson.getGroupId())
                 .set(LESSON.TIME_OF_START, lesson.getStartTime())
-                .set(LESSON.TIME_OF_END, lesson.getEndTime())
+                .set(LESSON.TIME_OF_END, ValidLesson.calculateEndTime(lesson.getStartTime(), lesson.getLength()))
                 .set(LESSON.DURATION_IN_MINUTES, lesson.getLength())
                 .set(LESSON.COMMENT, lesson.getComment())
                 .execute();
@@ -238,6 +246,12 @@ public class DB {
     // PRIVATE
 
     private final DSLContext sql;
+
+    private void cleanAccounts() {
+        sql.deleteFrom(ACCOUNT)
+                .where(ACCOUNT.ID.isNotNull())
+                .execute();
+    }
 
     private java.sql.Date toSql(LocalDate startDate) {
         return startDate == null ? null : JodaTimeZoneHandler.getDefault().from(startDate).toJavaSqlDate();

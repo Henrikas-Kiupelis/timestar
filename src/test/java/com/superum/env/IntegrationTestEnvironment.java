@@ -8,6 +8,7 @@ import com.superum.helper.ResultVariation;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.Unchecked;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,11 @@ public abstract class IntegrationTestEnvironment {
                 .addFilters(this.springSecurityFilterChain)
                 .build();
         db.init();
+    }
+
+    @After
+    public void clean() {
+        db.clean();
     }
 
     // PROTECTED
