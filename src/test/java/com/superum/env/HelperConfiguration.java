@@ -1,6 +1,7 @@
-package com.superum.helper;
+package com.superum.env;
 
 import com.superum.config.PersistenceContext;
+import com.superum.helper.DB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +12,8 @@ import org.springframework.context.annotation.Lazy;
 public class HelperConfiguration {
 
     @Bean
-    public DatabaseHelper databaseHelper() {
-        return new DatabaseHelper(persistenceContext.dsl());
+    public DB db() {
+        return new DB(persistenceContext.dsl());
     }
 
     // PRIVATE
