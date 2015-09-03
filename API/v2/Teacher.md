@@ -57,6 +57,7 @@ Deletes an existing teacher;
 also deletes the Account of this teacher
 
 It will fail if:
+  * HTTP 400; teacher cannot be deleted because it is still used;
   * HTTP 404; no teacher with provided id exists;
 
 Returns HTTP 200 OK if it succeeds
