@@ -53,6 +53,7 @@ Returns HTTP 200 OK if it succeeds
 Deletes an existing customer
 
 It will fail if:
+* HTTP 400; customer cannot be deleted because it is still used;
 * HTTP 404; no customer with provided id exists;
 
 Returns HTTP 200 OK if it succeeds
