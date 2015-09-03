@@ -26,6 +26,10 @@ import static com.superum.helper.validation.Validator.validate;
  */
 public class ValidLesson extends MappedClass<ValidLesson, Long> {
 
+    public static long calculateEndTime(long startTime, int length) {
+        return new Instant(startTime).plus(Duration.standardMinutes(length)).getMillis();
+    }
+
     public Long calculateEndTime() {
         Long startTime = validLessonDTO.getStartTime();
         Integer length = validLessonDTO.getLength();
@@ -132,10 +136,6 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
                 .map(record -> record.getValue(GROUP_OF_STUDENTS.TEACHER_ID))
                 .orElseThrow(() -> new DatabaseException("Problem retrieving teacher id for specified group id: "
                         + validLessonDTO.getGroupId()));
-    }
-
-    private static long calculateEndTime(long startTime, int length) {
-        return new Instant(startTime).plus(Duration.standardMinutes(length)).getMillis();
     }
 
     private static final int COMMENT_SIZE_LIMIT = 500;
