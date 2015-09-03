@@ -108,11 +108,11 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
         performPost(DEFAULT_PATH, partialStudent, OK_NO_BODY);
 
         ValidStudentDTO beforeUpdate = Fake.student(OLD_STUDENT_ID);
-        ValidStudentDTO afterUpdate = ValidStudentDTO.builder()
-                .id(partialStudent.getId())
-                .name(partialStudent.getName())
+        ValidStudentDTO afterUpdate = ValidStudentDTO.stepBuilder()
                 .customerId(beforeUpdate.getCustomerId())
                 .email(beforeUpdate.getEmail())
+                .name(partialStudent.getName())
+                .id(partialStudent.getId())
                 .build();
 
         assertInDatabase(afterUpdate, this::customEquals);
@@ -164,7 +164,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     public void deletingStudentById_shouldDeleteStudent() throws Exception {
         ValidStudentDTO student = db.insertValidStudent(Fake.student(NEW_STUDENT_ID, OLD_CUSTOMER_ID));
 
-        performDelete(DEFAULT_PATH + NEW_STUDENT_ID, OK_NO_BODY);
+        performDelete(DEFAULT_PATH + student.getId(), OK_NO_BODY);
 
         assertNotInDatabase(student);
     }

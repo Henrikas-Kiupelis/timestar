@@ -75,12 +75,12 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
         performPost(DEFAULT_PATH, partialCustomer, OK_NO_BODY);
 
         ValidCustomerDTO beforeUpdate = Fake.customer(OLD_CUSTOMER_ID);
-        ValidCustomerDTO afterUpdate = ValidCustomerDTO.builder()
-                .id(partialCustomer.getId())
+        ValidCustomerDTO afterUpdate = ValidCustomerDTO.stepBuilder()
                 .startDate(beforeUpdate.getStartDate())
                 .name(partialCustomer.getName())
                 .phone(beforeUpdate.getPhone())
                 .website(beforeUpdate.getWebsite())
+                .id(partialCustomer.getId())
                 .picture(beforeUpdate.getPicture())
                 .comment(beforeUpdate.getComment())
                 .build();
@@ -119,7 +119,7 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
     public void deletingCustomerById_shouldDeleteCustomer() throws Exception {
         ValidCustomerDTO customer = db.insertValidCustomer(Fake.customer(NEW_CUSTOMER_ID));
 
-        performDelete(DEFAULT_PATH + NEW_CUSTOMER_ID, OK_NO_BODY);
+        performDelete(DEFAULT_PATH + customer.getId(), OK_NO_BODY);
 
         assertNotInDatabase(customer);
     }
