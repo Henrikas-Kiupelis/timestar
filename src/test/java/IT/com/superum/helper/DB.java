@@ -1,4 +1,4 @@
-package com.superum.helper;
+package IT.com.superum.helper;
 
 import com.google.common.collect.ObjectArrays;
 import com.superum.api.attendance.ValidLessonAttendanceDTO;
@@ -9,6 +9,7 @@ import com.superum.api.lesson.ValidLesson;
 import com.superum.api.lesson.ValidLessonDTO;
 import com.superum.api.student.ValidStudentDTO;
 import com.superum.api.teacher.FullTeacherDTO;
+import com.superum.helper.Fake;
 import com.superum.helper.time.JodaTimeZoneHandler;
 import org.joda.time.LocalDate;
 import org.jooq.DSLContext;
@@ -23,9 +24,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static IT.com.superum.env.IntegrationTestEnvironment.TEST_PARTITION;
 import static com.superum.db.generated.timestar.Keys.TEACHER_LANGUAGE_IBFK_1;
 import static com.superum.db.generated.timestar.Tables.*;
-import static com.superum.env.IntegrationTestEnvironment.TEST_PARTITION;
 import static org.jooq.impl.DSL.groupConcat;
 
 @Component

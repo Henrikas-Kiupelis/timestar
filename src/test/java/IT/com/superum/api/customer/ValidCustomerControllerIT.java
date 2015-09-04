@@ -1,8 +1,9 @@
-package com.superum.api.customer;
+package IT.com.superum.api.customer;
 
+import IT.com.superum.env.IntegrationTestEnvironment;
+import IT.com.superum.helper.DB;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.superum.env.IntegrationTestEnvironment;
-import com.superum.helper.DB;
+import com.superum.api.customer.ValidCustomerDTO;
 import com.superum.helper.Fake;
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
@@ -13,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 
-import static com.superum.helper.ResultVariation.*;
-import static com.superum.utils.MockMvcUtils.fromResponse;
+import static IT.com.superum.helper.ResultVariation.*;
+import static IT.com.superum.utils.MockMvcUtils.fromResponse;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -150,8 +151,6 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
     @Test
     public void readingCustomerByNonExistentId_shouldReturn404() throws Exception {
         performGet(DEFAULT_PATH + NEW_CUSTOMER_ID, BAD, status().isNotFound());
-
-        assertNotInDatabase(NEW_CUSTOMER_ID);
     }
 
     @Test
@@ -186,8 +185,6 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
     @Test
     public void readingCustomersForNonExistentTeacher_shouldReturn404() throws Exception {
         performGet(DEFAULT_PATH + "teacher/" + NEW_TEACHER_ID, BAD, status().isNotFound());
-
-        assertNotInDatabase(NEW_TEACHER_ID);
     }
 
     @Test
@@ -202,8 +199,6 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
     @Test
     public void countingCustomersForNonExistentTeacher_shouldReturn404() throws Exception {
         performGet(DEFAULT_PATH + "teacher/" + NEW_TEACHER_ID + "/count", BAD, status().isNotFound());
-
-        assertNotInDatabase(NEW_TEACHER_ID);
     }
 
     // PRIVATE

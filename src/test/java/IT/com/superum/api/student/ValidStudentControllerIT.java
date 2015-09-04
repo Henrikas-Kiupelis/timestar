@@ -1,8 +1,9 @@
-package com.superum.api.student;
+package IT.com.superum.api.student;
 
+import IT.com.superum.env.IntegrationTestEnvironment;
+import IT.com.superum.helper.DB;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.superum.env.IntegrationTestEnvironment;
-import com.superum.helper.DB;
+import com.superum.api.student.ValidStudentDTO;
 import com.superum.helper.Fake;
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
@@ -15,8 +16,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 
-import static com.superum.helper.ResultVariation.*;
-import static com.superum.utils.MockMvcUtils.fromResponse;
+import static IT.com.superum.helper.ResultVariation.*;
+import static IT.com.superum.utils.MockMvcUtils.fromResponse;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -195,8 +196,6 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     @Test
     public void readingStudentByNonExistentId_shouldReturn404() throws Exception {
         performGet(DEFAULT_PATH + NEW_STUDENT_ID, BAD, status().isNotFound());
-
-        assertNotInDatabase(NEW_STUDENT_ID);
     }
 
     @Test
@@ -222,8 +221,6 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     @Test
     public void readingStudentsForNonExistentGroup_shouldReturn404() throws Exception {
         performGet(DEFAULT_PATH + "group/" + NEW_GROUP_ID, BAD, status().isNotFound());
-
-        assertNotInDatabase(DB::readValidGroup, NEW_GROUP_ID);
     }
 
     @Test
@@ -239,8 +236,6 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     @Test
     public void readingStudentsForNonExistentLesson_shouldReturn404() throws Exception {
         performGet(DEFAULT_PATH + "lesson/" + NEW_LESSON_ID, BAD, status().isNotFound());
-
-        assertNotInDatabase(DB::readValidLesson, NEW_LESSON_ID);
     }
 
     @Test
@@ -256,8 +251,6 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     @Test
     public void readingStudentsForNonExistentCustomer_shouldReturn404() throws Exception {
         performGet(DEFAULT_PATH + "customer/" + NEW_CUSTOMER_ID, BAD, status().isNotFound());
-
-        assertNotInDatabase(DB::readValidStudent, NEW_CUSTOMER_ID);
     }
 
     // PRIVATE

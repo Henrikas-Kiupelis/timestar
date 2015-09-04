@@ -1,4 +1,4 @@
-package com.superum.helper;
+package IT.com.superum.helper;
 
 public enum ResultVariation {
 

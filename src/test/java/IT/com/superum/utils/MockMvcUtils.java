@@ -1,4 +1,4 @@
-package com.superum.utils;
+package IT.com.superum.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.test.web.servlet.MvcResult;

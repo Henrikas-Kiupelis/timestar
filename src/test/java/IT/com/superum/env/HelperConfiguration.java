@@ -1,7 +1,7 @@
-package com.superum.env;
+package IT.com.superum.env;
 
+import IT.com.superum.helper.DB;
 import com.superum.config.PersistenceContext;
-import com.superum.helper.DB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

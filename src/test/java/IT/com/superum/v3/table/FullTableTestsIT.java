@@ -1,6 +1,6 @@
-package com.superum.v3.table;
+package IT.com.superum.v3.table;
 
-import com.superum.env.IntegrationTestEnvironment;
+import IT.com.superum.env.IntegrationTestEnvironment;
 import org.junit.Test;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;

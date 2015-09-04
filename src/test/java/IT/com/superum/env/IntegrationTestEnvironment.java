@@ -1,10 +1,10 @@
-package com.superum.env;
+package IT.com.superum.env;
 
+import IT.com.superum.helper.DB;
+import IT.com.superum.helper.ResultVariation;
 import com.superum.TimeStarBackEndApplication;
 import com.superum.config.PersistenceContext;
 import com.superum.config.SecurityConfig;
-import com.superum.helper.DB;
-import com.superum.helper.ResultVariation;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.Unchecked;
@@ -36,9 +36,9 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static com.superum.utils.JsonUtils.APPLICATION_JSON_UTF8;
-import static com.superum.utils.JsonUtils.convertObjectToJsonBytes;
-import static com.superum.utils.MockMvcUtils.fromResponse;
+import static IT.com.superum.utils.JsonUtils.APPLICATION_JSON_UTF8;
+import static IT.com.superum.utils.JsonUtils.convertObjectToJsonBytes;
+import static IT.com.superum.utils.MockMvcUtils.fromResponse;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
