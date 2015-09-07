@@ -19,8 +19,8 @@ import static IT.com.superum.utils.MockMvcUtils.fromResponse;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TransactionConfiguration(defaultRollback = true)
 @Transactional
+@TransactionConfiguration(defaultRollback = true)
 public class ValidGroupControllerIT extends IntegrationTestEnvironment {
 
     @Test

@@ -8,7 +8,6 @@ import com.superum.config.SecurityConfig;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.Unchecked;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +45,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {TimeStarBackEndApplication.class, PersistenceContext.class, SecurityConfig.class, HelperConfiguration.class})
-@TransactionConfiguration(defaultRollback = true)
+@ContextConfiguration(classes = {TimeStarBackEndApplication.class, PersistenceContext.class, SecurityConfig.class, HelperConfiguration.class, MockConfig.class})
 @Transactional
+@TransactionConfiguration(defaultRollback = true)
 public abstract class IntegrationTestEnvironment {
 
     public static final int TEST_PARTITION = 0;
@@ -62,10 +61,14 @@ public abstract class IntegrationTestEnvironment {
         db.init();
     }
 
+    /*
+    Should not be needed anymore due to MockConfig
     @After
+    @Rollback(false)
     public void clean() {
         db.clean();
     }
+    */
 
     // PROTECTED
 
