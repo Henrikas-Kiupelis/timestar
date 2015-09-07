@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.superum.db.generated.timestar.Keys.*;
+import static com.superum.db.generated.timestar.Keys.STUDENTS_IN_GROUPS_IBFK_1;
 import static com.superum.db.generated.timestar.Tables.*;
 
 @Service
@@ -109,13 +109,12 @@ public class ValidLessonAttendanceCommandServiceImpl implements ValidLessonAtten
     private void validateStudentIdsAgainstGroup(ValidLessonAttendance lessonAttendance, int partitionId) {
         Condition condition = lessonAttendance.secondaryValuesEq(STUDENT.ID)
                 .and(defaultStudentQueries.partitionId(partitionId))
-                .and(STUDENTS_IN_GROUPS.GROUP_ID.eq(LESSON.GROUP_ID));
+                .and(LESSON.ID.eq(lessonAttendance.primaryValue()));
 
         Select<?> select = sql.selectOne()
-                .from(LESSON_ATTENDANCE)
-                .join(LESSON).onKey(LESSON_ATTENDANCE_IBFK_1)
-                .join(STUDENT).onKey(LESSON_ATTENDANCE_IBFK_2)
+                .from(STUDENT)
                 .join(STUDENTS_IN_GROUPS).onKey(STUDENTS_IN_GROUPS_IBFK_1)
+                .join(LESSON).on(LESSON.GROUP_ID.eq(STUDENTS_IN_GROUPS.GROUP_ID))
                 .where(condition)
                 .groupBy(STUDENT.ID);
 
