@@ -1,6 +1,6 @@
 package com.superum.helper.field.core;
 
-import com.superum.helper.NullChecker;
+import eu.goodlike.neat.Null;
 import org.jooq.*;
 
 import java.util.Objects;
@@ -82,7 +82,7 @@ public abstract class AbstractMappedField<F> implements MappedField<F> {
     // CONSTRUCTORS
 
     protected AbstractMappedField(String name, Field<F> field, boolean isMandatory, boolean isPrimary) {
-        NullChecker.check(name, isMandatory, isPrimary).notNull("Name, Mandatory and Primary cannot be null for MappedFields");
+        Null.check(name, isMandatory, isPrimary).ifAny("Name, Mandatory and Primary cannot be null for MappedFields");
 
         this.name = name;
         this.field = field;

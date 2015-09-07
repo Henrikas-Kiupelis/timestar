@@ -27,7 +27,23 @@ public class CustomerLanguages {
         return languages;
     }
 
+    // CONSTRUCTORS
+    @JsonCreator
+    public CustomerLanguages(@JsonProperty("id") int customerId,
+                             @JsonProperty("languages") List<String> languages) {
+        this.customerId = customerId;
+        this.languages = languages != null ? languages : Collections.emptyList();
+    }
+
+    // PRIVATE
+
+    @Min(value = 1, message = "The customer id must be set")
+    private final int customerId;
+
+    private final List<String> languages;
+
     // OBJECT OVERRIDES
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper("CustomerLanguages")
@@ -55,18 +71,4 @@ public class CustomerLanguages {
         return Objects.hash(customerId, languages);
     }
 
-    // CONSTRUCTORS
-    @JsonCreator
-    public CustomerLanguages(@JsonProperty("id") int customerId,
-                             @JsonProperty("languages") List<String> languages) {
-        this.customerId = customerId;
-        this.languages = languages != null ? languages : Collections.emptyList();
-    }
-
-    // PRIVATE
-
-    @Min(value = 1, message = "The customer id must be set")
-    private final int customerId;
-
-    private final List<String> languages;
 }

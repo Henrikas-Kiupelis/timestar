@@ -1,7 +1,7 @@
 package com.superum.api;
 
 import com.superum.api.core.CommonControllerLogic;
-import com.superum.helper.time.JodaTimeZoneHandler;
+import eu.goodlike.time.JodaTimeZoneHandler;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
+import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
 
 /**
  * Contains various API methods that do not have much to do with the app itself, but are still useful

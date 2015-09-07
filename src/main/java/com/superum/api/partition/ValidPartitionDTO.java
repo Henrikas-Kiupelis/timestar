@@ -3,12 +3,11 @@ package com.superum.api.partition;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.superum.db.partition.Partition;
-import com.superum.helper.Equals;
+import eu.goodlike.validation.Validate;
 
-import java.util.Arrays;
 import java.util.Objects;
 
-import static com.superum.helper.validation.Validator.validate;
+
 
 /**
  * <pre>
@@ -63,11 +62,11 @@ public class ValidPartitionDTO {
     }
 
     public ValidPartitionDTO(Integer id, String name) {
-        validate(id).not().Null().between(MIN_PARTITION_ID, MAX_PARTITION_ID)
+        Validate.Int(id).not().Null().between(MIN_PARTITION_ID, MAX_PARTITION_ID)
                 .ifInvalid(() -> new InvalidPartitionException("Partition id cannot be null, and must be between " +
                         MIN_PARTITION_ID + " and " + MAX_PARTITION_ID + ", not: " + id));
 
-        validate(name).not().Null().not().blank().fits(PARTITION_NAME_LIMIT)
+        Validate.string(name).not().Null().not().blank().fits(PARTITION_NAME_LIMIT)
                 .ifInvalid(() -> new InvalidPartitionException("Partition name cannot be null, blank and must fit " +
                         PARTITION_NAME_LIMIT + " chars"));
 
@@ -104,15 +103,16 @@ public class ValidPartitionDTO {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ValidPartitionDTO && EQUALS.equals(this, (ValidPartitionDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof ValidPartitionDTO)) return false;
+        ValidPartitionDTO that = (ValidPartitionDTO) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
     }
-
-    private static final Equals<ValidPartitionDTO> EQUALS = new Equals<>(Arrays.asList(ValidPartitionDTO::getId,
-            ValidPartitionDTO::getName));
 
 }

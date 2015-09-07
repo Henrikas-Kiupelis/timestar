@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
+import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
 
 @RestController
 @RequestMapping(value = "/timestar/api")

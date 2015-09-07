@@ -2,13 +2,11 @@ package com.superum.api.grouping;
 
 import com.google.common.base.MoreObjects;
 import com.superum.helper.field.ManyDefined;
-import com.superum.helper.validation.Validator;
+import eu.goodlike.validation.Validate;
 import org.jooq.lambda.Seq;
 
 import java.util.Objects;
 import java.util.Set;
-
-import static com.superum.helper.validation.Validator.validate;
 
 /**
  * <pre>
@@ -35,10 +33,10 @@ public class ValidGrouping implements ManyDefined<Integer, Integer> {
         this.groupId = validGroupingDTO.getGroupId();
         this.studentIds = validGroupingDTO.getStudentIds();
 
-        validate(groupId).not().Null().moreThan(0)
+        Validate.Int(groupId).not().Null().moreThan(0)
                 .ifInvalid(() -> new InvalidGroupingException("Group id for grouping must be set and positive, not " + groupId));
 
-        validate(studentIds).not().Null().not().empty().forEach(Validator::validate,
+        Validate.collection(studentIds).not().Null().not().empty().forEach(Validate::Int,
                 studentId -> studentId.not().Null().moreThan(0)
                         .ifInvalid(() -> new InvalidGroupingException("Student ids for grouping must be set and positive, not " +
                                 studentId.value())))

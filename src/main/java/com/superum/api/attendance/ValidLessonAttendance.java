@@ -2,13 +2,11 @@ package com.superum.api.attendance;
 
 import com.google.common.base.MoreObjects;
 import com.superum.helper.field.ManyDefined;
-import com.superum.helper.validation.Validator;
+import eu.goodlike.validation.Validate;
 import org.jooq.lambda.Seq;
 
 import java.util.Objects;
 import java.util.Set;
-
-import static com.superum.helper.validation.Validator.validate;
 
 /**
  * <pre>
@@ -35,10 +33,10 @@ public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
         this.lessonId = validLessonAttendanceDTO.getLessonId();
         this.studentIds = validLessonAttendanceDTO.getStudentIds();
 
-        validate(lessonId).not().Null().moreThan(0)
+        Validate.Long(lessonId).not().Null().moreThan(0)
                 .ifInvalid(() -> new InvalidLessonAttendanceException("Lesson id for attendance must be set and positive, not " + lessonId));
 
-        validate(studentIds).not().Null().not().empty().forEach(Validator::validate,
+        Validate.collection(studentIds).not().Null().not().empty().forEach(Validate::Int,
                 studentId -> studentId.not().Null().moreThan(0)
                         .ifInvalid(() -> new InvalidLessonAttendanceException("Student ids for attendance must be set and positive, not " +
                                 studentId.value())))

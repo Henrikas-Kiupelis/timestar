@@ -2,12 +2,12 @@ package com.superum.api.group;
 
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
+import eu.goodlike.validation.Validate;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
-import static com.superum.helper.validation.Validator.validate;
 
 /**
  * <pre>
@@ -22,20 +22,20 @@ public class ValidGroup extends MappedClass<ValidGroup, Integer> {
     // CONSTRUCTORS
 
     public ValidGroup(ValidGroupDTO validGroupDTO) {
-        validate(validGroupDTO.getId()).Null().or().moreThan(0)
+        Validate.Int(validGroupDTO.getId()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidGroupException("Group id must be positive, not: " + validGroupDTO.getId()));
 
-        validate(validGroupDTO.getCustomerId()).Null().or().moreThan(0)
+        Validate.Int(validGroupDTO.getCustomerId()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidGroupException("Group's customer id must be positive, not: " + validGroupDTO.getCustomerId()));
 
-        validate(validGroupDTO.getTeacherId()).Null().or().moreThan(0)
+        Validate.Int(validGroupDTO.getTeacherId()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidGroupException("Group's teacher id must be positive, not: " + validGroupDTO.getTeacherId()));
 
-        validate(validGroupDTO.getLanguageLevel()).Null().or().not().blank().fits(LANGUAGE_LEVEL_SIZE_LIMIT)
+        Validate.string(validGroupDTO.getLanguageLevel()).Null().or().not().blank().fits(LANGUAGE_LEVEL_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidGroupException("Group's language level must not be blank or exceed " +
                         LANGUAGE_LEVEL_SIZE_LIMIT + " chars: " + validGroupDTO.getLanguageLevel()));
 
-        validate(validGroupDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
+        Validate.string(validGroupDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidGroupException("Group's name must not be blank or exceed " +
                         NAME_SIZE_LIMIT + " chars: " + validGroupDTO.getName()));
 

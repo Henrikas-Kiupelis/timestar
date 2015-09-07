@@ -4,14 +4,15 @@ import com.superum.helper.Random;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.steps.FieldDef;
-import com.superum.helper.time.JodaTimeZoneHandler;
+import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.validation.Validate;
 import org.jooq.lambda.Seq;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.STUDENT;
-import static com.superum.helper.validation.Validator.validate;
+
 
 /**
  * <pre>
@@ -43,20 +44,20 @@ public class ValidStudent extends MappedClass<ValidStudent, Integer> {
     // CONSTRUCTORS
 
     public ValidStudent(ValidStudentDTO validStudentDTO) {
-        validate(validStudentDTO.getId()).Null().or().moreThan(0)
+        Validate.Int(validStudentDTO.getId()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidStudentException("Student id must be positive, not: " +
                         validStudentDTO.getId()));
 
-        validate(validStudentDTO.getCustomerId()).Null().or().moreThan(0)
+        Validate.Int(validStudentDTO.getCustomerId()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidStudentException("Customer id for student must be positive, not: " +
                         validStudentDTO.getCustomerId()));
 
-        validate(validStudentDTO.getEmail()).Null().or().not().blank().fits(EMAIL_SIZE_LIMIT).email()
+        Validate.string(validStudentDTO.getEmail()).Null().or().not().blank().fits(EMAIL_SIZE_LIMIT).email()
                 .ifInvalid(() -> new InvalidStudentException("Student email must not exceed " +
                         EMAIL_SIZE_LIMIT + " chars, be blank or be of invalid format: " +
                         validStudentDTO.getEmail()));
 
-        validate(validStudentDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
+        Validate.string(validStudentDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidStudentException("Student name must not exceed " +
                         NAME_SIZE_LIMIT + " chars or be blank: " + validStudentDTO.getName()));
 

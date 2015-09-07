@@ -6,11 +6,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.superum.api.core.DTOWithTimestamps;
-import com.superum.helper.Equals;
 import org.joda.time.Instant;
 import org.jooq.Record;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
@@ -213,17 +211,21 @@ public final class ValidGroupDTO extends DTOWithTimestamps {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ValidGroupDTO && EQUALS.equals(this, (ValidGroupDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof ValidGroupDTO)) return false;
+        ValidGroupDTO that = (ValidGroupDTO) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(customerId, that.customerId) &&
+                Objects.equals(teacherId, that.teacherId) &&
+                Objects.equals(usesHourlyWage, that.usesHourlyWage) &&
+                Objects.equals(languageLevel, that.languageLevel) &&
+                Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, customerId, teacherId, usesHourlyWage, languageLevel, name);
     }
-
-    private static final Equals<ValidGroupDTO> EQUALS = new Equals<>(Arrays.asList(ValidGroupDTO::getId,
-            ValidGroupDTO::getTeacherId, ValidGroupDTO::getCustomerId, ValidGroupDTO::getUsesHourlyWage,
-            ValidGroupDTO::getLanguageLevel, ValidGroupDTO::getName));
 
     // GENERATED
 

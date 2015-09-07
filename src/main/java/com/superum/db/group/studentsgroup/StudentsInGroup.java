@@ -5,10 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
 
 import javax.validation.constraints.Min;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,27 +22,6 @@ public class StudentsInGroup {
     @JsonProperty("studentIds")
     public List<Integer> getStudentIds() {
         return studentIds;
-    }
-
-    // OBJECT OVERRIDES
-
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper("StudentsInGroup")
-                .add("Group id", groupId)
-                .add("Students", studentIds)
-                .toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return this == o || o instanceof StudentsInGroup && EQUALS.equals(this, (StudentsInGroup) o);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(groupId, studentIds);
     }
 
     // CONSTRUCTORS
@@ -63,7 +40,28 @@ public class StudentsInGroup {
 
     private final List<Integer> studentIds;
 
-    private static final Equals<StudentsInGroup> EQUALS = new Equals<>(Arrays.asList(StudentsInGroup::getGroupId,
-            StudentsInGroup::getStudentIds));
+    // OBJECT OVERRIDES
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper("StudentsInGroup")
+                .add("Group id", groupId)
+                .add("Students", studentIds)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StudentsInGroup)) return false;
+        StudentsInGroup that = (StudentsInGroup) o;
+        return Objects.equals(groupId, that.groupId) &&
+                Objects.equals(studentIds, that.studentIds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupId, studentIds);
+    }
 
 }

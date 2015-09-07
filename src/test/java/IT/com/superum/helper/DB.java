@@ -10,7 +10,7 @@ import com.superum.api.lesson.ValidLessonDTO;
 import com.superum.api.student.ValidStudentDTO;
 import com.superum.api.teacher.FullTeacherDTO;
 import com.superum.helper.Fake;
-import com.superum.helper.time.JodaTimeZoneHandler;
+import eu.goodlike.time.JodaTimeZoneHandler;
 import org.joda.time.LocalDate;
 import org.jooq.DSLContext;
 import org.jooq.Field;

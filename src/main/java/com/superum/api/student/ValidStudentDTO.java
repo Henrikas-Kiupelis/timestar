@@ -3,13 +3,11 @@ package com.superum.api.student;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.superum.api.core.DTOWithTimestamps;
-import com.superum.helper.Equals;
-import com.superum.helper.time.JodaTimeZoneHandler;
+import eu.goodlike.time.JodaTimeZoneHandler;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.STUDENT;
@@ -223,7 +221,15 @@ public class ValidStudentDTO extends DTOWithTimestamps {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ValidStudentDTO && EQUALS.equals(this, (ValidStudentDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof ValidStudentDTO)) return false;
+        ValidStudentDTO that = (ValidStudentDTO) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(code, that.code) &&
+                Objects.equals(customerId, that.customerId) &&
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(name, that.name);
     }
 
     @Override
@@ -231,11 +237,7 @@ public class ValidStudentDTO extends DTOWithTimestamps {
         return Objects.hash(id, code, customerId, startDate, email, name);
     }
 
-    private static final Equals<ValidStudentDTO> EQUALS = new Equals<>(Arrays.asList(ValidStudentDTO::getId,
-            ValidStudentDTO::getCode, ValidStudentDTO::getCustomerId, ValidStudentDTO::getStartDate,
-            ValidStudentDTO::getEmail, ValidStudentDTO::getName));
-
-    // GENERATED
+   // GENERATED
 
     public interface CustomerIdStep {
         EmailStep customerId(Integer customerId);

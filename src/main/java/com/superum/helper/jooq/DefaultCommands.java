@@ -23,6 +23,7 @@ public interface DefaultCommands<R extends Record, ID> extends DefaultSql<R, ID>
      * @param <T> type of the object that contains mapping definitions to this table
      * @return object, created by using mapper on the record returned by the database; Optional.empty if it was
      * null
+     * @throws NullPointerException if body or mapper is null
      */
     <T extends Defined<T, ID>, DTO> Optional<DTO> create(T body, int partitionId, Function<R, DTO> mapper);
 
@@ -34,12 +35,14 @@ public interface DefaultCommands<R extends Record, ID> extends DefaultSql<R, ID>
      * </pre>
      * @param <T> type of the object that contains mapping definitions to this table
      * @return amount of records updated; 0 if nothing was updated, 1 if a single record was updated
+     * @throws NullPointerException if body is null
      */
     <T extends Defined<T, ID>> int update(T body, int partitionId);
 
     /**
      * Deletes a single record from the table using a particular primary key
      * @return amount of records deleted; 0 if nothing was deleted, 1 if a single record was deleted
+     * @throws NullPointerException if id is null
      */
     int delete(ID id, int partitionId);
 

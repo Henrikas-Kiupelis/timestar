@@ -5,9 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
 import com.superum.api.exception.InvalidRequestException;
-import com.superum.helper.Equals;
-import com.superum.helper.NullChecker;
-import com.superum.helper.time.JodaTimeZoneHandler;
+import eu.goodlike.neat.Null;
+import eu.goodlike.time.JodaTimeZoneHandler;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
@@ -17,7 +16,6 @@ import org.jooq.Record;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.LESSON;
@@ -86,33 +84,6 @@ public class Lesson {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
-	
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("Lesson")
-                .add("Lesson id", id)
-                .add("Group id", groupId)
-                .add("Teacher id", teacherId)
-                .add("Start time", startTime)
-                .add("End time", endTime)
-                .add("Length", length)
-                .add("Comment", comment)
-                .add("Created at", createdAt)
-                .add("Updated at", updatedAt)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-        return this == o || o instanceof Lesson && EQUALS.equals(this, (Lesson) o);
-	}
-
-	@Override
-	public int hashCode() {
-        return Objects.hash(id, groupId, startTime, length, comment);
-	}
 
 	// CONSTRUCTORS
 
@@ -127,8 +98,8 @@ public class Lesson {
                                       @JsonProperty("length") int length,
                                       @JsonProperty("comment") String comment) {
         if (startTime == null) {
-            NullChecker.check(timeZone, startDate, startHour, startMinute)
-                    .notNull(() -> new InvalidRequestException("Must provide either startTime or timeZone, " +
+            Null.check(timeZone, startDate, startHour, startMinute)
+                    .ifAny(() -> new InvalidRequestException("Must provide either startTime or timeZone, " +
                             "startDate, startHour and startMinute"));
 
             return fromTimeZone(id, groupId, null, DateTimeZone.forID(timeZone), LocalDate.parse(startDate),
@@ -213,8 +184,39 @@ public class Lesson {
 	private final Instant createdAt;
     private final Instant updatedAt;
 
-    private static final Equals<Lesson> EQUALS = new Equals<>(Arrays.asList(Lesson::getId, Lesson::getGroupId,
-            Lesson::getStartTime, Lesson::getLength, Lesson::getComment));
+    // OBJECT OVERRIDES
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper("Lesson")
+                .add("Lesson id", id)
+                .add("Group id", groupId)
+                .add("Teacher id", teacherId)
+                .add("Start time", startTime)
+                .add("End time", endTime)
+                .add("Length", length)
+                .add("Comment", comment)
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Lesson)) return false;
+        Lesson lesson = (Lesson) o;
+        return Objects.equals(id, lesson.id) &&
+                Objects.equals(groupId, lesson.groupId) &&
+                Objects.equals(startTime, lesson.startTime) &&
+                Objects.equals(length, lesson.length) &&
+                Objects.equals(comment, lesson.comment);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, groupId, startTime, length, comment);
+    }
 
     // GENERATED
 

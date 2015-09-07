@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.superum.api.customer.ValidCustomerDTO;
 import com.superum.api.teacher.FullTeacherDTO;
-import com.superum.helper.Equals;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -94,8 +92,11 @@ public class FullTable {
                 Collections.emptyList(), Collections.emptyList());
     }
 
-    public FullTable(List<FullTeacherDTO> teachers, List<ValidCustomerDTO> customers, List<TableField> fields,
-                     List<TableReport> teacherReports, List<TableReport> customerReports) {
+    public FullTable(@JsonProperty(TEACHERS_FIELD) List<FullTeacherDTO> teachers,
+                     @JsonProperty(CUSTOMERS_FIELD) List<ValidCustomerDTO> customers,
+                     @JsonProperty(FIELDS_FIELD) List<TableField> fields,
+                     @JsonProperty(TEACHER_REPORT_FIELD) List<TableReport> teacherReports,
+                     @JsonProperty(CUSTOMER_REPORT_FIELD) List<TableReport> customerReports) {
         this.teachers = teachers;
         this.customers = customers;
         this.fields = fields;
@@ -134,15 +135,19 @@ public class FullTable {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof FullTable && EQUALS.equals(this, (FullTable) o);
+        if (this == o) return true;
+        if (!(o instanceof FullTable)) return false;
+        FullTable fullTable = (FullTable) o;
+        return Objects.equals(teachers, fullTable.teachers) &&
+                Objects.equals(customers, fullTable.customers) &&
+                Objects.equals(fields, fullTable.fields) &&
+                Objects.equals(teacherReports, fullTable.teacherReports) &&
+                Objects.equals(customerReports, fullTable.customerReports);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(teachers, customers, fields, teacherReports, customerReports);
     }
-
-    private static final Equals<FullTable> EQUALS = new Equals<>(Arrays.asList(FullTable::getTeachers,
-            FullTable::getCustomers, FullTable::getFields, FullTable::getTeacherReports, FullTable::getCustomerReports));
 
 }

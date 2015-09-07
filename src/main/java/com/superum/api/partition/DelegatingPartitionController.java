@@ -6,7 +6,7 @@ import com.superum.db.partition.PartitionController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
+import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
 
 /**
  * <pre>

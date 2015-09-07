@@ -41,41 +41,6 @@ public class CustomerLessonData {
 	public PaymentData getPaymentData() {
 		return paymentData;
 	}
-	
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("CustomerLessonData")
-                .add("Customer", customer)
-                .add("Customer contract languages", customerContractLanguages)
-                .add("Lesson data", teacherLessonData)
-                .add("Total data", totalData)
-                .add("Payment data", paymentData)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof CustomerLessonData))
-			return false;
-
-		CustomerLessonData other = (CustomerLessonData) o;
-
-		return Objects.equals(this.customer, other.customer)
-				&& Objects.equals(this.customerContractLanguages, other.customerContractLanguages)
-				&& Objects.equals(this.teacherLessonData, other.teacherLessonData)
-				&& Objects.equals(this.totalData, other.totalData)
-				&& Objects.equals(this.paymentData, other.paymentData);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(customer, customerContractLanguages, teacherLessonData, totalData, paymentData);
-	}
 
 	// CONSTRUCTORS
 
@@ -108,5 +73,40 @@ public class CustomerLessonData {
 	
 	@NotNull
 	private final PaymentData paymentData;
+
+	// OBJECT OVERRIDES
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper("CustomerLessonData")
+				.add("Customer", customer)
+				.add("Customer contract languages", customerContractLanguages)
+				.add("Lesson data", teacherLessonData)
+				.add("Total data", totalData)
+				.add("Payment data", paymentData)
+				.toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+
+		if (!(o instanceof CustomerLessonData))
+			return false;
+
+		CustomerLessonData other = (CustomerLessonData) o;
+
+		return Objects.equals(this.customer, other.customer)
+				&& Objects.equals(this.customerContractLanguages, other.customerContractLanguages)
+				&& Objects.equals(this.teacherLessonData, other.teacherLessonData)
+				&& Objects.equals(this.totalData, other.totalData)
+				&& Objects.equals(this.paymentData, other.paymentData);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(customer, customerContractLanguages, teacherLessonData, totalData, paymentData);
+	}
 
 }

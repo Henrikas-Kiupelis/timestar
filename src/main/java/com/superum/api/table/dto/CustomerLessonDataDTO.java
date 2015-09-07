@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.superum.api.customer.ValidCustomerDTO;
 import com.superum.api.group.ValidGroupDTO;
-import com.superum.helper.Equals;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -110,17 +108,19 @@ public final class CustomerLessonDataDTO {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof CustomerLessonDataDTO && EQUALS.equals(this, (CustomerLessonDataDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof CustomerLessonDataDTO)) return false;
+        CustomerLessonDataDTO that = (CustomerLessonDataDTO) o;
+        return Objects.equals(customer, that.customer) &&
+                Objects.equals(groups, that.groups) &&
+                Objects.equals(teacherLessonData, that.teacherLessonData) &&
+                Objects.equals(totalLessonData, that.totalLessonData) &&
+                Objects.equals(paymentData, that.paymentData);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(customer, groups, teacherLessonData, totalLessonData, paymentData);
     }
-
-    private static final Equals<CustomerLessonDataDTO> EQUALS = new Equals<>(Arrays.asList(
-            CustomerLessonDataDTO::getCustomer, CustomerLessonDataDTO::getGroups,
-            CustomerLessonDataDTO::getTeacherLessonData, CustomerLessonDataDTO::getTotalLessonData,
-            CustomerLessonDataDTO::getPaymentData));
 
 }

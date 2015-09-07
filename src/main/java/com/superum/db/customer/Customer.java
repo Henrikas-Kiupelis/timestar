@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
-import com.superum.helper.time.JodaTimeZoneHandler;
+import eu.goodlike.time.JodaTimeZoneHandler;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
@@ -13,7 +12,6 @@ import org.jooq.Record;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
@@ -91,33 +89,6 @@ public class Customer {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
-	
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("Customer")
-                .add("Customer id", id)
-                .add("Contract started", startDate)
-                .add("Name", name)
-                .add("Phone", phone)
-                .add("Website", website)
-                .add("Picture", picture)
-                .add("Comment", comment)
-                .add("Created at", createdAt)
-                .add("Updated at", updatedAt)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-        return this == o || o instanceof Customer && EQUALS.equals(this, (Customer) o);
-    }
-
-	@Override
-	public int hashCode() {
-        return Objects.hash(id, startDate, name, phone, website, picture, comment);
-	}
 
 	// CONSTRUCTORS
 
@@ -204,9 +175,41 @@ public class Customer {
     private final Instant createdAt;
     private final Instant updatedAt;
 
-    private static final Equals<Customer> EQUALS = new Equals<>(Arrays.asList(Customer::getId,
-            Customer::getStartDate,  Customer::getName, Customer::getPhone, Customer::getWebsite,
-            Customer::getPicture, Customer::getComment));
+    // OBJECT OVERRIDES
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper("Customer")
+                .add("Customer id", id)
+                .add("Contract started", startDate)
+                .add("Name", name)
+                .add("Phone", phone)
+                .add("Website", website)
+                .add("Picture", picture)
+                .add("Comment", comment)
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Customer)) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(id, customer.id) &&
+                Objects.equals(startDate, customer.startDate) &&
+                Objects.equals(name, customer.name) &&
+                Objects.equals(phone, customer.phone) &&
+                Objects.equals(website, customer.website) &&
+                Objects.equals(picture, customer.picture) &&
+                Objects.equals(comment, customer.comment);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, startDate, name, phone, website, picture, comment);
+    }
 
     // GENERATED
 

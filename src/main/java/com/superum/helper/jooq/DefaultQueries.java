@@ -1,5 +1,6 @@
 package com.superum.helper.jooq;
 
+import eu.goodlike.neat.Null;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -8,8 +9,6 @@ import org.jooq.TableField;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
-import static com.superum.helper.NullChecker.check;
 
 /**
  * Contains methods for queries on tables
@@ -37,10 +36,10 @@ public interface DefaultQueries<R extends Record, ID> extends DefaultSql<R, ID> 
 
     /**
      * @return true if a record with primary key value id exists in given partition; false otherwise
-     * @throws IllegalArgumentException if primary key is null
+     * @throws NullPointerException if primary key is null
      */
     default boolean exists(ID id, int partitionId) {
-        if (id == null) throw new IllegalArgumentException("Primary key value cannot be null");
+        Null.check(id).ifAny("Primary key value cannot be null");
         return existsForCondition(idAndPartition(id, partitionId));
     }
 
@@ -49,7 +48,7 @@ public interface DefaultQueries<R extends Record, ID> extends DefaultSql<R, ID> 
      * @throws NullPointerException if key or keyValue is null
      */
     default <F_ID> boolean existsForKey(int partitionId, TableField<R, F_ID> key, F_ID keyValue) {
-        check(key, keyValue).notNull("Key field and its value cannot be null");
+        Null.check(key, keyValue).ifAny("Key field and its value cannot be null");
         return existsForCondition(key.eq(keyValue).and(partitionId(partitionId)));
     }
 
@@ -73,13 +72,13 @@ public interface DefaultQueries<R extends Record, ID> extends DefaultSql<R, ID> 
      */
     default <T, F_ID> List<T> readForForeignKey(int page, int amount, int partitionId,
                                                  TableField<R, F_ID> foreignKey, F_ID keyValue, RecordMapper<R, T> mapper) {
-        check(foreignKey, keyValue).notNull("Foreign field and its value cannot be null");
+        Null.check(foreignKey, keyValue).ifAny("Foreign field and its value cannot be null");
         return readForCondition(page, amount, foreignKey.eq(keyValue).and(partitionId(partitionId)), mapper);
     }
 
     /**
      * @return count of objects with a certain condition
-     * @throws IllegalArgumentException if condition is null
+     * @throws NullPointerException if condition is null
      */
     int countForCondition(Condition condition);
 
@@ -95,8 +94,23 @@ public interface DefaultQueries<R extends Record, ID> extends DefaultSql<R, ID> 
      * @throws NullPointerException if foreignKey or keyValue is null
      */
     default <T, F_ID> int countForForeignKey(int partitionId, TableField<R, F_ID> foreignKey, F_ID keyValue) {
-        check(foreignKey, keyValue).notNull("Foreign field and its value cannot be null");
+        Null.check(foreignKey, keyValue).ifAny("Foreign field and its value cannot be null");
         return countForCondition(foreignKey.eq(keyValue).and(partitionId(partitionId)));
+    }
+
+    /**
+     * @return a single field value of a record for given condition; enforce uniqueness with condition or suffer!
+     * @throws NullPointerException if field or condition is null
+     */
+    <T> Optional<T> readFieldForCondition(TableField<R, T> field, Condition condition);
+
+    /**
+     * @return a single field value of a record with certain id
+     * @throws NullPointerException if id is null
+     */
+    default <T> Optional<T> readField(TableField<R, T> field, ID id, int partitionId) {
+        Null.check(id).ifAny("Primary key value cannot be null");
+        return readFieldForCondition(field, idAndPartition(id, partitionId));
     }
 
 }

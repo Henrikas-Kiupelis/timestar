@@ -47,43 +47,6 @@ public class LessonTable {
 	public List<PaymentData> getPaymentData() {
 		return paymentData;
 	}
-	
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("LessonTable")
-                .add("Teachers total", totalTeacherCount)
-                .add("Teachers", teachers)
-                .add("Languages", languages)
-                .add("Lesson data", customerLessonData)
-                .add("Total data", totalData)
-                .add("Payment data", paymentData)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof LessonTable))
-			return false;
-
-		LessonTable other = (LessonTable) o;
-
-		return this.totalTeacherCount == other.totalTeacherCount
-				&& Objects.equals(this.teachers, other.teachers)
-				&& Objects.equals(this.languages, other.languages)
-				&& Objects.equals(this.customerLessonData, other.customerLessonData)
-				&& Objects.equals(this.totalData, other.totalData)
-				&& Objects.equals(this.paymentData, other.paymentData);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(totalTeacherCount, teachers, languages, customerLessonData, totalData, paymentData);
-	}
 
 	// CONSTRUCTORS
 
@@ -120,5 +83,42 @@ public class LessonTable {
 	
 	@NotNull
 	private final List<PaymentData> paymentData;
+
+	// OBJECT OVERRIDES
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper("LessonTable")
+				.add("Teachers total", totalTeacherCount)
+				.add("Teachers", teachers)
+				.add("Languages", languages)
+				.add("Lesson data", customerLessonData)
+				.add("Total data", totalData)
+				.add("Payment data", paymentData)
+				.toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+
+		if (!(o instanceof LessonTable))
+			return false;
+
+		LessonTable other = (LessonTable) o;
+
+		return this.totalTeacherCount == other.totalTeacherCount
+				&& Objects.equals(this.teachers, other.teachers)
+				&& Objects.equals(this.languages, other.languages)
+				&& Objects.equals(this.customerLessonData, other.customerLessonData)
+				&& Objects.equals(this.totalData, other.totalData)
+				&& Objects.equals(this.paymentData, other.paymentData);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(totalTeacherCount, teachers, languages, customerLessonData, totalData, paymentData);
+	}
 
 }

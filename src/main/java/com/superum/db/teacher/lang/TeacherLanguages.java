@@ -5,10 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
 
 import javax.validation.constraints.Min;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -29,26 +27,6 @@ public class TeacherLanguages {
 		return languages;
 	}
 
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("TeacherLanguages")
-                .add("Teacher id", teacherId)
-                .add("Languages", languages)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-        return this == o || o instanceof TeacherLanguages && EQUALS.equals(this, (TeacherLanguages) o);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(teacherId, languages);
-	}
-
 	// CONSTRUCTORS
 
 	@JsonCreator
@@ -65,7 +43,28 @@ public class TeacherLanguages {
 
 	private final List<String> languages;
 
-    private static final Equals<TeacherLanguages> EQUALS = new Equals<>(Arrays.asList(TeacherLanguages::getTeacherId,
-			TeacherLanguages::getLanguages));
+	// OBJECT OVERRIDES
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper("TeacherLanguages")
+				.add("Teacher id", teacherId)
+				.add("Languages", languages)
+				.toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof TeacherLanguages)) return false;
+		TeacherLanguages that = (TeacherLanguages) o;
+		return Objects.equals(teacherId, that.teacherId) &&
+				Objects.equals(languages, that.languages);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(teacherId, languages);
+	}
 
 }

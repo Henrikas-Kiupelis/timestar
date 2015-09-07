@@ -1,19 +1,18 @@
 package com.superum.helper.field;
 
-import com.superum.helper.NullChecker;
 import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.core.SimpleMappedField;
 import com.superum.helper.field.steps.FieldDef;
 import com.superum.helper.field.steps.FieldNameStep;
 import com.superum.helper.field.steps.GetterStep;
 import com.superum.helper.field.steps.TableFieldStep;
+import eu.goodlike.neat.Null;
+import eu.goodlike.validation.Validate;
 import org.jooq.Field;
 import org.jooq.TableField;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
-
-import static com.superum.helper.validation.Validator.validate;
 
 /**
  * Builder class to define how to create a MappedField; uses step builder pattern
@@ -41,7 +40,7 @@ public class FieldDefinition<T, F> implements FieldNameStep<T, F>, TableFieldSte
 
     @Override
     public TableFieldStep<T, F> fieldName(String name) {
-        validate(name).not().Null().not().blank()
+        Validate.string(name).not().Null().not().blank()
                 .ifInvalid(() -> new IllegalArgumentException("Defined field must have a valid name, not: " + name));
 
         this.name = name;
@@ -68,7 +67,7 @@ public class FieldDefinition<T, F> implements FieldNameStep<T, F>, TableFieldSte
 
     @Override
     public <U> FieldDef<T, F> getter(Function<T, U> getter, Function<U, F> converter) {
-        NullChecker.check(getter, converter).notNull("Defined field can't have null getter or converter");
+        Null.check(getter, converter).ifAny("Defined field can't have null getter or converter");
 
         this.getter = getter.andThen(u -> u == null ? null : converter.apply(u));
         return this;

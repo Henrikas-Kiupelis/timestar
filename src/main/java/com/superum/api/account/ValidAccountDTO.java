@@ -6,13 +6,11 @@ import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
 import com.superum.db.account.Account;
 import com.superum.db.account.AccountType;
-import com.superum.helper.Equals;
+import eu.goodlike.validation.Validate;
 import org.joda.time.Instant;
 
 import java.util.Arrays;
 import java.util.Objects;
-
-import static com.superum.helper.validation.Validator.validate;
 
 /**
  * <pre>
@@ -91,7 +89,7 @@ public final class ValidAccountDTO {
     }
 
     public static void validateUsername(String username) {
-        validate(username).not().Null().not().blank().fits(USERNAME_SIZE_LIMIT)
+        Validate.string(username).not().Null().not().blank().fits(USERNAME_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidAccountException("Account username must not be null, blank, or exceed " +
                         USERNAME_SIZE_LIMIT + " chars: " + username));
     }
@@ -103,7 +101,7 @@ public final class ValidAccountDTO {
                                                @JsonProperty("password") char[] password) {
         validateUsername(username);
 
-        validate(password).not().Null().not().blank()
+        Validate.charArray(password).not().Null().not().blank()
                 .ifInvalid(() -> new InvalidAccountException("Account must have a password!"));
 
         return new ValidAccountDTO(null, username, null, password, null, null);
@@ -159,17 +157,21 @@ public final class ValidAccountDTO {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ValidAccountDTO && EQUALS.equals(this, (ValidAccountDTO) o)
-                && Arrays.equals(this.password, ((ValidAccountDTO) o).password);
+        if (this == o) return true;
+        if (!(o instanceof ValidAccountDTO)) return false;
+        ValidAccountDTO that = (ValidAccountDTO) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(username, that.username) &&
+                Objects.equals(accountType, that.accountType) &&
+                Arrays.equals(password, that.password) &&
+                Objects.equals(createdAt, that.createdAt) &&
+                Objects.equals(updatedAt, that.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, accountType, password);
+        return Objects.hash(id, username, accountType, Arrays.asList(password));
     }
-
-    private static final Equals<ValidAccountDTO> EQUALS = new Equals<>(Arrays.asList(ValidAccountDTO::getId,
-            ValidAccountDTO::getUsername, ValidAccountDTO::getAccountType));
 
     // GENERATED
 

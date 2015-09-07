@@ -2,13 +2,14 @@ package com.superum.api.teacher;
 
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
+import eu.goodlike.validation.Validate;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.TEACHER;
-import static com.superum.helper.validation.Validator.validate;
+
 
 /**
  * <pre>
@@ -23,48 +24,48 @@ public final class ValidTeacher extends MappedClass<ValidTeacher, Integer> {
     // CONSTRUCTORS
 
     public ValidTeacher(FullTeacherDTO fullTeacherDTO) {
-        validate(fullTeacherDTO.getId()).Null().or().moreThan(0)
+        Validate.Int(fullTeacherDTO.getId()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher id can't be negative: " + fullTeacherDTO.getId()));
 
-        validate(fullTeacherDTO.getPaymentDay()).Null().or().dayOfMonth()
+        Validate.Int(fullTeacherDTO.getPaymentDay()).Null().or().dayOfMonth()
                 .ifInvalid(() -> new InvalidTeacherException("Such payment day for teacher is impossible: " + fullTeacherDTO.getPaymentDay()));
 
-        validate(fullTeacherDTO.getHourlyWage()).Null().or().positive()
+        Validate.bigDecimal(fullTeacherDTO.getHourlyWage()).Null().or().positive()
                 .ifInvalid(() -> new InvalidTeacherException("Hourly wage for teacher must be positive, not " + fullTeacherDTO.getHourlyWage()));
 
-        validate(fullTeacherDTO.getAcademicWage()).Null().or().positive()
+        Validate.bigDecimal(fullTeacherDTO.getAcademicWage()).Null().or().positive()
                 .ifInvalid(() -> new InvalidTeacherException("Academic wage for teacher must be positive, not " + fullTeacherDTO.getAcademicWage()));
 
-        validate(fullTeacherDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher name must not exceed " +
                         NAME_SIZE_LIMIT + " chars or be blank: " + fullTeacherDTO.getName()));
 
-        validate(fullTeacherDTO.getSurname()).Null().or().not().blank().fits(SURNAME_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getSurname()).Null().or().not().blank().fits(SURNAME_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher surname must not exceed " +
                         SURNAME_SIZE_LIMIT + " chars or be blank: " + fullTeacherDTO.getSurname()));
 
-        validate(fullTeacherDTO.getPhone()).Null().or().not().blank().fits(PHONE_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getPhone()).Null().or().not().blank().fits(PHONE_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher phone must not exceed " +
                         PHONE_SIZE_LIMIT + " chars or be blank: " + fullTeacherDTO.getPhone()));
 
-        validate(fullTeacherDTO.getCity()).Null().or().not().blank().fits(CITY_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getCity()).Null().or().not().blank().fits(CITY_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher city must not exceed " +
                         CITY_SIZE_LIMIT + " chars or be blank: " + fullTeacherDTO.getCity()));
 
-        validate(fullTeacherDTO.getEmail()).Null().or().not().blank().fits(EMAIL_SIZE_LIMIT).email()
+        Validate.string(fullTeacherDTO.getEmail()).Null().or().not().blank().fits(EMAIL_SIZE_LIMIT).email()
                 .ifInvalid(() -> new InvalidTeacherException("Teacher email must not exceed " +
                         EMAIL_SIZE_LIMIT + " chars, be blank or be of invalid format: " +
                         fullTeacherDTO.getEmail()));
 
-        validate(fullTeacherDTO.getPicture()).Null().or().fits(PICTURE_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getPicture()).Null().or().fits(PICTURE_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher picture must not exceed " +
                         PICTURE_SIZE_LIMIT + " chars: " + fullTeacherDTO.getPicture()));
 
-        validate(fullTeacherDTO.getDocument()).Null().or().fits(DOCUMENT_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getDocument()).Null().or().fits(DOCUMENT_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher document must not exceed " +
                         DOCUMENT_SIZE_LIMIT + " chars: " + fullTeacherDTO.getDocument()));
 
-        validate(fullTeacherDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher comment must not exceed " +
                         COMMENT_SIZE_LIMIT + " chars: " + fullTeacherDTO.getComment()));
 

@@ -3,14 +3,12 @@ package com.superum.api.lesson;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.superum.api.core.DTOWithTimestamps;
-import com.superum.helper.Equals;
-import com.superum.helper.time.JodaTimeZoneHandler;
+import eu.goodlike.time.JodaTimeZoneHandler;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.LESSON;
@@ -99,7 +97,7 @@ public final class ValidLessonDTO extends DTOWithTimestamps {
         return new ValidLessonDTO(id, groupId, teacherId, startTime, endTime, length, comment, getCreatedAt(), getUpdatedAt());
     }
     @JsonIgnore
-    public ValidLessonDTO without() {
+    public ValidLessonDTO withoutId() {
         return new ValidLessonDTO(null, groupId, teacherId, startTime, endTime, length, comment, getCreatedAt(), getUpdatedAt());
     }
 
@@ -146,19 +144,19 @@ public final class ValidLessonDTO extends DTOWithTimestamps {
                                               @JsonProperty(LENGTH_FIELD) Integer length,
                                               @JsonProperty(COMMENT_FIELD) String comment) {
         if (startTime == null) {
-            if (timeZone == null || startDate  == null || startHour == null || startMinute == null)
-                return new ValidLessonDTO(id, groupId, null, null, null, length, comment, null, null);
-
-            return fromTimeZone(id, groupId, null, DateTimeZone.forID(timeZone), LocalDate.parse(startDate),
+            return fromTimeZone(id, groupId, null, timeZone, startDate == null ? null : LocalDate.parse(startDate),
                     startHour, startMinute, length, comment, null, null);
         }
         return new ValidLessonDTO(id, groupId, null, startTime, null, length, comment, null, null);
     }
 
-    public static ValidLessonDTO fromTimeZone(Long id, Integer groupId, Integer teacherId, DateTimeZone timeZone,
+    public static ValidLessonDTO fromTimeZone(Long id, Integer groupId, Integer teacherId, String timeZone,
                                       LocalDate startDate, Integer startHour, Integer startMinute, Integer length,
                                       String comment, Instant createdAt, Instant updatedAt) {
-        Long startTime = JodaTimeZoneHandler.forTimeZone(timeZone).from(startDate, startHour, startMinute).toEpochMillis();
+        if (timeZone == null || startDate  == null || startHour == null || startMinute == null)
+            return new ValidLessonDTO(id, groupId, null, null, null, length, comment, null, null);
+
+        Long startTime = JodaTimeZoneHandler.forTimeZoneId(timeZone).from(startDate, startHour, startMinute).toEpochMillis();
         return new ValidLessonDTO(id, groupId, teacherId, startTime, null, length, comment, createdAt, updatedAt);
     }
 
@@ -238,17 +236,20 @@ public final class ValidLessonDTO extends DTOWithTimestamps {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ValidLessonDTO && EQUALS.equals(this, (ValidLessonDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof ValidLessonDTO)) return false;
+        ValidLessonDTO that = (ValidLessonDTO) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(groupId, that.groupId) &&
+                Objects.equals(startTime, that.startTime) &&
+                Objects.equals(length, that.length) &&
+                Objects.equals(comment, that.comment);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, groupId, startTime, length, comment);
     }
-
-    private static final Equals<ValidLessonDTO> EQUALS = new Equals<>(Arrays.asList(ValidLessonDTO::getId,
-            ValidLessonDTO::getGroupId, ValidLessonDTO::getStartTime, ValidLessonDTO::getLength,
-            ValidLessonDTO::getComment));
 
     // GENERATED
 
@@ -294,7 +295,7 @@ public final class ValidLessonDTO extends DTOWithTimestamps {
         private Integer groupId;
         private Integer teacherId;
         private Long startTime;
-        private DateTimeZone timeZone;
+        private String timeZone;
         private LocalDate startDate;
         private Integer startHour;
         private Integer startMinute;
@@ -326,13 +327,13 @@ public final class ValidLessonDTO extends DTOWithTimestamps {
 
         @Override
         public Builder timeZone(DateTimeZone timeZone) {
-            this.timeZone = timeZone;
+            this.timeZone = timeZone.toString();
             return this;
         }
 
         @Override
         public Builder timeZone(String timeZone) {
-            this.timeZone = DateTimeZone.forID(timeZone);
+            this.timeZone = timeZone;
             return this;
         }
 
@@ -399,7 +400,7 @@ public final class ValidLessonDTO extends DTOWithTimestamps {
         @Override
         public ValidLessonDTO build() {
             return startTime == null
-                    ?fromTimeZone(id, groupId, teacherId, timeZone, startDate, startHour, startMinute, length,
+                    ? fromTimeZone(id, groupId, teacherId, timeZone, startDate, startHour, startMinute, length,
                     comment, createdAt, updatedAt)
                     : new ValidLessonDTO(id, groupId, teacherId, startTime, null, length, comment, createdAt, updatedAt);
         }

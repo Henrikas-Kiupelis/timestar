@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.superum.api.customer.ValidCustomerDTO;
 import com.superum.api.teacher.FullTeacherDTO;
-import com.superum.helper.Equals;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +69,9 @@ public class Table {
         return new Table(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
     }
 
-    public Table(List<FullTeacherDTO> teachers, List<ValidCustomerDTO> customers, List<TableField> fields) {
+    public Table(@JsonProperty(TEACHERS_FIELD) List<FullTeacherDTO> teachers,
+                 @JsonProperty(CUSTOMERS_FIELD) List<ValidCustomerDTO> customers,
+                 @JsonProperty(FIELDS_FIELD) List<TableField> fields) {
         this.teachers = teachers;
         this.customers = customers;
         this.fields = fields;
@@ -102,15 +102,17 @@ public class Table {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof Table && EQUALS.equals(this, (Table) o);
+        if (this == o) return true;
+        if (!(o instanceof Table)) return false;
+        Table table = (Table) o;
+        return Objects.equals(teachers, table.teachers) &&
+                Objects.equals(customers, table.customers) &&
+                Objects.equals(fields, table.fields);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(teachers, customers, fields);
     }
-
-    private static final Equals<Table> EQUALS = new Equals<>(Arrays.asList(Table::getTeachers, Table::getCustomers,
-            Table::getFields));
 
 }

@@ -2,13 +2,11 @@ package com.superum.api.teacher;
 
 import com.google.common.base.MoreObjects;
 import com.superum.helper.field.ManyDefined;
-import com.superum.helper.validation.Validator;
+import eu.goodlike.validation.Validate;
 import org.jooq.lambda.Seq;
 
 import java.util.List;
 import java.util.Objects;
-
-import static com.superum.helper.validation.Validator.validate;
 
 /**
  * <pre>
@@ -49,10 +47,10 @@ public final class ValidTeacherLanguages implements ManyDefined<Integer, String>
     }
 
     private ValidTeacherLanguages(Integer id, List<String> languages) {
-        validate(id).Null().or().moreThan(0)
+        Validate.Int(id).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher id can't be negative: " + id));
 
-        validate(languages).Null().or().not().empty().forEach(Validator::validate,
+        Validate.collection(languages).Null().or().not().empty().forEach(Validate::string,
                 language -> language.not().Null().not().blank().fits(LANGUAGE_CODE_SIZE_LIMIT)
                         .ifInvalid(() -> new InvalidTeacherException("Specific Teacher languages must not be null, blank or exceed "
                                 + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + language.value())))

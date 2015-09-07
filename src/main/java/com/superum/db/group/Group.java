@@ -5,14 +5,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
 import com.superum.db.teacher.WageType;
-import com.superum.helper.Equals;
 import org.joda.time.Instant;
 import org.jooq.Record;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
@@ -76,32 +74,6 @@ public class Group {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
-	
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("Group")
-                .add("Group id", id)
-                .add("Customer id", customerId)
-                .add("Teacher id", teacherId)
-                .add("WageType", wage)
-                .add("Language level", languageLevel)
-                .add("Name", name)
-                .add("Created at", createdAt)
-                .add("Updated at", updatedAt)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-        return this == o || o instanceof Group && EQUALS.equals(this, (Group) o);
-	}
-
-	@Override
-	public int hashCode() {
-        return Objects.hash(id, customerId, teacherId, wage, languageLevel, name);
-	}
 
 	// CONSTRUCTORS
 
@@ -177,8 +149,39 @@ public class Group {
 	private final Instant createdAt;
 	private final Instant updatedAt;
 
-    private static final Equals<Group> EQUALS = new Equals<>(Arrays.asList(Group::getId, Group::getTeacherId,
-            Group::getCustomerId, Group::getUsesHourlyWage, Group::getLanguageLevel, Group::getName));
+    // OBJECT OVERRIDES
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper("Group")
+                .add("Group id", id)
+                .add("Customer id", customerId)
+                .add("Teacher id", teacherId)
+                .add("WageType", wage)
+                .add("Language level", languageLevel)
+                .add("Name", name)
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Group)) return false;
+        Group group = (Group) o;
+        return Objects.equals(id, group.id) &&
+                Objects.equals(teacherId, group.teacherId) &&
+                Objects.equals(customerId, group.customerId) &&
+                Objects.equals(wage, group.wage) &&
+                Objects.equals(languageLevel, group.languageLevel) &&
+                Objects.equals(name, group.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, customerId, teacherId, wage, languageLevel, name);
+    }
 
     // GENERATED
 

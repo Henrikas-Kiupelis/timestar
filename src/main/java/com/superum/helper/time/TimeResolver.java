@@ -1,11 +1,12 @@
 package com.superum.helper.time;
 
+import eu.goodlike.time.JodaTimeZoneHandler;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.jooq.Condition;
 import org.jooq.TableField;
 
-import static com.superum.helper.time.JodaTimeZoneHandler.defaultTimeZone;
+import static eu.goodlike.time.JodaTimeZoneHandler.defaultTimeZone;
 
 /**
  * <pre>

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.superum.api.core.DTOWithTimestamps;
-import com.superum.helper.Equals;
+import eu.goodlike.misc.SpecialUtils;
 import org.joda.time.Instant;
 import org.jooq.Record;
 
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.TEACHER;
-import static com.superum.helper.Constants.MYSQL_GROUP_CONCAT_SEPARATOR;
+import static eu.goodlike.misc.Constants.MYSQL_GROUP_CONCAT_SEPARATOR;
 
 /**
  * <pre>
@@ -334,20 +334,31 @@ public final class FullTeacherDTO extends DTOWithTimestamps {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof FullTeacherDTO && EQUALS.equals(this, (FullTeacherDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof FullTeacherDTO)) return false;
+        FullTeacherDTO that = (FullTeacherDTO) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(paymentDay, that.paymentDay) &&
+                SpecialUtils.equalsJavaMathBigDecimal(hourlyWage, that.hourlyWage) &&
+                SpecialUtils.equalsJavaMathBigDecimal(academicWage, that.academicWage) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(surname, that.surname) &&
+                Objects.equals(phone, that.phone) &&
+                Objects.equals(city, that.city) &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(picture, that.picture) &&
+                Objects.equals(document, that.document) &&
+                Objects.equals(comment, that.comment) &&
+                Objects.equals(languages, that.languages);
     }
 
     @Override
     public int hashCode() {
+        Double hourlyWage = this.hourlyWage == null ? 0 : this.hourlyWage.doubleValue();
+        Double academicWage = this.academicWage == null ? 0 : this.academicWage.doubleValue();
         return Objects.hash(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email,
                 picture, document, comment, languages);
     }
-
-    private static final Equals<FullTeacherDTO> EQUALS = new Equals<>(Arrays.asList(FullTeacherDTO::getId,
-            FullTeacherDTO::getPaymentDay, FullTeacherDTO::getHourlyWage, FullTeacherDTO::getAcademicWage,
-            FullTeacherDTO::getName, FullTeacherDTO::getSurname, FullTeacherDTO::getPhone, FullTeacherDTO::getCity,
-            FullTeacherDTO::getEmail, FullTeacherDTO::getPicture, FullTeacherDTO::getDocument,
-            FullTeacherDTO::getComment, FullTeacherDTO::getLanguages));
 
     // GENERATED
 

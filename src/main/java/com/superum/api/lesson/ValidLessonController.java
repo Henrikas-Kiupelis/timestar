@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
+import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
 
 /**
  * <pre>

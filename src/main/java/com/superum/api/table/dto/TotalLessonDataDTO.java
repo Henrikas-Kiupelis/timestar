@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
+import eu.goodlike.misc.SpecialUtils;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -77,16 +76,17 @@ public final class TotalLessonDataDTO {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof TotalLessonDataDTO && EQUALS.equals(this, (TotalLessonDataDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof TotalLessonDataDTO)) return false;
+        TotalLessonDataDTO that = (TotalLessonDataDTO) o;
+        return Objects.equals(count, that.count) &&
+                Objects.equals(duration, that.duration) &&
+                SpecialUtils.equalsJavaMathBigDecimal(cost, that.cost);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(count, duration, cost);
+        return Objects.hash(count, duration, cost == null ? 0 : cost.doubleValue());
     }
-
-    private static final Equals<TotalLessonDataDTO> EQUALS = new Equals<>(Arrays.asList(
-            TotalLessonDataDTO::getCount, TotalLessonDataDTO::getDuration,
-            TotalLessonDataDTO::getCost));
 
 }

@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
+import eu.goodlike.misc.SpecialUtils;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -69,7 +68,11 @@ public class TableField {
 
     // CONSTRUCTORS
 
-    public TableField(Integer customerId, int teacherId, List<Long> lessonIds, int duration, BigDecimal cost) {
+    public TableField(@JsonProperty(CUSTOMER_ID_FIELD) Integer customerId,
+                      @JsonProperty(TEACHER_ID_FIELD) int teacherId,
+                      @JsonProperty(LESSON_IDS_FIELD) List<Long> lessonIds,
+                      @JsonProperty(DURATION_FIELD) int duration,
+                      @JsonProperty(COST_FIELD) BigDecimal cost) {
         this.customerId = customerId;
         this.teacherId = teacherId;
         this.lessonIds = lessonIds;
@@ -108,15 +111,19 @@ public class TableField {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof TableField && EQUALS.equals(this, (TableField) o);
+        if (this == o) return true;
+        if (!(o instanceof TableField)) return false;
+        TableField that = (TableField) o;
+        return Objects.equals(teacherId, that.teacherId) &&
+                Objects.equals(duration, that.duration) &&
+                Objects.equals(customerId, that.customerId) &&
+                Objects.equals(lessonIds, that.lessonIds) &&
+                SpecialUtils.equalsJavaMathBigDecimal(cost, that.cost);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(customerId, teacherId, lessonIds, duration, cost);
+        return Objects.hash(customerId, teacherId, lessonIds, duration, cost == null ? 0 : cost.doubleValue());
     }
-
-    private static final Equals<TableField> EQUALS = new Equals<>(Arrays.asList(TableField::getCustomerId,
-            TableField::getTeacherId, TableField::getLessonIds, TableField::getCost, TableField::getDuration));
 
 }

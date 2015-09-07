@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.superum.api.teacher.FullTeacherDTO;
-import com.superum.helper.Equals;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -108,17 +106,18 @@ public final class OptimizedLessonTableDTO {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof OptimizedLessonTableDTO && EQUALS.equals(this, (OptimizedLessonTableDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof OptimizedLessonTableDTO)) return false;
+        OptimizedLessonTableDTO that = (OptimizedLessonTableDTO) o;
+        return Objects.equals(teachers, that.teachers) &&
+                Objects.equals(customerLessonData, that.customerLessonData) &&
+                Objects.equals(totalLessonData, that.totalLessonData) &&
+                Objects.equals(paymentData, that.paymentData);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(teachers, customerLessonData, totalLessonData, paymentData);
     }
-
-    private static final Equals<OptimizedLessonTableDTO> EQUALS = new Equals<>(Arrays.asList(
-            OptimizedLessonTableDTO::getTeachers,
-            OptimizedLessonTableDTO::getCustomerLessonData, OptimizedLessonTableDTO::getTotalLessonData,
-            OptimizedLessonTableDTO::getPaymentData));
 
 }

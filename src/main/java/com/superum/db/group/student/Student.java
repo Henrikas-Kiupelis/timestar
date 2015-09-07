@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
 import com.superum.helper.Random;
-import com.superum.helper.time.JodaTimeZoneHandler;
+import eu.goodlike.time.JodaTimeZoneHandler;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -15,7 +14,6 @@ import org.jooq.Record;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.STUDENT;
@@ -103,32 +101,6 @@ public class Student {
     public static int generateCode() {
         return Random.numberWithDigits(6);
     }
-	
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("Student")
-                .add("Student id", id)
-                .add("Student code", code)
-                .add("Customer id", customerId)
-                .add("Start date", startDate)
-                .add("Email", email)
-                .add("Name", name)
-                .add("Created at", createdAt)
-                .add("Updated at", updatedAt)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-        return this == o || o instanceof Student && EQUALS.equals(this, (Student) o);
-    }
-
-	@Override
-	public int hashCode() {
-        return Objects.hash(id, code, customerId, startDate, email, name);
-	}
 
 	// CONSTRUCTORS
 
@@ -204,8 +176,39 @@ public class Student {
     private final Instant createdAt;
     private final Instant updatedAt;
 
-    private static final Equals<Student> EQUALS = new Equals<>(Arrays.asList(Student::getId, Student::getCode,
-            Student::getCustomerId, Student::getStartDate, Student::getEmail, Student::getName));
+    // OBJECT OVERRIDES
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper("Student")
+                .add("Student id", id)
+                .add("Student code", code)
+                .add("Customer id", customerId)
+                .add("Start date", startDate)
+                .add("Email", email)
+                .add("Name", name)
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Student)) return false;
+        Student student = (Student) o;
+        return Objects.equals(id, student.id) &&
+                Objects.equals(code, student.code) &&
+                Objects.equals(customerId, student.customerId) &&
+                Objects.equals(startDate, student.startDate) &&
+                Objects.equals(email, student.email) &&
+                Objects.equals(name, student.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, code, customerId, startDate, email, name);
+    }
 
     // GENERATED
 

@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
+import eu.goodlike.misc.SpecialUtils;
 import org.joda.time.LocalDate;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -58,7 +59,9 @@ public class TableReport {
 
     // CONSTRUCTORS
 
-    public TableReport(int id, LocalDate paymentDate, BigDecimal cost) {
+    public TableReport(@JsonProperty(ID_FIELD) int id,
+                       @JsonProperty(PAYMENT_DATE_FIELD) @JsonDeserialize(using = LocalDateDeserializer.class) LocalDate paymentDate,
+                       @JsonProperty(COST_FIELD) BigDecimal cost) {
         this.id = id;
         this.paymentDate = paymentDate;
         this.cost = cost;
@@ -89,15 +92,17 @@ public class TableReport {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof TableReport && EQUALS.equals(this, (TableReport) o);
+        if (this == o) return true;
+        if (!(o instanceof TableReport)) return false;
+        TableReport that = (TableReport) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(paymentDate, that.paymentDate) &&
+                SpecialUtils.equalsJavaMathBigDecimal(cost, that.cost);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, paymentDate, cost);
+        return Objects.hash(id, paymentDate, cost == null ? 0 : cost.doubleValue());
     }
-
-    private static final Equals<TableReport> EQUALS = new Equals<>(Arrays.asList(TableReport::getId,
-            TableReport::getPaymentDate, TableReport::getCost));
 
 }

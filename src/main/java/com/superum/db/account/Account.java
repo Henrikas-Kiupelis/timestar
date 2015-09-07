@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
 import com.google.common.primitives.Chars;
-import com.superum.helper.Equals;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.Instant;
 import org.jooq.Record;
@@ -61,30 +60,6 @@ public class Account {
 	@JsonIgnore
 	public void erasePassword() {
         Arrays.fill(password, '?');
-	}
-	
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("Account")
-                .add("Account id", id)
-                .add("Username", username)
-                .add("Account Type", accountType)
-                .addValue("Password: [PROTECTED]")
-                .add("Created at", createdAt)
-                .add("Updated at", updatedAt)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-        return this == o || o instanceof Account && EQUALS.equals(this, (Account) o);
-    }
-
-	@Override
-	public int hashCode() {
-        return Objects.hash(id, username, accountType, password);
 	}
 
 	// CONSTRUCTORS
@@ -145,8 +120,35 @@ public class Account {
     private final Instant createdAt;
     private final Instant updatedAt;
 
-    private static final Equals<Account> EQUALS = new Equals<>(Arrays.asList(Account::getId, Account::getUsername,
-			Account::getAccountType, Account::getPassword));
+    // OBJECT OVERRIDES
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper("Account")
+                .add("Account id", id)
+                .add("Username", username)
+                .add("Account Type", accountType)
+                .addValue("Password: [PROTECTED]")
+                .add("Created at", createdAt)
+                .add("Updated at", updatedAt)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Account)) return false;
+        Account account = (Account) o;
+        return Objects.equals(id, account.id) &&
+                Objects.equals(username, account.username) &&
+                Objects.equals(accountType, account.accountType) &&
+                Arrays.equals(password, account.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, accountType, Arrays.asList(password));
+    }
 
     // GENERATED
 

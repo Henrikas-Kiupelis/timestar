@@ -1,6 +1,6 @@
 package com.superum.helper.jooq;
 
-import com.superum.helper.NullChecker;
+import eu.goodlike.neat.Null;
 import org.jooq.*;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class DefaultQueriesImpl<R extends Record, ID> extends DefaultSqlImpl<R, 
 
     @Override
     public <T> Optional<T> read(ID id, int partitionId, Function<R, T> mapper) {
-        NullChecker.check(id, mapper).notNull("Primary key or mapper cannot be null");
+        Null.check(id, mapper).ifAny("Primary key or mapper cannot be null");
 
         return sql.selectFrom(table)
                 .where(idAndPartition(id, partitionId))
@@ -26,15 +26,14 @@ public class DefaultQueriesImpl<R extends Record, ID> extends DefaultSqlImpl<R, 
 
     @Override
     public boolean existsForCondition(Condition condition) {
-        if (condition == null)
-            throw new IllegalArgumentException("Condition cannot be null");
+        Null.check(condition).ifAny("Condition cannot be null");
 
         return sql.fetchExists(sql.selectOne().from(table).where(condition).limit(1));
     }
 
     @Override
     public <T> List<T> readForCondition(int page, int amount, Condition condition, RecordMapper<R, T> mapper) {
-        NullChecker.check(condition, mapper).notNull("Condition or mapper cannot be null");
+        Null.check(condition, mapper).ifAny("Condition or mapper cannot be null");
 
         return sql.selectFrom(table)
                 .where(condition)
@@ -47,10 +46,21 @@ public class DefaultQueriesImpl<R extends Record, ID> extends DefaultSqlImpl<R, 
 
     @Override
     public int countForCondition(Condition condition) {
-        if (condition == null)
-            throw new IllegalArgumentException("Condition cannot be null");
+        Null.check(condition).ifAny("Condition cannot be null");
 
         return sql.fetchCount(table, condition);
+    }
+
+    @Override
+    public <T> Optional<T> readFieldForCondition(TableField<R, T> field, Condition condition) {
+        Null.check(field, condition).ifAny("Field or condition cannot be null");
+
+        return sql.select(field)
+                .from(table)
+                .where(condition)
+                .limit(1)
+                .fetch().stream().findAny()
+                .map(record -> record.getValue(field));
     }
 
     // CONSTRUCTORS

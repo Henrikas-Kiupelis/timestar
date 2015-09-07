@@ -3,13 +3,11 @@ package com.superum.api.customer;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.superum.api.core.DTOWithTimestamps;
-import com.superum.helper.Equals;
-import com.superum.helper.time.JodaTimeZoneHandler;
+import eu.goodlike.time.JodaTimeZoneHandler;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
@@ -227,17 +225,22 @@ public final class ValidCustomerDTO extends DTOWithTimestamps {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ValidCustomerDTO && EQUALS.equals(this, (ValidCustomerDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof ValidCustomerDTO)) return false;
+        ValidCustomerDTO that = (ValidCustomerDTO) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(phone, that.phone) &&
+                Objects.equals(website, that.website) &&
+                Objects.equals(picture, that.picture) &&
+                Objects.equals(comment, that.comment);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, startDate, name, phone, website, picture, comment);
     }
-
-    private static final Equals<ValidCustomerDTO> EQUALS = new Equals<>(Arrays.asList(ValidCustomerDTO::getId,
-            ValidCustomerDTO::getStartDate,  ValidCustomerDTO::getName, ValidCustomerDTO::getPhone,
-            ValidCustomerDTO::getWebsite, ValidCustomerDTO::getPicture, ValidCustomerDTO::getComment));
 
     // GENERATED
 

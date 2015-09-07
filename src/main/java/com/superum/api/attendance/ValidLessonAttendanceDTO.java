@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 
@@ -85,15 +83,16 @@ public final class ValidLessonAttendanceDTO {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ValidLessonAttendanceDTO && EQUALS.equals(this, (ValidLessonAttendanceDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof ValidLessonAttendanceDTO)) return false;
+        ValidLessonAttendanceDTO that = (ValidLessonAttendanceDTO) o;
+        return Objects.equals(lessonId, that.lessonId) &&
+                Objects.equals(studentIds, that.studentIds);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(lessonId, studentIds);
     }
-
-    private static final Equals<ValidLessonAttendanceDTO> EQUALS = new Equals<>(Arrays.asList(
-            ValidLessonAttendanceDTO::getLessonId, ValidLessonAttendanceDTO::getStudentIds));
 
 }

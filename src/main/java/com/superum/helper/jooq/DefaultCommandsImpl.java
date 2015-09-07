@@ -1,8 +1,8 @@
 package com.superum.helper.jooq;
 
-import com.superum.helper.NullChecker;
 import com.superum.helper.field.Defined;
 import com.superum.helper.field.core.MappedField;
+import eu.goodlike.neat.Null;
 import org.jooq.*;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
@@ -21,7 +21,7 @@ public class DefaultCommandsImpl<R extends Record, ID> extends DefaultSqlImpl<R,
 
     @Override
     public <T extends Defined<T, ID>, DTO> Optional<DTO> create(T body, int partitionId, Function<R, DTO> mapper) {
-        NullChecker.check(body, mapper).notNull("Body and mapper function cannot be null");
+        Null.check(body, mapper).ifAny("Body and mapper function cannot be null");
 
         return body.createFields().foldLeft(sql.insertInto(table).set(partitionField, partitionId),
                 (step, field) -> field.insert(step))
@@ -31,8 +31,7 @@ public class DefaultCommandsImpl<R extends Record, ID> extends DefaultSqlImpl<R,
 
     @Override
     public <T extends Defined<T, ID>> int update(T body, int partitionId) {
-        if (body == null)
-            throw new IllegalArgumentException("Body value cannot be null");
+        Null.check(body).ifAny("Body value cannot be null");
 
         Tuple2<Optional<MappedField<?>>, Seq<MappedField<?>>> updateFields = body.updateFields().splitAtHead();
 
@@ -47,8 +46,7 @@ public class DefaultCommandsImpl<R extends Record, ID> extends DefaultSqlImpl<R,
 
     @Override
     public int delete(ID id, int partitionId) {
-        if (id == null)
-            throw new IllegalArgumentException("Primary key value cannot be null");
+        Null.check(id).ifAny("Primary key value cannot be null");
 
         return sql.deleteFrom(table)
                 .where(idAndPartition(id, partitionId))

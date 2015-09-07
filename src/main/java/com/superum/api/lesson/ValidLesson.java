@@ -4,6 +4,7 @@ import com.superum.api.customer.InvalidCustomerException;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
+import eu.goodlike.validation.Validate;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.jooq.Condition;
@@ -14,7 +15,7 @@ import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
 import static com.superum.db.generated.timestar.Tables.LESSON;
-import static com.superum.helper.validation.Validator.validate;
+
 
 /**
  * <pre>
@@ -78,23 +79,23 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
     // CONSTRUCTORS
 
     public ValidLesson(ValidLessonDTO validLessonDTO) {
-        validate(validLessonDTO.getId()).Null().or().moreThan(0)
+        Validate.Long(validLessonDTO.getId()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidLessonException("Lesson id must be positive, not: "+
                         validLessonDTO.getId()));
 
-        validate(validLessonDTO.getGroupId()).Null().or().moreThan(0)
+        Validate.Int(validLessonDTO.getGroupId()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidLessonException("Group id for lesson must be positive, not: " +
                         validLessonDTO.getGroupId()));
 
-        validate(validLessonDTO.getStartTime()).Null().or().equal(0).or().moreThan(0)
+        Validate.Long(validLessonDTO.getStartTime()).Null().or().equal(0).or().moreThan(0)
                 .ifInvalid(() -> new InvalidLessonException("Lesson start time must be non-negative, not: " +
                         validLessonDTO.getStartTime()));
 
-        validate(validLessonDTO.getLength()).Null().or().moreThan(0)
+        Validate.Int(validLessonDTO.getLength()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidLessonException("Lesson length must be positive, not: " +
                         validLessonDTO.getLength()));
 
-        validate(validLessonDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
+        Validate.string(validLessonDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidCustomerException("Lesson comment must not exceed " +
                         COMMENT_SIZE_LIMIT + " chars: " + validLessonDTO.getComment()));
 
@@ -128,9 +129,19 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
     }
 
     private int findTeacherId(DSLContext sql, int partitionId) {
-        return sql.select(GROUP_OF_STUDENTS.TEACHER_ID)
+        Integer groupId = validLessonDTO.getGroupId();
+        return groupId == null
+                ? sql.select(LESSON.TEACHER_ID)
+                .from(LESSON)
+                .where(LESSON.ID.eq(validLessonDTO.getId())
+                        .and(LESSON.PARTITION_ID.eq(partitionId)))
+                .fetch().stream().findAny()
+                .map(record -> record.getValue(LESSON.TEACHER_ID))
+                .orElseThrow(() -> new DatabaseException("Problem retrieving teacher id for lesson with id: "
+                        + validLessonDTO.getId()))
+                : sql.select(GROUP_OF_STUDENTS.TEACHER_ID)
                 .from(GROUP_OF_STUDENTS)
-                .where(GROUP_OF_STUDENTS.ID.eq(validLessonDTO.getGroupId())
+                .where(GROUP_OF_STUDENTS.ID.eq(groupId)
                         .and(GROUP_OF_STUDENTS.PARTITION_ID.eq(partitionId)))
                 .fetch().stream().findAny()
                 .map(record -> record.getValue(GROUP_OF_STUDENTS.TEACHER_ID))

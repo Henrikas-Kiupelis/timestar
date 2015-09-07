@@ -5,6 +5,7 @@ import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.teacher.ValidTeacherController;
 import com.superum.helper.PartitionAccount;
 import com.superum.helper.time.TimeResolver;
+import eu.goodlike.validation.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.superum.helper.Constants.APPLICATION_JSON_UTF8;
-import static com.superum.helper.validation.Validator.validate;
+import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+
 
 /**
  * <pre>
@@ -76,7 +77,7 @@ public class SplitLessonTableController extends CommonControllerLogic {
     @ResponseBody
     public List<TableReport> getReportData(PartitionAccount account, @PathVariable String source,
                              @RequestParam(value = "id") String id) {
-        validate(id).not().Null().not().blank().commaSeparatedListOfIntegers()
+        Validate.string(id).not().Null().not().blank().commaSeparatedListOfIntegers()
                 .ifInvalid(() -> new InvalidRequestException("Parameter id must be a comma separated list of " +
                         "positive integers, not: " + id));
 

@@ -5,11 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jooq.Record;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.PARTITIONS;
@@ -28,26 +26,6 @@ public class Partition {
 	@JsonProperty("name") 
 	public String getName() {
 		return name;
-	}
-
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("Partition")
-                .add("Partition id", id)
-                .add("Name", name)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-        return this == o || o instanceof Partition && EQUALS.equals(this, (Partition) o);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, name);
 	}
 
 	// CONSTRUCTORS
@@ -75,6 +53,28 @@ public class Partition {
 	@NotEmpty
 	private final String name;
 
-    private static final Equals<Partition> EQUALS = new Equals<>(Arrays.asList(Partition::getId, Partition::getName));
+	// OBJECT OVERRIDES
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper("Partition")
+				.add("Partition id", id)
+				.add("Name", name)
+				.toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Partition)) return false;
+		Partition partition = (Partition) o;
+		return Objects.equals(id, partition.id) &&
+				Objects.equals(name, partition.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name);
+	}
 
 }

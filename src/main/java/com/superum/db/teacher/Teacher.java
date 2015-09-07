@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
+import eu.goodlike.misc.SpecialUtils;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.jooq.Record;
@@ -14,7 +14,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.superum.db.generated.timestar.Tables.TEACHER;
@@ -108,38 +107,6 @@ public class Teacher {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
-	
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("Teacher")
-                .add("Teacher id", id)
-                .add("Payment day", paymentDay)
-                .add("Hourly wage", hourlyWage)
-                .add("Academic wage", academicWage)
-                .add("Name", name)
-                .add("Surname", surname)
-                .add("Phone", phone)
-                .add("City", city)
-                .add("Email", email)
-                .add("Picture", picture)
-                .add("Document", document)
-                .add("Comment", comment)
-                .add("Created at", createdAt)
-                .add("Updated at", updatedAt)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-        return this == o || o instanceof Teacher && EQUALS.equals(this, (Teacher) o);
-	}
-
-	@Override
-	public int hashCode() {
-        return Objects.hash(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture, document, comment);
-	}
 
 	// CONSTRUCTORS
 
@@ -260,9 +227,53 @@ public class Teacher {
 	private final Instant createdAt;
     private final Instant updatedAt;
 
-    private static final Equals<Teacher> EQUALS = new Equals<>(Arrays.asList(Teacher::getId, Teacher::getPaymentDay,
-			Teacher::getHourlyWage, Teacher::getAcademicWage, Teacher::getName, Teacher::getSurname, Teacher::getPhone,
-            Teacher::getCity, Teacher::getEmail, Teacher::getPicture, Teacher::getDocument, Teacher::getComment));
+	// OBJECT OVERRIDES
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper("Teacher")
+				.add("Teacher id", id)
+				.add("Payment day", paymentDay)
+				.add("Hourly wage", hourlyWage)
+				.add("Academic wage", academicWage)
+				.add("Name", name)
+				.add("Surname", surname)
+				.add("Phone", phone)
+				.add("City", city)
+				.add("Email", email)
+				.add("Picture", picture)
+				.add("Document", document)
+				.add("Comment", comment)
+				.add("Created at", createdAt)
+				.add("Updated at", updatedAt)
+				.toString();
+	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Teacher)) return false;
+        Teacher teacher = (Teacher) o;
+        return Objects.equals(id, teacher.id) &&
+                Objects.equals(paymentDay, teacher.paymentDay) &&
+                SpecialUtils.equalsJavaMathBigDecimal(hourlyWage, teacher.hourlyWage) &&
+                SpecialUtils.equalsJavaMathBigDecimal(academicWage, teacher.academicWage) &&
+                Objects.equals(name, teacher.name) &&
+                Objects.equals(surname, teacher.surname) &&
+                Objects.equals(phone, teacher.phone) &&
+                Objects.equals(city, teacher.city) &&
+                Objects.equals(email, teacher.email) &&
+                Objects.equals(picture, teacher.picture) &&
+                Objects.equals(document, teacher.document) &&
+                Objects.equals(comment, teacher.comment);
+    }
+
+    @Override
+	public int hashCode() {
+        Double hourlyWage = this.hourlyWage == null ? 0 : this.hourlyWage.doubleValue();
+        Double academicWage = this.academicWage == null ? 0 : this.academicWage.doubleValue();
+		return Objects.hash(id, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture, document, comment);
+	}
 
     // GENERATED
 

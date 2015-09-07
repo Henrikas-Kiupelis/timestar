@@ -2,13 +2,14 @@ package com.superum.api.customer;
 
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
-import com.superum.helper.time.JodaTimeZoneHandler;
+import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.validation.Validate;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
-import static com.superum.helper.validation.Validator.validate;
+
 
 /**
  * <pre>
@@ -21,27 +22,27 @@ import static com.superum.helper.validation.Validator.validate;
 public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
 
     public ValidCustomer(ValidCustomerDTO validCustomerDTO) {
-        validate(validCustomerDTO.getId()).Null().or().moreThan(0)
+        Validate.Int(validCustomerDTO.getId()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidCustomerException("Customer id must be positive, not: "+
                         validCustomerDTO.getId()));
 
-        validate(validCustomerDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
+        Validate.string(validCustomerDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidCustomerException("Customer name must not exceed " +
                         NAME_SIZE_LIMIT + " chars or be blank: " + validCustomerDTO.getName()));
 
-        validate(validCustomerDTO.getPhone()).Null().or().not().blank().fits(PHONE_SIZE_LIMIT)
+        Validate.string(validCustomerDTO.getPhone()).Null().or().not().blank().fits(PHONE_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidCustomerException("Customer phone must not exceed " +
                         PHONE_SIZE_LIMIT + " chars or be blank: " + validCustomerDTO.getPhone()));
 
-        validate(validCustomerDTO.getWebsite()).Null().or().not().blank().fits(WEBSITE_SIZE_LIMIT)
+        Validate.string(validCustomerDTO.getWebsite()).Null().or().not().blank().fits(WEBSITE_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidCustomerException("Customer website must not exceed " +
                         WEBSITE_SIZE_LIMIT + " chars or be blank: " + validCustomerDTO.getWebsite()));
 
-        validate(validCustomerDTO.getPicture()).Null().or().fits(PICTURE_SIZE_LIMIT)
+        Validate.string(validCustomerDTO.getPicture()).Null().or().fits(PICTURE_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidCustomerException("Customer picture must not exceed " +
                         PICTURE_SIZE_LIMIT + " chars: " + validCustomerDTO.getPicture()));
 
-        validate(validCustomerDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
+        Validate.string(validCustomerDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidCustomerException("Customer comment must not exceed " +
                         COMMENT_SIZE_LIMIT + " chars: " + validCustomerDTO.getComment()));
 

@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 
@@ -85,15 +83,16 @@ public class ValidGroupingDTO {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ValidGroupingDTO && EQUALS.equals(this, (ValidGroupingDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof ValidGroupingDTO)) return false;
+        ValidGroupingDTO that = (ValidGroupingDTO) o;
+        return Objects.equals(groupId, that.groupId) &&
+                Objects.equals(studentIds, that.studentIds);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(groupId, studentIds);
     }
-
-    private static final Equals<ValidGroupingDTO> EQUALS = new Equals<>(Arrays.asList(
-            ValidGroupingDTO::getGroupId, ValidGroupingDTO::getStudentIds));
 
 }

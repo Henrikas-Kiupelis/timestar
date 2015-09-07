@@ -1,6 +1,6 @@
 package com.superum.helper.field.core;
 
-import com.superum.helper.SpecialUtils;
+import eu.goodlike.misc.SpecialUtils;
 import org.jooq.Field;
 
 import java.math.BigDecimal;
@@ -76,7 +76,7 @@ public class SimpleMappedField<F> extends AbstractMappedField<F> {
 
         @Override
         public int hashCode() {
-            return value == null ? 0 : Double.valueOf(value.doubleValue()).hashCode();
+            return SpecialUtils.bigDecimalCustomHashCode(value);
         }
 
         // CONSTRUCTORS

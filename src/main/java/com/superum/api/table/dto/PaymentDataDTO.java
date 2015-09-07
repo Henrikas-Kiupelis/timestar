@@ -5,11 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Equals;
+import eu.goodlike.misc.SpecialUtils;
 import org.joda.time.LocalDate;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -73,15 +72,16 @@ public final class PaymentDataDTO {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof PaymentDataDTO && EQUALS.equals(this, (PaymentDataDTO) o);
+        if (this == o) return true;
+        if (!(o instanceof PaymentDataDTO)) return false;
+        PaymentDataDTO that = (PaymentDataDTO) o;
+        return Objects.equals(paymentDate, that.paymentDate) &&
+                SpecialUtils.equalsJavaMathBigDecimal(cost, that.cost);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(paymentDate, cost);
+        return Objects.hash(paymentDate, cost == null ? 0 : cost.doubleValue());
     }
-
-    private static final Equals<PaymentDataDTO> EQUALS = new Equals<>(Arrays.asList(
-            PaymentDataDTO::getPaymentDate, PaymentDataDTO::getCost));
 
 }

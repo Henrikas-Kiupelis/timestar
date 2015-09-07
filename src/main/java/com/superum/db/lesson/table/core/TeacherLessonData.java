@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import eu.goodlike.misc.SpecialUtils;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -31,37 +32,6 @@ public class TeacherLessonData {
 	public BigDecimal getCost() {
 		return cost;
 	}
-	
-	// OBJECT OVERRIDES
-
-	@Override
-	public String toString() {
-        return MoreObjects.toStringHelper("TeacherLessonData")
-                .add("Lesson ids", lessonIds)
-                .add("Duration", duration)
-                .add("Cost", cost)
-                .toString();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-
-		if (!(o instanceof TeacherLessonData))
-			return false;
-
-		TeacherLessonData other = (TeacherLessonData) o;
-
-		return this.duration == other.duration
-				&& Objects.equals(this.lessonIds, other.lessonIds)
-				&& Objects.equals(this.cost, other.cost);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(lessonIds, duration, cost);
-	}
 
 	// CONSTRUCTORS
 
@@ -83,6 +53,36 @@ public class TeacherLessonData {
 	
 	@NotNull
 	private final BigDecimal cost;
-	
+
+	// OBJECT OVERRIDES
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper("TeacherLessonData")
+				.add("Lesson ids", lessonIds)
+				.add("Duration", duration)
+				.add("Cost", cost)
+				.toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+
+		if (!(o instanceof TeacherLessonData))
+			return false;
+
+		TeacherLessonData other = (TeacherLessonData) o;
+
+		return this.duration == other.duration
+				&& Objects.equals(this.lessonIds, other.lessonIds)
+				&& SpecialUtils.equalsJavaMathBigDecimal(this.cost, other.cost);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(lessonIds, duration, cost == null ? 0 : cost.doubleValue());
+	}
 
 }
