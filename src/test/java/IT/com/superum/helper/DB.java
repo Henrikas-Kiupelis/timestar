@@ -47,7 +47,10 @@ public class DB {
     }
 
     /**
+     * <pre>
      * Occasionally some straggler accounts remain in the DB despite transaction rollback... needs investigation!
+     * EDIT: Seems to have been a concurrency issue, looks to be solved
+     * </pre>
      */
     public void clean() {
         cleanAccounts();
@@ -226,6 +229,13 @@ public class DB {
         return studentIds.isEmpty() ? Optional.empty() : Optional.of(new ValidGroupingDTO(groupId, studentIds));
     }
 
+    public boolean existsGroupingForStudentId(int studentId) {
+        return sql.fetchExists(sql.selectOne()
+                        .from(STUDENTS_IN_GROUPS)
+                        .where(STUDENTS_IN_GROUPS.STUDENT_ID.eq(studentId))
+                        .limit(1));
+    }
+
     public Optional<ValidLessonAttendanceDTO> readValidLessonAttendance(long lessonId) {
         Set<Integer> studentIds = sql.select(LESSON_ATTENDANCE.STUDENT_ID)
                 .from(LESSON_ATTENDANCE)
@@ -235,6 +245,13 @@ public class DB {
                 .collect(Collectors.toSet());
 
         return studentIds.isEmpty() ? Optional.empty() : Optional.of(new ValidLessonAttendanceDTO(lessonId, studentIds));
+    }
+
+    public boolean existsLessonAttendanceForStudentId(int studentId) {
+        return sql.fetchExists(sql.selectOne()
+                .from(LESSON_ATTENDANCE)
+                .where(LESSON_ATTENDANCE.STUDENT_ID.eq(studentId))
+                .limit(1));
     }
 
     // CONSTRUCTORS
