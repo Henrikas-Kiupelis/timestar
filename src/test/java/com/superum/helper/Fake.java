@@ -166,7 +166,7 @@ public class Fake {
     }
 
     public static BigDecimal wage(long id) {
-        return BigDecimal.valueOf(id);
+        return BigDecimal.valueOf(id).setScale(4, BigDecimal.ROUND_UNNECESSARY);
     }
 
     public static int day(long id) {
@@ -241,7 +241,7 @@ public class Fake {
     }
 
     public static long time(long id) {
-        return id * 1000000;
+        return id * 1000000000;
     }
 
     // PRIVATE
