@@ -1,5 +1,6 @@
 package com.superum.helper.jooq;
 
+import eu.goodlike.neat.Null;
 import org.jooq.*;
 
 /**
@@ -16,11 +17,13 @@ public abstract class DefaultSqlImplForMany<R extends Record, Primary, Secondary
 
     @Override
     public Condition primaryAndPartition(Primary value, int partitionId) {
+        Null.check(value).ifAny("Primary value cannot be null");
         return idAndPartition(value, partitionId);
     }
 
     @Override
     public Condition secondaryAndPartition(Secondary value, int partitionId) {
+        Null.check(value).ifAny("Secondary value cannot be null");
         return secondary(value).and(partitionId(partitionId));
     }
 

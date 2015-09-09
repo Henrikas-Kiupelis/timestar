@@ -1,5 +1,6 @@
 package com.superum.helper.jooq;
 
+import eu.goodlike.neat.Null;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Table;
@@ -21,8 +22,7 @@ public class ForeignQueriesImpl<ID> implements ForeignQueries<ID> {
      */
     @Override
     public boolean isUsed(ID id) {
-        if (id == null)
-            throw new IllegalArgumentException("Foreign key value cannot be null");
+        Null.check(id).ifAny("Foreign key value cannot be null");
 
         return sql.fetchExists(
                 sql.selectOne()

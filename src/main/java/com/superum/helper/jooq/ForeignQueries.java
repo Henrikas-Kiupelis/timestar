@@ -8,6 +8,7 @@ public interface ForeignQueries<ID> {
 
     /**
      * @return true if a given value is used as a foreign key; false otherwise
+     * @throws NullPointerException if id is null
      */
     boolean isUsed(ID id);
 

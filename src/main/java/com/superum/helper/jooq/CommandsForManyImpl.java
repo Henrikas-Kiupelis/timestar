@@ -1,6 +1,7 @@
 package com.superum.helper.jooq;
 
 import com.superum.helper.field.ManyDefined;
+import eu.goodlike.neat.Null;
 import org.jooq.*;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class CommandsForManyImpl<R extends Record, Primary, Secondary>
 
     @Override
     public <T extends ManyDefined<Primary, Secondary>> int create(T bodyOfMany, int partitionId) {
+        Null.check(bodyOfMany).ifAny("Body cannot be null");
         return bodyOfMany.secondaryValues()
                 .foldLeft(sql.insertInto(table, partitionField, primaryField(), secondaryField),
                         (step, secondary) -> step.values(partitionId, bodyOfMany.primaryValue(), secondary))
@@ -28,6 +30,7 @@ public class CommandsForManyImpl<R extends Record, Primary, Secondary>
 
     @Override
     public <T extends ManyDefined<Primary, Secondary>> int delete(T bodyOfMany, int partitionId) {
+        Null.check(bodyOfMany).ifAny("Body cannot be null");
         Condition condition = bodyOfMany.secondaryValues()
                 .foldLeft(primaryAndPartition(bodyOfMany.primaryValue(), partitionId),
                         (step, secondary) -> step.and(secondary(secondary)));
@@ -39,6 +42,7 @@ public class CommandsForManyImpl<R extends Record, Primary, Secondary>
 
     @Override
     public int deletePrimary(Primary value, int partitionId) {
+        Null.check(value).ifAny("Primary value cannot be null");
         return sql.deleteFrom(table)
                 .where(primaryAndPartition(value, partitionId))
                 .execute();
@@ -46,6 +50,7 @@ public class CommandsForManyImpl<R extends Record, Primary, Secondary>
 
     @Override
     public int deleteSecondary(Secondary value, int partitionId) {
+        Null.check(value).ifAny("Secondary value cannot be null");
         return sql.deleteFrom(table)
                 .where(secondaryAndPartition(value, partitionId))
                 .execute();

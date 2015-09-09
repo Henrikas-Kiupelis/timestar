@@ -22,12 +22,14 @@ public interface DefaultSqlForMany<R extends Record, Primary, Secondary> {
     /**
      * @return condition which checks if the record's partition field is equal to partitionId, and primary value is
      * equal to given one
+     * @throws NullPointerException if value is null
      */
     Condition primaryAndPartition(Primary value, int partitionId);
 
     /**
      * @return condition which checks if the record's partition field is equal to partitionId, and secondary value
      * is equal to given one
+     * @throws NullPointerException if value is null
      */
     Condition secondaryAndPartition(Secondary value, int partitionId);
 

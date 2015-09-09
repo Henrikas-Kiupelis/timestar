@@ -28,7 +28,7 @@ public class DefaultQueriesImpl<R extends Record, ID> extends DefaultSqlImpl<R, 
     public boolean existsForCondition(Condition condition) {
         Null.check(condition).ifAny("Condition cannot be null");
 
-        return sql.fetchExists(sql.selectOne().from(table).where(condition).limit(1));
+        return sql.fetchExists(table, condition);
     }
 
     @Override

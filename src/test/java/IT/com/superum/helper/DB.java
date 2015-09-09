@@ -231,10 +231,7 @@ public class DB {
     }
 
     public boolean existsGroupingForStudentId(int studentId) {
-        return sql.fetchExists(sql.selectOne()
-                        .from(STUDENTS_IN_GROUPS)
-                        .where(STUDENTS_IN_GROUPS.STUDENT_ID.eq(studentId))
-                        .limit(1));
+        return sql.fetchExists(STUDENTS_IN_GROUPS, STUDENTS_IN_GROUPS.STUDENT_ID.eq(studentId));
     }
 
     public Optional<ValidLessonAttendanceDTO> readValidLessonAttendance(long lessonId) {
@@ -249,10 +246,7 @@ public class DB {
     }
 
     public boolean existsLessonAttendanceForStudentId(int studentId) {
-        return sql.fetchExists(sql.selectOne()
-                .from(LESSON_ATTENDANCE)
-                .where(LESSON_ATTENDANCE.STUDENT_ID.eq(studentId))
-                .limit(1));
+        return sql.fetchExists(LESSON_ATTENDANCE, LESSON_ATTENDANCE.STUDENT_ID.eq(studentId));
     }
 
     // CONSTRUCTORS

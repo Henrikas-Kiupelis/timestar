@@ -18,6 +18,7 @@ public interface DefaultSql<R extends Record, ID> {
     /**
      * @return condition which checks if the record's partition field is equal to partitionId, and primary key is equal
      * to id
+     * @throws NullPointerException if id is null
      */
     Condition idAndPartition(ID id, int partitionId);
 

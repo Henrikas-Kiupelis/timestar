@@ -1,6 +1,7 @@
 package com.superum.helper.jooq;
 
 import com.superum.helper.field.ManyDefined;
+import eu.goodlike.neat.Null;
 
 /**
  * Contains methods for commands on many-to-many tables
@@ -19,6 +20,7 @@ public interface CommandsForMany<Primary, Secondary> {
      * Uses the definitions in parameter 'bodyOfMany' to fill the fields
      * </pre>
      * @return amount of records created
+     * @throws NullPointerException if bodyOfMany is null
      */
     <T extends ManyDefined<Primary, Secondary>> int create(T bodyOfMany, int partitionId);
 
@@ -29,18 +31,21 @@ public interface CommandsForMany<Primary, Secondary> {
      * Uses the definitions in parameter 'bodyOfMany' to choose which fields to delete
      * </pre>
      * @return amount of records deleted
+     * @throws NullPointerException if bodyOfMany is null
      */
     <T extends ManyDefined<Primary, Secondary>> int delete(T bodyOfMany, int partitionId);
 
     /**
      * Deletes records with a given Primary value
      * @return amount of records deleted
+     * @throws NullPointerException if value is null
      */
     int deletePrimary(Primary value, int partitionId);
 
     /**
      * Deletes records with a given Secondary value
      * @return amount of records deleted
+     * @throws NullPointerException if value is null
      */
     int deleteSecondary(Secondary value, int partitionId);
 
@@ -51,8 +56,10 @@ public interface CommandsForMany<Primary, Secondary> {
      * Essentially, all records for Primary value are deleted, then all the records in 'bodyOfMany' are created
      * </pre>
      * @return amount of records created when updating
+     * @throws NullPointerException if bodyOfMany is null
      */
     default <T extends ManyDefined<Primary, Secondary>> int update(T bodyOfMany, int partitionId) {
+        Null.check(bodyOfMany).ifAny("Body cannot be null");
         deletePrimary(bodyOfMany.primaryValue(), partitionId);
         return create(bodyOfMany, partitionId);
     }

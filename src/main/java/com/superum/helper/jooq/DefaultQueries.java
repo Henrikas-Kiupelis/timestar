@@ -30,7 +30,7 @@ public interface DefaultQueries<R extends Record, ID> extends DefaultSql<R, ID> 
 
     /**
      * @return true if a record for a certain condition exists; false otherwise
-     * @throws IllegalArgumentException if condition is null
+     * @throws NullPointerException if condition is null
      */
     boolean existsForCondition(Condition condition);
 

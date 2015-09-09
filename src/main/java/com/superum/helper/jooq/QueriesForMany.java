@@ -12,13 +12,13 @@ public interface QueriesForMany<Primary, Secondary> {
 
     /**
      * @return true if a record with primary value exists; false otherwise
-     * @throws IllegalArgumentException if value is null
+     * @throws NullPointerException if value is null
      */
     boolean existsPrimary(Primary value, int partitionId);
 
     /**
      * @return true if a record with secondary value exists; false otherwise
-     * @throws IllegalArgumentException if value is null
+     * @throws NullPointerException if value is null
      */
     boolean existsSecondary(Secondary value, int partitionId);
 

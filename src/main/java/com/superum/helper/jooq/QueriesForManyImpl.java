@@ -1,5 +1,6 @@
 package com.superum.helper.jooq;
 
+import eu.goodlike.neat.Null;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Table;
@@ -19,14 +20,14 @@ public final class QueriesForManyImpl<R extends Record, Primary, Secondary>
 
     @Override
     public boolean existsPrimary(Primary value, int partitionId) {
-        if (value == null) throw new IllegalArgumentException("Primary value cannot be null");
-        return sql.fetchExists(sql.selectOne().from(table).where(primaryAndPartition(value, partitionId)));
+        Null.check(value).ifAny("Primary value cannot be null");
+        return sql.fetchExists(table, primaryAndPartition(value, partitionId));
     }
 
     @Override
     public boolean existsSecondary(Secondary value, int partitionId) {
-        if (value == null) throw new IllegalArgumentException("Secondary value cannot be null");
-        return sql.fetchExists(sql.selectOne().from(table).where(secondaryAndPartition(value, partitionId)));
+        Null.check(value).ifAny("Primary value cannot be null");
+        return sql.fetchExists(table, secondaryAndPartition(value, partitionId));
     }
 
     // CONSTRUCTORS

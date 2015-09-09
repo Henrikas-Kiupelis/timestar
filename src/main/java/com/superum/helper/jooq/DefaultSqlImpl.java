@@ -1,5 +1,6 @@
 package com.superum.helper.jooq;
 
+import eu.goodlike.neat.Null;
 import org.jooq.*;
 
 /**
@@ -16,12 +17,15 @@ public abstract class DefaultSqlImpl<R extends Record, ID> implements DefaultSql
 
     @Override
     public Condition idAndPartition(ID id, int partitionId) {
+        Null.check(id).ifAny("Id cannot be null");
         return keyField.eq(id).and(partitionId(partitionId));
     }
 
     // CONSTRUCTORS
 
     protected DefaultSqlImpl(DSLContext sql, Table<R> table, TableField<R, ID> keyField, TableField<R, Integer> partitionField) {
+        Null.check(sql, table, keyField, partitionField).ifAny("DSLContext, table, keyField and partitionField cannot be null");
+
         this.sql = sql;
         this.table = table;
         this.keyField = keyField;

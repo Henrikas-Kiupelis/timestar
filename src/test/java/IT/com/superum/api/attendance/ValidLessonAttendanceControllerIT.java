@@ -193,6 +193,4 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
 
     private static final String DEFAULT_PATH = "/timestar/api/v2/lesson/attendance/";
 
-
-
 }
