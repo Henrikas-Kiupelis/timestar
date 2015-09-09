@@ -12,7 +12,7 @@ buildscript {
         jsonPathVersion = '2.0.0'
         javaMailVersion = '1.4.7'
         jodaTimeVersion = '2.8.2';
-        jacksonVersion = '2.5.4';
+        jacksonVersion = '2.6.1';
         guavaVersion = '18.0';
         joolVestion = '0.9.7';
     }
@@ -30,6 +30,7 @@ buildscript {
         classpath "com.jayway.jsonpath:json-path:${jsonPathVersion}"
         classpath "javax.mail:mail:${javaMailVersion}"
         classpath "joda-time:joda-time:${jodaTimeVersion}"
+        classpath "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
         classpath "com.fasterxml.jackson.datatype:jackson-datatype-joda:${jacksonVersion}"
         classpath "com.google.guava:guava:${guavaVersion}"
         classpath "org.jooq:jool:${joolVestion}"
@@ -71,7 +72,8 @@ dependencies {
     compile "c3p0:c3p0:0.9.1.2"
     compile "javax.mail:mail:1.4.7"
     compile "joda-time:joda-time:2.8.2"
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.5.4'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.1'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.6.1'
     compile 'com.google.guava:guava:18.0'
     compile 'org.jooq:jool:0.9.7';
     compile fileTree(dir: 'libs', include: ['*.jar'])

@@ -3,3 +3,5 @@ Change all DB string limits to 255 or more (where it makes sense)
 Make all foreign keys checked where appropriate and return 404 as a result
 
 Decouple DSLContext entirely from all non-DAO classes (export all methods to new DAO classes)
+
+Grouping tests!
