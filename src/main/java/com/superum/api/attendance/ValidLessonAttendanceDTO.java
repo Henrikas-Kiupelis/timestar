@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.Objects;
 import java.util.Set;
@@ -60,7 +61,7 @@ public final class ValidLessonAttendanceDTO {
 
     public ValidLessonAttendanceDTO(Long lessonId, Set<Integer> studentIds) {
         this.lessonId = lessonId;
-        this.studentIds = studentIds;
+        this.studentIds = studentIds == null ? null : ImmutableSet.copyOf(studentIds);
     }
 
     // PRIVATE
