@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.STUDENT;
+import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 
 
 /**
@@ -52,14 +53,14 @@ public class ValidStudent extends MappedClass<ValidStudent, Integer> {
                 .ifInvalid(() -> new InvalidStudentException("Customer id for student must be positive, not: " +
                         validStudentDTO.getCustomerId()));
 
-        Validate.string(validStudentDTO.getEmail()).Null().or().not().blank().fits(EMAIL_SIZE_LIMIT).email()
+        Validate.string(validStudentDTO.getEmail()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE).email()
                 .ifInvalid(() -> new InvalidStudentException("Student email must not exceed " +
-                        EMAIL_SIZE_LIMIT + " chars, be blank or be of invalid format: " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " +
                         validStudentDTO.getEmail()));
 
-        Validate.string(validStudentDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
+        Validate.string(validStudentDTO.getName()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidStudentException("Student name must not exceed " +
-                        NAME_SIZE_LIMIT + " chars or be blank: " + validStudentDTO.getName()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + validStudentDTO.getName()));
 
         this.validStudentDTO = validStudentDTO;
 
@@ -69,9 +70,6 @@ public class ValidStudent extends MappedClass<ValidStudent, Integer> {
     // PRIVATE
 
     private final ValidStudentDTO validStudentDTO;
-
-    private static final int EMAIL_SIZE_LIMIT = 60;
-    private static final int NAME_SIZE_LIMIT = 60;
 
     // FIELD NAMES
 

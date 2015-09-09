@@ -139,7 +139,7 @@ public final class ValidAccountDTO {
     private final Instant createdAt;
     private final Instant updatedAt;
 
-    private static final int USERNAME_SIZE_LIMIT = 60;
+    private static final int USERNAME_SIZE_LIMIT = 190;
 
     // OBJECT OVERRIDES
 

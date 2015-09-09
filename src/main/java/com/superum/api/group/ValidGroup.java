@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.GROUP_OF_STUDENTS;
+import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 
 /**
  * <pre>
@@ -31,13 +32,13 @@ public class ValidGroup extends MappedClass<ValidGroup, Integer> {
         Validate.Int(validGroupDTO.getTeacherId()).Null().or().moreThan(0)
                 .ifInvalid(() -> new InvalidGroupException("Group's teacher id must be positive, not: " + validGroupDTO.getTeacherId()));
 
-        Validate.string(validGroupDTO.getLanguageLevel()).Null().or().not().blank().fits(LANGUAGE_LEVEL_SIZE_LIMIT)
+        Validate.string(validGroupDTO.getLanguageLevel()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidGroupException("Group's language level must not be blank or exceed " +
-                        LANGUAGE_LEVEL_SIZE_LIMIT + " chars: " + validGroupDTO.getLanguageLevel()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + validGroupDTO.getLanguageLevel()));
 
-        Validate.string(validGroupDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
+        Validate.string(validGroupDTO.getName()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidGroupException("Group's name must not be blank or exceed " +
-                        NAME_SIZE_LIMIT + " chars: " + validGroupDTO.getName()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + validGroupDTO.getName()));
 
         this.validGroupDTO = validGroupDTO;
 
@@ -47,9 +48,6 @@ public class ValidGroup extends MappedClass<ValidGroup, Integer> {
     // PRIVATE
 
     private final ValidGroupDTO validGroupDTO;
-
-    private static final int LANGUAGE_LEVEL_SIZE_LIMIT = 20;
-    private static final int NAME_SIZE_LIMIT = 30;
 
     // FIELD NAMES
 

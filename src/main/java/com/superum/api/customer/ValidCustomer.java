@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.CUSTOMER;
+import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 
 
 /**
@@ -26,21 +27,21 @@ public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
                 .ifInvalid(() -> new InvalidCustomerException("Customer id must be positive, not: "+
                         validCustomerDTO.getId()));
 
-        Validate.string(validCustomerDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
+        Validate.string(validCustomerDTO.getName()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidCustomerException("Customer name must not exceed " +
-                        NAME_SIZE_LIMIT + " chars or be blank: " + validCustomerDTO.getName()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + validCustomerDTO.getName()));
 
-        Validate.string(validCustomerDTO.getPhone()).Null().or().not().blank().fits(PHONE_SIZE_LIMIT)
+        Validate.string(validCustomerDTO.getPhone()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidCustomerException("Customer phone must not exceed " +
-                        PHONE_SIZE_LIMIT + " chars or be blank: " + validCustomerDTO.getPhone()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + validCustomerDTO.getPhone()));
 
-        Validate.string(validCustomerDTO.getWebsite()).Null().or().not().blank().fits(WEBSITE_SIZE_LIMIT)
+        Validate.string(validCustomerDTO.getWebsite()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidCustomerException("Customer website must not exceed " +
-                        WEBSITE_SIZE_LIMIT + " chars or be blank: " + validCustomerDTO.getWebsite()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + validCustomerDTO.getWebsite()));
 
-        Validate.string(validCustomerDTO.getPicture()).Null().or().fits(PICTURE_SIZE_LIMIT)
+        Validate.string(validCustomerDTO.getPicture()).Null().or().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidCustomerException("Customer picture must not exceed " +
-                        PICTURE_SIZE_LIMIT + " chars: " + validCustomerDTO.getPicture()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + validCustomerDTO.getPicture()));
 
         Validate.string(validCustomerDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidCustomerException("Customer comment must not exceed " +
@@ -55,10 +56,6 @@ public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
 
     private final ValidCustomerDTO validCustomerDTO;
 
-    private static final int NAME_SIZE_LIMIT = 30;
-    private static final int PHONE_SIZE_LIMIT = 30;
-    private static final int WEBSITE_SIZE_LIMIT = 30;
-    private static final int PICTURE_SIZE_LIMIT = 100;
     private static final int COMMENT_SIZE_LIMIT = 500;
 
     // FIELD NAMES

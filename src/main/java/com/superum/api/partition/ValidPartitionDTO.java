@@ -7,6 +7,7 @@ import eu.goodlike.validation.Validate;
 
 import java.util.Objects;
 
+import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 
 
 /**
@@ -66,9 +67,9 @@ public class ValidPartitionDTO {
                 .ifInvalid(() -> new InvalidPartitionException("Partition id cannot be null, and must be between " +
                         MIN_PARTITION_ID + " and " + MAX_PARTITION_ID + ", not: " + id));
 
-        Validate.string(name).not().Null().not().blank().fits(PARTITION_NAME_LIMIT)
+        Validate.string(name).not().Null().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidPartitionException("Partition name cannot be null, blank and must fit " +
-                        PARTITION_NAME_LIMIT + " chars"));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars"));
 
         this.id = id;
         this.name = name;
@@ -88,8 +89,6 @@ public class ValidPartitionDTO {
 
     private static final int MIN_PARTITION_ID = -99999999;
     private static final int MAX_PARTITION_ID = 999999999;
-
-    private static final int PARTITION_NAME_LIMIT = 10;
 
     // OBJECT OVERRIDES
 

@@ -6,18 +6,23 @@ USE timestarv2;
 
 CREATE TABLE partitions (
   id INT NOT NULL UNIQUE,
-  name VARCHAR(10) NOT NULL UNIQUE,
+  name VARCHAR(180) NOT NULL UNIQUE,
   PRIMARY KEY (id));
 
 CREATE TABLE account (
-  username VARCHAR(70) NOT NULL UNIQUE,
+  username VARCHAR(190) NOT NULL UNIQUE,
   enabled BIT NOT NULL DEFAULT 1,
   id INT,
   created_at BIGINT,
   updated_at BIGINT,
   password CHAR(60) NOT NULL,
-  account_type VARCHAR(10) NOT NULL,
+  account_type VARCHAR(180) NOT NULL,
   PRIMARY KEY(username));
+
+CREATE TABLE roles (
+  username VARCHAR(190) NOT NULL,
+  role VARCHAR(180) NOT NULL,
+  FOREIGN KEY(username) REFERENCES account(username));
 
 DELIMITER //
 CREATE TRIGGER automatic_roles
@@ -58,11 +63,6 @@ FOR EACH ROW
   END; //
 DELIMITER ;
 
-CREATE TABLE roles (
-  username VARCHAR(60) NOT NULL,
-  role VARCHAR(60) NOT NULL,
-  FOREIGN KEY(username) REFERENCES account(username));
-
 INSERT INTO partitions (id, name)
 VALUES (0, 'TEST');
 
@@ -85,13 +85,13 @@ CREATE TABLE teacher (
   payment_day INT NOT NULL,
   hourly_wage DECIMAL(19, 4) NOT NULL,
   academic_wage DECIMAL(19, 4) NOT NULL,
-  email VARCHAR(60) NOT NULL,
-  name VARCHAR(30) NOT NULL,
-  surname VARCHAR(30) NOT NULL,
-  phone VARCHAR(30) NOT NULL,
-  city VARCHAR(30) NOT NULL,
-  picture VARCHAR(100),
-  document VARCHAR(100),
+  email VARCHAR(180) NOT NULL,
+  name VARCHAR(180) NOT NULL,
+  surname VARCHAR(180) NOT NULL,
+  phone VARCHAR(180) NOT NULL,
+  city VARCHAR(180) NOT NULL,
+  picture VARCHAR(180),
+  document VARCHAR(180),
   comment VARCHAR(500),
   PRIMARY KEY(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id),
@@ -133,10 +133,10 @@ CREATE TABLE customer (
   updated_at BIGINT,
 
   start_date DATE NOT NULL,
-  name VARCHAR(30) NOT NULL,
-  phone VARCHAR(30) NOT NULL,
-  website VARCHAR(30) NOT NULL,
-  picture VARCHAR(100),
+  name VARCHAR(180) NOT NULL,
+  phone VARCHAR(180) NOT NULL,
+  website VARCHAR(180) NOT NULL,
+  picture VARCHAR(180),
   comment VARCHAR(500),
   PRIMARY KEY(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id));
@@ -171,8 +171,8 @@ CREATE TABLE group_of_students (
   updated_at BIGINT,
 
   use_hourly_wage BIT NOT NULL,
-  language_level VARCHAR(20) NOT NULL,
-  name VARCHAR(30) NOT NULL,
+  language_level VARCHAR(180) NOT NULL,
+  name VARCHAR(180) NOT NULL,
   PRIMARY KEY(id),
   FOREIGN KEY(customer_id) REFERENCES customer(id),
   FOREIGN KEY(teacher_id) REFERENCES teacher(id),
@@ -213,8 +213,8 @@ CREATE TABLE student (
 
   code INT,
   start_date DATE,
-  email VARCHAR(60) NOT NULL,
-  name VARCHAR(60) NOT NULL,
+  email VARCHAR(180) NOT NULL,
+  name VARCHAR(180) NOT NULL,
   PRIMARY KEY(id),
   FOREIGN KEY(customer_id) REFERENCES customer(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id),

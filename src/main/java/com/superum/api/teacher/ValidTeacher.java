@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.superum.db.generated.timestar.Tables.TEACHER;
+import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 
 
 /**
@@ -36,34 +37,34 @@ public final class ValidTeacher extends MappedClass<ValidTeacher, Integer> {
         Validate.bigDecimal(fullTeacherDTO.getAcademicWage()).Null().or().positive()
                 .ifInvalid(() -> new InvalidTeacherException("Academic wage for teacher must be positive, not " + fullTeacherDTO.getAcademicWage()));
 
-        Validate.string(fullTeacherDTO.getName()).Null().or().not().blank().fits(NAME_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getName()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher name must not exceed " +
-                        NAME_SIZE_LIMIT + " chars or be blank: " + fullTeacherDTO.getName()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + fullTeacherDTO.getName()));
 
-        Validate.string(fullTeacherDTO.getSurname()).Null().or().not().blank().fits(SURNAME_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getSurname()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher surname must not exceed " +
-                        SURNAME_SIZE_LIMIT + " chars or be blank: " + fullTeacherDTO.getSurname()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + fullTeacherDTO.getSurname()));
 
-        Validate.string(fullTeacherDTO.getPhone()).Null().or().not().blank().fits(PHONE_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getPhone()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher phone must not exceed " +
-                        PHONE_SIZE_LIMIT + " chars or be blank: " + fullTeacherDTO.getPhone()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + fullTeacherDTO.getPhone()));
 
-        Validate.string(fullTeacherDTO.getCity()).Null().or().not().blank().fits(CITY_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getCity()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher city must not exceed " +
-                        CITY_SIZE_LIMIT + " chars or be blank: " + fullTeacherDTO.getCity()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + fullTeacherDTO.getCity()));
 
-        Validate.string(fullTeacherDTO.getEmail()).Null().or().not().blank().fits(EMAIL_SIZE_LIMIT).email()
+        Validate.string(fullTeacherDTO.getEmail()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE).email()
                 .ifInvalid(() -> new InvalidTeacherException("Teacher email must not exceed " +
-                        EMAIL_SIZE_LIMIT + " chars, be blank or be of invalid format: " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " +
                         fullTeacherDTO.getEmail()));
 
-        Validate.string(fullTeacherDTO.getPicture()).Null().or().fits(PICTURE_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getPicture()).Null().or().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher picture must not exceed " +
-                        PICTURE_SIZE_LIMIT + " chars: " + fullTeacherDTO.getPicture()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + fullTeacherDTO.getPicture()));
 
-        Validate.string(fullTeacherDTO.getDocument()).Null().or().fits(DOCUMENT_SIZE_LIMIT)
+        Validate.string(fullTeacherDTO.getDocument()).Null().or().fits(DEFAULT_VARCHAR_FIELD_SIZE)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher document must not exceed " +
-                        DOCUMENT_SIZE_LIMIT + " chars: " + fullTeacherDTO.getDocument()));
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + fullTeacherDTO.getDocument()));
 
         Validate.string(fullTeacherDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
                 .ifInvalid(() -> new InvalidTeacherException("Teacher comment must not exceed " +
@@ -78,13 +79,6 @@ public final class ValidTeacher extends MappedClass<ValidTeacher, Integer> {
 
     private final FullTeacherDTO fullTeacherDTO;
 
-    private static final int NAME_SIZE_LIMIT = 30;
-    private static final int SURNAME_SIZE_LIMIT = 30;
-    private static final int PHONE_SIZE_LIMIT = 30;
-    private static final int CITY_SIZE_LIMIT = 30;
-    private static final int EMAIL_SIZE_LIMIT = 30;
-    private static final int PICTURE_SIZE_LIMIT = 100;
-    private static final int DOCUMENT_SIZE_LIMIT = 100;
     private static final int COMMENT_SIZE_LIMIT = 500;
 
     // FIELD NAMES
