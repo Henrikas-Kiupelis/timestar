@@ -5,7 +5,7 @@ import com.superum.db.lesson.table.core.PaymentData;
 import com.superum.db.lesson.table.core.TeacherLessonData;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.time.TimeResolver;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
 import org.joda.time.LocalDate;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -86,7 +86,7 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
                 .map(object -> (BigDecimal) object)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        LocalDate endDate = JodaTimeZoneHandler.getDefault().from(timeResolver.getEndTime()).toOrgJodaTimeLocalDate().minusDays(1);
+        LocalDate endDate = Time.convert(timeResolver.getEndTime()).toJodaLocalDate().minusDays(1);
 		return new PaymentData(endDate, cost.divide(BigDecimal.valueOf(60), 4, BigDecimal.ROUND_HALF_EVEN));
 	}
 
@@ -101,7 +101,7 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
 				.map(record -> record.getValue(CUSTOMER.START_DATE))
 				.orElseThrow(() -> new DatabaseException("Couldn't find customer with id " + customerId));
 
-        LocalDate contractDate = JodaTimeZoneHandler.getDefault().from(contractStartDate).toOrgJodaTimeLocalDate().minusDays(1);
+        LocalDate contractDate = Time.convert(contractStartDate).toJodaLocalDate().minusDays(1);
         TimeResolver timeResolver = TimeResolver.from(contractDate);
         Condition condition = GROUP_OF_STUDENTS.CUSTOMER_ID.eq(customerId)
                 .and(LESSON.PARTITION_ID.eq(partitionId))
@@ -119,7 +119,7 @@ public class LessonTableQueriesImpl implements LessonTableQueries {
                 .map(object -> (BigDecimal) object)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        LocalDate endDate = JodaTimeZoneHandler.getDefault().from(timeResolver.getEndTime()).toOrgJodaTimeLocalDate();
+        LocalDate endDate = Time.convert(timeResolver.getEndTime()).toJodaLocalDate();
 		return new PaymentData(endDate, cost.divide(BigDecimal.valueOf(60), 4, BigDecimal.ROUND_HALF_EVEN));
 	}
 

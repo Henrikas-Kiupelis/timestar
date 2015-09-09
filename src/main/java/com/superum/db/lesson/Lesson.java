@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
 import com.superum.api.exception.InvalidRequestException;
+import eu.goodlike.libraries.jodatime.Time;
 import eu.goodlike.neat.Null;
-import eu.goodlike.time.JodaTimeZoneHandler;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
@@ -117,7 +117,7 @@ public class Lesson {
     public static Lesson fromTimeZone(long id, int groupId, Integer teacherId, DateTimeZone timeZone,
                                       LocalDate startDate, int startHour, int startMinute, int length,
                                       String comment, Instant createdAt, Instant updatedAt) {
-        long startTime = JodaTimeZoneHandler.forTimeZone(timeZone).from(startDate, startHour, startMinute).toEpochMillis();
+        long startTime = Time.forZone(timeZone).from(startDate, startHour, startMinute).toEpochMillis();
         return fromStartTime(id, groupId, teacherId, startTime, length, comment, createdAt, updatedAt);
     }
 

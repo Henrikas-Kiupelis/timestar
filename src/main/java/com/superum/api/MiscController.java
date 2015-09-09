@@ -1,7 +1,7 @@
 package com.superum.api;
 
 import com.superum.api.core.CommonControllerLogic;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -42,10 +42,10 @@ public class MiscController extends CommonControllerLogic {
         if (minute == null) minute = 0;
         if (second == null) second = 0;
         if (millisecond == null) millisecond = 0;
-        DateTimeZone dateTimeZone = time_zone == null ? JodaTimeZoneHandler.defaultTimeZone() : DateTimeZone.forID(time_zone);
+        DateTimeZone dateTimeZone = time_zone == null ? Time.defaultTimeZone() : DateTimeZone.forID(time_zone);
         LocalDate localDate = date == null ? LocalDate.now(dateTimeZone) : LocalDate.parse(date);
 
-        return JodaTimeZoneHandler.forTimeZoneId(time_zone).from(localDate, hour, minute, second, millisecond).toEpochMillis();
+        return Time.forZone(dateTimeZone).from(localDate, hour, minute, second, millisecond).toEpochMillis();
     }
 
 }

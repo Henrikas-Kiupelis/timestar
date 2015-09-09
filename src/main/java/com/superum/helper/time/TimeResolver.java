@@ -1,12 +1,11 @@
 package com.superum.helper.time;
 
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
+import eu.goodlike.libraries.jodatime.TimeHandler;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.jooq.Condition;
 import org.jooq.TableField;
-
-import static eu.goodlike.time.JodaTimeZoneHandler.defaultTimeZone;
 
 /**
  * <pre>
@@ -72,7 +71,7 @@ public final class TimeResolver {
      */
     public static TimeResolver from(String timeZone, String startDate, String endDate) {
         DateTimeZone dateTimeZone = timeZone == null
-                ? defaultTimeZone()
+                ? Time.defaultTimeZone()
                 : DateTimeZone.forID(timeZone);
         LocalDate localStartDate = startDate == null
                 ? LocalDate.now(dateTimeZone)
@@ -87,7 +86,7 @@ public final class TimeResolver {
      * Resolves the time using JodaTimeZoneHandler for given timezone and given LocalDates
      */
     private static TimeResolver from(DateTimeZone dateTimeZone, LocalDate localStartDate, LocalDate localEndDate) {
-        return from(JodaTimeZoneHandler.forTimeZone(dateTimeZone), localStartDate, localEndDate);
+        return from(Time.forZone(dateTimeZone), localStartDate, localEndDate);
     }
 
     /**
@@ -99,7 +98,7 @@ public final class TimeResolver {
      * 3) use start and end to resolve time
      * </pre>
      */
-    private static TimeResolver from(JodaTimeZoneHandler handler, LocalDate localStartDate, LocalDate localEndDate) {
+    private static TimeResolver from(TimeHandler handler, LocalDate localStartDate, LocalDate localEndDate) {
         long start = handler.from(localStartDate).toEpochMillis();
         long end = handler.from(localEndDate.plusDays(1)).toEpochMillis();
         return from(start, end);
@@ -118,7 +117,7 @@ public final class TimeResolver {
      * </pre>
      */
     public static TimeResolver from(int paymentDay) {
-        LocalDate today = LocalDate.now(defaultTimeZone());
+        LocalDate today = LocalDate.now(Time.defaultTimeZone());
         LocalDate dayOneOfThisMonth = today.withDayOfMonth(1);
         LocalDate paymentDate = getPaymentDate(dayOneOfThisMonth, paymentDay);
 
@@ -133,7 +132,7 @@ public final class TimeResolver {
             previousPaymentDate = getPaymentDate(dayOneOfPreviousMonth, paymentDay);
             nextPaymentDate = paymentDate;
         }
-        return from(JodaTimeZoneHandler.getDefault(), previousPaymentDate.plusDays(1), nextPaymentDate);
+        return from(Time.getDefault(), previousPaymentDate.plusDays(1), nextPaymentDate);
     }
 
     /**

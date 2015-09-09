@@ -2,7 +2,7 @@ package com.superum.api.customer;
 
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
 import eu.goodlike.validation.Validate;
 
 import java.util.Arrays;
@@ -82,7 +82,7 @@ public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
             FieldDef.steps(ValidCustomer.class, java.sql.Date.class)
                     .fieldName(START_DATE_FIELD).tableField(CUSTOMER.START_DATE)
                     .getter(customer -> customer.validCustomerDTO.getStartDate(),
-                            date -> JodaTimeZoneHandler.getDefault().from(date).toJavaSqlDate())
+                            date -> Time.convert(date).toSqlDate())
                     .mandatory(),
 
             FieldDef.steps(ValidCustomer.class, String.class)

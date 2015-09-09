@@ -4,7 +4,7 @@ import com.superum.helper.Random;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.steps.FieldDef;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
 import eu.goodlike.validation.Validate;
 import org.jooq.lambda.Seq;
 
@@ -104,7 +104,7 @@ public class ValidStudent extends MappedClass<ValidStudent, Integer> {
                     .fieldName(START_DATE_FIELD)
                     .tableField(STUDENT.START_DATE)
                     .getter(student -> student.validStudentDTO.getStartDate(),
-                            date -> JodaTimeZoneHandler.getDefault().from(date).toJavaSqlDate()),
+                            date -> Time.convert(date).toSqlDate()),
 
             FieldDef.steps(ValidStudent.class, String.class)
                     .fieldName(EMAIL_FIELD)

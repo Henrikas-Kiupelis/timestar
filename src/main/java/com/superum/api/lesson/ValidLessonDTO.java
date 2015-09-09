@@ -3,7 +3,7 @@ package com.superum.api.lesson;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.superum.api.core.DTOWithTimestamps;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -156,7 +156,7 @@ public final class ValidLessonDTO extends DTOWithTimestamps {
         if (timeZone == null || startDate  == null || startHour == null || startMinute == null)
             return new ValidLessonDTO(id, groupId, null, null, null, length, comment, null, null);
 
-        Long startTime = JodaTimeZoneHandler.forTimeZoneId(timeZone).from(startDate, startHour, startMinute).toEpochMillis();
+        Long startTime = Time.forZoneId(timeZone).from(startDate, startHour, startMinute).toEpochMillis();
         return new ValidLessonDTO(id, groupId, teacherId, startTime, null, length, comment, createdAt, updatedAt);
     }
 

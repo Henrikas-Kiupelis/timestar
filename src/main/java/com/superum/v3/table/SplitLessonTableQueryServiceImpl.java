@@ -7,7 +7,7 @@ import com.superum.api.teacher.FullTeacherDTO;
 import com.superum.api.teacher.TeacherNotFoundException;
 import com.superum.api.teacher.ValidTeacherQueryService;
 import com.superum.helper.time.TimeResolver;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
 import org.joda.time.LocalDate;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -227,18 +227,14 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
             BigDecimal cost = record.getValue(COST_FIELD, BigDecimal.class)
                     // please refer to paddedSumField() documentation for the reason of this division
                     .divide(PADDING, BigDecimal.ROUND_HALF_EVEN);
-            LocalDate endDate = JodaTimeZoneHandler.getDefault()
-                    .from(timeResolvers.get(id).getEndTime())
-                    .toOrgJodaTimeLocalDate()
+            LocalDate endDate = Time.convert(timeResolvers.get(id).getEndTime()).toJodaLocalDate()
                     // endTime is inclusive, which means it points to the next day at 00:00:00
                     .minusDays(1);
             reports.add(new TableReport(id, endDate, cost));
         }
         // since we have the deadline even in the scenario where the amount to pay is 0, we add it to this list
         for (int id : Sets.difference(Seq.seq(ids).toSet(), Seq.seq(reports).map(TableReport::getId).toSet())) {
-            LocalDate endDate = JodaTimeZoneHandler.getDefault()
-                    .from(timeResolvers.get(id).getEndTime())
-                    .toOrgJodaTimeLocalDate()
+            LocalDate endDate = Time.convert(timeResolvers.get(id).getEndTime()).toJodaLocalDate()
                     // endTime is inclusive, which means it points to the next day at 00:00:00
                     .minusDays(1);
             reports.add(new TableReport(id, endDate, ZERO));
@@ -256,9 +252,7 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
                         .and(CUSTOMER.PARTITION_ID.eq(partitionId)))
                 .fetch().stream()
                 .collect(Collectors.toMap(r -> r.getValue(CUSTOMER.ID),
-                        r -> TimeResolver.from(JodaTimeZoneHandler.getDefault()
-                                .from(r.getValue(CUSTOMER.START_DATE))
-                                .toOrgJodaTimeLocalDate())));
+                        r -> TimeResolver.from(Time.convert(r.getValue(CUSTOMER.START_DATE)).toJodaLocalDate())));
     }
 
     /**

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
@@ -50,7 +50,7 @@ public class Customer {
 
     @JsonIgnore
     public java.sql.Date getStartDateSql() {
-        return JodaTimeZoneHandler.getDefault().from(startDate).toJavaSqlDate();
+        return Time.convert(startDate).toSqlDate();
     }
 
 	@JsonProperty("name")
@@ -120,9 +120,7 @@ public class Customer {
 			return null;
 
 		int id = customerRecord.getValue(CUSTOMER.ID);
-		LocalDate startDate = JodaTimeZoneHandler.getDefault()
-                .from(customerRecord.getValue(CUSTOMER.START_DATE))
-                .toOrgJodaTimeLocalDate();
+		LocalDate startDate = Time.convert(customerRecord.getValue(CUSTOMER.START_DATE)).toJodaLocalDate();
 		String name = customerRecord.getValue(CUSTOMER.NAME);
 		String phone = customerRecord.getValue(CUSTOMER.PHONE);
 		String website = customerRecord.getValue(CUSTOMER.WEBSITE);

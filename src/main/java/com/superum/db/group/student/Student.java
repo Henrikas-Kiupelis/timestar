@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
 import com.superum.helper.Random;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -73,7 +73,7 @@ public class Student {
     }
     @JsonIgnore
     public java.sql.Date getStartDateSql() {
-        return JodaTimeZoneHandler.getDefault().from(startDate).toJavaSqlDate();
+        return Time.convert(startDate).toSqlDate();
     }
 	
 	@JsonProperty("email")
@@ -131,9 +131,7 @@ public class Student {
 		int id = studentRecord.getValue(STUDENT.ID);
         Integer code = studentRecord.getValue(STUDENT.CODE);
         Integer customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
-        LocalDate startDate = JodaTimeZoneHandler.getDefault()
-                .from(studentRecord.getValue(STUDENT.START_DATE))
-                .toOrgJodaTimeLocalDate();
+        LocalDate startDate = Time.convert(studentRecord.getValue(STUDENT.START_DATE)).toJodaLocalDate();
 		String email = studentRecord.getValue(STUDENT.EMAIL);
 		String name = studentRecord.getValue(STUDENT.NAME);
 

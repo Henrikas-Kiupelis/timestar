@@ -7,7 +7,7 @@ import com.superum.api.table.dto.*;
 import com.superum.api.teacher.FullTeacherDTO;
 import com.superum.api.teacher.ValidTeacherQueryService;
 import com.superum.helper.time.TimeResolver;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
 import org.joda.time.LocalDate;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -278,7 +278,7 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
                 .findAny()
                 .orElse(ZERO);
 
-        LocalDate endDate = JodaTimeZoneHandler.getDefault().from(timeResolver.getEndTime()).toOrgJodaTimeLocalDate().minusDays(1);
+        LocalDate endDate = Time.convert(timeResolver.getEndTime()).toJodaLocalDate().minusDays(1);
         return new PaymentDataDTO(endDate, cost);
     }
 
@@ -308,7 +308,7 @@ public class OptimizedLessonTableServiceImpl implements OptimizedLessonTableServ
                 .map(record -> (BigDecimal) record.getValue("totalCost"))
                 .orElse(ZERO);
 
-        LocalDate endDate = JodaTimeZoneHandler.getDefault().from(timeResolver.getEndTime()).toOrgJodaTimeLocalDate().minusDays(1);
+        LocalDate endDate = Time.convert(timeResolver.getEndTime()).toJodaLocalDate().minusDays(1);
         return new PaymentDataDTO(endDate, cost);
     }
 

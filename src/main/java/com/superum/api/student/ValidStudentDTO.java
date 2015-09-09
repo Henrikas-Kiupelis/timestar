@@ -3,7 +3,7 @@ package com.superum.api.student;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.superum.api.core.DTOWithTimestamps;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.jooq.Record;
@@ -314,7 +314,7 @@ public class ValidStudentDTO extends DTOWithTimestamps {
 
         @Override
         public Builder startDate(java.sql.Date startDate) {
-            this.startDate = startDate == null ? null : JodaTimeZoneHandler.getDefault().from(startDate).toOrgJodaTimeLocalDate();
+            this.startDate = startDate == null ? null : Time.convert(startDate).toJodaLocalDate();
             return this;
         }
 
