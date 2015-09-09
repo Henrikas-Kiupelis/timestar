@@ -5,7 +5,7 @@ import com.superum.db.account.AccountDAO;
 import com.superum.db.partition.PartitionService;
 import com.superum.db.teacher.lang.TeacherLanguagesService;
 import com.superum.exception.DatabaseException;
-import com.superum.helper.Fake;
+import com.superum.helper.Fakes;
 import com.superum.helper.PartitionAccount;
 import com.superum.helper.mail.GMail;
 import com.superum.utils.FakeUtils;
@@ -49,7 +49,7 @@ public class TeacherServiceTests {
     @Test
     public void testAddingTeacher() {
         int id = 1;
-        PartitionAccount account = Fake.partitionAccount();
+        PartitionAccount account = Fakes.partitionAccount();
         Teacher addedTeacher = makeFakeTeacher(id);
         Teacher originalTeacher = addedTeacher.withoutId();
 
@@ -66,7 +66,7 @@ public class TeacherServiceTests {
     @Test
     public void testFindingExistingTeacher() {
         int id = 1;
-        PartitionAccount account = Fake.partitionAccount();
+        PartitionAccount account = Fakes.partitionAccount();
         Teacher teacher = makeFakeTeacher(id);
 
         when(teacherDAO.read(id, account.partitionId())).thenReturn(teacher);
@@ -82,7 +82,7 @@ public class TeacherServiceTests {
     @Test
     public void testDeletingTeacher() {
         int id = 1;
-        PartitionAccount account = Fake.partitionAccount();
+        PartitionAccount account = Fakes.partitionAccount();
         Teacher teacher = makeFakeTeacher(id);
 
         when(teacherDAO.delete(id, account.partitionId())).thenReturn(teacher);
@@ -101,7 +101,7 @@ public class TeacherServiceTests {
     @Test
     public void testUpdatingExistingTeacherData() {
         int id = 1;
-        PartitionAccount account = Fake.partitionAccount();
+        PartitionAccount account = Fakes.partitionAccount();
         Teacher originalTeacher = makeFakeTeacher(id);
 
         Teacher updatedTeacher = makeFakeTeacher(id + 1).withId(id);
@@ -119,7 +119,7 @@ public class TeacherServiceTests {
     @Test(expected = DatabaseException.class)
     public void testUpdatingNonExistingTeacher() {
         int id = Integer.MAX_VALUE;
-        PartitionAccount account = Fake.partitionAccount();
+        PartitionAccount account = Fakes.partitionAccount();
         Teacher nonExistentTeacher = makeFakeTeacher(id);
 
         when(teacherDAO.update(nonExistentTeacher, account.partitionId())).thenThrow(new DatabaseException());
@@ -129,7 +129,7 @@ public class TeacherServiceTests {
 
     @Test
     public void testGettingAllTeachers() {
-        PartitionAccount account = Fake.partitionAccount();
+        PartitionAccount account = Fakes.partitionAccount();
         List<Teacher> fakeTeachers = makeSomeFakes(2, FakeUtils::makeFakeTeacher);
 
         when(teacherDAO.readAll(account.partitionId())).thenReturn(fakeTeachers);

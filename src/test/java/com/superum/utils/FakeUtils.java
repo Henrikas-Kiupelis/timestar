@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-import static com.superum.helper.Fake.Boolean;
-import static com.superum.helper.Fake.*;
+import static eu.goodlike.test.Fake.Boolean;
+import static eu.goodlike.test.Fake.*;
 
 public class FakeUtils {
 
