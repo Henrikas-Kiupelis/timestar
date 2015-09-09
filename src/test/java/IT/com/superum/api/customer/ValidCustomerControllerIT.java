@@ -4,7 +4,9 @@ import IT.com.superum.env.IntegrationTestEnvironment;
 import IT.com.superum.helper.DB;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.superum.api.customer.ValidCustomerDTO;
-import com.superum.helper.Fake;
+import com.superum.helper.Fakes;
+import eu.goodlike.libraries.mockmvc.MVC;
+import eu.goodlike.test.Fake;
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -14,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 
-import static IT.com.superum.helper.ResultVariation.*;
-import static IT.com.superum.utils.MockMvcUtils.fromResponse;
+import static eu.goodlike.libraries.mockmvc.HttpResult.*;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,9 +26,9 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void insertingCustomerWithoutId_shouldCreateNewCustomer() throws Exception {
-        ValidCustomerDTO customer = Fake.customer(NEW_CUSTOMER_ID).withoutId();
+        ValidCustomerDTO customer = Fakes.customer(NEW_CUSTOMER_ID).withoutId();
 
-        ValidCustomerDTO insertedCustomer = performPut(DEFAULT_PATH, customer, OK)
+        ValidCustomerDTO insertedCustomer = mvc.performPut(DEFAULT_PATH, customer, OK)
                 .map(Unchecked.function(this::readCustomer))
                 .orElseThrow(() -> new Exception("Successful insertion should return a customer!"));
 
@@ -39,9 +40,9 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void insertingCustomerWithId_shouldReturn400() throws Exception {
-        ValidCustomerDTO customer = Fake.customer(NEW_CUSTOMER_ID);
+        ValidCustomerDTO customer = Fakes.customer(NEW_CUSTOMER_ID);
 
-        performPut(DEFAULT_PATH, customer, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, customer, BAD, status().isBadRequest());
 
         assertNotInDatabase(customer);
     }
@@ -54,14 +55,14 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
                 .website(Fake.website(NEW_CUSTOMER_ID))
                 .build();
 
-        performPut(DEFAULT_PATH, customer, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, customer, BAD, status().isBadRequest());
     }
 
     @Test
     public void updatingCustomerWithId_shouldUpdateCustomer() throws Exception {
-        ValidCustomerDTO customer = Fake.customer(NEW_CUSTOMER_ID).withId(OLD_CUSTOMER_ID);
+        ValidCustomerDTO customer = Fakes.customer(NEW_CUSTOMER_ID).withId(OLD_CUSTOMER_ID);
 
-        performPost(DEFAULT_PATH, customer, OK_NO_BODY);
+        mvc.performPost(DEFAULT_PATH, customer, OK_NO_BODY);
 
         assertInDatabase(customer);
     }
@@ -73,9 +74,9 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_STUDENT_ID))
                 .build();
 
-        performPost(DEFAULT_PATH, partialCustomer, OK_NO_BODY);
+        mvc.performPost(DEFAULT_PATH, partialCustomer, OK_NO_BODY);
 
-        ValidCustomerDTO beforeUpdate = Fake.customer(OLD_CUSTOMER_ID);
+        ValidCustomerDTO beforeUpdate = Fakes.customer(OLD_CUSTOMER_ID);
         ValidCustomerDTO afterUpdate = ValidCustomerDTO.stepBuilder()
                 .startDate(beforeUpdate.getStartDate())
                 .name(partialCustomer.getName())
@@ -91,9 +92,9 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void updatingCustomerWithoutId_shouldReturn400() throws Exception {
-        ValidCustomerDTO customer = Fake.customer(NEW_CUSTOMER_ID).withoutId();
+        ValidCustomerDTO customer = Fakes.customer(NEW_CUSTOMER_ID).withoutId();
 
-        performPost(DEFAULT_PATH, customer, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, customer, BAD, status().isBadRequest());
     }
 
     @Test
@@ -102,46 +103,46 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
                 .id(OLD_CUSTOMER_ID)
                 .build();
 
-        performPost(DEFAULT_PATH, customer, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, customer, BAD, status().isBadRequest());
 
-        assertInDatabase(Fake.customer(OLD_CUSTOMER_ID));
+        assertInDatabase(Fakes.customer(OLD_CUSTOMER_ID));
     }
 
     @Test
     public void updatingCustomerWithNonExistentId_shouldReturn404() throws Exception {
-        ValidCustomerDTO customer = Fake.customer(NEW_CUSTOMER_ID);
+        ValidCustomerDTO customer = Fakes.customer(NEW_CUSTOMER_ID);
 
-        performPost(DEFAULT_PATH, customer, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, customer, BAD, status().isNotFound());
 
         assertNotInDatabase(customer);
     }
 
     @Test
     public void deletingCustomerById_shouldDeleteCustomer() throws Exception {
-        ValidCustomerDTO customer = db.insertValidCustomer(Fake.customer(NEW_CUSTOMER_ID));
+        ValidCustomerDTO customer = db.insertValidCustomer(Fakes.customer(NEW_CUSTOMER_ID));
 
-        performDelete(DEFAULT_PATH + customer.getId(), OK_NO_BODY);
+        mvc.performDelete(DEFAULT_PATH + customer.getId(), OK_NO_BODY);
 
         assertNotInDatabase(customer);
     }
 
     @Test
     public void deletingCustomerByStillUsedId_shouldReturn400() throws Exception {
-        performDelete(DEFAULT_PATH + OLD_CUSTOMER_ID, BAD, status().isBadRequest());
+        mvc.performDelete(DEFAULT_PATH + OLD_CUSTOMER_ID, BAD, status().isBadRequest());
 
         assertInDatabase(OLD_CUSTOMER_ID);
     }
 
     @Test
     public void deletingCustomerByNonExistentId_shouldReturn404() throws Exception {
-        performDelete(DEFAULT_PATH + NEW_CUSTOMER_ID, BAD, status().isNotFound());
+        mvc.performDelete(DEFAULT_PATH + NEW_CUSTOMER_ID, BAD, status().isNotFound());
 
         assertNotInDatabase(NEW_CUSTOMER_ID);
     }
 
     @Test
     public void readingCustomerById_shouldReturnCustomer() throws Exception {
-        ValidCustomerDTO customer = performGet(DEFAULT_PATH + OLD_CUSTOMER_ID, OK)
+        ValidCustomerDTO customer = mvc.performGet(DEFAULT_PATH + OLD_CUSTOMER_ID, OK)
                 .map(Unchecked.function(this::readCustomer))
                 .orElseThrow(() -> new Exception("Successful read should return a customer!"));
 
@@ -150,12 +151,12 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingCustomerByNonExistentId_shouldReturn404() throws Exception {
-        performGet(DEFAULT_PATH + NEW_CUSTOMER_ID, BAD, status().isNotFound());
+        mvc.performGet(DEFAULT_PATH + NEW_CUSTOMER_ID, BAD, status().isNotFound());
     }
 
     @Test
     public void readingAllCustomers_shouldReturnCustomers() throws Exception {
-        List<ValidCustomerDTO> customers = performGet(DEFAULT_PATH, OK)
+        List<ValidCustomerDTO> customers = mvc.performGet(DEFAULT_PATH, OK)
                 .map(Unchecked.function(this::readCustomers))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -165,7 +166,7 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void countingAllCustomers_shouldReturnCountOf2() throws Exception {
-        int count = performGet(DEFAULT_PATH + "count", OK)
+        int count = mvc.performGet(DEFAULT_PATH + "count", OK)
                 .map(Unchecked.function(this::readCount))
                 .orElseThrow(() -> new Exception("Successful read should return an integer!"));
 
@@ -174,7 +175,7 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingCustomersForTeacher_shouldReturnCustomers() throws Exception {
-        List<ValidCustomerDTO> customers = performGet(DEFAULT_PATH + "teacher/" + OLD_TEACHER_ID, OK)
+        List<ValidCustomerDTO> customers = mvc.performGet(DEFAULT_PATH + "teacher/" + OLD_TEACHER_ID, OK)
                 .map(Unchecked.function(this::readCustomers))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -184,12 +185,12 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingCustomersForNonExistentTeacher_shouldReturn404() throws Exception {
-        performGet(DEFAULT_PATH + "teacher/" + NEW_TEACHER_ID, BAD, status().isNotFound());
+        mvc.performGet(DEFAULT_PATH + "teacher/" + NEW_TEACHER_ID, BAD, status().isNotFound());
     }
 
     @Test
     public void countingCustomersForTeacher_shouldReturnCountOf1() throws Exception {
-        int count = performGet(DEFAULT_PATH + "teacher/" + OLD_TEACHER_ID + "/count", OK)
+        int count = mvc.performGet(DEFAULT_PATH + "teacher/" + OLD_TEACHER_ID + "/count", OK)
                 .map(Unchecked.function(this::readCount))
                 .orElseThrow(() -> new Exception("Successful read should return an integer!"));
 
@@ -198,17 +199,17 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void countingCustomersForNonExistentTeacher_shouldReturn404() throws Exception {
-        performGet(DEFAULT_PATH + "teacher/" + NEW_TEACHER_ID + "/count", BAD, status().isNotFound());
+        mvc.performGet(DEFAULT_PATH + "teacher/" + NEW_TEACHER_ID + "/count", BAD, status().isNotFound());
     }
 
     // PRIVATE
 
     private ValidCustomerDTO readCustomer(MvcResult result) throws IOException {
-        return fromResponse(result, ValidCustomerDTO.class);
+        return MVC.from(result).to(ValidCustomerDTO.class);
     }
 
     private List<ValidCustomerDTO> readCustomers(MvcResult result) throws IOException {
-        return fromResponse(result, LIST_OF_CUSTOMERS);
+        return MVC.from(result).to(LIST_OF_CUSTOMERS);
     }
 
     private void assertNotInDatabase(ValidCustomerDTO customer) {

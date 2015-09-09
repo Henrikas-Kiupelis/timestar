@@ -4,7 +4,9 @@ import IT.com.superum.env.IntegrationTestEnvironment;
 import IT.com.superum.helper.DB;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.superum.api.group.ValidGroupDTO;
-import com.superum.helper.Fake;
+import com.superum.helper.Fakes;
+import eu.goodlike.libraries.mockmvc.MVC;
+import eu.goodlike.test.Fake;
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -14,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 
-import static IT.com.superum.helper.ResultVariation.*;
-import static IT.com.superum.utils.MockMvcUtils.fromResponse;
+import static eu.goodlike.libraries.mockmvc.HttpResult.*;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,9 +26,9 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void creatingGroupWithoutId_shouldCreateNewGroup() throws Exception {
-        ValidGroupDTO group = Fake.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID).withoutId();
+        ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID).withoutId();
 
-        ValidGroupDTO insertedGroup = performPut(DEFAULT_PATH, group, OK)
+        ValidGroupDTO insertedGroup = mvc.performPut(DEFAULT_PATH, group, OK)
                 .map(Unchecked.function(this::readGroup))
                 .orElseThrow(() -> new Exception("Successful insertion should return a group!"));
 
@@ -39,9 +40,9 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void creatingGroupWithId_shouldReturn400() throws Exception {
-        ValidGroupDTO group = Fake.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID);
+        ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID);
 
-        performPut(DEFAULT_PATH, group, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, group, BAD, status().isBadRequest());
 
         assertNotInDatabase(group);
     }
@@ -54,14 +55,14 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
                 .languageLevel(Fake.languageLevel(NEW_GROUP_ID))
                 .build();
 
-        performPut(DEFAULT_PATH, group, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, group, BAD, status().isBadRequest());
     }
 
     @Test
     public void updatingGroupWithId_shouldUpdateGroup() throws Exception {
-        ValidGroupDTO group = Fake.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID).withId(OLD_GROUP_ID);
+        ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID).withId(OLD_GROUP_ID);
 
-        performPost(DEFAULT_PATH, group, OK_NO_BODY);
+        mvc.performPost(DEFAULT_PATH, group, OK_NO_BODY);
 
         assertInDatabase(group);
     }
@@ -73,9 +74,9 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_GROUP_ID))
                 .build();
 
-        performPost(DEFAULT_PATH, partialGroup, OK_NO_BODY);
+        mvc.performPost(DEFAULT_PATH, partialGroup, OK_NO_BODY);
 
-        ValidGroupDTO beforeUpdate = Fake.group(OLD_GROUP_ID);
+        ValidGroupDTO beforeUpdate = Fakes.group(OLD_GROUP_ID);
         ValidGroupDTO afterUpdate = ValidGroupDTO.stepBuilder()
                 .teacherId(beforeUpdate.getTeacherId())
                 .usesHourlyWage(beforeUpdate.getUsesHourlyWage())
@@ -90,9 +91,9 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void updatingGroupWithoutId_shouldReturn400() throws Exception {
-        ValidGroupDTO group = Fake.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID).withoutId();
+        ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID).withoutId();
 
-        performPost(DEFAULT_PATH, group, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, group, BAD, status().isBadRequest());
     }
 
     @Test
@@ -101,46 +102,46 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
                 .id(OLD_GROUP_ID)
                 .build();
 
-        performPost(DEFAULT_PATH, group, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, group, BAD, status().isBadRequest());
 
-        assertInDatabase(Fake.group(OLD_GROUP_ID));
+        assertInDatabase(Fakes.group(OLD_GROUP_ID));
     }
 
     @Test
     public void updatingGroupWithNonExistentId_shouldReturn404() throws Exception {
-        ValidGroupDTO group = Fake.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID);
+        ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID);
 
-        performPost(DEFAULT_PATH, group, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, group, BAD, status().isNotFound());
 
         assertNotInDatabase(group);
     }
 
     @Test
     public void deletingGroupById_shouldDeleteGroup() throws Exception {
-        ValidGroupDTO group = db.insertValidGroup(Fake.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID));
+        ValidGroupDTO group = db.insertValidGroup(Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID));
 
-        performDelete(DEFAULT_PATH + group.getId(), OK_NO_BODY);
+        mvc.performDelete(DEFAULT_PATH + group.getId(), OK_NO_BODY);
 
         assertNotInDatabase(group);
     }
 
     @Test
     public void deletingGroupByStillUsedId_shouldReturn400() throws Exception {
-        performDelete(DEFAULT_PATH + OLD_GROUP_ID, BAD, status().isBadRequest());
+        mvc.performDelete(DEFAULT_PATH + OLD_GROUP_ID, BAD, status().isBadRequest());
 
         assertInDatabase(OLD_GROUP_ID);
     }
 
     @Test
     public void deletingGroupByNonExistentId_shouldReturn404() throws Exception {
-        performDelete(DEFAULT_PATH + NEW_GROUP_ID, BAD, status().isNotFound());
+        mvc.performDelete(DEFAULT_PATH + NEW_GROUP_ID, BAD, status().isNotFound());
 
         assertNotInDatabase(NEW_GROUP_ID);
     }
 
     @Test
     public void readingGroupById_shouldReturnGroup() throws Exception {
-        ValidGroupDTO group = performGet(DEFAULT_PATH + OLD_GROUP_ID, OK)
+        ValidGroupDTO group = mvc.performGet(DEFAULT_PATH + OLD_GROUP_ID, OK)
                 .map(Unchecked.function(this::readGroup))
                 .orElseThrow(() -> new Exception("Successful read should return a group!"));
 
@@ -149,12 +150,12 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupByNonExistentId_shouldReturn404() throws Exception {
-        performGet(DEFAULT_PATH + NEW_GROUP_ID, BAD, status().isNotFound());
+        mvc.performGet(DEFAULT_PATH + NEW_GROUP_ID, BAD, status().isNotFound());
     }
 
     @Test
     public void readingAllGroups_shouldReturnGroups() throws Exception {
-        List<ValidGroupDTO> groups = performGet(DEFAULT_PATH, OK)
+        List<ValidGroupDTO> groups = mvc.performGet(DEFAULT_PATH, OK)
                 .map(Unchecked.function(this::readGroups))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -164,7 +165,7 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupsForTeacher_shouldReturnGroups() throws Exception {
-        List<ValidGroupDTO> groups = performGet(DEFAULT_PATH + "teacher/" + OLD_TEACHER_ID, OK)
+        List<ValidGroupDTO> groups = mvc.performGet(DEFAULT_PATH + "teacher/" + OLD_TEACHER_ID, OK)
                 .map(Unchecked.function(this::readGroups))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -174,12 +175,12 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupsForNonExistentTeacher_shouldReturn404() throws Exception {
-        performGet(DEFAULT_PATH + "teacher/" + NEW_TEACHER_ID, BAD, status().isNotFound());
+        mvc.performGet(DEFAULT_PATH + "teacher/" + NEW_TEACHER_ID, BAD, status().isNotFound());
     }
 
     @Test
     public void readingGroupsForCustomer_shouldReturnGroups() throws Exception {
-        List<ValidGroupDTO> groups = performGet(DEFAULT_PATH + "customer/" + OLD_CUSTOMER_ID, OK)
+        List<ValidGroupDTO> groups = mvc.performGet(DEFAULT_PATH + "customer/" + OLD_CUSTOMER_ID, OK)
                 .map(Unchecked.function(this::readGroups))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -189,12 +190,12 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupsForNonExistentCustomer_shouldReturn404() throws Exception {
-        performGet(DEFAULT_PATH + "customer/" + NEW_CUSTOMER_ID, BAD, status().isNotFound());
+        mvc.performGet(DEFAULT_PATH + "customer/" + NEW_CUSTOMER_ID, BAD, status().isNotFound());
     }
 
     @Test
     public void readingGroupsForStudent_shouldReturnGroups() throws Exception {
-        List<ValidGroupDTO> groups = performGet(DEFAULT_PATH + "student/" + OLD_STUDENT_ID, OK)
+        List<ValidGroupDTO> groups = mvc.performGet(DEFAULT_PATH + "student/" + OLD_STUDENT_ID, OK)
                 .map(Unchecked.function(this::readGroups))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -204,14 +205,14 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingGroupsForNonExistentStudent_shouldReturn404() throws Exception {
-        performGet(DEFAULT_PATH + "student/" + NEW_STUDENT_ID, BAD, status().isNotFound());
+        mvc.performGet(DEFAULT_PATH + "student/" + NEW_STUDENT_ID, BAD, status().isNotFound());
     }
 
     @Test
     public void readingGroupsWithoutCustomer_shouldReturnGroups() throws Exception {
-        db.insertValidGroup(Fake.group(NEW_GROUP_ID, OLD_TEACHER_ID, null));
+        db.insertValidGroup(Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, null));
 
-        List<ValidGroupDTO> groups = performGet(DEFAULT_PATH + "customer/none", OK)
+        List<ValidGroupDTO> groups = mvc.performGet(DEFAULT_PATH + "customer/none", OK)
                 .map(Unchecked.function(this::readGroups))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -222,11 +223,11 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
     // PRIVATE
 
     private ValidGroupDTO readGroup(MvcResult result) throws IOException {
-        return fromResponse(result, ValidGroupDTO.class);
+        return MVC.from(result).to(ValidGroupDTO.class);
     }
 
     private List<ValidGroupDTO> readGroups(MvcResult result) throws IOException {
-        return fromResponse(result, LIST_OF_GROUPS);
+        return MVC.from(result).to(LIST_OF_GROUPS);
     }
 
     private void assertNotInDatabase(ValidGroupDTO group) {

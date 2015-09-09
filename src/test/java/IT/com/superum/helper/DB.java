@@ -9,8 +9,9 @@ import com.superum.api.lesson.ValidLesson;
 import com.superum.api.lesson.ValidLessonDTO;
 import com.superum.api.student.ValidStudentDTO;
 import com.superum.api.teacher.FullTeacherDTO;
-import com.superum.helper.Fake;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import com.superum.helper.Fakes;
+import eu.goodlike.libraries.jodatime.Time;
+import eu.goodlike.test.Fake;
 import org.joda.time.LocalDate;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -24,7 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static IT.com.superum.env.IntegrationTestEnvironment.TEST_PARTITION;
+import static IT.com.superum.helper.TestConstants.TEST_PARTITION;
 import static com.superum.db.generated.timestar.Keys.TEACHER_LANGUAGE_IBFK_1;
 import static com.superum.db.generated.timestar.Tables.*;
 import static org.jooq.impl.DSL.groupConcat;
@@ -272,16 +273,16 @@ public class DB {
     }
 
     private java.sql.Date toSql(LocalDate startDate) {
-        return startDate == null ? null : JodaTimeZoneHandler.getDefault().from(startDate).toJavaSqlDate();
+        return startDate == null ? null : Time.convert(startDate).toSqlDate();
     }
 
     private void insertCustomers() {
-        Fake.someOf(2, Fake::customer)
+        Fake.someOf(Fakes::customer, 2)
                 .forEach(this::insertValidCustomer);
     }
 
     private void insertTeachers() {
-        Fake.someOf(2, Fake::teacher)
+        Fake.someOf(Fakes::teacher, 2)
                 .forEach(teacher -> {
                     insertFullTeacher(teacher);
                     insertValidAccount(teacher);
@@ -289,27 +290,27 @@ public class DB {
     }
 
     private void insertGroups() {
-        Fake.someOf(2, Fake::group)
+        Fake.someOf(Fakes::group, 2)
                 .forEach(this::insertValidGroup);
     }
 
     private void insertStudents() {
-        Fake.someOf(2, Fake::student)
+        Fake.someOf(Fakes::student, 2)
                 .forEach(this::insertValidStudent);
     }
 
     private void insertGrouping() {
-        Fake.someOf(2, Fake::grouping)
+        Fake.someOf(Fakes::grouping, 2)
                 .forEach(this::insertValidGrouping);
     }
 
     private void insertLessons() {
-        Fake.someOfLong(2, Fake::lesson)
+        Fake.someOfLong(Fakes::lesson, 2)
                 .forEach(this::insertValidLesson);
     }
 
     private void insertAttendance() {
-        Fake.someOfLong(2, Fake::lessonAttendance)
+        Fake.someOfLong(Fakes::lessonAttendance, 2)
                 .forEach(this::insertValidLessonAttendance);
     }
 

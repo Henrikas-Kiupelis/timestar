@@ -4,12 +4,14 @@ import IT.com.superum.env.IntegrationTestEnvironment;
 import com.superum.api.customer.ValidCustomerDTO;
 import com.superum.api.lesson.ValidLessonDTO;
 import com.superum.api.teacher.FullTeacherDTO;
-import com.superum.helper.Fake;
+import com.superum.helper.Fakes;
 import com.superum.helper.time.TimeResolver;
 import com.superum.v3.table.FullTable;
 import com.superum.v3.table.TableField;
 import com.superum.v3.table.TableReport;
-import eu.goodlike.time.JodaTimeZoneHandler;
+import eu.goodlike.libraries.jodatime.Time;
+import eu.goodlike.libraries.mockmvc.MVC;
+import eu.goodlike.test.Fake;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
@@ -23,8 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static IT.com.superum.helper.ResultVariation.OK;
-import static IT.com.superum.utils.MockMvcUtils.fromResponse;
+import static eu.goodlike.libraries.mockmvc.HttpResult.OK;
 import static java.math.BigDecimal.ZERO;
 import static org.junit.Assert.assertEquals;
 
@@ -34,7 +35,7 @@ public class FullTableIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingFullTable_shouldReturnTable() throws Exception {
-        FullTable table = performGet(DEFAULT_PATH + DEFAULT_PARAMS, OK)
+        FullTable table = mvc.performGet(DEFAULT_PATH + DEFAULT_PARAMS, OK)
                 .map(Unchecked.function(this::readTable))
                 .orElseThrow(() -> new AssertionError("Should return empty table instead of null"));
 
@@ -43,7 +44,7 @@ public class FullTableIT extends IntegrationTestEnvironment {
 
     // PRIVATE
 
-    private FullTable precomputedTable() {
+    public FullTable precomputedTable() {
         List<FullTeacherDTO> teachers = precomputedTeachers();
         List<ValidCustomerDTO> customers = precomputedCustomers();
         List<TableField> fields = precomputedFields();
@@ -53,15 +54,15 @@ public class FullTableIT extends IntegrationTestEnvironment {
     }
 
     private List<FullTeacherDTO> precomputedTeachers() {
-        return Fake.someOf(2, Fake::teacher);
+        return Fake.someOf(Fakes::teacher, 2);
     }
 
     private List<ValidCustomerDTO> precomputedCustomers() {
-        return Fake.someOf(2, Fake::customer);
+        return Fake.someOf(Fakes::customer, 2);
     }
 
     private List<TableField> precomputedFields() {
-        return Fake.someOfLong(2, Fake::lesson).stream()
+        return Fake.someOfLong(Fakes::lesson, 2).stream()
                 .map(lesson -> new TableField(
                         lesson.getId().intValue(),
                         lesson.getId().intValue(),
@@ -83,7 +84,7 @@ public class FullTableIT extends IntegrationTestEnvironment {
                         .map(FullTeacherDTO::getPaymentDay)
                         .map(TimeResolver::from)
                         .map(TimeResolver::getEndTime)
-                        .map(millis -> JodaTimeZoneHandler.getDefault().from(millis).toOrgJodaTimeLocalDate().minusDays(1)))
+                        .map(millis -> Time.convert(millis).toJodaLocalDate().minusDays(1)))
                 .map(t2 -> new TableReport(t2.v1.getId(), t2.v2, ZERO))
                 .toList();
     }
@@ -94,13 +95,13 @@ public class FullTableIT extends IntegrationTestEnvironment {
                         .map(ValidCustomerDTO::getStartDate)
                         .map(TimeResolver::from)
                         .map(TimeResolver::getEndTime)
-                        .map(millis -> JodaTimeZoneHandler.getDefault().from(millis).toOrgJodaTimeLocalDate().minusDays(1)))
+                        .map(millis -> Time.convert(millis).toJodaLocalDate().minusDays(1)))
                 .map(t2 -> new TableReport(t2.v1.getId(), t2.v2, ZERO))
                 .toList();
     }
 
     private FullTable readTable(MvcResult result) throws IOException {
-        return fromResponse(result, FullTable.class);
+        return MVC.from(result).to(FullTable.class);
     }
 
     private static final String DEFAULT_PATH = "/timestar/api/v3/lesson/table/data/full/";

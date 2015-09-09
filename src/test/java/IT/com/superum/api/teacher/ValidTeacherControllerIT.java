@@ -4,7 +4,9 @@ import IT.com.superum.env.IntegrationTestEnvironment;
 import IT.com.superum.helper.DB;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.superum.api.teacher.FullTeacherDTO;
-import com.superum.helper.Fake;
+import com.superum.helper.Fakes;
+import eu.goodlike.libraries.mockmvc.MVC;
+import eu.goodlike.test.Fake;
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -14,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 
-import static IT.com.superum.helper.ResultVariation.*;
-import static IT.com.superum.utils.MockMvcUtils.fromResponse;
+import static eu.goodlike.libraries.mockmvc.HttpResult.*;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,9 +26,9 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void insertingTeacherWithoutId_shouldCreateNewTeacher() throws Exception {
-        FullTeacherDTO teacher = Fake.teacher(NEW_TEACHER_ID).withoutId();
+        FullTeacherDTO teacher = Fakes.teacher(NEW_TEACHER_ID).withoutId();
 
-        FullTeacherDTO insertedTeacher = performPut(DEFAULT_PATH, teacher, OK)
+        FullTeacherDTO insertedTeacher = mvc.performPut(DEFAULT_PATH, teacher, OK)
                 .map(Unchecked.function(this::readTeacher))
                 .orElseThrow(() -> new Exception("Successful insertion should return a teacher!"));
 
@@ -39,9 +40,9 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void insertingTeacherWithId_shouldReturn400() throws Exception {
-        FullTeacherDTO teacher = Fake.teacher(NEW_TEACHER_ID);
+        FullTeacherDTO teacher = Fakes.teacher(NEW_TEACHER_ID);
 
-        performPut(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
 
         assertNotInDatabase(teacher);
     }
@@ -59,7 +60,7 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
                 .languages(Fake.language(NEW_TEACHER_ID))
                 .build();
 
-        performPut(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
     }
 
     @Test
@@ -76,14 +77,14 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
                 .languages(Fake.language(NEW_TEACHER_ID))
                 .build();
 
-        performPut(DEFAULT_PATH, teacher, BAD, status().isConflict());
+        mvc.performPut(DEFAULT_PATH, teacher, BAD, status().isConflict());
     }
 
     @Test
     public void updatingTeacherWithId_shouldUpdateTeacher() throws Exception {
-        FullTeacherDTO teacher = Fake.teacher(NEW_TEACHER_ID).withId(OLD_TEACHER_ID);
+        FullTeacherDTO teacher = Fakes.teacher(NEW_TEACHER_ID).withId(OLD_TEACHER_ID);
 
-        performPost(DEFAULT_PATH, teacher, OK_NO_BODY);
+        mvc.performPost(DEFAULT_PATH, teacher, OK_NO_BODY);
 
         assertInDatabase(teacher);
     }
@@ -95,9 +96,9 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_TEACHER_ID))
                 .build();
 
-        performPost(DEFAULT_PATH, partialTeacher, OK_NO_BODY);
+        mvc.performPost(DEFAULT_PATH, partialTeacher, OK_NO_BODY);
 
-        FullTeacherDTO beforeUpdate = Fake.teacher(OLD_TEACHER_ID);
+        FullTeacherDTO beforeUpdate = Fakes.teacher(OLD_TEACHER_ID);
         FullTeacherDTO afterUpdate = FullTeacherDTO.stepBuilder()
                 .paymentDay(beforeUpdate.getPaymentDay())
                 .hourlyWage(beforeUpdate.getHourlyWage())
@@ -119,9 +120,9 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void updatingTeacherWithoutId_shouldReturn400() throws Exception {
-        FullTeacherDTO teacher = Fake.teacher(NEW_TEACHER_ID).withoutId();
+        FullTeacherDTO teacher = Fakes.teacher(NEW_TEACHER_ID).withoutId();
 
-        performPost(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
     }
 
     @Test
@@ -130,16 +131,16 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
                 .id(OLD_TEACHER_ID)
                 .build();
 
-        performPost(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
 
-        assertInDatabase(Fake.teacher(OLD_TEACHER_ID));
+        assertInDatabase(Fakes.teacher(OLD_TEACHER_ID));
     }
 
     @Test
     public void updatingTeacherWithNonExistentId_shouldReturn404() throws Exception {
-        FullTeacherDTO teacher = Fake.teacher(NEW_TEACHER_ID);
+        FullTeacherDTO teacher = Fakes.teacher(NEW_TEACHER_ID);
 
-        performPost(DEFAULT_PATH, teacher, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isNotFound());
 
         assertNotInDatabase(teacher);
     }
@@ -159,38 +160,38 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
                 .id(EXTRA_TEACHER_ID)
                 .build();
 
-        performPost(DEFAULT_PATH, teacher, BAD, status().isConflict());
+        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isConflict());
 
-        assertInDatabase(Fake.teacher(EXTRA_TEACHER_ID));
+        assertInDatabase(Fakes.teacher(EXTRA_TEACHER_ID));
     }
 
     @Test
     public void deletingTeacherById_shouldDeleteTeacher() throws Exception {
-        FullTeacherDTO teacher = db.insertFullTeacher(Fake.teacher(NEW_TEACHER_ID));
+        FullTeacherDTO teacher = db.insertFullTeacher(Fakes.teacher(NEW_TEACHER_ID));
         db.insertValidAccount(teacher);
 
-        performDelete(DEFAULT_PATH + teacher.getId(), OK_NO_BODY);
+        mvc.performDelete(DEFAULT_PATH + teacher.getId(), OK_NO_BODY);
 
         assertNotInDatabase(teacher);
     }
 
     @Test
     public void deletingTeacherByStillUsedId_shouldReturn400() throws Exception {
-        performDelete(DEFAULT_PATH + OLD_TEACHER_ID, BAD, status().isBadRequest());
+        mvc.performDelete(DEFAULT_PATH + OLD_TEACHER_ID, BAD, status().isBadRequest());
 
         assertInDatabase(OLD_TEACHER_ID);
     }
 
     @Test
     public void deletingTeacherByNonExistentId_shouldReturn404() throws Exception {
-        performDelete(DEFAULT_PATH + NEW_TEACHER_ID, BAD, status().isNotFound());
+        mvc.performDelete(DEFAULT_PATH + NEW_TEACHER_ID, BAD, status().isNotFound());
 
         assertNotInDatabase(NEW_TEACHER_ID);
     }
 
     @Test
     public void readingTeacherById_shouldReturnTeacher() throws Exception {
-        FullTeacherDTO teacher = performGet(DEFAULT_PATH + OLD_TEACHER_ID, OK)
+        FullTeacherDTO teacher = mvc.performGet(DEFAULT_PATH + OLD_TEACHER_ID, OK)
                 .map(Unchecked.function(this::readTeacher))
                 .orElseThrow(() -> new Exception("Successful read should return a teacher!"));
 
@@ -199,12 +200,12 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingTeacherByNonExistentId_shouldReturn404() throws Exception {
-        performGet(DEFAULT_PATH + NEW_TEACHER_ID, BAD, status().isNotFound());
+        mvc.performGet(DEFAULT_PATH + NEW_TEACHER_ID, BAD, status().isNotFound());
     }
 
     @Test
     public void readingAllTeachers_shouldReturnTeachers() throws Exception {
-        List<FullTeacherDTO> teachers = performGet(DEFAULT_PATH, OK)
+        List<FullTeacherDTO> teachers = mvc.performGet(DEFAULT_PATH, OK)
                 .map(Unchecked.function(this::readTeachers))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -214,7 +215,7 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void countingAllTeachers_shouldReturn2() throws Exception {
-        int count = performGet(DEFAULT_PATH + "count", OK)
+        int count = mvc.performGet(DEFAULT_PATH + "count", OK)
                 .map(Unchecked.function(this::readCount))
                 .orElseThrow(() -> new Exception("Successful read should return an integer!"));
 
@@ -224,11 +225,11 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
     // PRIVATE
 
     private FullTeacherDTO readTeacher(MvcResult result) throws IOException {
-        return fromResponse(result, FullTeacherDTO.class);
+        return MVC.from(result).to(FullTeacherDTO.class);
     }
 
     private List<FullTeacherDTO> readTeachers(MvcResult result) throws IOException {
-        return fromResponse(result, LIST_OF_TEACHERS);
+        return MVC.from(result).to(LIST_OF_TEACHERS);
     }
 
     private void assertNotInDatabase(FullTeacherDTO teacher) {
@@ -248,7 +249,6 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
     }
 
     private static final String DEFAULT_PATH = "/timestar/api/v2/teacher/";
-    private static final int EXTRA_TEACHER_ID = 2;
 
     private static final TypeReference<List<FullTeacherDTO>> LIST_OF_TEACHERS = new TypeReference<List<FullTeacherDTO>>() {};
 
