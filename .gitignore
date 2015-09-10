@@ -24,13 +24,15 @@
 
 # Files containing passwords - use the .fill files to make a copy and fill the approriate fields
 
-/src/main/resources/
+/src/main/resources/email.properties
+/src/main/resources/persistence.properties
 
 # Generated files - use gradlew generate to make them
 
 /src/generated/
 
-# Folders for file upload/download testing
+# Folders containing irrelevant stuff
 
 /pictures/
 /documents/
+/test_sql/
