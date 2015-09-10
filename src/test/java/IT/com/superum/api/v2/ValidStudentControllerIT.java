@@ -1,4 +1,4 @@
-package IT.com.superum.api.v2.student;
+package IT.com.superum.api.v2;
 
 import IT.com.superum.helper.DB;
 import IT.com.superum.helper.IntegrationTestEnvironment;
@@ -96,8 +96,6 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
         ValidStudentDTO student = Fakes.student(NEW_STUDENT_ID, NEW_CUSTOMER_ID).withoutId();
 
         mvc.performPut(DEFAULT_PATH, student, BAD, status().isNotFound());
-
-        assertNotInDatabase(student);
     }
 
     @Test
@@ -175,7 +173,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     public void updatingStudentWithNonExistentCustomerId_shouldReturn404() throws Exception {
         ValidStudentDTO student = Fakes.student(NEW_STUDENT_ID, NEW_CUSTOMER_ID).withId(OLD_STUDENT_ID);
 
-        mvc.performPut(DEFAULT_PATH, student, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, student, BAD, status().isNotFound());
 
         assertInDatabase(Fakes.student(OLD_STUDENT_ID));
     }

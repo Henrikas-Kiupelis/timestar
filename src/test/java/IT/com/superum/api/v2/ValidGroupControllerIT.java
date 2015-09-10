@@ -1,4 +1,4 @@
-package IT.com.superum.api.v2.group;
+package IT.com.superum.api.v2;
 
 import IT.com.superum.helper.DB;
 import IT.com.superum.helper.IntegrationTestEnvironment;
@@ -59,6 +59,20 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
     }
 
     @Test
+    public void creatingGroupWithNonExistentTeacherId_shouldReturn404() throws Exception {
+        ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, NEW_TEACHER_ID, OLD_CUSTOMER_ID).withoutId();
+
+        mvc.performPut(DEFAULT_PATH, group, BAD, status().isNotFound());
+    }
+
+    @Test
+    public void creatingGroupWithNonExistentCustomerId_shouldReturn404() throws Exception {
+        ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, NEW_CUSTOMER_ID).withoutId();
+
+        mvc.performPut(DEFAULT_PATH, group, BAD, status().isNotFound());
+    }
+
+    @Test
     public void updatingGroupWithId_shouldUpdateGroup() throws Exception {
         ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID).withId(OLD_GROUP_ID);
 
@@ -114,6 +128,24 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
         mvc.performPost(DEFAULT_PATH, group, BAD, status().isNotFound());
 
         assertNotInDatabase(group);
+    }
+
+    @Test
+    public void updatingGroupWithNonExistentTeacherId_shouldReturn404() throws Exception {
+        ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, NEW_TEACHER_ID, OLD_CUSTOMER_ID).withId(OLD_GROUP_ID);
+
+        mvc.performPost(DEFAULT_PATH, group, BAD, status().isNotFound());
+
+        assertInDatabase(Fakes.group(OLD_GROUP_ID));
+    }
+
+    @Test
+    public void updatingGroupWithNonExistentCustomerId_shouldReturn404() throws Exception {
+        ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, NEW_CUSTOMER_ID).withId(OLD_GROUP_ID);
+
+        mvc.performPost(DEFAULT_PATH, group, BAD, status().isNotFound());
+
+        assertInDatabase(Fakes.group(OLD_GROUP_ID));
     }
 
     @Test

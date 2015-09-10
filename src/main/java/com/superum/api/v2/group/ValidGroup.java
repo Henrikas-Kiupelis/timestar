@@ -6,6 +6,7 @@ import eu.goodlike.validation.Validate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 import static timestar_v2.Tables.GROUP_OF_STUDENTS;
@@ -19,6 +20,14 @@ import static timestar_v2.Tables.GROUP_OF_STUDENTS;
  * </pre>
  */
 public class ValidGroup extends MappedClass<ValidGroup, Integer> {
+
+    public boolean hasNonExistentCustomerId(Predicate<Integer> customerIdCheck) {
+        return validGroupDTO.getCustomerId() != null && customerIdCheck.test(validGroupDTO.getCustomerId());
+    }
+
+    public boolean hasNonExistentTeacherId(Predicate<Integer> teacherIdCheck) {
+        return validGroupDTO.getTeacherId() != null && teacherIdCheck.test(validGroupDTO.getTeacherId());
+    }
 
     // CONSTRUCTORS
 

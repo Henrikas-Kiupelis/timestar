@@ -39,7 +39,7 @@ public class ValidStudent extends MappedClass<ValidStudent, Integer> {
     }
 
     public boolean hasNonExistentCustomerId(Predicate<Integer> customerIdCheck) {
-        return validStudentDTO.getCustomerId() == null || customerIdCheck.test(validStudentDTO.getCustomerId());
+        return validStudentDTO.getCustomerId() != null && customerIdCheck.test(validStudentDTO.getCustomerId());
     }
 
     public static int generateCode() {

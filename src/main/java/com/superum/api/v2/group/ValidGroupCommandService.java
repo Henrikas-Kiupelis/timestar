@@ -1,5 +1,7 @@
 package com.superum.api.v2.group;
 
+import com.superum.api.v2.customer.CustomerNotFoundException;
+import com.superum.api.v2.teacher.TeacherNotFoundException;
 import com.superum.exception.DatabaseException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,8 @@ public interface ValidGroupCommandService {
      * @return created group with its id set
      *
      * @throws InvalidGroupException if id field was set or a mandatory field was not set
+     * @throws CustomerNotFoundException if customer for customerId field does not exist
+     * @throws TeacherNotFoundException if teacher for teacherId field does not exist
      * @throws DatabaseException if database error occurred
      * @throws DataAccessException if an unexpected database error occurred
      */
@@ -44,6 +48,8 @@ public interface ValidGroupCommandService {
      * </pre>
      * @throws InvalidGroupException if id field was not set, or no other fields were set
      * @throws GroupNotFoundException if no group with this id exists
+     * @throws CustomerNotFoundException if customer for customerId field does not exist
+     * @throws TeacherNotFoundException if teacher for teacherId field does not exist
      * @throws DatabaseException if database error occurred
      * @throws DataAccessException if an unexpected database error occurred
      */

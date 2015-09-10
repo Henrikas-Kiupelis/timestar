@@ -28,7 +28,7 @@ public class ValidLessonCommandServiceImpl implements ValidLessonCommandService 
             throw new InvalidLessonException("Provided lesson does not have the following mandatory fields set: "
                     + lesson.mandatoryFields().filter(MappedField::isNotSet).join(", "));
 
-        if (lesson.hasNonExistentGroupId(id -> defaultGroupQueries.exists(id, partitionId)))
+        if (lesson.hasNonExistentGroupId(id -> !defaultGroupQueries.exists(id, partitionId)))
             throw new GroupNotFoundException("Couldn't find group id for lesson: " + lesson);
 
         if (lesson.isOverlapping(sql, partitionId))
@@ -51,7 +51,7 @@ public class ValidLessonCommandServiceImpl implements ValidLessonCommandService 
         if (!defaultLessonQueries.exists(lesson.getId(), partitionId))
             throw new LessonNotFoundException("Couldn't find lesson with id " + lesson.getId());
 
-        if (lesson.hasNonExistentGroupId(id -> defaultGroupQueries.exists(id, partitionId)))
+        if (lesson.hasNonExistentGroupId(id -> !defaultGroupQueries.exists(id, partitionId)))
             throw new GroupNotFoundException("Couldn't find group id for lesson: " + lesson);
 
         if (lesson.isOverlapping(sql, partitionId))

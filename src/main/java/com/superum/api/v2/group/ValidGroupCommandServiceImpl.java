@@ -1,5 +1,7 @@
 package com.superum.api.v2.group;
 
+import com.superum.api.v2.customer.CustomerNotFoundException;
+import com.superum.api.v2.teacher.TeacherNotFoundException;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.field.core.MappedField;
 import com.superum.helper.jooq.DefaultCommands;
@@ -8,7 +10,9 @@ import com.superum.helper.jooq.ForeignQueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import timestar_v2.tables.records.CustomerRecord;
 import timestar_v2.tables.records.GroupOfStudentsRecord;
+import timestar_v2.tables.records.TeacherRecord;
 
 @Service
 @Transactional
@@ -24,6 +28,12 @@ public class ValidGroupCommandServiceImpl implements ValidGroupCommandService {
         if (!group.mandatoryFields().allMatch(MappedField::isSet))
             throw new InvalidGroupException("Provided group does not have the following mandatory fields set: "
                     + group.mandatoryFields().filter(MappedField::isNotSet).join(", "));
+
+        if (group.hasNonExistentCustomerId(id -> !defaultCustomerQueries.exists(id, partitionId)))
+            throw new CustomerNotFoundException("Couldn't find customer id for group: " + group);
+
+        if (group.hasNonExistentTeacherId(id -> !defaultTeacherQueries.exists(id, partitionId)))
+            throw new TeacherNotFoundException("Couldn't find teacher id for group: " + group);
 
         return defaultGroupCommands.create(group, partitionId, ValidGroupDTO::valueOf)
                 .orElseThrow(() -> new DatabaseException("Couldn't return group after inserting it: " + group));
@@ -41,6 +51,12 @@ public class ValidGroupCommandServiceImpl implements ValidGroupCommandService {
 
         if (!defaultGroupQueries.exists(group.getId(), partitionId))
             throw new GroupNotFoundException("Couldn't find group with id " + group.getId());
+
+        if (group.hasNonExistentCustomerId(id -> !defaultCustomerQueries.exists(id, partitionId)))
+            throw new CustomerNotFoundException("Couldn't find customer id for group: " + group);
+
+        if (group.hasNonExistentTeacherId(id -> !defaultTeacherQueries.exists(id, partitionId)))
+            throw new TeacherNotFoundException("Couldn't find teacher id for group: " + group);
 
         if (defaultGroupCommands.update(group, partitionId) == 0)
             throw new DatabaseException("Couldn't update group: " + group);
@@ -64,10 +80,14 @@ public class ValidGroupCommandServiceImpl implements ValidGroupCommandService {
     @Autowired
     public ValidGroupCommandServiceImpl(DefaultCommands<GroupOfStudentsRecord, Integer> defaultGroupCommands,
                                         DefaultQueries<GroupOfStudentsRecord, Integer> defaultGroupQueries,
-                                        ForeignQueries<Integer> foreignGroupQueries) {
+                                        ForeignQueries<Integer> foreignGroupQueries,
+                                        DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries,
+                                        DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries) {
         this.defaultGroupCommands = defaultGroupCommands;
         this.defaultGroupQueries = defaultGroupQueries;
         this.foreignGroupQueries = foreignGroupQueries;
+        this.defaultCustomerQueries = defaultCustomerQueries;
+        this.defaultTeacherQueries = defaultTeacherQueries;
     }
 
     // PRIVATE
@@ -75,5 +95,8 @@ public class ValidGroupCommandServiceImpl implements ValidGroupCommandService {
     private final DefaultCommands<GroupOfStudentsRecord, Integer> defaultGroupCommands;
     private final DefaultQueries<GroupOfStudentsRecord, Integer> defaultGroupQueries;
     private final ForeignQueries<Integer> foreignGroupQueries;
+
+    private final DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries;
+    private final DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries;
 
 }

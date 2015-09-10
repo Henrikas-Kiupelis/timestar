@@ -78,7 +78,7 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
     }
 
     public boolean hasNonExistentGroupId(Predicate<Integer> groupIdCheck) {
-        return validLessonDTO.getGroupId() == null || groupIdCheck.test(validLessonDTO.getGroupId());
+        return validLessonDTO.getGroupId() != null && groupIdCheck.test(validLessonDTO.getGroupId());
     }
 
     // CONSTRUCTORS

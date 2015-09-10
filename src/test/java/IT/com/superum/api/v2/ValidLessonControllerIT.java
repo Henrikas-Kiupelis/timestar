@@ -1,4 +1,4 @@
-package IT.com.superum.api.v2.lesson;
+package IT.com.superum.api.v2;
 
 import IT.com.superum.helper.DB;
 import IT.com.superum.helper.IntegrationTestEnvironment;
@@ -61,9 +61,7 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
     public void creatingLessonWithNonExistentGroupId_shouldReturn404() throws Exception {
         ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, NEW_GROUP_ID, OLD_TEACHER_ID).withoutId();
 
-        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
-
-        assertNotInDatabase(lesson);
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isNotFound());
     }
 
     @Test
@@ -136,7 +134,7 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void updatingLessonWithNonExistentGroupId_shouldReturn404() throws Exception {
-        ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID).withId(OLD_LESSON_ID);
+        ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, NEW_GROUP_ID, OLD_TEACHER_ID).withId(OLD_LESSON_ID);
 
         mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isNotFound());
 

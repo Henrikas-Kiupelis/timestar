@@ -1,4 +1,4 @@
-package IT.com.superum.api.v2.teacher;
+package IT.com.superum.api.v2;
 
 import IT.com.superum.helper.DB;
 import IT.com.superum.helper.IntegrationTestEnvironment;

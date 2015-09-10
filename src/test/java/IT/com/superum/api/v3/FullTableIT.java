@@ -1,4 +1,4 @@
-package IT.com.superum.api.v3.table;
+package IT.com.superum.api.v3;
 
 import IT.com.superum.helper.IntegrationTestEnvironment;
 import com.superum.api.v2.customer.ValidCustomerDTO;

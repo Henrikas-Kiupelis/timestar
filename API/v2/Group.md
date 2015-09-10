@@ -20,6 +20,8 @@ Creates a new group
 It will fail if:
   * HTTP 400; the id field was set;
   * HTTP 400; a mandatory field was not set;
+  * HTTP 404; no customer with provided id exists;
+  * HTTP 404; no teacher with provided id exists;
 
 Returned group will have its id field set
 
@@ -38,6 +40,8 @@ It will fail if:
   * HTTP 400; the id field was not set;
   * HTTP 400; only the id field was set and no other fields were;
   * HTTP 404; no group with provided id exists;
+  * HTTP 404; no customer with provided id exists;
+  * HTTP 404; no teacher with provided id exists;
 
 Returns HTTP 200 OK if it succeeds
 

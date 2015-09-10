@@ -29,7 +29,7 @@
 
 # Generated files - use gradlew generate to make them
 
-/src/generated/
+/src/gen/
 
 # Folders containing irrelevant stuff
 
