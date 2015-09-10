@@ -4,7 +4,7 @@
 
 ## Relevant classes
 
-[ValidStudentDTO](../../src/main/java/com/superum/api/student/ValidStudentDTO.java)
+[ValidStudentDTO](../../src/main/java/com/superum/api/v2/student/ValidStudentDTO.java)
 
 ### Commands
 
@@ -22,6 +22,7 @@ It will fail if:
   * HTTP 400; the id field was set;
   * HTTP 400; a mandatory field was not set;
   * HTTP 400; both or neither of customerId and startDate were set;
+  * HTTP 404; no customer with provided id exists;
 
 Returned student will have its id field set
 
@@ -41,6 +42,7 @@ It will fail if:
   * HTTP 400; only the id field was set and no other fields were;
   * HTTP 400; both of customerId and startDate were set;
   * HTTP 404; no student with provided id exists;
+  * HTTP 404; no customer with provided id exists;
 
 Returns HTTP 200 OK if it succeeds
 

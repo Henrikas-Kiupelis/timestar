@@ -12,15 +12,15 @@ is still quite slow, because some queries happen too many times, prompting the c
 
 ## Relevant classes
 
-[OptimizedLessonTableDTO](../../src/main/java/com/superum/api/table/dto/OptimizedLessonTableDTO.java) - represents the entire table
+[OptimizedLessonTableDTO](../../src/main/java/com/superum/api/v2/table/dto/OptimizedLessonTableDTO.java) - represents the entire table
 
-[CustomerLessonDataDTO](../../src/main/java/com/superum/api/table/dto/CustomerLessonDataDTO.java) - represents a row of a table; belongs to a customer
+[CustomerLessonDataDTO](../../src/main/java/com/superum/api/v2/table/dto/CustomerLessonDataDTO.java) - represents a row of a table; belongs to a customer
 
-[TeacherLessonDataDTO](../../src/main/java/com/superum/api/table/dto/TeacherLessonDataDTO.java) - represents a field of the table; belongs to a customer and a teacher
+[TeacherLessonDataDTO](../../src/main/java/com/superum/api/v2/table/dto/TeacherLessonDataDTO.java) - represents a field of the table; belongs to a customer and a teacher
 
-[TotalLessonDataDTO](../../src/main/java/com/superum/api/table/dto/TotalLessonDataDTO.java) - represents sum of a row or column
+[TotalLessonDataDTO](../../src/main/java/com/superum/api/v2/table/dto/TotalLessonDataDTO.java) - represents sum of a row or column
 
-[PaymentDataDTO](../../src/main/java/com/superum/api/table/dto/PaymentDataDTO.java) - represents a report on customer or teacher payments (when and how much needs to be done)
+[PaymentDataDTO](../../src/main/java/com/superum/api/v2/table/dto/PaymentDataDTO.java) - represents a report on customer or teacher payments (when and how much needs to be done)
 
 ### Commands
 

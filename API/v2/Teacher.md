@@ -4,7 +4,7 @@
 
 ## Relevant classes
 
-[FullTeacherDTO](../../src/main/java/com/superum/api/teacher/FullTeacherDTO.java)
+[FullTeacherDTO](../../src/main/java/com/superum/api/v2/teacher/FullTeacherDTO.java)
 
 ### Commands
 

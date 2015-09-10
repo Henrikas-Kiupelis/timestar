@@ -1,13 +1,13 @@
 package com.superum.helper;
 
 import com.google.common.collect.Sets;
-import com.superum.api.attendance.ValidLessonAttendanceDTO;
-import com.superum.api.customer.ValidCustomerDTO;
-import com.superum.api.group.ValidGroupDTO;
-import com.superum.api.grouping.ValidGroupingDTO;
-import com.superum.api.lesson.ValidLessonDTO;
-import com.superum.api.student.ValidStudentDTO;
-import com.superum.api.teacher.FullTeacherDTO;
+import com.superum.api.v2.attendance.ValidLessonAttendanceDTO;
+import com.superum.api.v2.customer.ValidCustomerDTO;
+import com.superum.api.v2.group.ValidGroupDTO;
+import com.superum.api.v2.grouping.ValidGroupingDTO;
+import com.superum.api.v2.lesson.ValidLessonDTO;
+import com.superum.api.v2.student.ValidStudentDTO;
+import com.superum.api.v2.teacher.FullTeacherDTO;
 import eu.goodlike.test.Fake;
 
 import java.util.Collections;

@@ -4,7 +4,7 @@
 
 ## Relevant classes
 
-[ValidCustomerDTO](../../src/main/java/com/superum/api/customer/ValidCustomerDTO.java)
+[ValidCustomerDTO](../../src/main/java/com/superum/api/v2/customer/ValidCustomerDTO.java)
 
 ### Commands
 

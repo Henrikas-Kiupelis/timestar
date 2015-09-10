@@ -4,7 +4,7 @@
 
 ## Relevant classes
 
-[ValidLessonDTO](../../src/main/java/com/superum/api/lesson/ValidLessonDTO.java)
+[ValidLessonDTO](../../src/main/java/com/superum/api/v2/lesson/ValidLessonDTO.java)
 
 ### Commands
 
@@ -20,6 +20,7 @@ Creates a new lesson
 It will fail if:
   * HTTP 400; the id field was set;
   * HTTP 400; a mandatory field was not set;
+  * HTTP 404; no group with provided id exists;
   * HTTP 409; the lesson overlaps with another lesson for the teacher of the group this lesson is for;
 
 Returned lesson will have its id field set
@@ -39,6 +40,7 @@ It will fail if:
   * HTTP 400; the id field was not set;
   * HTTP 400; only the id field was set and no other fields were;
   * HTTP 404; no lesson with provided id exists;
+  * HTTP 404; no group with provided id exists;
   * HTTP 409; the lesson overlaps with another lesson for the teacher of the group this lesson is for;
 
 Returns HTTP 200 OK if it succeeds

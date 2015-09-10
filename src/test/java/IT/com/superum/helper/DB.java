@@ -1,14 +1,14 @@
 package IT.com.superum.helper;
 
 import com.google.common.collect.ObjectArrays;
-import com.superum.api.attendance.ValidLessonAttendanceDTO;
-import com.superum.api.customer.ValidCustomerDTO;
-import com.superum.api.group.ValidGroupDTO;
-import com.superum.api.grouping.ValidGroupingDTO;
-import com.superum.api.lesson.ValidLesson;
-import com.superum.api.lesson.ValidLessonDTO;
-import com.superum.api.student.ValidStudentDTO;
-import com.superum.api.teacher.FullTeacherDTO;
+import com.superum.api.v2.attendance.ValidLessonAttendanceDTO;
+import com.superum.api.v2.customer.ValidCustomerDTO;
+import com.superum.api.v2.group.ValidGroupDTO;
+import com.superum.api.v2.grouping.ValidGroupingDTO;
+import com.superum.api.v2.lesson.ValidLesson;
+import com.superum.api.v2.lesson.ValidLessonDTO;
+import com.superum.api.v2.student.ValidStudentDTO;
+import com.superum.api.v2.teacher.FullTeacherDTO;
 import com.superum.helper.Fakes;
 import eu.goodlike.functional.some.Some;
 import eu.goodlike.libraries.jodatime.Time;
@@ -26,9 +26,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static IT.com.superum.helper.TestConstants.TEST_PARTITION;
-import static com.superum.db.generated.timestar.Keys.TEACHER_LANGUAGE_IBFK_1;
-import static com.superum.db.generated.timestar.Tables.*;
 import static org.jooq.impl.DSL.groupConcat;
+import static timestar_v2.Keys.TEACHER_LANGUAGE_IBFK_1;
+import static timestar_v2.Tables.*;
 
 @Component
 @Transactional

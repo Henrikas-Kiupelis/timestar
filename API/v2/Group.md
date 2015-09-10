@@ -4,7 +4,7 @@
 
 ## Relevant classes
 
-[ValidGroupDTO](../../src/main/java/com/superum/api/group/ValidGroupDTO.java)
+[ValidGroupDTO](../../src/main/java/com/superum/api/v2/group/ValidGroupDTO.java)
 
 ### Commands
 

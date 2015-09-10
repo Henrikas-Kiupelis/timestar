@@ -10,7 +10,7 @@
 
 ## Relevant classes
 
-[ValidGroupingDTO](../../src/main/java/com/superum/api/grouping/ValidGroupingDTO.java)
+[ValidGroupingDTO](../../src/main/java/com/superum/api/v2/grouping/ValidGroupingDTO.java)
 
 ### Commands
 
@@ -72,7 +72,7 @@ In order to make queries, use [/group/student/{id}](./Group.md#read-for-table) o
 
 ## Relevant classes
 
-[ValidLessonAttendanceDTO](../../src/main/java/com/superum/api/attendance/ValidLessonAttendanceDTO.java)
+[ValidLessonAttendanceDTO](../../src/main/java/com/superum/api/v2/attendance/ValidLessonAttendanceDTO.java)
 
 ### Commands
 

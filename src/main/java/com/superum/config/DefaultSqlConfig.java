@@ -1,13 +1,13 @@
 package com.superum.config;
 
-import com.superum.db.generated.timestar.tables.records.*;
 import com.superum.helper.jooq.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import timestar_v2.tables.records.*;
 
-import static com.superum.db.generated.timestar.Tables.*;
+import static timestar_v2.Tables.*;
 
 @Configuration
 @Lazy

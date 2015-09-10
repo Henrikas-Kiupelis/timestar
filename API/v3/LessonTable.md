@@ -32,13 +32,13 @@ in front end, because it's a simple operation (no domain logic needed here);
 
 ## Relevant classes
 
-[Table](../../src/main/java/com/superum/v3/table/Table.java) - basic table; has teachers/customers/fields
+[Table](../../src/main/java/com/superum/api/v3/table/Table.java) - basic table; has teachers/customers/fields
 
-[TableField](../../src/main/java/com/superum/v3/table/TableField.java) - contains the data found in one of the table's fields
+[TableField](../../src/main/java/com/superum/api/v3/table/TableField.java) - contains the data found in one of the table's fields
 
-[TableReport](../../src/main/java/com/superum/v3/table/TableReport.java) - contains a report on the amount required to pay and deadline
+[TableReport](../../src/main/java/com/superum/api/v3/table/TableReport.java) - contains a report on the amount required to pay and deadline
 
-[FullTable](../../src/main/java/com/superum/v3/table/FullTable.java) - combines basic table and reports into one
+[FullTable](../../src/main/java/com/superum/api/v3/table/FullTable.java) - combines basic table and reports into one
 
 ### Commands
 

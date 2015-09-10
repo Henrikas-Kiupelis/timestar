@@ -14,7 +14,7 @@
 
 ## Relevant classes
 
-[ValidAccountDTO](../../src/main/java/com/superum/api/account/ValidAccountDTO.java)
+[ValidAccountDTO](../../src/main/java/com/superum/api/v2/account/ValidAccountDTO.java)
 
 ### Commands
 
@@ -73,7 +73,7 @@ Returned ValidAccount contains all the fields, except password
 
 ## Relevant classes
 
-[ValidPartitionDTO](../../src/main/java/com/superum/api/partition/ValidPartitionDTO.java)
+[ValidPartitionDTO](../../src/main/java/com/superum/api/v2/partition/ValidPartitionDTO.java)
 
 ### Commands
 
