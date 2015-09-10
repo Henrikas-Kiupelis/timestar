@@ -10,8 +10,8 @@ import com.superum.api.lesson.ValidLessonDTO;
 import com.superum.api.student.ValidStudentDTO;
 import com.superum.api.teacher.FullTeacherDTO;
 import com.superum.helper.Fakes;
+import eu.goodlike.functional.some.Some;
 import eu.goodlike.libraries.jodatime.Time;
-import eu.goodlike.test.Fake;
 import org.joda.time.LocalDate;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -37,6 +37,19 @@ public class DB {
 
     // INIT
 
+    private static final Field<?>[] FULL_TEACHER_FIELDS = ObjectArrays.concat(TEACHER.fields(),
+            groupConcat(TEACHER_LANGUAGE.CODE).as(FullTeacherDTO.getLanguagesFieldName()));
+    private static final String FILLER_PASSWORD = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+    // CREATE
+    private static final String TEACHER_TYPE = "TEACHER";
+    private final DSLContext sql;
+
+    @Autowired
+    public DB(DSLContext sql) {
+        this.sql = sql;
+    }
+
     public void init() {
         insertCustomers();
         insertTeachers();
@@ -56,8 +69,6 @@ public class DB {
     public void clean() {
         cleanAccounts();
     }
-
-    // CREATE
 
     public FullTeacherDTO insertFullTeacher(FullTeacherDTO teacher) {
         sql.insertInto(TEACHER)
@@ -115,6 +126,8 @@ public class DB {
         return readValidGroup(group.getId())
                 .orElseThrow(() -> new RuntimeException("Couldn't insert group"));
     }
+
+    // READ
 
     public ValidStudentDTO insertValidStudent(ValidStudentDTO student) {
         sql.insertInto(STUDENT)
@@ -177,10 +190,6 @@ public class DB {
                 .execute();
     }
 
-    // READ
-
-    private static final Field<?>[] FULL_TEACHER_FIELDS = ObjectArrays.concat(TEACHER.fields(),
-            groupConcat(TEACHER_LANGUAGE.CODE).as(FullTeacherDTO.getLanguagesFieldName()));
     public Optional<FullTeacherDTO> readFullTeacher(int teacherId) {
         return sql.select(FULL_TEACHER_FIELDS).from(TEACHER)
                 .join(TEACHER_LANGUAGE).onKey(TEACHER_LANGUAGE_IBFK_1)
@@ -219,6 +228,8 @@ public class DB {
                 .map(ValidLessonDTO::valueOf);
     }
 
+    // CONSTRUCTORS
+
     public Optional<ValidGroupingDTO> readValidGrouping(int groupId) {
         Set<Integer> studentIds = sql.select(STUDENTS_IN_GROUPS.STUDENT_ID)
                 .from(STUDENTS_IN_GROUPS)
@@ -229,6 +240,8 @@ public class DB {
 
         return studentIds.isEmpty() ? Optional.empty() : Optional.of(new ValidGroupingDTO(groupId, studentIds));
     }
+
+    // PRIVATE
 
     public boolean existsGroupingForStudentId(int studentId) {
         return sql.fetchExists(STUDENTS_IN_GROUPS, STUDENTS_IN_GROUPS.STUDENT_ID.eq(studentId));
@@ -249,17 +262,6 @@ public class DB {
         return sql.fetchExists(LESSON_ATTENDANCE, LESSON_ATTENDANCE.STUDENT_ID.eq(studentId));
     }
 
-    // CONSTRUCTORS
-
-    @Autowired
-    public DB(DSLContext sql) {
-        this.sql = sql;
-    }
-
-    // PRIVATE
-
-    private final DSLContext sql;
-
     private void cleanAccounts() {
         sql.deleteFrom(ACCOUNT)
                 .where(ACCOUNT.ID.isNotNull())
@@ -271,12 +273,12 @@ public class DB {
     }
 
     private void insertCustomers() {
-        Fake.someOf(Fakes::customer, 2)
+        Some.of(Fakes::customer).fetch(2)
                 .forEach(this::insertValidCustomer);
     }
 
     private void insertTeachers() {
-        Fake.someOf(Fakes::teacher, 2)
+        Some.of(Fakes::teacher).fetch(2)
                 .forEach(teacher -> {
                     insertFullTeacher(teacher);
                     insertValidAccount(teacher);
@@ -284,31 +286,28 @@ public class DB {
     }
 
     private void insertGroups() {
-        Fake.someOf(Fakes::group, 2)
+        Some.of(Fakes::group).fetch(2)
                 .forEach(this::insertValidGroup);
     }
 
     private void insertStudents() {
-        Fake.someOf(Fakes::student, 2)
+        Some.of(Fakes::student).fetch(2)
                 .forEach(this::insertValidStudent);
     }
 
     private void insertGrouping() {
-        Fake.someOf(Fakes::grouping, 2)
+        Some.of(Fakes::grouping).fetch(2)
                 .forEach(this::insertValidGrouping);
     }
 
     private void insertLessons() {
-        Fake.someOfLong(Fakes::lesson, 2)
+        Some.ofLong(Fakes::lesson).fetch(2)
                 .forEach(this::insertValidLesson);
     }
 
     private void insertAttendance() {
-        Fake.someOfLong(Fakes::lessonAttendance, 2)
+        Some.ofLong(Fakes::lessonAttendance).fetch(2)
                 .forEach(this::insertValidLessonAttendance);
     }
-
-    private static final String FILLER_PASSWORD = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    private static final String TEACHER_TYPE = "TEACHER";
 
 }

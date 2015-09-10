@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
-import com.superum.helper.Random;
 import eu.goodlike.libraries.jodatime.Time;
+import eu.goodlike.random.Random;
 import org.hibernate.validator.constraints.Email;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
@@ -24,18 +24,89 @@ public class Student {
 
 	// PUBLIC API
 
+	@Min(value = 0, message = "Negative student ids not allowed")
+	private final int id;
+	private final Integer code;
+	private final Integer customerId;
+    @NotNull(message = "There must be a start date")
+    private final LocalDate startDate;
+	@NotNull(message = "The student must have an email")
+	@Size(max = 60, message = "Email size must not exceed 60 characters")
+	@Email
+	private final String email;
+	@NotNull(message = "The student must have a name")
+	@Size(max = 60, message = "Name size must not exceed 60 characters")
+	private final String name;
+    private final Instant createdAt;
+    private final Instant updatedAt;
+
+	@JsonCreator
+	public Student(@JsonProperty("id") int id,
+                   @JsonProperty("customerId") Integer customerId,
+                   @JsonProperty("startDate") String startDate,
+                   @JsonProperty("email") String email,
+                   @JsonProperty("name") String name) {
+		this(id, null, customerId, startDate == null ? null : LocalDate.parse(startDate), email, name, null, null);
+	}
+
+    public Student(int id, Integer code, Integer customerId, LocalDate startDate, String email, String name, Instant createdAt, Instant updatedAt) {
+        this.id = id;
+        this.code = code;
+        this.customerId = customerId;
+        this.startDate = startDate;
+        this.email = email;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public static int generateCode() {
+        return Random.getFast().numberWithDigits(6);
+    }
+
+	public static Student valueOf(Record studentRecord) {
+		if (studentRecord == null)
+			return null;
+
+		int id = studentRecord.getValue(STUDENT.ID);
+        Integer code = studentRecord.getValue(STUDENT.CODE);
+        Integer customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
+        LocalDate startDate = Time.convert(studentRecord.getValue(STUDENT.START_DATE)).toJodaLocalDate();
+		String email = studentRecord.getValue(STUDENT.EMAIL);
+		String name = studentRecord.getValue(STUDENT.NAME);
+
+        long createdTimestamp = studentRecord.getValue(STUDENT.CREATED_AT);
+        Instant createdAt = new Instant(createdTimestamp);
+        long updatedTimestamp = studentRecord.getValue(STUDENT.UPDATED_AT);
+        Instant updatedAt = new Instant(updatedTimestamp);
+		return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+	}
+	
+    public static Builder builder() {
+        return new Builder();
+    }
+	
+    public static CustomerIdStep stepBuilder() {
+        return new Builder();
+    }
+
 	@JsonProperty("id")
 	public int getId() {
 		return id;
 	}
+
 	@JsonIgnore
 	public boolean hasId() {
 		return id > 0;
 	}
+
     @JsonIgnore
     public Student withId(int id) {
         return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
     }
+
+	// CONSTRUCTORS
+
     @JsonIgnore
     public Student withoutId() {
         return new Student(0, code, customerId, startDate, email, name, createdAt, updatedAt);
@@ -45,18 +116,23 @@ public class Student {
     public Integer getCode() {
         return code;
     }
+	
 	@JsonIgnore
     public Student withCode(int code) {
         return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
     }
+
     @JsonIgnore
     public Student withoutCode() {
         return new Student(id, null, customerId, startDate, email, name, createdAt, updatedAt);
     }
+
     @JsonIgnore
     public Student withGeneratedCode() {
         return withCode(generateCode());
     }
+
+    // PRIVATE
 
 	@JsonProperty("customerId")
 	public Integer getCustomerId() {
@@ -67,10 +143,12 @@ public class Student {
     public String getStartDateString() {
         return startDate.toString();
     }
+	
     @JsonIgnore
     public LocalDate getStartDate() {
         return startDate;
     }
+
     @JsonIgnore
     public java.sql.Date getStartDateSql() {
         return Time.convert(startDate).toSqlDate();
@@ -97,82 +175,6 @@ public class Student {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
-
-    public static int generateCode() {
-        return Random.numberWithDigits(6);
-    }
-
-	// CONSTRUCTORS
-
-	@JsonCreator
-	public Student(@JsonProperty("id") int id,
-                   @JsonProperty("customerId") Integer customerId,
-                   @JsonProperty("startDate") String startDate,
-                   @JsonProperty("email") String email,
-                   @JsonProperty("name") String name) {
-		this(id, null, customerId, startDate == null ? null : LocalDate.parse(startDate), email, name, null, null);
-	}
-
-    public Student(int id, Integer code, Integer customerId, LocalDate startDate, String email, String name, Instant createdAt, Instant updatedAt) {
-        this.id = id;
-        this.code = code;
-        this.customerId = customerId;
-        this.startDate = startDate;
-        this.email = email;
-        this.name = name;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-	
-	public static Student valueOf(Record studentRecord) {
-		if (studentRecord == null)
-			return null;
-		
-		int id = studentRecord.getValue(STUDENT.ID);
-        Integer code = studentRecord.getValue(STUDENT.CODE);
-        Integer customerId = studentRecord.getValue(STUDENT.CUSTOMER_ID);
-        LocalDate startDate = Time.convert(studentRecord.getValue(STUDENT.START_DATE)).toJodaLocalDate();
-		String email = studentRecord.getValue(STUDENT.EMAIL);
-		String name = studentRecord.getValue(STUDENT.NAME);
-
-        long createdTimestamp = studentRecord.getValue(STUDENT.CREATED_AT);
-        Instant createdAt = new Instant(createdTimestamp);
-        long updatedTimestamp = studentRecord.getValue(STUDENT.UPDATED_AT);
-        Instant updatedAt = new Instant(updatedTimestamp);
-		return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
-	}
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static CustomerIdStep stepBuilder() {
-        return new Builder();
-    }
-
-    // PRIVATE
-
-	@Min(value = 0, message = "Negative student ids not allowed")
-	private final int id;
-
-	private final Integer code;
-	
-	private final Integer customerId;
-
-    @NotNull(message = "There must be a start date")
-    private final LocalDate startDate;
-	
-	@NotNull(message = "The student must have an email")
-	@Size(max = 60, message = "Email size must not exceed 60 characters")
-	@Email
-	private final String email;
-	
-	@NotNull(message = "The student must have a name")
-	@Size(max = 60, message = "Name size must not exceed 60 characters")
-	private final String name;
-
-    private final Instant createdAt;
-    private final Instant updatedAt;
 
     // OBJECT OVERRIDES
 

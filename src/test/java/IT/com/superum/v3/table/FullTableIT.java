@@ -9,6 +9,7 @@ import com.superum.helper.time.TimeResolver;
 import com.superum.v3.table.FullTable;
 import com.superum.v3.table.TableField;
 import com.superum.v3.table.TableReport;
+import eu.goodlike.functional.some.Some;
 import eu.goodlike.libraries.jodatime.Time;
 import eu.goodlike.libraries.mockmvc.MVC;
 import eu.goodlike.test.Fake;
@@ -33,6 +34,11 @@ import static org.junit.Assert.assertEquals;
 @TransactionConfiguration(defaultRollback = true)
 public class FullTableIT extends IntegrationTestEnvironment {
 
+    private static final String DEFAULT_PATH = "/timestar/api/v3/lesson/table/data/full/";
+
+    // PRIVATE
+    private static final String DEFAULT_PARAMS = "?start=" + 0 + "&end=" + Long.MAX_VALUE;
+
     @Test
     public void readingFullTable_shouldReturnTable() throws Exception {
         FullTable table = mvc.performGet(DEFAULT_PATH + DEFAULT_PARAMS, OK)
@@ -41,8 +47,6 @@ public class FullTableIT extends IntegrationTestEnvironment {
 
         assertEquals("Returned table should be equal to the pre-computed one", precomputedTable(), table);
     }
-
-    // PRIVATE
 
     public FullTable precomputedTable() {
         List<FullTeacherDTO> teachers = precomputedTeachers();
@@ -54,15 +58,15 @@ public class FullTableIT extends IntegrationTestEnvironment {
     }
 
     private List<FullTeacherDTO> precomputedTeachers() {
-        return Fake.someOf(Fakes::teacher, 2);
+        return Some.of(Fakes::teacher).fetch(2);
     }
 
     private List<ValidCustomerDTO> precomputedCustomers() {
-        return Fake.someOf(Fakes::customer, 2);
+        return Some.of(Fakes::customer).fetch(2);
     }
 
     private List<TableField> precomputedFields() {
-        return Fake.someOfLong(Fakes::lesson, 2).stream()
+        return Some.ofLong(Fakes::lesson).fetchStream(2)
                 .map(lesson -> new TableField(
                         lesson.getId().intValue(),
                         lesson.getId().intValue(),
@@ -103,8 +107,5 @@ public class FullTableIT extends IntegrationTestEnvironment {
     private FullTable readTable(MvcResult result) throws IOException {
         return MVC.from(result).to(FullTable.class);
     }
-
-    private static final String DEFAULT_PATH = "/timestar/api/v3/lesson/table/data/full/";
-    private static final String DEFAULT_PARAMS = "?start=" + 0 + "&end=" + Long.MAX_VALUE;
 
 }

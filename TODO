@@ -3,6 +3,4 @@ Make all foreign keys checked where appropriate and return 404 as a result
 Decouple DSLContext entirely from all non-DAO classes (export all methods to new DAO classes)
 
 Export:
-    Random + Power (goodlike-math)
     Field + jooq (goodlike-commons)
-    Resty remake? (goodlike-commons)

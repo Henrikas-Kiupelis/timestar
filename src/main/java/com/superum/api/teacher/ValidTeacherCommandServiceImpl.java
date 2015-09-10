@@ -8,12 +8,12 @@ import com.superum.db.generated.timestar.tables.records.TeacherRecord;
 import com.superum.db.partition.PartitionService;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.PartitionAccount;
-import com.superum.helper.Random;
 import com.superum.helper.jooq.CommandsForMany;
 import com.superum.helper.jooq.DefaultCommands;
 import com.superum.helper.jooq.DefaultQueries;
 import com.superum.helper.jooq.ForeignQueries;
 import com.superum.helper.mail.GMail;
+import eu.goodlike.random.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +29,45 @@ import static com.superum.db.generated.timestar.Tables.TEACHER;
 @Service
 @Transactional
 public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandService {
+
+    private static final int PASSWORD_LENGTH = 7;
+    private static final String EMAIL_TITLE = "Your password for ";
+    private static final String EMAIL_BODY = "Password: ";
+    private static final Logger LOG = LoggerFactory.getLogger(ValidTeacherCommandService.class);
+
+    // CONSTRUCTORS
+    private final DefaultCommands<TeacherRecord, Integer> defaultTeacherCommands;
+
+    // PRIVATE
+    private final CommandsForMany<Integer, String> teacherLanguagesCommands;
+    private final DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries;
+    private final ForeignQueries<Integer> foreignTeacherQueries;
+    private final PasswordEncoder encoder;
+    private final GMail mail;
+    private final AccountDAO accountDAO;
+    private final PartitionService partitionService;
+    private final ValidTeacherQueryService validTeacherQueryService;
+
+    @Autowired
+    public ValidTeacherCommandServiceImpl(DefaultCommands<TeacherRecord, Integer> defaultTeacherCommands,
+                                          CommandsForMany<Integer, String> teacherLanguagesCommands,
+                                          DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries,
+                                          ForeignQueries<Integer> foreignTeacherQueries,
+                                          PasswordEncoder encoder, GMail mail, AccountDAO accountDAO,
+                                          PartitionService partitionService,
+                                          ValidTeacherQueryService validTeacherQueryService) {
+        this.defaultTeacherCommands = defaultTeacherCommands;
+        this.teacherLanguagesCommands = teacherLanguagesCommands;
+        this.defaultTeacherQueries = defaultTeacherQueries;
+        this.foreignTeacherQueries = foreignTeacherQueries;
+
+        this.encoder = encoder;
+        this.mail = mail;
+        this.accountDAO = accountDAO;
+        this.partitionService = partitionService;
+
+        this.validTeacherQueryService = validTeacherQueryService;
+    }
 
     @Override
     public FullTeacherDTO create(FullTeacherDTO fullTeacherDTO, PartitionAccount account) {
@@ -115,7 +154,7 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
     public void createAccount(FullTeacherDTO fullTeacherDTO, PartitionAccount account) {
         String name = partitionService.findPartition(account.partitionId()).getName();
 
-        char[] randomPassword = Random.password(true, true, false, PASSWORD_LENGTH);
+        char[] randomPassword = Random.getDefault().password(true, true, false, PASSWORD_LENGTH);
         StringBuilder message = new StringBuilder()
                 .append(EMAIL_BODY);
         for (char ch : randomPassword)
@@ -141,55 +180,11 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
         LOG.debug("New Teacher Account created: {}", teacherAccount);
     }
 
-    // CONSTRUCTORS
-
-    @Autowired
-    public ValidTeacherCommandServiceImpl(DefaultCommands<TeacherRecord, Integer> defaultTeacherCommands,
-                                          CommandsForMany<Integer, String> teacherLanguagesCommands,
-                                          DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries,
-                                          ForeignQueries<Integer> foreignTeacherQueries,
-                                          PasswordEncoder encoder, GMail mail, AccountDAO accountDAO,
-                                          PartitionService partitionService,
-                                          ValidTeacherQueryService validTeacherQueryService) {
-        this.defaultTeacherCommands = defaultTeacherCommands;
-        this.teacherLanguagesCommands = teacherLanguagesCommands;
-        this.defaultTeacherQueries = defaultTeacherQueries;
-        this.foreignTeacherQueries = foreignTeacherQueries;
-
-        this.encoder = encoder;
-        this.mail = mail;
-        this.accountDAO = accountDAO;
-        this.partitionService = partitionService;
-
-        this.validTeacherQueryService = validTeacherQueryService;
-    }
-
-    // PRIVATE
-
-    private final DefaultCommands<TeacherRecord, Integer> defaultTeacherCommands;
-    private final CommandsForMany<Integer, String> teacherLanguagesCommands;
-    private final DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries;
-    private final ForeignQueries<Integer> foreignTeacherQueries;
-
-    private final PasswordEncoder encoder;
-    private final GMail mail;
-    private final AccountDAO accountDAO;
-    private final PartitionService partitionService;
-
-    private final ValidTeacherQueryService validTeacherQueryService;
-
     /**
      * To avoid long pauses when sending e-mails/generating passwords, accounts are created on a separate thread
      */
     private void createAccountAsync(FullTeacherDTO fullTeacherDTO, PartitionAccount account) {
         new Thread(() -> createAccount(fullTeacherDTO, account)).start();
     }
-
-    private static final int PASSWORD_LENGTH = 7;
-
-    private static final String EMAIL_TITLE = "Your password for ";
-    private static final String EMAIL_BODY = "Password: ";
-
-    private static final Logger LOG = LoggerFactory.getLogger(ValidTeacherCommandService.class);
 
 }

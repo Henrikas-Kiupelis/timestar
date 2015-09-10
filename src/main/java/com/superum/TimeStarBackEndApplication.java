@@ -1,5 +1,6 @@
 package com.superum;
 
+import eu.goodlike.random.Random;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,7 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TimeStarBackEndApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TimeStarBackEndApplication.class, args);
+        Random.init(); // to avoid initialization times later on in app; optional
+        SpringApplication.run(TimeStarBackEndApplication.class, args);
 	}
 
 }

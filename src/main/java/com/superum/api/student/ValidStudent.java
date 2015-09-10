@@ -1,10 +1,10 @@
 package com.superum.api.student;
 
-import com.superum.helper.Random;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.steps.FieldDef;
 import eu.goodlike.libraries.jodatime.Time;
+import eu.goodlike.random.Random;
 import eu.goodlike.validation.Validate;
 import org.jooq.lambda.Seq;
 
@@ -25,67 +25,24 @@ import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
  */
 public class ValidStudent extends MappedClass<ValidStudent, Integer> {
 
-    @Override
-    public Seq<MappedField<?>> createFields() {
-        return super.createFields().concat(CODE_FIELD_DEF.toField(this));
-    }
-
-    public boolean hasNeitherCustomerIdNorStartDate() {
-        return validStudentDTO.getCustomerId() == null && validStudentDTO.getStartDate() == null;
-    }
-
-    public boolean hasBothCustomerAndStartDate() {
-        return validStudentDTO.getCustomerId() != null && validStudentDTO.getStartDate() != null;
-    }
-
-    public static int generateCode() {
-        return Random.numberWithDigits(6);
-    }
-
-    // CONSTRUCTORS
-
-    public ValidStudent(ValidStudentDTO validStudentDTO) {
-        Validate.Int(validStudentDTO.getId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidStudentException("Student id must be positive, not: " +
-                        validStudentDTO.getId()));
-
-        Validate.Int(validStudentDTO.getCustomerId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidStudentException("Customer id for student must be positive, not: " +
-                        validStudentDTO.getCustomerId()));
-
-        Validate.string(validStudentDTO.getEmail()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE).email()
-                .ifInvalid(() -> new InvalidStudentException("Student email must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " +
-                        validStudentDTO.getEmail()));
-
-        Validate.string(validStudentDTO.getName()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidStudentException("Student name must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + validStudentDTO.getName()));
-
-        this.validStudentDTO = validStudentDTO;
-
-        registerFields(FIELD_DEFINITION_LIST, this);
-    }
-
-    // PRIVATE
-
-    private final ValidStudentDTO validStudentDTO;
-
-    // FIELD NAMES
-
     private static final String ID_FIELD = "id";
     private static final String CODE_FIELD = "code";
     private static final String CUSTOMER_ID_FIELD = "customerId";
     private static final String START_DATE_FIELD = "startDate";
+
+    // CONSTRUCTORS
     private static final String EMAIL_FIELD = "email";
+
+    // PRIVATE
     private static final String NAME_FIELD = "name";
 
+    // FIELD NAMES
     private static final FieldDef<ValidStudent, Integer> CODE_FIELD_DEF =
             FieldDef.steps(ValidStudent.class, Integer.class)
                     .fieldName(CODE_FIELD)
                     .tableField(STUDENT.CODE)
                     .getter(validStudent -> generateCode());
-
+    private final ValidStudentDTO validStudentDTO;
     private static final List<FieldDef<ValidStudent, ?>> FIELD_DEFINITION_LIST = Arrays.asList(
             FieldDef.steps(ValidStudent.class, Integer.class)
                     .fieldName(ID_FIELD)
@@ -116,5 +73,44 @@ public class ValidStudent extends MappedClass<ValidStudent, Integer> {
                     .getter(student -> student.validStudentDTO.getName())
                     .mandatory()
     );
+    public ValidStudent(ValidStudentDTO validStudentDTO) {
+        Validate.Int(validStudentDTO.getId()).Null().or().moreThan(0)
+                .ifInvalid(() -> new InvalidStudentException("Student id must be positive, not: " +
+                        validStudentDTO.getId()));
+
+        Validate.Int(validStudentDTO.getCustomerId()).Null().or().moreThan(0)
+                .ifInvalid(() -> new InvalidStudentException("Customer id for student must be positive, not: " +
+                        validStudentDTO.getCustomerId()));
+
+        Validate.string(validStudentDTO.getEmail()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE).email()
+                .ifInvalid(() -> new InvalidStudentException("Student email must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " +
+                        validStudentDTO.getEmail()));
+
+        Validate.string(validStudentDTO.getName()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
+                .ifInvalid(() -> new InvalidStudentException("Student name must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + validStudentDTO.getName()));
+
+        this.validStudentDTO = validStudentDTO;
+
+        registerFields(FIELD_DEFINITION_LIST, this);
+    }
+
+    public static int generateCode() {
+        return Random.getFast().numberWithDigits(6);
+    }
+
+    @Override
+    public Seq<MappedField<?>> createFields() {
+        return super.createFields().concat(CODE_FIELD_DEF.toField(this));
+    }
+
+    public boolean hasNeitherCustomerIdNorStartDate() {
+        return validStudentDTO.getCustomerId() == null && validStudentDTO.getStartDate() == null;
+    }
+
+    public boolean hasBothCustomerAndStartDate() {
+        return validStudentDTO.getCustomerId() != null && validStudentDTO.getStartDate() != null;
+    }
 
 }
