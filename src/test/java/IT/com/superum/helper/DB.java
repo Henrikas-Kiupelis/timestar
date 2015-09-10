@@ -37,19 +37,6 @@ public class DB {
 
     // INIT
 
-    private static final Field<?>[] FULL_TEACHER_FIELDS = ObjectArrays.concat(TEACHER.fields(),
-            groupConcat(TEACHER_LANGUAGE.CODE).as(FullTeacherDTO.getLanguagesFieldName()));
-    private static final String FILLER_PASSWORD = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-
-    // CREATE
-    private static final String TEACHER_TYPE = "TEACHER";
-    private final DSLContext sql;
-
-    @Autowired
-    public DB(DSLContext sql) {
-        this.sql = sql;
-    }
-
     public void init() {
         insertCustomers();
         insertTeachers();
@@ -60,15 +47,7 @@ public class DB {
         insertAttendance();
     }
 
-    /**
-     * <pre>
-     * Occasionally some straggler accounts remain in the DB despite transaction rollback... needs investigation!
-     * EDIT: Seems to have been a concurrency issue, looks to be solved
-     * </pre>
-     */
-    public void clean() {
-        cleanAccounts();
-    }
+    // CREATE
 
     public FullTeacherDTO insertFullTeacher(FullTeacherDTO teacher) {
         sql.insertInto(TEACHER)
@@ -126,8 +105,6 @@ public class DB {
         return readValidGroup(group.getId())
                 .orElseThrow(() -> new RuntimeException("Couldn't insert group"));
     }
-
-    // READ
 
     public ValidStudentDTO insertValidStudent(ValidStudentDTO student) {
         sql.insertInto(STUDENT)
@@ -190,6 +167,8 @@ public class DB {
                 .execute();
     }
 
+    // READ
+
     public Optional<FullTeacherDTO> readFullTeacher(int teacherId) {
         return sql.select(FULL_TEACHER_FIELDS).from(TEACHER)
                 .join(TEACHER_LANGUAGE).onKey(TEACHER_LANGUAGE_IBFK_1)
@@ -228,7 +207,6 @@ public class DB {
                 .map(ValidLessonDTO::valueOf);
     }
 
-    // CONSTRUCTORS
 
     public Optional<ValidGroupingDTO> readValidGrouping(int groupId) {
         Set<Integer> studentIds = sql.select(STUDENTS_IN_GROUPS.STUDENT_ID)
@@ -241,7 +219,6 @@ public class DB {
         return studentIds.isEmpty() ? Optional.empty() : Optional.of(new ValidGroupingDTO(groupId, studentIds));
     }
 
-    // PRIVATE
 
     public boolean existsGroupingForStudentId(int studentId) {
         return sql.fetchExists(STUDENTS_IN_GROUPS, STUDENTS_IN_GROUPS.STUDENT_ID.eq(studentId));
@@ -262,11 +239,16 @@ public class DB {
         return sql.fetchExists(LESSON_ATTENDANCE, LESSON_ATTENDANCE.STUDENT_ID.eq(studentId));
     }
 
-    private void cleanAccounts() {
-        sql.deleteFrom(ACCOUNT)
-                .where(ACCOUNT.ID.isNotNull())
-                .execute();
+    // CONSTRUCTORS
+
+    @Autowired
+    public DB(DSLContext sql) {
+        this.sql = sql;
     }
+
+    // PRIVATE
+
+    private final DSLContext sql;
 
     private java.sql.Date toSql(LocalDate startDate) {
         return startDate == null ? null : Time.convert(startDate).toSqlDate();
@@ -309,5 +291,10 @@ public class DB {
         Some.ofLong(Fakes::lessonAttendance).fetch(2)
                 .forEach(this::insertValidLessonAttendance);
     }
+
+    private static final Field<?>[] FULL_TEACHER_FIELDS = ObjectArrays.concat(TEACHER.fields(),
+            groupConcat(TEACHER_LANGUAGE.CODE).as(FullTeacherDTO.getLanguagesFieldName()));
+    private static final String FILLER_PASSWORD = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    private static final String TEACHER_TYPE = "TEACHER";
 
 }

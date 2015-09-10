@@ -23,22 +23,86 @@ import static com.superum.db.generated.timestar.Tables.STUDENT;
 public class Student {
 
 	// PUBLIC API
+    @JsonProperty("id")
+    public int getId() {
+        return id;
+    }
+    @JsonIgnore
+    public boolean hasId() {
+        return id > 0;
+    }
+    @JsonIgnore
+    public Student withId(int id) {
+        return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Student withoutId() {
+        return new Student(0, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
 
-	@Min(value = 0, message = "Negative student ids not allowed")
-	private final int id;
-	private final Integer code;
-	private final Integer customerId;
-    @NotNull(message = "There must be a start date")
-    private final LocalDate startDate;
-	@NotNull(message = "The student must have an email")
-	@Size(max = 60, message = "Email size must not exceed 60 characters")
-	@Email
-	private final String email;
-	@NotNull(message = "The student must have a name")
-	@Size(max = 60, message = "Name size must not exceed 60 characters")
-	private final String name;
-    private final Instant createdAt;
-    private final Instant updatedAt;
+    @JsonProperty("code")
+    public Integer getCode() {
+        return code;
+    }
+    @JsonIgnore
+    public Student withCode(int code) {
+        return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Student withoutCode() {
+        return new Student(id, null, customerId, startDate, email, name, createdAt, updatedAt);
+    }
+    @JsonIgnore
+    public Student withGeneratedCode() {
+        return withCode(generateCode());
+    }
+    public static int generateCode() {
+        return Random.getFast().numberWithDigits(6);
+    }
+
+    @JsonProperty("customerId")
+    public Integer getCustomerId() {
+        return customerId;
+    }
+
+    @JsonProperty("startDate")
+    public String getStartDateString() {
+        return startDate.toString();
+    }
+
+    @JsonIgnore
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    @JsonIgnore
+    public java.sql.Date getStartDateSql() {
+        return Time.convert(startDate).toSqlDate();
+    }
+
+    @JsonProperty("email")
+    public String getEmail() {
+        return email;
+    }
+
+    @JsonProperty("name")
+    public String getName() {
+        return name;
+    }
+
+    @JsonProperty("createdAt")
+    @JsonSerialize(using = InstantSerializer.class)
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    @JsonProperty("updatedAt")
+    @JsonSerialize(using = InstantSerializer.class)
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    // CONSTRUCTORS
 
 	@JsonCreator
 	public Student(@JsonProperty("id") int id,
@@ -58,10 +122,6 @@ public class Student {
         this.name = name;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-    }
-
-    public static int generateCode() {
-        return Random.getFast().numberWithDigits(6);
     }
 
 	public static Student valueOf(Record studentRecord) {
@@ -90,91 +150,29 @@ public class Student {
         return new Builder();
     }
 
-	@JsonProperty("id")
-	public int getId() {
-		return id;
-	}
-
-	@JsonIgnore
-	public boolean hasId() {
-		return id > 0;
-	}
-
-    @JsonIgnore
-    public Student withId(int id) {
-        return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
-    }
-
-	// CONSTRUCTORS
-
-    @JsonIgnore
-    public Student withoutId() {
-        return new Student(0, code, customerId, startDate, email, name, createdAt, updatedAt);
-    }
-
-    @JsonProperty("code")
-    public Integer getCode() {
-        return code;
-    }
-	
-	@JsonIgnore
-    public Student withCode(int code) {
-        return new Student(id, code, customerId, startDate, email, name, createdAt, updatedAt);
-    }
-
-    @JsonIgnore
-    public Student withoutCode() {
-        return new Student(id, null, customerId, startDate, email, name, createdAt, updatedAt);
-    }
-
-    @JsonIgnore
-    public Student withGeneratedCode() {
-        return withCode(generateCode());
-    }
-
     // PRIVATE
 
-	@JsonProperty("customerId")
-	public Integer getCustomerId() {
-		return customerId;
-	}
+    @Min(value = 0, message = "Negative student ids not allowed")
+    private final int id;
 
-    @JsonProperty("startDate")
-    public String getStartDateString() {
-        return startDate.toString();
-    }
-	
-    @JsonIgnore
-    public LocalDate getStartDate() {
-        return startDate;
-    }
+    private final Integer code;
 
-    @JsonIgnore
-    public java.sql.Date getStartDateSql() {
-        return Time.convert(startDate).toSqlDate();
-    }
-	
-	@JsonProperty("email")
-	public String getEmail() {
-		return email;
-	}
-	
-	@JsonProperty("name")
-	public String getName() {
-		return name;
-	}
+    private final Integer customerId;
 
-    @JsonProperty("createdAt")
-    @JsonSerialize(using = InstantSerializer.class)
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
+    @NotNull(message = "There must be a start date")
+    private final LocalDate startDate;
 
-    @JsonProperty("updatedAt")
-    @JsonSerialize(using = InstantSerializer.class)
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
+    @NotNull(message = "The student must have an email")
+    @Size(max = 60, message = "Email size must not exceed 60 characters")
+    @Email
+    private final String email;
+
+    @NotNull(message = "The student must have a name")
+    @Size(max = 60, message = "Name size must not exceed 60 characters")
+    private final String name;
+
+    private final Instant createdAt;
+    private final Instant updatedAt;
 
     // OBJECT OVERRIDES
 

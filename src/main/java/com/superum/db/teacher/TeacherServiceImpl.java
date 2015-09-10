@@ -25,89 +25,64 @@ import java.util.List;
 @Transactional
 public class TeacherServiceImpl implements TeacherService {
 
-	private static final int PASSWORD_LENGTH = 7;
-	private static final String EMAIL_TITLE = "Your password for ";
-	private static final String EMAIL_BODY = "Password: ";
-	private static final Logger LOG = LoggerFactory.getLogger(TeacherService.class);
-	private final TeacherDAO teacherDAO;
-	private final PasswordEncoder encoder;
+    @Override
+    public Teacher addTeacher(Teacher teacher, PartitionAccount account) {
+        LOG.debug("Creating new Teacher: {}");
 
-	// CONSTRUCTORS
-	private final GMail mail;
-	
-	// PRIVATE
-	private final AccountDAO accountDAO;
-	private final TeacherLanguagesService teacherLanguagesService;
-	private final PartitionService partitionService;
-	@Autowired
-	public TeacherServiceImpl(TeacherDAO teacherDAO, PasswordEncoder encoder, GMail mail, AccountDAO accountDAO,
-			TeacherLanguagesService teacherLanguagesService, PartitionService partitionService) {
-		this.teacherDAO = teacherDAO;
-		this.encoder = encoder;
-		this.mail = mail;
-		this.accountDAO = accountDAO;
-		this.teacherLanguagesService = teacherLanguagesService;
-		this.partitionService = partitionService;
-	}
+        Teacher newTeacher = teacherDAO.create(teacher, account.partitionId());
+        LOG.debug("New Teacher created: {}", newTeacher);
 
-	@Override
-	public Teacher addTeacher(Teacher teacher, PartitionAccount account) {
-		LOG.debug("Creating new Teacher: {}");
+        createAccountAsynchronously(newTeacher, account);
 
-		Teacher newTeacher = teacherDAO.create(teacher, account.partitionId());
-		LOG.debug("New Teacher created: {}", newTeacher);
+        return newTeacher;
+    }
 
-		createAccountAsynchronously(newTeacher, account);
+    @Override
+    public Teacher findTeacher(int id, int partitionId) {
+        LOG.debug("Reading teacher by ID: {}", id);
 
-		return newTeacher;
-	}
+        Teacher teacher = teacherDAO.read(id, partitionId);
+        LOG.debug("Teacher retrieved: {}", teacher);
 
-	@Override
-	public Teacher findTeacher(int id, int partitionId) {
-		LOG.debug("Reading teacher by ID: {}", id);
+        return teacher;
+    }
 
-		Teacher teacher = teacherDAO.read(id, partitionId);
-		LOG.debug("Teacher retrieved: {}", teacher);
+    @Override
+    public Teacher updateTeacher(Teacher teacher, int partitionId) {
+        LOG.debug("Updating Teacher: {}", teacher);
 
-		return teacher;
-	}
+        Teacher oldTeacher = teacherDAO.update(teacher, partitionId);
+        LOG.debug("Old Teacher retrieved: {}", oldTeacher);
 
-	@Override
-	public Teacher updateTeacher(Teacher teacher, int partitionId) {
-		LOG.debug("Updating Teacher: {}", teacher);
+        return oldTeacher;
+    }
 
-		Teacher oldTeacher = teacherDAO.update(teacher, partitionId);
-		LOG.debug("Old Teacher retrieved: {}", oldTeacher);
+    @Override
+    public Teacher deleteTeacher(int id, PartitionAccount account) {
+        LOG.debug("Deleting Teacher by ID: {}", id);
 
-		return oldTeacher;
-	}
-	
-	@Override
-	public Teacher deleteTeacher(int id, PartitionAccount account) {
-		LOG.debug("Deleting Teacher by ID: {}", id);
+        TeacherLanguages deletedLanguages = teacherLanguagesService.deleteLanguagesForTeacher(id, account.partitionId());
+        LOG.debug("Deleted TeacherLanguages: {}", deletedLanguages);
 
-		TeacherLanguages deletedLanguages = teacherLanguagesService.deleteLanguagesForTeacher(id, account.partitionId());
-		LOG.debug("Deleted TeacherLanguages: {}", deletedLanguages);
+        Teacher deletedTeacher = teacherDAO.delete(id, account.partitionId());
+        LOG.debug("Deleted Teacher: {}", deletedTeacher);
 
-		Teacher deletedTeacher = teacherDAO.delete(id, account.partitionId());
-		LOG.debug("Deleted Teacher: {}", deletedTeacher);
+        String username = account.usernameFor(deletedTeacher.getEmail());
+        Account deletedAccount = accountDAO.delete(username);
+        LOG.debug("Deleted Account: {}", deletedAccount);
 
-		String username = account.usernameFor(deletedTeacher.getEmail());
-		Account deletedAccount = accountDAO.delete(username);
-		LOG.debug("Deleted Account: {}", deletedAccount);
+        return deletedTeacher;
+    }
 
-		return deletedTeacher;
-	}
-	
-	@Override
-	public List<Teacher> getAllTeachers(int partitionId) {
-		LOG.debug("Reading all Teachers");
+    @Override
+    public List<Teacher> getAllTeachers(int partitionId) {
+        LOG.debug("Reading all Teachers");
 
-		List<Teacher> allTeachers = teacherDAO.readAll(partitionId);
-		LOG.debug("Teachers retrieved: {}", allTeachers);
+        List<Teacher> allTeachers = teacherDAO.readAll(partitionId);
+        LOG.debug("Teachers retrieved: {}", allTeachers);
 
-		return allTeachers;
-	}
+        return allTeachers;
+    }
 
     /**
      * This method is public so it can be tested; should not be accessible by other classes because it is not in the
@@ -116,7 +91,7 @@ public class TeacherServiceImpl implements TeacherService {
     public void createAccount(Teacher newTeacher, PartitionAccount account) {
         String name = partitionService.findPartition(account.partitionId()).getName();
 
-		char[] randomPassword = Random.getDefault().password(true, true, false, PASSWORD_LENGTH);
+        char[] randomPassword = Random.getDefault().password(true, true, false, PASSWORD_LENGTH);
         StringBuilder message = new StringBuilder()
                 .append(EMAIL_BODY);
         for (char ch : randomPassword)
@@ -140,10 +115,37 @@ public class TeacherServiceImpl implements TeacherService {
         Account teacherAccount = accountDAO.create(new Account(newTeacher.getId(), accountName, AccountType.TEACHER.name(), securePassword.toCharArray()));
         LOG.debug("New Teacher Account created: {}", teacherAccount);
     }
-	
+
+	// CONSTRUCTORS
+
+    @Autowired
+    public TeacherServiceImpl(TeacherDAO teacherDAO, PasswordEncoder encoder, GMail mail, AccountDAO accountDAO,
+                              TeacherLanguagesService teacherLanguagesService, PartitionService partitionService) {
+        this.teacherDAO = teacherDAO;
+        this.encoder = encoder;
+        this.mail = mail;
+        this.accountDAO = accountDAO;
+        this.teacherLanguagesService = teacherLanguagesService;
+        this.partitionService = partitionService;
+    }
+
+    // PRIVATE
+
+    private final TeacherDAO teacherDAO;
+    private final PasswordEncoder encoder;
+    private final GMail mail;
+    private final AccountDAO accountDAO;
+    private final TeacherLanguagesService teacherLanguagesService;
+    private final PartitionService partitionService;
+
     private void createAccountAsynchronously(Teacher newTeacher, PartitionAccount account) {
         // To avoid long pauses when sending e-mails/generating passwords, accounts are created on a separate thread
         new Thread(() -> createAccount(newTeacher, account)).start();
     }
+
+	private static final int PASSWORD_LENGTH = 7;
+	private static final String EMAIL_TITLE = "Your password for ";
+	private static final String EMAIL_BODY = "Password: ";
+	private static final Logger LOG = LoggerFactory.getLogger(TeacherService.class);
 
 }

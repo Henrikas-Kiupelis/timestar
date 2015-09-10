@@ -34,11 +34,6 @@ import static org.junit.Assert.assertEquals;
 @TransactionConfiguration(defaultRollback = true)
 public class FullTableIT extends IntegrationTestEnvironment {
 
-    private static final String DEFAULT_PATH = "/timestar/api/v3/lesson/table/data/full/";
-
-    // PRIVATE
-    private static final String DEFAULT_PARAMS = "?start=" + 0 + "&end=" + Long.MAX_VALUE;
-
     @Test
     public void readingFullTable_shouldReturnTable() throws Exception {
         FullTable table = mvc.performGet(DEFAULT_PATH + DEFAULT_PARAMS, OK)
@@ -48,7 +43,13 @@ public class FullTableIT extends IntegrationTestEnvironment {
         assertEquals("Returned table should be equal to the pre-computed one", precomputedTable(), table);
     }
 
-    public FullTable precomputedTable() {
+    // PRIVATE
+
+    private FullTable readTable(MvcResult result) throws IOException {
+        return MVC.from(result).to(FullTable.class);
+    }
+
+    private FullTable precomputedTable() {
         List<FullTeacherDTO> teachers = precomputedTeachers();
         List<ValidCustomerDTO> customers = precomputedCustomers();
         List<TableField> fields = precomputedFields();
@@ -104,8 +105,7 @@ public class FullTableIT extends IntegrationTestEnvironment {
                 .toList();
     }
 
-    private FullTable readTable(MvcResult result) throws IOException {
-        return MVC.from(result).to(FullTable.class);
-    }
+    private static final String DEFAULT_PATH = "/timestar/api/v3/lesson/table/data/full/";
+    private static final String DEFAULT_PARAMS = "?start=" + 0 + "&end=" + Long.MAX_VALUE;
 
 }
