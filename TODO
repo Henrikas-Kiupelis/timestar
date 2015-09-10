@@ -1,6 +1,7 @@
 Make all foreign keys checked where appropriate and return 404 as a result
 
 Decouple DSLContext entirely from all non-DAO classes (export all methods to new DAO classes)
+    use Function and Predicate or similar to wrap query classes inside Domain objects!
 
 Export:
     Field + jooq (goodlike-commons)

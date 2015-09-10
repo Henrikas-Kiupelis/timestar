@@ -24,18 +24,13 @@
 
 # Files containing passwords - use the .fill files to make a copy and fill the approriate fields
 
-/src/main/resources/persistence.properties
-/src/main/resources/email.properties
+/src/main/resources/
 
 # Generated files - use gradlew generate to make them
 
-/src/main/java/com/superum/db/generated/
+/src/generated/
 
 # Folders for file upload/download testing
 
 /pictures/
 /documents/
-
-# SQL test statements
-
-src/main/resources/sql/Testing.sql

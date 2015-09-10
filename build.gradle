@@ -116,8 +116,8 @@ task generate << {
 			}
 			generate() {}
 			target() {
-				packageName("com.superum.db.generated.${schema}")
-				directory('src/main/java')
+				packageName("${schema}")
+				directory('src/generated')
 			}
 		}
 	}
