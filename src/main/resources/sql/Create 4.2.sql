@@ -1,8 +1,8 @@
-DROP DATABASE timestarv2;
+DROP DATABASE timestar_v2;
 
-CREATE DATABASE timestarv2;
+CREATE DATABASE timestar_v2;
 
-USE timestarv2;
+USE timestar_v2;
 
 CREATE TABLE partitions (
   id INT NOT NULL UNIQUE,
