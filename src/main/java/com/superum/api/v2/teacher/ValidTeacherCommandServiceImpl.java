@@ -1,28 +1,16 @@
 package com.superum.api.v2.teacher;
 
-import com.google.common.primitives.Chars;
-import com.superum.api.v1.account.Account;
-import com.superum.api.v1.account.AccountDAO;
-import com.superum.api.v1.account.AccountType;
-import com.superum.api.v1.partition.PartitionService;
+import com.superum.api.v2.account.ValidAccountService;
 import com.superum.exception.DatabaseException;
-import com.superum.helper.GMail;
 import com.superum.helper.PartitionAccount;
 import com.superum.helper.jooq.CommandsForMany;
 import com.superum.helper.jooq.DefaultCommands;
 import com.superum.helper.jooq.DefaultQueries;
 import com.superum.helper.jooq.ForeignQueries;
-import eu.goodlike.random.Random;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import timestar_v2.tables.records.TeacherRecord;
-
-import javax.mail.MessagingException;
-import java.util.Arrays;
 
 import static timestar_v2.Tables.TEACHER;
 
@@ -105,63 +93,24 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
         if (defaultTeacherCommands.delete(teacherId, account.partitionId()) == 0)
             throw new DatabaseException("Couldn't delete teacher with id: " + teacherId);
 
-        accountDAO.delete(account.usernameFor(deletedTeacher.getEmail()));
+        validAccountService.deleteAccount(deletedTeacher, account);
     }
 
-    /**
-     * This method is public so it can be tested; should not be accessible by other classes because it is not in the
-     * interface, and can only be called by casting the interface to this class
-     */
-    public void createAccount(FullTeacherDTO fullTeacherDTO, PartitionAccount account) {
-        String name = partitionService.findPartition(account.partitionId()).getName();
-
-        char[] randomPassword = Random.getDefault().password(true, true, false, PASSWORD_LENGTH);
-        StringBuilder message = new StringBuilder()
-                .append(EMAIL_BODY);
-        for (char ch : randomPassword)
-            message.append(ch);
-        LOG.debug("Random password generated");
-
-        try {
-            String fullTitle = EMAIL_TITLE + name;
-            mail.send(fullTeacherDTO.getEmail(), fullTitle, message.toString());
-            LOG.debug("Sent email to teacher '{}': title - '{}'; body - '{}'", fullTeacherDTO, fullTitle, EMAIL_BODY + "[PROTECTED}");
-        } catch (MessagingException e) {
-            defaultTeacherCommands.delete(fullTeacherDTO.getId(), account.partitionId());
-            throw new IllegalStateException("Failed to send mail! Creation aborted.", e);
-        }
-
-        String securePassword = encoder.encode(Chars.join("", randomPassword));
-        Arrays.fill(randomPassword, '?');
-        LOG.debug("Password encoded and erased from memory");
-
-        String accountName = account.usernameFor(fullTeacherDTO.getEmail());
-        Account teacherAccount = accountDAO.create(new Account(fullTeacherDTO.getId(), accountName,
-                AccountType.TEACHER.name(), securePassword.toCharArray()));
-        LOG.debug("New Teacher Account created: {}", teacherAccount);
-    }
-
-    // CONSRUTCTORS
+    // CONSTRUCTORS
 
     @Autowired
     public ValidTeacherCommandServiceImpl(DefaultCommands<TeacherRecord, Integer> defaultTeacherCommands,
                                           CommandsForMany<Integer, String> teacherLanguagesCommands,
                                           DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries,
                                           ForeignQueries<Integer> foreignTeacherQueries,
-                                          PasswordEncoder encoder, GMail mail, AccountDAO accountDAO,
-                                          PartitionService partitionService,
+                                          ValidAccountService validAccountService,
                                           ValidTeacherQueryService validTeacherQueryService) {
         this.defaultTeacherCommands = defaultTeacherCommands;
         this.teacherLanguagesCommands = teacherLanguagesCommands;
         this.defaultTeacherQueries = defaultTeacherQueries;
         this.foreignTeacherQueries = foreignTeacherQueries;
-
-        this.encoder = encoder;
-        this.mail = mail;
-        this.accountDAO = accountDAO;
-        this.partitionService = partitionService;
-
         this.validTeacherQueryService = validTeacherQueryService;
+        this.validAccountService = validAccountService;
     }
 
     // PRIVATE
@@ -170,24 +119,14 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
     private final CommandsForMany<Integer, String> teacherLanguagesCommands;
     private final DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries;
     private final ForeignQueries<Integer> foreignTeacherQueries;
-
-    private final PasswordEncoder encoder;
-    private final GMail mail;
-    private final AccountDAO accountDAO;
-    private final PartitionService partitionService;
-
     private final ValidTeacherQueryService validTeacherQueryService;
+    private final ValidAccountService validAccountService;
 
     /**
      * To avoid long pauses when sending e-mails/generating passwords, accounts are created on a separate thread
      */
     private void createAccountAsync(FullTeacherDTO fullTeacherDTO, PartitionAccount account) {
-        new Thread(() -> createAccount(fullTeacherDTO, account)).start();
+        new Thread(() -> validAccountService.createAccount(fullTeacherDTO, account)).start();
     }
-
-    private static final int PASSWORD_LENGTH = 7;
-    private static final String EMAIL_TITLE = "Your password for ";
-    private static final String EMAIL_BODY = "Password: ";
-    private static final Logger LOG = LoggerFactory.getLogger(ValidTeacherCommandService.class);
 
 }
