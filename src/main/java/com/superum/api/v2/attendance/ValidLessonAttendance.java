@@ -7,6 +7,7 @@ import org.jooq.lambda.Seq;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiPredicate;
 
 /**
  * <pre>
@@ -25,6 +26,10 @@ public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
     @Override
     public Seq<Integer> secondaryValues() {
         return Seq.seq(studentIds);
+    }
+
+    public boolean areStudentsFromGroupThisLessonWasFor(BiPredicate<Long, Set<Integer>> checker) {
+        return checker.test(lessonId, studentIds);
     }
 
     // CONSTRUCTORS

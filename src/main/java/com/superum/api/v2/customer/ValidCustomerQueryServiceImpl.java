@@ -2,18 +2,12 @@ package com.superum.api.v2.customer;
 
 import com.superum.api.v2.teacher.TeacherNotFoundException;
 import com.superum.helper.jooq.DefaultQueries;
-import org.jooq.DSLContext;
-import org.jooq.SelectHavingStep;
-import org.jooq.SelectSelectStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import timestar_v2.tables.records.CustomerRecord;
 import timestar_v2.tables.records.TeacherRecord;
 
 import java.util.List;
-
-import static timestar_v2.Keys.*;
-import static timestar_v2.Tables.*;
 
 @Service
 public class ValidCustomerQueryServiceImpl implements ValidCustomerQueryService {
@@ -29,12 +23,7 @@ public class ValidCustomerQueryServiceImpl implements ValidCustomerQueryService 
         if (!defaultTeacherQueries.exists(teacherId, partitionId))
             throw new TeacherNotFoundException("No teacher with given id exists: " + teacherId);
 
-        return teachersForCustomer(sql.select(CUSTOMER.fields()), teacherId, partitionId)
-                .orderBy(CUSTOMER.ID)
-                .limit(amount)
-                .offset(page * amount)
-                .fetch()
-                .map(ValidCustomerDTO::valueOf);
+        return customersForTeacher.fetch(teacherId, page, amount, partitionId);
     }
 
     @Override
@@ -47,7 +36,7 @@ public class ValidCustomerQueryServiceImpl implements ValidCustomerQueryService 
         if (!defaultTeacherQueries.exists(teacherId, partitionId))
             throw new TeacherNotFoundException("No teacher with given id exists: " + teacherId);
 
-        return sql.fetchCount(teachersForCustomer(sql.selectOne(), teacherId, partitionId));
+        return customersForTeacher.count(teacherId, partitionId);
     }
 
     @Override
@@ -58,27 +47,18 @@ public class ValidCustomerQueryServiceImpl implements ValidCustomerQueryService 
     // CONSTRUCTORS
 
     @Autowired
-    public ValidCustomerQueryServiceImpl(DSLContext sql, DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries,
+    public ValidCustomerQueryServiceImpl(CustomersForTeacherFetcher customersForTeacher,
+                                         DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries,
                                          DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries) {
-        this.sql = sql;
+        this.customersForTeacher = customersForTeacher;
         this.defaultCustomerQueries = defaultCustomerQueries;
         this.defaultTeacherQueries = defaultTeacherQueries;
     }
 
     // PRIVATE
 
-    private final DSLContext sql;
+    private final CustomersForTeacherFetcher customersForTeacher;
     private final DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries;
     private final DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries;
-
-    private SelectHavingStep<?> teachersForCustomer(SelectSelectStep<?> select, int teacherId, int partitionId) {
-        return select.from(CUSTOMER)
-                .join(STUDENT).onKey(STUDENT_IBFK_1)
-                .join(STUDENTS_IN_GROUPS).onKey(STUDENTS_IN_GROUPS_IBFK_1)
-                .join(GROUP_OF_STUDENTS).onKey(STUDENTS_IN_GROUPS_IBFK_2)
-                .where(GROUP_OF_STUDENTS.TEACHER_ID.eq(teacherId)
-                        .and(CUSTOMER.PARTITION_ID.eq(partitionId)))
-                .groupBy(CUSTOMER.ID);
-    }
 
 }

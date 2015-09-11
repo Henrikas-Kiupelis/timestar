@@ -3,7 +3,6 @@ package com.superum.api.v2.group;
 import com.superum.api.v2.teacher.TeacherNotFoundException;
 import com.superum.helper.jooq.DefaultQueries;
 import org.jooq.Condition;
-import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import timestar_v2.tables.records.CustomerRecord;
@@ -13,9 +12,7 @@ import timestar_v2.tables.records.TeacherRecord;
 
 import java.util.List;
 
-import static timestar_v2.Keys.STUDENTS_IN_GROUPS_IBFK_2;
 import static timestar_v2.Tables.GROUP_OF_STUDENTS;
-import static timestar_v2.Tables.STUDENTS_IN_GROUPS;
 
 @Service
 public class ValidGroupQueryServiceImpl implements ValidGroupQueryService {
@@ -54,19 +51,7 @@ public class ValidGroupQueryServiceImpl implements ValidGroupQueryService {
         if (!defaultStudentQueries.exists(studentId, partitionId))
             throw new TeacherNotFoundException("No student with given id exists: " + studentId);
 
-        Condition condition = defaultGroupQueries.partitionId(partitionId)
-                .and(STUDENTS_IN_GROUPS.STUDENT_ID.eq(studentId));
-
-        return sql.select(GROUP_OF_STUDENTS.fields())
-                .from(GROUP_OF_STUDENTS)
-                .join(STUDENTS_IN_GROUPS).onKey(STUDENTS_IN_GROUPS_IBFK_2)
-                .where(condition)
-                .groupBy(GROUP_OF_STUDENTS.ID)
-                .orderBy(GROUP_OF_STUDENTS.ID)
-                .limit(amount)
-                .offset(page * amount)
-                .fetch()
-                .map(ValidGroupDTO::valueOf);
+        return groupsForStudent.fetch(studentId, page, amount, partitionId);
     }
 
     @Override
@@ -80,11 +65,12 @@ public class ValidGroupQueryServiceImpl implements ValidGroupQueryService {
     // CONSTRUCTORS
 
     @Autowired
-    public ValidGroupQueryServiceImpl(DSLContext sql, DefaultQueries<GroupOfStudentsRecord, Integer> defaultGroupQueries,
+    public ValidGroupQueryServiceImpl(GroupsForStudentFetcher groupsForStudent,
+                                      DefaultQueries<GroupOfStudentsRecord, Integer> defaultGroupQueries,
                                       DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries,
                                       DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries,
                                       DefaultQueries<StudentRecord, Integer> defaultStudentQueries) {
-        this.sql = sql;
+        this.groupsForStudent = groupsForStudent;
         this.defaultGroupQueries = defaultGroupQueries;
         this.defaultTeacherQueries = defaultTeacherQueries;
         this.defaultCustomerQueries = defaultCustomerQueries;
@@ -93,7 +79,7 @@ public class ValidGroupQueryServiceImpl implements ValidGroupQueryService {
 
     // PRIVATE
 
-    private final DSLContext sql;
+    private final GroupsForStudentFetcher groupsForStudent;
     private final DefaultQueries<GroupOfStudentsRecord, Integer> defaultGroupQueries;
     private final DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries;
     private final DefaultQueries<CustomerRecord, Integer> defaultCustomerQueries;

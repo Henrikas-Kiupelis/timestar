@@ -1,7 +1,10 @@
 Decouple DSLContext entirely from all non-DAO classes (export all methods to new DAO classes)
     use Function and Predicate or similar to wrap query classes inside Domain objects!
 
+Decouple Account creation process from TeacherService class
+
 Export:
     Field + jooq (goodlike-commons)
 
 API v3 for lesson (and rest) with multiple DTO classes + resolution of DTO -> Domain and inverse (if time allows)
+    do DSL decoulping here!

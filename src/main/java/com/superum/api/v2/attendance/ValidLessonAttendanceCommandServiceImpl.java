@@ -7,16 +7,13 @@ import com.superum.helper.jooq.CommandsForMany;
 import com.superum.helper.jooq.DefaultQueries;
 import com.superum.helper.jooq.QueriesForMany;
 import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import timestar_v2.tables.records.LessonRecord;
 import timestar_v2.tables.records.StudentRecord;
 
-import static timestar_v2.Keys.STUDENTS_IN_GROUPS_IBFK_1;
-import static timestar_v2.Tables.*;
+import static timestar_v2.Tables.STUDENT;
 
 @Service
 @Transactional
@@ -75,11 +72,12 @@ public class ValidLessonAttendanceCommandServiceImpl implements ValidLessonAtten
     // CONSTRUCTORS
 
     @Autowired
-    public ValidLessonAttendanceCommandServiceImpl(DSLContext sql, CommandsForMany<Long, Integer> lessonAttendanceCommands,
+    public ValidLessonAttendanceCommandServiceImpl(StudentGroupChecker studentGroupChecker,
+                                                   CommandsForMany<Long, Integer> lessonAttendanceCommands,
                                                    DefaultQueries<LessonRecord, Long> defaultLessonQueries,
                                                    DefaultQueries<StudentRecord, Integer> defaultStudentQueries,
                                                    QueriesForMany<Long, Integer> defaultLessonAttendanceQueries) {
-        this.sql = sql;
+        this.studentGroupChecker = studentGroupChecker;
         this.lessonAttendanceCommands = lessonAttendanceCommands;
         this.defaultLessonQueries = defaultLessonQueries;
         this.defaultStudentQueries = defaultStudentQueries;
@@ -88,7 +86,7 @@ public class ValidLessonAttendanceCommandServiceImpl implements ValidLessonAtten
 
     // PRIVATE
 
-    private final DSLContext sql;
+    private final StudentGroupChecker studentGroupChecker;
     private final CommandsForMany<Long, Integer> lessonAttendanceCommands;
     private final DefaultQueries<LessonRecord, Long> defaultLessonQueries;
     private final DefaultQueries<StudentRecord, Integer> defaultStudentQueries;
@@ -107,18 +105,8 @@ public class ValidLessonAttendanceCommandServiceImpl implements ValidLessonAtten
     }
 
     private void validateStudentIdsAgainstGroup(ValidLessonAttendance lessonAttendance, int partitionId) {
-        Condition condition = lessonAttendance.secondaryValuesEq(STUDENT.ID)
-                .and(defaultStudentQueries.partitionId(partitionId))
-                .and(LESSON.ID.eq(lessonAttendance.primaryValue()));
-
-        Select<?> select = sql.selectOne()
-                .from(STUDENT)
-                .join(STUDENTS_IN_GROUPS).onKey(STUDENTS_IN_GROUPS_IBFK_1)
-                .join(LESSON).on(LESSON.GROUP_ID.eq(STUDENTS_IN_GROUPS.GROUP_ID))
-                .where(condition)
-                .groupBy(STUDENT.ID);
-
-        if (sql.fetchCount(select) != lessonAttendance.secondaryValues().count())
+        if (!lessonAttendance.areStudentsFromGroupThisLessonWasFor((lessonId, studentIds) ->
+                studentGroupChecker.checkLessonWithStudentIds(lessonId, studentIds, partitionId)))
             throw new InvalidLessonAttendanceException("Some of the students do not belong to the group this lesson was for: " +
                     lessonAttendance.secondaryValues().join(", "));
     }
