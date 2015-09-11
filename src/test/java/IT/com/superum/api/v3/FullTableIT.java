@@ -8,7 +8,7 @@ import com.superum.api.v3.table.FullTable;
 import com.superum.api.v3.table.TableField;
 import com.superum.api.v3.table.TableReport;
 import com.superum.helper.Fakes;
-import com.superum.helper.time.TimeResolver;
+import com.superum.helper.TimeResolver;
 import eu.goodlike.functional.some.Some;
 import eu.goodlike.libraries.jodatime.Time;
 import eu.goodlike.libraries.mockmvc.MVC;

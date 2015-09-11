@@ -4,7 +4,7 @@ import com.superum.api.v2.core.CommonControllerLogic;
 import com.superum.api.v2.exception.InvalidRequestException;
 import com.superum.api.v2.teacher.ValidTeacherController;
 import com.superum.helper.PartitionAccount;
-import com.superum.helper.time.TimeResolver;
+import com.superum.helper.TimeResolver;
 import eu.goodlike.validation.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

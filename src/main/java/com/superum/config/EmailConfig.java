@@ -1,6 +1,6 @@
 package com.superum.config;
 
-import com.superum.helper.mail.GMail;
+import com.superum.helper.GMail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

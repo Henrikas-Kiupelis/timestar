@@ -1,4 +1,4 @@
-package com.superum.helper.mail;
+package com.superum.helper;
 
 import com.sun.mail.smtp.SMTPTransport;
 

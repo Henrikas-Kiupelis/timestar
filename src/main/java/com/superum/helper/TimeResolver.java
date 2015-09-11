@@ -1,4 +1,4 @@
-package com.superum.helper.time;
+package com.superum.helper;
 
 import eu.goodlike.libraries.jodatime.Time;
 import eu.goodlike.libraries.jodatime.TimeHandler;

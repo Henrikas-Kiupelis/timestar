@@ -17,7 +17,6 @@ import java.util.function.Predicate;
 import static timestar_v2.Tables.GROUP_OF_STUDENTS;
 import static timestar_v2.Tables.LESSON;
 
-
 /**
  * <pre>
  * Domain object for lessons

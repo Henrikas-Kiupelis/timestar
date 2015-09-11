@@ -1,7 +1,7 @@
 package IT.com.superum.helper;
 
 import com.superum.api.v1.account.AccountDAO;
-import com.superum.helper.mail.GMail;
+import com.superum.helper.GMail;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
