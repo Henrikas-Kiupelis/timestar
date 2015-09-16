@@ -15,7 +15,9 @@ import java.util.Properties;
 /**
  * Sends emails using a GMail account
  *
- * Borrowed from some stackoverflow thread (sorry, guy, can't remember!)
+ * Borrowed from:
+ * http://stackoverflow.com/questions/3649014/send-email-using-java/3649148#3649148
+ * by Cheok Yan Cheng
  */
 public class GMail {
 
