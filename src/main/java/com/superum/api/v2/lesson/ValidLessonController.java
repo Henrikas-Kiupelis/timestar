@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * <pre>
@@ -28,7 +29,7 @@ public class ValidLessonController extends CommonControllerLogic {
 
     // COMMANDS
 
-    @RequestMapping(method = RequestMethod.PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidLessonDTO create(PartitionAccount account, @RequestBody ValidLessonDTO lesson) {
         if (lesson == null)
@@ -42,7 +43,7 @@ public class ValidLessonController extends CommonControllerLogic {
         return createdLesson;
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidLessonDTO lesson) {
         if (lesson == null)
@@ -54,7 +55,7 @@ public class ValidLessonController extends CommonControllerLogic {
         LOG.info("Lesson successfully updated");
     }
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id:[\\d]+}", method = DELETE)
     @ResponseBody
     public void delete(PartitionAccount account, @PathVariable int id) {
         validateId("Lesson", id);
@@ -67,7 +68,7 @@ public class ValidLessonController extends CommonControllerLogic {
 
     // QUERIES
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{id:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidLessonDTO read(PartitionAccount account, @PathVariable int id) {
         validateId("Lesson", id);
@@ -80,7 +81,7 @@ public class ValidLessonController extends CommonControllerLogic {
         return lesson;
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidLessonDTO> readAll(PartitionAccount account,
                                         @RequestParam(value="page", required=false) Integer page,
@@ -104,7 +105,7 @@ public class ValidLessonController extends CommonControllerLogic {
         return lessons;
     }
 
-    @RequestMapping(value = "/{tableName:group|teacher|customer|student}/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{tableName:group|teacher|customer|student}/{id:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidLessonDTO> readForTable(PartitionAccount account, @PathVariable String tableName, @PathVariable int id,
                                              @RequestParam(value="page", required=false) Integer page,

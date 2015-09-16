@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * <pre>
@@ -27,7 +28,7 @@ public class ValidStudentController extends CommonControllerLogic {
 
     // COMMANDS
 
-    @RequestMapping(method = RequestMethod.PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidStudentDTO create(PartitionAccount account, @RequestBody ValidStudentDTO student) {
         if (student == null)
@@ -41,7 +42,7 @@ public class ValidStudentController extends CommonControllerLogic {
         return createdStudent;
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidStudentDTO student) {
         if (student == null)
@@ -53,7 +54,7 @@ public class ValidStudentController extends CommonControllerLogic {
         LOG.info("Student successfully updated");
     }
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id:[\\d]+}", method = DELETE)
     @ResponseBody
     public void delete(PartitionAccount account, @PathVariable int id) {
         validateId("Student", id);
@@ -66,7 +67,7 @@ public class ValidStudentController extends CommonControllerLogic {
 
     // QUERIES
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{id:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidStudentDTO read(PartitionAccount account, @PathVariable int id) {
         validateId("Student", id);
@@ -79,7 +80,7 @@ public class ValidStudentController extends CommonControllerLogic {
         return student;
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidStudentDTO> readAll(PartitionAccount account,
                                          @RequestParam(value="page", required=false) Integer page,
@@ -96,7 +97,7 @@ public class ValidStudentController extends CommonControllerLogic {
         return students;
     }
 
-    @RequestMapping(value = "/{tableName:group|lesson|customer}/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{tableName:group|lesson|customer}/{id:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidStudentDTO> readForTable(PartitionAccount account, @PathVariable String tableName, @PathVariable long id,
                                                  @RequestParam(value="page", required=false) Integer page,

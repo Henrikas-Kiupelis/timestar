@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * <pre>
@@ -26,7 +27,7 @@ public class ValidTeacherController extends CommonControllerLogic {
 
     // COMMANDS
 
-    @RequestMapping(method = RequestMethod.PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FullTeacherDTO create(PartitionAccount account, @RequestBody FullTeacherDTO teacher) {
         if (teacher == null)
@@ -40,7 +41,7 @@ public class ValidTeacherController extends CommonControllerLogic {
         return createdTeacher;
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody FullTeacherDTO teacher) {
         if (teacher == null)
@@ -52,7 +53,7 @@ public class ValidTeacherController extends CommonControllerLogic {
         LOG.info("Successfully updated teacher");
     }
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id:[\\d]+}", method = DELETE)
     @ResponseBody
     public void delete(PartitionAccount account, @PathVariable int id) {
         validateId("Teacher", id);
@@ -65,7 +66,7 @@ public class ValidTeacherController extends CommonControllerLogic {
 
     // QUERIES
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{id:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FullTeacherDTO read(PartitionAccount account, @PathVariable int id) {
         validateId("Teacher", id);
@@ -80,7 +81,7 @@ public class ValidTeacherController extends CommonControllerLogic {
 
 
 
-    @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<FullTeacherDTO> readAll(PartitionAccount account,
                                                @RequestParam(value="page", required=false) Integer page,
@@ -98,7 +99,7 @@ public class ValidTeacherController extends CommonControllerLogic {
         return teachers;
     }
 
-    @RequestMapping(value = "/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/count", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public int countAll(PartitionAccount account) {
         LOG.info("User {} is counting teachers", account);

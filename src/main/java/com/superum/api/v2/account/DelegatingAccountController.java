@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * <pre>
@@ -23,7 +24,7 @@ import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
 @RequestMapping(value = "/timestar/api/v2/account")
 public class DelegatingAccountController {
 
-    @RequestMapping(method = RequestMethod.PUT, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidAccountDTO createAdmin(PartitionAccount partitionAccount, @RequestBody ValidAccountDTO validAccountDTO) {
         if (validAccountDTO == null)
@@ -33,7 +34,7 @@ public class DelegatingAccountController {
         return ValidAccountDTO.valueOf(account);
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidAccountDTO update(PartitionAccount partitionAccount, @RequestBody ValidAccountDTO validAccountDTO) {
         if (validAccountDTO == null)
@@ -43,7 +44,7 @@ public class DelegatingAccountController {
         return ValidAccountDTO.valueOf(account);
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidAccountDTO read(PartitionAccount partitionAccount, @RequestParam(value="username") String username) {
         ValidAccountDTO.validateUsername(username);

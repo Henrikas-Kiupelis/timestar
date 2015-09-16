@@ -10,13 +10,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 
 /**
@@ -31,13 +35,13 @@ import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
 @RequestMapping(value = "/timestar/api/v3/lesson/table")
 public class SplitLessonTableController extends CommonControllerLogic {
 
-    @RequestMapping(value = "/size", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/size", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public int getTeacherCount(PartitionAccount account) {
         return validTeacherController.countAll(account);
     }
 
-    @RequestMapping(value = "/data", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/data", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public Table getTableData(PartitionAccount account,
                             @RequestParam(value = "per_page", required = false) Integer per_page,
@@ -49,7 +53,7 @@ public class SplitLessonTableController extends CommonControllerLogic {
         return getTableData(account, DEFAULT_HOME_PAGE, per_page, time_zone, start_date, end_date, start, end);
     }
 
-    @RequestMapping(value = "/data/{page:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/data/{page:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public Table getTableData(PartitionAccount account, @PathVariable int page,
                             @RequestParam(value = "per_page", required = false) Integer per_page,
@@ -73,7 +77,7 @@ public class SplitLessonTableController extends CommonControllerLogic {
         return lessonTable;
     }
 
-    @RequestMapping(value = "/report/{source:teacher|customer}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/report/{source:teacher|customer}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<TableReport> getReportData(PartitionAccount account, @PathVariable String source,
                              @RequestParam(value = "id") String id) {
@@ -101,7 +105,7 @@ public class SplitLessonTableController extends CommonControllerLogic {
         return reports;
     }
 
-    @RequestMapping(value = "/data/full", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/data/full", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FullTable getTableDataFull(PartitionAccount account,
                                   @RequestParam(value = "per_page", required = false) Integer per_page,
@@ -113,7 +117,7 @@ public class SplitLessonTableController extends CommonControllerLogic {
         return getTableDataFull(account, DEFAULT_HOME_PAGE, per_page, time_zone, start_date, end_date, start, end);
     }
 
-    @RequestMapping(value = "/data/full/{page:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/data/full/{page:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FullTable getTableDataFull(PartitionAccount account, @PathVariable int page,
                                   @RequestParam(value = "per_page", required = false) Integer per_page,

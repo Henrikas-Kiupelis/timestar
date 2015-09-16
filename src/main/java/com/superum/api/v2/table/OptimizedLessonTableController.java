@@ -9,9 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  * <pre>
@@ -25,7 +29,7 @@ import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
 @RequestMapping(value = "/timestar/api/v2/lesson/table")
 public class OptimizedLessonTableController extends CommonControllerLogic {
 
-    @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public OptimizedLessonTableDTO read(PartitionAccount account,
                                       @RequestParam(value = "per_page", required = false) Integer per_page,
@@ -37,7 +41,7 @@ public class OptimizedLessonTableController extends CommonControllerLogic {
         return read(account, DEFAULT_HOME_PAGE, per_page, time_zone, start_date, end_date, start, end);
     }
 
-    @RequestMapping(value = "/{page:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{page:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public OptimizedLessonTableDTO read(PartitionAccount account, @PathVariable int page,
                                       @RequestParam(value = "per_page", required = false) Integer per_page,

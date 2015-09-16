@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * <pre>
@@ -26,7 +27,7 @@ public class ValidCustomerController extends CommonControllerLogic {
 
     // COMMANDS
 
-	@RequestMapping(method = RequestMethod.PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+	@RequestMapping(method = PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public ValidCustomerDTO create(PartitionAccount account, @RequestBody ValidCustomerDTO customer) {
         if (customer == null)
@@ -40,7 +41,7 @@ public class ValidCustomerController extends CommonControllerLogic {
         return createdCustomer;
 	}
 
-    @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidCustomerDTO customer) {
         if (customer == null)
@@ -52,7 +53,7 @@ public class ValidCustomerController extends CommonControllerLogic {
         LOG.info("Customer successfully updated");
     }
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id:[\\d]+}", method = DELETE)
     @ResponseBody
     public void delete(PartitionAccount account, @PathVariable int id) {
         validateId("Customer", id);
@@ -65,7 +66,7 @@ public class ValidCustomerController extends CommonControllerLogic {
 
     // QUERIES
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{id:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
 	public ValidCustomerDTO read(PartitionAccount account, @PathVariable int id) {
         validateId("Customer", id);
@@ -78,7 +79,7 @@ public class ValidCustomerController extends CommonControllerLogic {
         return customer;
 	}
 
-    @RequestMapping(value = "/teacher/{teacherId:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/teacher/{teacherId:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidCustomerDTO> readForTeacher(PartitionAccount account, @PathVariable int teacherId,
                                                  @RequestParam(value="page", required=false) Integer page,
@@ -96,7 +97,7 @@ public class ValidCustomerController extends CommonControllerLogic {
         return customers;
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidCustomerDTO> readAll(PartitionAccount account,
                                           @RequestParam(value="page", required=false) Integer page,
@@ -113,7 +114,7 @@ public class ValidCustomerController extends CommonControllerLogic {
         return customers;
     }
 
-    @RequestMapping(value = "/teacher/{teacherId:[\\d]+}/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/teacher/{teacherId:[\\d]+}/count", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public int countForTeacher(PartitionAccount account, @PathVariable int teacherId) {
         validateId("Teacher", teacherId);
@@ -126,7 +127,7 @@ public class ValidCustomerController extends CommonControllerLogic {
         return count;
     }
 
-    @RequestMapping(value = "/count", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/count", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public int countAll(PartitionAccount account) {
         LOG.info("User {} is counting all customers", account);

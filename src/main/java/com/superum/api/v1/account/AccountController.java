@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @RequestMapping(value = "/timestar/api")
 public class AccountController {
 
-	@RequestMapping(value = "/account/admin/add", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
+	@RequestMapping(value = "/account/admin/add", method = POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public Account createNewAdmin(PartitionAccount partitionAccount, @RequestBody @Valid Account account) {
 		String username = partitionAccount.usernameFor(account);
@@ -25,7 +27,7 @@ public class AccountController {
 		return accountService.createNewAdmin(new Account(0, username, AccountType.ADMIN.name(), securePassword.toCharArray()));
 	}
 	
-	@RequestMapping(value = "/account/update", method = RequestMethod.POST, produces = APPLICATION_JSON_UTF8)
+	@RequestMapping(value = "/account/update", method = POST, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public Account updateAccount(PartitionAccount partitionAccount, @RequestBody @Valid Account account) {
         if (!partitionAccount.belongsTo(account))
@@ -38,7 +40,7 @@ public class AccountController {
                 account.getAccountType(),securePassword.toCharArray()));
 	}
 	
-	@RequestMapping(value = "/account/info", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+	@RequestMapping(value = "/account/info", method = GET, produces = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public Account retrieveInfo(PartitionAccount partitionAccount, @RequestParam(value="username") String username) {
 		return accountService.retrieveInfo(partitionAccount.usernameFor(username));

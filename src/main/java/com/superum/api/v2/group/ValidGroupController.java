@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * <pre>
@@ -27,7 +28,7 @@ public class ValidGroupController extends CommonControllerLogic {
 
     // COMMANDS
 
-    @RequestMapping(method = RequestMethod.PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidGroupDTO create(PartitionAccount account, @RequestBody ValidGroupDTO group) {
         if (group == null)
@@ -41,7 +42,7 @@ public class ValidGroupController extends CommonControllerLogic {
         return createdGroup;
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidGroupDTO group) {
         if (group == null)
@@ -53,7 +54,7 @@ public class ValidGroupController extends CommonControllerLogic {
         LOG.info("Group successfully updated");
     }
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id:[\\d]+}", method = DELETE)
     @ResponseBody
     public void delete(PartitionAccount account, @PathVariable int id) {
         validateId("Group", id);
@@ -66,7 +67,7 @@ public class ValidGroupController extends CommonControllerLogic {
 
     // QUERIES
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{id:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidGroupDTO read(PartitionAccount account, @PathVariable int id) {
         validateId("Group", id);
@@ -79,7 +80,7 @@ public class ValidGroupController extends CommonControllerLogic {
         return group;
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidGroupDTO> readAll(PartitionAccount account,
                                        @RequestParam(value="page", required=false) Integer page,
@@ -95,7 +96,7 @@ public class ValidGroupController extends CommonControllerLogic {
         return groups;
     }
 
-    @RequestMapping(value = "/{tableName:teacher|customer|student}/{id:[\\d]+}", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{tableName:teacher|customer|student}/{id:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidGroupDTO> readForTable(PartitionAccount account, @PathVariable String tableName, @PathVariable int id,
                                               @RequestParam(value="page", required=false) Integer page,
@@ -129,7 +130,7 @@ public class ValidGroupController extends CommonControllerLogic {
         return groups;
     }
 
-    @RequestMapping(value = "/customer/none", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/customer/none", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public List<ValidGroupDTO> readForTable(PartitionAccount account,
                                             @RequestParam(value="page", required=false) Integer page,

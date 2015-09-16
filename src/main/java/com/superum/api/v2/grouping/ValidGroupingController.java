@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * <pre>
@@ -22,7 +23,7 @@ import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
 @RequestMapping(value = "/timestar/api/v2/grouping")
 public class ValidGroupingController extends CommonControllerLogic {
 
-    @RequestMapping(method = RequestMethod.PUT, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void create(PartitionAccount account, @RequestBody ValidGroupingDTO grouping) {
         if (grouping == null)
@@ -34,7 +35,7 @@ public class ValidGroupingController extends CommonControllerLogic {
         LOG.info("Grouping successfully created");
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidGroupingDTO grouping) {
         if (grouping == null)
@@ -46,7 +47,7 @@ public class ValidGroupingController extends CommonControllerLogic {
         LOG.info("Grouping successfully updated");
     }
 
-    @RequestMapping(value = "/{field:group|student}/{id:[\\d]+}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{field:group|student}/{id:[\\d]+}", method = DELETE)
     @ResponseBody
     public void deleteCustomer(PartitionAccount account, @PathVariable String field, @PathVariable int id) {
         validateId(field, id);

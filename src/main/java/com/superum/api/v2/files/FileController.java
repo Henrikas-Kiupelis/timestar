@@ -2,11 +2,13 @@ package com.superum.api.v2.files;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * <pre>
@@ -19,7 +21,7 @@ import java.io.IOException;
 @RestController
 public class FileController {
 
-	@RequestMapping(value="/{folder:pictures|documents}/upload", method=RequestMethod.POST)
+	@RequestMapping(value="/{folder:pictures|documents}/upload", method= POST)
 	@ResponseBody 
 	public String addPicture(@PathVariable String folder, @RequestParam("name") String name, @RequestParam("file") MultipartFile file) {
 		if (file.isEmpty())
@@ -33,25 +35,25 @@ public class FileController {
          }
 	}
 	
-	@RequestMapping(value = "/pictures/{pictureName:.+}", method = RequestMethod.GET)
+	@RequestMapping(value = "/pictures/{pictureName:.+}", method = GET)
 	@ResponseBody
 	public FileSystemResource getPicture(@PathVariable String pictureName) {
 	    return new FileSystemResource(fileService.getPicture(pictureName)); 
 	}
 	
-	@RequestMapping(value = "/documents/{documentName:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@RequestMapping(value = "/documents/{documentName:.+}", method = GET, produces = APPLICATION_OCTET_STREAM_VALUE)
 	@ResponseBody
 	public FileSystemResource getDocument(@PathVariable String documentName) {
 	    return new FileSystemResource(fileService.getDocument(documentName)); 
 	}
 	
-	@RequestMapping(value = "/pictures/delete/{pictureName:.+}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/pictures/delete/{pictureName:.+}", method = DELETE)
 	@ResponseBody
 	public void deletePicture(@PathVariable String pictureName) {
 	    fileService.deletePicture(pictureName);
 	}
 	
-	@RequestMapping(value = "/documents/delete/{documentName:.+}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/documents/delete/{documentName:.+}", method = DELETE)
 	@ResponseBody
 	public void deleteDocument(@PathVariable String documentName) {
 	    fileService.deleteDocument(documentName);
