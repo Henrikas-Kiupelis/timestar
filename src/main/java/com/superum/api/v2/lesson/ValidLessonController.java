@@ -57,7 +57,7 @@ public class ValidLessonController extends CommonControllerLogic {
 
     @RequestMapping(value = "/{id:[\\d]+}", method = DELETE)
     @ResponseBody
-    public void delete(PartitionAccount account, @PathVariable int id) {
+    public void delete(PartitionAccount account, @PathVariable long id) {
         validateId("Lesson", id);
 
         LOG.info("User {} is deleting a lesson with id: {}", account, id);
@@ -70,7 +70,7 @@ public class ValidLessonController extends CommonControllerLogic {
 
     @RequestMapping(value = "/{id:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public ValidLessonDTO read(PartitionAccount account, @PathVariable int id) {
+    public ValidLessonDTO read(PartitionAccount account, @PathVariable long id) {
         validateId("Lesson", id);
 
         LOG.info("User {} is reading lesson with id: {}", account, id);
