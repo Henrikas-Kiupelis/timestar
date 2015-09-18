@@ -8,7 +8,7 @@
 
 ### Commands
 
-<a name="create"><a>
+#### Create
 ```
     PUT   /lesson
     BODY  ValidLessonDTO
@@ -27,7 +27,7 @@ Returned lesson will have its id field set
 
 ------
 
-<a name="update"><a>
+#### Update
 ```
     POST  /lesson
     BODY  ValidLessonDTO
@@ -47,7 +47,7 @@ Returns HTTP 200 OK if it succeeds
 
 ------
 
-<a name="delete"><a>
+#### Delete
 ```
     DELETE  /lesson/{lessonId}
             lessonId        long           1 <= lessonId <= MAX_LONG
@@ -64,7 +64,7 @@ Returns HTTP 200 OK if it succeeds
 
 ### Queries
 
-<a name="read"><a>
+#### Read
 ```
     GET  /lesson/{lessonId}
          lessonId        long           1 <= lessonId <= MAX_LONG
@@ -78,7 +78,7 @@ It will fail if:
 
 ------
 
-<a name="read-all"><a>
+#### Read all
 ```
     GET  /lesson
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
@@ -104,7 +104,7 @@ the page parameter must be incremented, or per_page value raised
 
 ------
 
-<a name="read-for-table"><a>
+#### Read for table
 ```
     GET  /lesson/{tableName}/{id}
          tableName      String         teacher, customer, group or student

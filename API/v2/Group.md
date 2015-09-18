@@ -8,7 +8,7 @@
 
 ### Commands
 
-<a name="create"><a>
+#### Create
 ```
     PUT   /group
     BODY  ValidGroupDTO
@@ -27,7 +27,7 @@ Returned group will have its id field set
 
 ------
 
-<a name="update"><a>
+#### Update
 ```
     POST  /group
     BODY  ValidGroupDTO
@@ -47,7 +47,7 @@ Returns HTTP 200 OK if it succeeds
 
 ------
 
-<a name="delete"><a>
+#### Delete
 ```
     DELETE  /group/{groupId}
             groupId        int            1 <= groupId <= MAX_INT
@@ -64,7 +64,7 @@ Returns HTTP 200 OK if it succeeds
 
 ### Queries
 
-<a name="read"><a>
+#### Read
 ```
     GET  /group/{groupId}
          groupId        int            1 <= groupId <= MAX_INT
@@ -78,7 +78,7 @@ It will fail if:
 
 ------
 
-<a name="read-all"><a>
+#### Read all
 ```
     GET  /group
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
@@ -95,7 +95,7 @@ the page parameter must be incremented, or per_page value raised
 
 ------
 
-<a name="read-for-table"><a>
+#### Read for table
 ```
     GET  /group/{tableName}/{id}
          tableName      String         teacher, customer or student
@@ -115,7 +115,7 @@ the page parameter must be incremented, or per_page value raised
 
 ------
 
-<a name="read-for-no-customer"><a>
+#### Read for no customer
 ```
     GET  /group/customer/none
     OPT  page           int            1 <= page <= MAX_INT; DEF 1

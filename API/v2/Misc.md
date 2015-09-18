@@ -18,7 +18,7 @@
 
 ### Commands
 
-<a name="create-admin"><a>
+#### Create admin
 ```
     PUT   /account
     BODY  ValidAccountDTO
@@ -35,7 +35,7 @@ Returned ValidAccount will not contain the password
 
 ------
 
-<a name="update-password"><a>
+#### Update password
 ```
     POST  /account
     BODY  ValidAccountDTO
@@ -55,7 +55,7 @@ Returned ValidAccount contains all the fields as they were before updating, exce
 
 ### Queries
 
-<a name="read-account"><a>
+#### Read account
 ```
     GET  /account
     REQ  username       String         any, username.length() <= 60
@@ -77,7 +77,7 @@ Returned ValidAccount contains all the fields, except password
 
 ### Commands
 
-<a name="create-partition"><a>
+#### Create partition
 ```
     PUT   /partition
     BODY  ValidPartitionDTO
@@ -101,7 +101,7 @@ N/A
 
 ### Queries
 
-<a name="read-time-zones"><a>
+#### Read time zones
 ```
     GET  misc/time/zones
     RET  Set<String>
@@ -113,7 +113,7 @@ It shouldn't fail under normal circumstances
 
 ------
 
-<a name="read-time"><a>
+#### Read time
 ```
     GET  misc/time
     RET  long
@@ -125,7 +125,7 @@ It shouldn't fail under normal circumstances
 
 ------
 
-<a name="convert-time"><a>
+#### Convert time
 ```
     GET  misc/time/convert
     OPT  time_zone      String          any time zone; DEF UTC
@@ -153,7 +153,7 @@ Instead, the prefix is
 
 ### Commands
 
-<a name="upload-file"><a>
+#### Upload file
 ```
     POST  /{folder}/upload
           folder         String         documents or pictures
@@ -173,7 +173,7 @@ If it fails, it will return an error message; it will fail if:
   
 ------
     
-<a name="delete-file"><a>
+#### Delete file
 ```
     DELETE  /{folder}/{fileName}
             folder         String         documents or pictures
@@ -189,7 +189,7 @@ It will fail if:
 
 ### Queries
 
-<a name="read-file"><a>
+#### Read file
 ```
     GET  /{folder}/{fileName}
          folder         String         documents or pictures

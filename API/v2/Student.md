@@ -8,7 +8,7 @@
 
 ### Commands
 
-<a name="create"><a>
+#### Create
 ```
     PUT   /student
     BODY  ValidStudentDTO
@@ -28,7 +28,7 @@ Returned student will have its id field set
 
 ------
 
-<a name="update"><a>
+#### Update
 ```
     POST  /student
     BODY  ValidStudentDTO
@@ -48,7 +48,7 @@ Returns HTTP 200 OK if it succeeds
 
 ------
 
-<a name="delete"><a>
+#### Delete
 ```
     DELETE  /student/{studentId}
             studentId        int            1 <= studentId <= MAX_INT
@@ -65,7 +65,7 @@ Returns HTTP 200 OK if it succeeds
 
 ### Queries
 
-<a name="read"><a>
+#### Read
 ```
     GET  /student/{studentId}
          studentId        int            1 <= studentId <= MAX_INT
@@ -79,7 +79,7 @@ It will fail if:
 
 ------
 
-<a name="read-all"><a>
+#### Read all
 ```
     GET  /student
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
@@ -96,7 +96,7 @@ the page parameter must be incremented, or per_page value raised
 
 ------
 
-<a name="read-for-table"><a>
+#### Read for table
 ```
     GET  /student/{tableName}/{id}
          tableName      String         group, lesson or customer

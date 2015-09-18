@@ -8,7 +8,7 @@
 
 ### Commands
 
-<a name="create"><a>
+#### Create
 ```
     PUT   /teacher
     BODY  FullTeacherDTO
@@ -27,7 +27,7 @@ Returned FullTeacher will have its id field set;
 
 ------
 
-<a name="update"><a>
+#### Update
 ```
     POST  /teacher
     BODY  FullTeacherDTO
@@ -46,7 +46,7 @@ Returns HTTP 200 OK if it succeeds
 
 ------
 
-<a name="delete"><a>
+#### Delete
 ```
     DELETE  /teacher/{teacherId}
             teacherId      int            1 <= teacherId <= MAX_INT
@@ -64,7 +64,7 @@ Returns HTTP 200 OK if it succeeds
 
 ### Queries
 
-<a name="read"><a>
+#### Read
 ```
     GET  /teacher/{teacherId}
          teacherId      int            1 <= teacherId <= MAX_INT
@@ -78,7 +78,7 @@ It will fail if:
 
 ------
 
-<a name="read-all"><a>
+#### Read all
 ```
     GET  /teacher
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
@@ -95,7 +95,7 @@ the page parameter must be incremented, or per_page value raised
     
 ------
 
-<a name="count-all"><a>
+#### Count all
 ```
     GET  /teacher/count
     RET  int

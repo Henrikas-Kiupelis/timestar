@@ -28,7 +28,7 @@ N/A
 
 ### Queries
 
-<a name="table-default"><a>
+#### Table default
 ```
     GET   /lesson/table
     OPT  per_page       int            1 <= page <= 12; DEF 6
@@ -44,7 +44,7 @@ Delegates the call to [/lesson/table/1](#table) using same parameters
     
 ------
 
-<a name="table"><a>
+#### Table
 ```
     GET  /lesson/table/{page}
          page           int            1 <= page <= MAX_INT

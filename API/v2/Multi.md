@@ -14,7 +14,7 @@
 
 ### Commands
 
-<a name="create-grouping"><a>
+#### Create grouping
 ```
     PUT   /grouping
     BODY  ValidGroupingDTO
@@ -31,7 +31,7 @@ Returns HTTP 200 OK if it succeeds
 
 ------
 
-<a name="update-grouping"><a>
+#### Update grouping
 ```
     POST  /grouping
     BODY  ValidGroupingDTO
@@ -48,7 +48,7 @@ Returns HTTP 200 OK if it succeeds
 
 ------
 
-<a name="delete-grouping"><a>
+#### Delete grouping
 ```
     DELETE   /grouping/{field}/{id}
              field      String      group or student
@@ -76,7 +76,7 @@ In order to make queries, use [/group/student/{id}](./Group.md#read-for-table) o
 
 ### Commands
 
-<a name="create-attendance"><a>
+#### Create attendance
 ```
     PUT   /lesson/attendance
     BODY  ValidLessonAttendanceDTO
@@ -94,7 +94,7 @@ Returns HTTP 200 OK if it succeeds
 
 ------
 
-<a name="update-attendance"><a>
+#### Update attendance
 ```
     POST  /lesson/attendance
     BODY  ValidLessonAttendanceDTO
@@ -112,7 +112,7 @@ Returns HTTP 200 OK if it succeeds
 
 ------
 
-<a name="delete-attendance"><a>
+#### Delete attendance
 ```
     DELETE   /lesson/attendance/{field}/{id}
              field      String      lesson or student

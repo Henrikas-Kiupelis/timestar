@@ -46,7 +46,7 @@ N/A
 
 ### Queries
 
-<a name="table-size"><a>
+#### Table size
 ```
     GET  /lesson/table/size
     RET  int
@@ -57,7 +57,7 @@ the call is delegated to [/v2/teacher/count](../v2/Teacher.md#count-all)
 
 ------
 
-<a name="table-data-default"><a>
+#### Table data default
 ```
     GET  /lesson/table/data
     OPT  per_page       int            1 <= page <= 12; DEF 6
@@ -73,7 +73,7 @@ Delegates the call to [/lesson/table/data/1](#table-data) using same parameters
 
 ------
 
-<a name="table-data"><a>
+#### Table data
 ```
     GET  /lesson/table/data/{page}
          page           int            1 <= page <= MAX_INT
@@ -96,7 +96,7 @@ It shouldn't fail under normal circumstances
 
 ------
 
-<a name="table-report"><a>
+#### Table report
 ```
     GET  /lesson/table/report/{source}
          source         String         teacher or customer
@@ -111,7 +111,7 @@ It will fail if:
 
 ------
 
-<a name="table-data-full-default"><a>
+#### Table data full default
 ```
     GET  /lesson/table/data/full
     OPT  per_page       int            1 <= page <= 12; DEF 6
@@ -127,7 +127,7 @@ Delegates the call to [/lesson/table/data/full/1](#table-data-full) using same p
 
 ------
 
-<a name="table-data-full"><a>
+#### Table data full
 ```
     GET  /lesson/table/data/full/{page}
          page           int            1 <= page <= MAX_INT
