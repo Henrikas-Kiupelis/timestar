@@ -8,7 +8,7 @@
 
 ### Commands
 
-<a name="create"><a>
+#### Create
 ```
     PUT   /customer
     BODY  ValidCustomerDTO
@@ -25,7 +25,7 @@ Returned FullCustomer will have its id field set;
 
 ------
 
-<a name="update"><a>
+#### Update
 ```
     POST  /customer
     BODY  ValidCustomerDTO
@@ -43,7 +43,7 @@ Returns HTTP 200 OK if it succeeds
 
 ------
 
-<a name="delete"><a>
+#### Delete
 ```
     DELETE  /customer/{customerId}
             customerId     int            1 <= customerId <= MAX_INT
@@ -60,7 +60,7 @@ Returns HTTP 200 OK if it succeeds
 
 ### Queries
 
-<a name="read"><a>
+#### Read
 ```
     GET  /customer/{customerId}
          customerId     int            1 <= customerId <= MAX_INT
@@ -74,7 +74,7 @@ It will fail if:
 
 ------
 
-<a name="read-for-teacher"><a>
+#### Read for teacher
 ```
     GET  /customer/teacher/{teacherId}
          teacherId      int            1 <= teacherId <= MAX_INT
@@ -99,7 +99,7 @@ the page parameter must be incremented, or per_page value raised
 
 ------
 
-<a name="read-all"><a>
+#### Read all
 ```
     GET  /customer
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
@@ -116,7 +116,7 @@ the page parameter must be incremented, or per_page value raised
 
 ------
 
-<a name="count-for-teacher"><a>
+#### Count for teacher
 ```
     GET  /customer/teacher/{teacherId}/count
          teacherId      int            1 <= teacherId <= MAX_INT
@@ -136,7 +136,7 @@ It will fail if:
 
 ------
 
-<a name="count-all"><a>
+#### Count all
 ```
     GET  /customer/count
     RET  int
