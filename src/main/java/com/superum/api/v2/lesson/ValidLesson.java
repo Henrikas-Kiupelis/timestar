@@ -1,6 +1,5 @@
 package com.superum.api.v2.lesson;
 
-import com.superum.api.v2.customer.InvalidCustomerException;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
@@ -100,7 +99,7 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
                         validLessonDTO.getLength()));
 
         Validate.string(validLessonDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidCustomerException("Lesson comment must not exceed " +
+                .ifInvalid(() -> new InvalidLessonException("Lesson comment must not exceed " +
                         COMMENT_SIZE_LIMIT + " chars: " + validLessonDTO.getComment()));
 
         this.validLessonDTO = validLessonDTO;
