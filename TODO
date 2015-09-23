@@ -1,7 +1,6 @@
 Export:
-    Field + jooq (goodlike-commons)
 
-API v3 for lesson (and rest) with multiple DTO classes + resolution of DTO -> Domain and inverse (if time allows)
+API v3 for lesson (and rest) with multiple DTO classes + resolution of DTO -> Domain
     do DSL decoupling here!
 
 Make account creation process make more sense
