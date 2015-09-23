@@ -83,7 +83,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     public void insertingStudentWithBothCustomerIdAndStartDate_shouldReturn400() throws Exception {
         ValidStudentDTO student = ValidStudentDTO.builder()
                 .customerId(OLD_CUSTOMER_ID)
-                .startDate(Fake.localDate(NEW_STUDENT_ID))
+                .startDate(Fakes.localDate(NEW_STUDENT_ID))
                 .email(Fake.email(NEW_STUDENT_ID))
                 .name(Fake.name(NEW_STUDENT_ID))
                 .build();
@@ -150,7 +150,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
         ValidStudentDTO student = ValidStudentDTO.builder()
                 .id(OLD_STUDENT_ID)
                 .customerId(OLD_CUSTOMER_ID)
-                .startDate(Fake.localDate(NEW_STUDENT_ID))
+                .startDate(Fakes.localDate(NEW_STUDENT_ID))
                 .email(Fake.email(NEW_STUDENT_ID))
                 .name(Fake.name(NEW_STUDENT_ID))
                 .build();

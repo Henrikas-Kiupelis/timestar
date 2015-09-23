@@ -9,6 +9,7 @@ import com.superum.api.v2.lesson.ValidLessonDTO;
 import com.superum.api.v2.student.ValidStudentDTO;
 import com.superum.api.v2.teacher.FullTeacherDTO;
 import eu.goodlike.test.Fake;
+import org.joda.time.LocalDate;
 
 import java.util.Collections;
 
@@ -20,7 +21,7 @@ public class Fakes {
 
     public static ValidCustomerDTO customer(int id) {
         return ValidCustomerDTO.stepBuilder()
-                .startDate(Fake.localDate(id))
+                .startDate(localDate(id))
                 .name(Fake.name(id))
                 .phone(Fake.phone(id))
                 .website(Fake.website(id))
@@ -80,7 +81,7 @@ public class Fakes {
     public static ValidStudentDTO studentWithDate(int id) {
         return ValidStudentDTO.stepBuilder()
                 .noCustomer()
-                .startDate(Fake.localDate(id))
+                .startDate(localDate(id))
                 .email(Fake.email(id))
                 .name(Fake.name(id))
                 .id(id)
@@ -116,6 +117,10 @@ public class Fakes {
 
     public static ValidLessonAttendanceDTO lessonAttendance(long lessonId, Integer... studentIds) {
         return ValidLessonAttendanceDTO.jsonInstance(lessonId, Sets.newHashSet(studentIds));
+    }
+
+    public static LocalDate localDate(long id) {
+        return LocalDate.parse("2015-01-" + Fake.dayString(id));
     }
 
     // PRIVATE

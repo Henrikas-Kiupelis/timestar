@@ -50,7 +50,7 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
     @Test
     public void insertingCustomerWithoutName_shouldReturn400() throws Exception {
         ValidCustomerDTO customer = ValidCustomerDTO.builder()
-                .startDate(Fake.localDate(NEW_CUSTOMER_ID))
+                .startDate(Fakes.localDate(NEW_CUSTOMER_ID))
                 .phone(Fake.phone(NEW_CUSTOMER_ID))
                 .website(Fake.website(NEW_CUSTOMER_ID))
                 .build();
