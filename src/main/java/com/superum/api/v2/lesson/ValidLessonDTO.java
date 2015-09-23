@@ -177,16 +177,17 @@ public final class ValidLessonDTO extends DTOWithTimestamps {
         if (lessonRecord == null)
             return null;
 
-        return stepBuilder()
-                .groupIdWithTeacher(lessonRecord.getValue(LESSON.GROUP_ID),
-                        lessonRecord.getValue(LESSON.TEACHER_ID))
-                .startTime(lessonRecord.getValue(LESSON.TIME_OF_START))
-                .length(lessonRecord.getValue(LESSON.DURATION_IN_MINUTES))
-                .id(lessonRecord.getValue(LESSON.ID))
-                .createdAt(lessonRecord.getValue(LESSON.CREATED_AT))
-                .comment(lessonRecord.getValue(LESSON.COMMENT))
-                .updatedAt(lessonRecord.getValue(LESSON.UPDATED_AT))
-                .build();
+        return new ValidLessonDTO(
+                lessonRecord.getValue(LESSON.ID),
+                lessonRecord.getValue(LESSON.GROUP_ID),
+                lessonRecord.getValue(LESSON.TEACHER_ID),
+                lessonRecord.getValue(LESSON.TIME_OF_START),
+                lessonRecord.getValue(LESSON.TIME_OF_END),
+                lessonRecord.getValue(LESSON.DURATION_IN_MINUTES),
+                lessonRecord.getValue(LESSON.COMMENT),
+                Time.getDefault().from(lessonRecord.getValue(LESSON.CREATED_AT)).toJodaInstant(),
+                Time.getDefault().from(lessonRecord.getValue(LESSON.UPDATED_AT)).toJodaInstant()
+        );
     }
 
     public static Builder builder() {
