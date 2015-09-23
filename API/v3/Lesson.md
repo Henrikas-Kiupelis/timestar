@@ -1,48 +1,41 @@
-# Lesson API
+# Lesson APIv3
 
-[Back to APIv2](./APIv2.md#api-v2)
-
-## Info
-
-[APIv3 version](../v3/Lesson.md#lesson-apiv3) - updated version
+[Back to APIv3](./APIv3.md#api-v3)
 
 ## Relevant classes
 
-[ValidLessonDTO](../../src/main/java/com/superum/api/v2/lesson/ValidLessonDTO.java)
+[SuppliedLesson](../../src/main/java/com/superum/api/v3/lesson/SuppliedLesson.java)
+[FetchedLesson](../../src/main/java/com/superum/api/3/lesson/FetchedLesson.java)
 
 ### Commands
 
 #### Create
 ```
     PUT   /lesson
-    BODY  ValidLessonDTO
-    RET   ValidLessonDTO
+    BODY  SuppliedLesson
+    RET   FetchedLesson
 ```
 
-Creates a new lesson
+Creates a new lesson, then returns it
 
 It will fail if:
-  * HTTP 400; the id field was set;
-  * HTTP 400; a mandatory field was not set;
+  * HTTP 400; any field except for "comment" was missing
   * HTTP 404; no group with provided id exists;
   * HTTP 409; the lesson overlaps with another lesson for the teacher of the group this lesson is for;
-
-Returned lesson will have its id field set
 
 ------
 
 #### Update
 ```
-    POST  /lesson
-    BODY  ValidLessonDTO
+    POST  /lesson/{lessonId}
+          lessonId        long           1 <= lessonId <= MAX_LONG
+    BODY  SuppliedLesson
     RET   void
 ```
 
 Updates a lesson
 
 It will fail if:
-  * HTTP 400; the id field was not set;
-  * HTTP 400; only the id field was set and no other fields were;
   * HTTP 404; no lesson with provided id exists;
   * HTTP 404; no group with provided id exists;
   * HTTP 409; the lesson overlaps with another lesson for the teacher of the group this lesson is for;
@@ -72,7 +65,7 @@ Returns HTTP 200 OK if it succeeds
 ```
     GET  /lesson/{lessonId}
          lessonId        long           1 <= lessonId <= MAX_LONG
-    RET  ValidLessonDTO
+    RET  FetchedLesson
 ```
 
 Reads and returns a lesson by id
@@ -92,7 +85,7 @@ It will fail if:
     OPT  end_date       String         any Date; DEF start_date
     OPT  start          long           0 <= page <= MAX_LONG; DEF start_date evaluated at 00:00:00 for time_zone
     OPT  end            long           0 <= page <= MAX_LONG; DEF (end_date + 1) evaluated at 00:00:00 for time_zone
-    RET  List<ValidLessonDTO>
+    RET  List<FetchedLesson>
 ```
 
 Reads and returns a list of all lessons for given parameters;
@@ -120,7 +113,7 @@ the page parameter must be incremented, or per_page value raised
     OPT  end_date       String         any Date; DEF start_date
     OPT  start          long           0 <= page <= MAX_LONG; DEF start_date evaluated at 00:00:00 for time_zone
     OPT  end            long           0 <= page <= MAX_LONG; DEF (end_date + 1) evaluated at 00:00:00 for time_zone
-    RET  List<ValidLessonDTO>
+    RET  List<FetchedLesson>
 ```
 
 Reads and returns a list of lessons for teacher, customer, group or student for given parameters;

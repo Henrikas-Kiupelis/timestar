@@ -6,6 +6,8 @@
 
 [APIv2](../v2/APIv2.md#api-v2)
 
+[Lesson](./Lesson.md#lesson-apiv3) - for updated lesson handling
+
 [LessonTable](./LessonTable.md#lesson-table-apiv3) - for the primary table of the application
 
 ## Description

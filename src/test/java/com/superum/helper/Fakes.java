@@ -8,12 +8,63 @@ import com.superum.api.v2.grouping.ValidGroupingDTO;
 import com.superum.api.v2.lesson.ValidLessonDTO;
 import com.superum.api.v2.student.ValidStudentDTO;
 import com.superum.api.v2.teacher.FullTeacherDTO;
+import com.superum.api.v3.lesson.FetchedLesson;
+import com.superum.api.v3.lesson.SuppliedLesson;
 import eu.goodlike.test.Fake;
 import org.joda.time.LocalDate;
 
+import java.time.Instant;
 import java.util.Collections;
 
+import static java.time.temporal.ChronoUnit.MINUTES;
+
 public class Fakes {
+
+    // API V3
+
+    public static SuppliedLesson suppliedLesson(long id) {
+        return suppliedLesson(id, Fake.id(id));
+    }
+
+    public static SuppliedLesson suppliedLesson(long id, int groupId) {
+        return SuppliedLesson.stepBuilder()
+                .withGroupId(groupId)
+                .withStartTime(Fake.time(id))
+                .withTimezone(null)
+                .withStartDate(null)
+                .withStartHour(null)
+                .withStartMinute(null)
+                .withLength(Fake.duration(id))
+                .withComment(Fake.comment(id))
+                .build();
+    }
+
+    public static FetchedLesson fetchedLesson(long id) {
+        return fetchedLesson(id, Fake.id(id));
+    }
+
+    public static FetchedLesson fetchedLesson(long id, int groupId) {
+        return fetchedLesson(id, groupId, Fake.id(id));
+    }
+
+    public static FetchedLesson fetchedLesson(long id, int groupId, int teacherId) {
+        long startTime = Fake.time(id);
+        int duration = Fake.duration(id);
+        long endTime = Instant.ofEpochMilli(startTime).plus(duration, MINUTES).toEpochMilli();
+        return FetchedLesson.stepBuilder()
+                .withId(id)
+                .withGroupId(groupId)
+                .withTeacherId(teacherId)
+                .withStartTime(startTime)
+                .withEndTime(endTime)
+                .withLength(duration)
+                .withComment(Fake.comment(id))
+                .withCreatedAt(Fake.time(id))
+                .withUpdatedAt(Fake.time(id))
+                .build();
+    }
+
+    // API V2
 
     public static PartitionAccount partitionAccount() {
         return new PartitionAccount(0, "test");

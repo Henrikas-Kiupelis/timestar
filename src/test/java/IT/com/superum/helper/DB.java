@@ -9,6 +9,10 @@ import com.superum.api.v2.lesson.ValidLesson;
 import com.superum.api.v2.lesson.ValidLessonDTO;
 import com.superum.api.v2.student.ValidStudentDTO;
 import com.superum.api.v2.teacher.FullTeacherDTO;
+import com.superum.api.v3.lesson.FetchedLesson;
+import com.superum.api.v3.lesson.LessonTransformer;
+import com.superum.api.v3.lesson.SuppliedLesson;
+import com.superum.api.v3.lesson.SuppliedLessonWithTimestamp;
 import com.superum.helper.Fakes;
 import eu.goodlike.functional.some.Some;
 import eu.goodlike.libraries.jodatime.Time;
@@ -21,11 +25,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static IT.com.superum.helper.TestConstants.TEST_PARTITION;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.jooq.impl.DSL.groupConcat;
 import static timestar_v2.Keys.TEACHER_LANGUAGE_IBFK_1;
 import static timestar_v2.Tables.*;
@@ -45,6 +52,52 @@ public class DB {
         insertGrouping();
         insertLessons();
         insertAttendance();
+    }
+
+    // API V3
+
+    public FetchedLesson insertSuppliedLesson(SuppliedLesson lesson, long lessonId) {
+        long endTime = Instant.ofEpochMilli(lesson.getStartTime()).plus(lesson.getLength(), MINUTES).toEpochMilli();
+        sql.insertInto(LESSON)
+                .set(LESSON.PARTITION_ID, TEST_PARTITION)
+                .set(LESSON.ID, lessonId)
+                .set(LESSON.GROUP_ID, lesson.getGroupId())
+                .set(LESSON.TIME_OF_START, lesson.getStartTime())
+                .set(LESSON.TIME_OF_END, endTime)
+                .set(LESSON.DURATION_IN_MINUTES, lesson.getLength())
+                .set(LESSON.COMMENT, lesson.getComment())
+                .execute();
+
+        return readFetchedLesson(lessonId)
+                .orElseThrow(() -> new RuntimeException("Couldn't insert lesson"));
+    }
+
+    public Optional<FetchedLesson> readFetchedLesson(long lessonId) {
+        return sql.selectFrom(LESSON)
+                .where(LESSON.ID.eq(lessonId))
+                .fetch().stream().findAny()
+                .map(lessonTransformer::from);
+    }
+
+    public Optional<SuppliedLesson> readSuppliedLesson(long lessonId) {
+        return sql.selectFrom(LESSON)
+                .where(LESSON.ID.eq(lessonId))
+                .fetch().stream().findAny()
+                .map(record -> {
+                    Integer groupId = record.getGroupId();
+                    Long startTime = record.getTimeOfStart();
+                    Integer length = record.getDurationInMinutes();
+                    String comment = record.getComment();
+                    return new SuppliedLesson(groupId, startTime, null, null, null, null, length, comment);
+                });
+    }
+
+    public boolean originCheck(FetchedLesson insertedLesson, SuppliedLesson lesson, boolean toCreate) {
+        SuppliedLessonWithTimestamp suppliedLesson = lessonTransformer.from(lesson, toCreate);
+        return Objects.equals(suppliedLesson.getGroupId(), insertedLesson.getGroupId()) &&
+                Objects.equals(suppliedLesson.getLength(), insertedLesson.getLength()) &&
+                Objects.equals(suppliedLesson.getStartTime(), insertedLesson.getStartTime()) &&
+                Objects.equals(suppliedLesson.getComment(), insertedLesson.getComment());
     }
 
     // CREATE
@@ -207,7 +260,6 @@ public class DB {
                 .map(ValidLessonDTO::valueOf);
     }
 
-
     public Optional<ValidGroupingDTO> readValidGrouping(int groupId) {
         Set<Integer> studentIds = sql.select(STUDENTS_IN_GROUPS.STUDENT_ID)
                 .from(STUDENTS_IN_GROUPS)
@@ -242,13 +294,15 @@ public class DB {
     // CONSTRUCTORS
 
     @Autowired
-    public DB(DSLContext sql) {
+    public DB(DSLContext sql, LessonTransformer lessonTransformer) {
         this.sql = sql;
+        this.lessonTransformer = lessonTransformer;
     }
 
     // PRIVATE
 
     private final DSLContext sql;
+    private final LessonTransformer lessonTransformer;
 
     private java.sql.Date toSql(LocalDate startDate) {
         return startDate == null ? null : Time.convert(startDate).toSqlDate();
