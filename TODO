@@ -1,8 +1,3 @@
-Export:
-
-API v3 for lesson (and rest) with multiple DTO classes + resolution of DTO -> Domain
-    do DSL decoupling here!
-
 Make account creation process make more sense
     Do something like generate a token that can be used to access a page, where a password could be entered
         This should be discussed
