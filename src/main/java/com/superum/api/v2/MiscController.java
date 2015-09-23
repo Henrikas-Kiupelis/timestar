@@ -7,6 +7,7 @@ import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZoneId;
 import java.util.Set;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
@@ -20,8 +21,11 @@ public class MiscController extends CommonControllerLogic {
 
     @RequestMapping(value = "/time/zones", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
-    public Set<String> getValidTimeZoneValues() {
-        return DateTimeZone.getAvailableIDs();
+    public Set<String> getValidTimeZoneValues(@RequestParam(value = "type") String type) {
+        if (type == null) type = "";
+        return type.toUpperCase().startsWith("JODA")
+                ? DateTimeZone.getAvailableIDs()
+                : ZoneId.getAvailableZoneIds();
     }
 
     @RequestMapping(value = "/time", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
