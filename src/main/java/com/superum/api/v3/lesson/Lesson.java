@@ -33,8 +33,6 @@ public final class Lesson {
      * @throws DataAccessException if an unexpected database error occurred
      */
     public Optional<FetchedLesson> create(int partitionId, Function<Record, FetchedLesson> mapper) {
-        Null.check(lessonRepository).ifAny("Lesson repository was not initialized for lesson!");
-
         if (lessonRepository.isOverlapping(teacherId, startTime, endTime, partitionId))
             throw new OverlappingLessonException("This teacher already has a lesson during this time, cannot create!");
 
@@ -47,8 +45,6 @@ public final class Lesson {
      * @throws DataAccessException if an unexpected database error occurred
      */
     public int update(long lessonId, int partitionId) {
-        Null.check(lessonRepository).ifAny("Lesson repository was not initialized for lesson!");
-
         if (lessonRepository.isOverlapping(lessonId, teacherId, startTime, endTime, partitionId))
             throw new OverlappingLessonException("This teacher already has a lesson during this time, cannot update!");
 
@@ -66,6 +62,7 @@ public final class Lesson {
         this.length = length;
         this.comment = comment;
 
+        Null.check(lessonRepository).ifAny("Lesson repository was not initialized for lesson!");
         this.lessonRepository = lessonRepository;
     }
 
