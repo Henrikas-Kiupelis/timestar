@@ -5,7 +5,7 @@
 ## Relevant classes
 
 [SuppliedLesson](../../src/main/java/com/superum/api/v3/lesson/SuppliedLesson.java)
-[FetchedLesson](../../src/main/java/com/superum/api/3/lesson/FetchedLesson.java)
+[FetchedLesson](../../src/main/java/com/superum/api/v3/lesson/FetchedLesson.java)
 
 ### Commands
 
