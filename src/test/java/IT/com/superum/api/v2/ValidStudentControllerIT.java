@@ -5,7 +5,7 @@ import IT.com.superum.helper.IntegrationTestEnvironment;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.superum.api.v2.student.ValidStudentDTO;
 import com.superum.helper.Fakes;
-import eu.goodlike.libraries.mockmvc.MVC;
+import eu.goodlike.libraries.spring.mockmvc.MVC;
 import eu.goodlike.test.Fake;
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 
-import static eu.goodlike.libraries.mockmvc.HttpResult.*;
+import static eu.goodlike.libraries.spring.mockmvc.HttpResult.*;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

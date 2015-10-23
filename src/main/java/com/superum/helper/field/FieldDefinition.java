@@ -20,6 +20,7 @@ import java.util.function.Function;
  * @param <F> the type of the field inside the database (i.e. java.sql.Date for DATE); class can contain any field, so
  *           long as it can be converted
  */
+@SuppressWarnings("deprecation")
 public class FieldDefinition<T, F> implements FieldNameStep<T, F>, TableFieldStep<T, F>, GetterStep<T, F>, FieldDef<T, F> {
 
     @Override

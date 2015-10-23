@@ -10,8 +10,8 @@ import com.superum.api.v3.table.TableReport;
 import com.superum.helper.Fakes;
 import com.superum.helper.TimeResolver;
 import eu.goodlike.functional.some.Some;
-import eu.goodlike.libraries.jodatime.Time;
-import eu.goodlike.libraries.mockmvc.MVC;
+import eu.goodlike.libraries.joda.time.Time;
+import eu.goodlike.libraries.spring.mockmvc.MVC;
 import eu.goodlike.test.Fake;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.Unchecked;
@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static eu.goodlike.libraries.mockmvc.HttpResult.OK;
+import static eu.goodlike.libraries.spring.mockmvc.HttpResult.OK;
 import static java.math.BigDecimal.ZERO;
 import static org.junit.Assert.assertEquals;
 
@@ -59,15 +59,15 @@ public class FullTableIT extends IntegrationTestEnvironment {
     }
 
     private List<FullTeacherDTO> precomputedTeachers() {
-        return Some.of(Fakes::teacher).fetch(2);
+        return Some.of(Fakes::teacher).oneUpTo(2);
     }
 
     private List<ValidCustomerDTO> precomputedCustomers() {
-        return Some.of(Fakes::customer).fetch(2);
+        return Some.of(Fakes::customer).oneUpTo(2);
     }
 
     private List<TableField> precomputedFields() {
-        return Some.ofLong(Fakes::lesson).fetchStream(2)
+        return Some.Of(Fakes::lesson).oneUpToStream(2)
                 .map(lesson -> new TableField(
                         lesson.getId().intValue(),
                         lesson.getId().intValue(),

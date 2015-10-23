@@ -2,7 +2,7 @@ package com.superum.api.v3.table;
 
 import com.google.common.collect.Sets;
 import com.superum.helper.TimeResolver;
-import eu.goodlike.libraries.jodatime.Time;
+import eu.goodlike.libraries.joda.time.Time;
 import org.joda.time.LocalDate;
 import org.jooq.*;
 import org.jooq.lambda.Seq;

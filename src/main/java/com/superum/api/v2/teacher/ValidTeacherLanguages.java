@@ -16,6 +16,7 @@ import java.util.Objects;
  * specific version of DTO, which is used for commands
  * </pre>
  */
+@SuppressWarnings("deprecation")
 public final class ValidTeacherLanguages implements ManyDefined<Integer, String> {
 
     @Override

@@ -19,6 +19,7 @@ import static timestar_v2.Tables.GROUP_OF_STUDENTS;
  * specific version of DTO, which is used for commands
  * </pre>
  */
+@SuppressWarnings("deprecation")
 public class ValidGroup extends MappedClass<ValidGroup, Integer> {
 
     public boolean hasNonExistentCustomerId(Predicate<Integer> customerIdCheck) {

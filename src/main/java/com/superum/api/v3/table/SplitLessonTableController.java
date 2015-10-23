@@ -33,6 +33,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
  */
 @Controller
 @RequestMapping(value = "/timestar/api/v3/lesson/table")
+@SuppressWarnings("deprecation")
 public class SplitLessonTableController extends CommonControllerLogic {
 
     @RequestMapping(value = "/size", method = GET, produces = APPLICATION_JSON_UTF8)

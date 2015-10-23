@@ -15,6 +15,7 @@ import java.util.Set;
  * This object should be used to validate DTO data and use it in a meaningful manner;
  * </pre>
  */
+@SuppressWarnings("deprecation")
 public class ValidGrouping implements ManyDefined<Integer, Integer> {
 
     @Override

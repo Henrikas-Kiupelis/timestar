@@ -35,6 +35,7 @@ import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
  * When returning an instance of ValidPartitionDTO with JSON, no additional fields will be present;
  * </pre>
  */
+@SuppressWarnings("deprecation")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public class ValidPartitionDTO {

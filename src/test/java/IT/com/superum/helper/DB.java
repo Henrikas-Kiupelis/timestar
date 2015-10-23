@@ -15,7 +15,7 @@ import com.superum.api.v3.lesson.SuppliedLesson;
 import com.superum.api.v3.lesson.SuppliedLessonWithTimestamp;
 import com.superum.helper.Fakes;
 import eu.goodlike.functional.some.Some;
-import eu.goodlike.libraries.jodatime.Time;
+import eu.goodlike.libraries.joda.time.Time;
 import org.joda.time.LocalDate;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -309,12 +309,12 @@ public class DB {
     }
 
     private void insertCustomers() {
-        Some.of(Fakes::customer).fetch(2)
+        Some.of(Fakes::customer).oneUpTo(2)
                 .forEach(this::insertValidCustomer);
     }
 
     private void insertTeachers() {
-        Some.of(Fakes::teacher).fetch(2)
+        Some.of(Fakes::teacher).oneUpTo(2)
                 .forEach(teacher -> {
                     insertFullTeacher(teacher);
                     insertValidAccount(teacher);
@@ -322,27 +322,27 @@ public class DB {
     }
 
     private void insertGroups() {
-        Some.of(Fakes::group).fetch(2)
+        Some.of(Fakes::group).oneUpTo(2)
                 .forEach(this::insertValidGroup);
     }
 
     private void insertStudents() {
-        Some.of(Fakes::student).fetch(2)
+        Some.of(Fakes::student).oneUpTo(2)
                 .forEach(this::insertValidStudent);
     }
 
     private void insertGrouping() {
-        Some.of(Fakes::grouping).fetch(2)
+        Some.of(Fakes::grouping).oneUpTo(2)
                 .forEach(this::insertValidGrouping);
     }
 
     private void insertLessons() {
-        Some.ofLong(Fakes::lesson).fetch(2)
+        Some.Of(Fakes::lesson).oneUpTo(2)
                 .forEach(this::insertValidLesson);
     }
 
     private void insertAttendance() {
-        Some.ofLong(Fakes::lessonAttendance).fetch(2)
+        Some.Of(Fakes::lessonAttendance).oneUpTo(2)
                 .forEach(this::insertValidLessonAttendance);
     }
 

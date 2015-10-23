@@ -3,7 +3,7 @@ package com.superum.api.v2.student;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.steps.FieldDef;
-import eu.goodlike.libraries.jodatime.Time;
+import eu.goodlike.libraries.joda.time.Time;
 import eu.goodlike.random.Random;
 import eu.goodlike.validation.Validate;
 import org.jooq.lambda.Seq;
@@ -23,6 +23,7 @@ import static timestar_v2.Tables.STUDENT;
  * specific version of DTO, which is used for commands
  * </pre>
  */
+@SuppressWarnings("deprecation")
 public class ValidStudent extends MappedClass<ValidStudent, Integer> {
 
     @Override

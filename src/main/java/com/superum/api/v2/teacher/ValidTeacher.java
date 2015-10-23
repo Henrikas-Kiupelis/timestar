@@ -20,6 +20,7 @@ import static timestar_v2.Tables.TEACHER;
  * specific version of DTO, which is used for commands
  * </pre>
  */
+@SuppressWarnings("deprecation")
 public final class ValidTeacher extends MappedClass<ValidTeacher, Integer> {
 
     // CONSTRUCTORS

@@ -3,3 +3,7 @@ Make account creation process make more sense
         This should be discussed
 
 Use commons classes from latest version in Lesson V3
+
+Remove partitionId from calls until it is required (i.e. new PartitionAccount() in repository) for Lesson v3
+
+Over time, fix all deprecation warnings

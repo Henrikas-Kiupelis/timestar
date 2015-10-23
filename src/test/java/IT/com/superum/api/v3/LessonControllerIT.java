@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.superum.api.v3.lesson.FetchedLesson;
 import com.superum.api.v3.lesson.SuppliedLesson;
 import com.superum.helper.Fakes;
-import eu.goodlike.libraries.mockmvc.MVC;
+import eu.goodlike.libraries.spring.mockmvc.MVC;
 import eu.goodlike.test.Fake;
 import org.jooq.lambda.Unchecked;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 
-import static eu.goodlike.libraries.mockmvc.HttpResult.*;
+import static eu.goodlike.libraries.spring.mockmvc.HttpResult.*;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

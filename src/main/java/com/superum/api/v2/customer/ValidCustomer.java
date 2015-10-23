@@ -2,7 +2,7 @@ package com.superum.api.v2.customer;
 
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
-import eu.goodlike.libraries.jodatime.Time;
+import eu.goodlike.libraries.joda.time.Time;
 import eu.goodlike.validation.Validate;
 
 import java.util.Arrays;
@@ -20,6 +20,7 @@ import static timestar_v2.Tables.CUSTOMER;
  * specific version of DTO, which is used for commands
  * </pre>
  */
+@SuppressWarnings("deprecation")
 public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
 
     public ValidCustomer(ValidCustomerDTO validCustomerDTO) {

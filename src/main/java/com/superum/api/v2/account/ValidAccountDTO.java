@@ -52,6 +52,7 @@ import java.util.Objects;
  * }
  * </pre>
  */
+@SuppressWarnings("deprecation")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public final class ValidAccountDTO {

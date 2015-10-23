@@ -13,6 +13,7 @@ import java.util.Objects;
  * SuppliedLesson version which uses timezone to represent start time of lesson; should be transformed into
  * SuppliedLessonWithTimestamp when (and if) possible
  */
+@SuppressWarnings("deprecation")
 public class SuppliedLessonWithTimezone {
 
     public Integer getGroupId() {

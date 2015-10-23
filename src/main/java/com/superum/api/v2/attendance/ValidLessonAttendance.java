@@ -16,6 +16,7 @@ import java.util.function.BiPredicate;
  * This object should be used to validate DTO data and use it in a meaningful manner;
  * </pre>
  */
+@SuppressWarnings("deprecation")
 public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
 
     @Override

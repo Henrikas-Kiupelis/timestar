@@ -7,7 +7,7 @@ import com.superum.api.v2.table.dto.*;
 import com.superum.api.v2.teacher.FullTeacherDTO;
 import com.superum.api.v2.teacher.ValidTeacherQueryService;
 import com.superum.helper.TimeResolver;
-import eu.goodlike.libraries.jodatime.Time;
+import eu.goodlike.libraries.joda.time.Time;
 import org.joda.time.LocalDate;
 import org.jooq.*;
 import org.jooq.impl.DSL;

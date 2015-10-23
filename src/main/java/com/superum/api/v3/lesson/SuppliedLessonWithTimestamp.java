@@ -10,6 +10,7 @@ import java.util.Objects;
  * SuppliedLesson version which uses timestamp to represent start time of lesson; all SuppliedLessons should eventually
  * be transformed into this
  */
+@SuppressWarnings("deprecation")
 public class SuppliedLessonWithTimestamp {
 
     public Integer getGroupId() {

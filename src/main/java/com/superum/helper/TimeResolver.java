@@ -1,7 +1,7 @@
 package com.superum.helper;
 
-import eu.goodlike.libraries.jodatime.Time;
-import eu.goodlike.libraries.jodatime.TimeHandler;
+import eu.goodlike.libraries.joda.time.Time;
+import eu.goodlike.libraries.joda.time.TimeHandler;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.jooq.Condition;

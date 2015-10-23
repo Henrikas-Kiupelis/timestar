@@ -24,6 +24,7 @@ import static timestar_v2.Tables.LESSON;
  * specific version of DTO, which is used for commands
  * </pre>
  */
+@SuppressWarnings("deprecation")
 public class ValidLesson extends MappedClass<ValidLesson, Long> {
 
     public static long calculateEndTime(long startTime, int length) {

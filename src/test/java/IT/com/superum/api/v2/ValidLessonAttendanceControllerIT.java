@@ -8,8 +8,8 @@ import org.junit.Test;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import static eu.goodlike.libraries.mockmvc.HttpResult.BAD;
-import static eu.goodlike.libraries.mockmvc.HttpResult.OK_NO_BODY;
+import static eu.goodlike.libraries.spring.mockmvc.HttpResult.BAD;
+import static eu.goodlike.libraries.spring.mockmvc.HttpResult.OK_NO_BODY;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
