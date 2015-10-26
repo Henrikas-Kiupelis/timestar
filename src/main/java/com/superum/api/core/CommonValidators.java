@@ -8,7 +8,7 @@ import eu.goodlike.v2.validate.impl.StringValidator;
 import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 import static eu.goodlike.misc.Constants.NOT_NULL_NOT_BLANK;
 
-public class CommonValidators {
+public final class CommonValidators {
 
     public static final StringValidator OPTIONAL_JSON_STRING =
             Validate.string().isNull().or().not().isBlank().isNoLargerThan(DEFAULT_VARCHAR_FIELD_SIZE);
