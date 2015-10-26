@@ -7,12 +7,13 @@ import com.superum.helper.field.steps.FieldNameStep;
 import com.superum.helper.field.steps.GetterStep;
 import com.superum.helper.field.steps.TableFieldStep;
 import eu.goodlike.neat.Null;
-import eu.goodlike.validation.Validate;
 import org.jooq.Field;
 import org.jooq.TableField;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
+
+import static eu.goodlike.misc.Constants.NOT_NULL_NOT_BLANK;
 
 /**
  * Builder class to define how to create a MappedField; uses step builder pattern
@@ -20,7 +21,6 @@ import java.util.function.Function;
  * @param <F> the type of the field inside the database (i.e. java.sql.Date for DATE); class can contain any field, so
  *           long as it can be converted
  */
-@SuppressWarnings("deprecation")
 public class FieldDefinition<T, F> implements FieldNameStep<T, F>, TableFieldStep<T, F>, GetterStep<T, F>, FieldDef<T, F> {
 
     @Override
@@ -41,8 +41,8 @@ public class FieldDefinition<T, F> implements FieldNameStep<T, F>, TableFieldSte
 
     @Override
     public TableFieldStep<T, F> fieldName(String name) {
-        Validate.string(name).not().Null().not().blank()
-                .ifInvalid(() -> new IllegalArgumentException("Defined field must have a valid name, not: " + name));
+        NOT_NULL_NOT_BLANK.ifInvalid(name)
+                .thenThrow(() -> new IllegalArgumentException("Defined field must have a valid name, not: " + name));
 
         this.name = name;
         return this;

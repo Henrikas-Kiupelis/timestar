@@ -6,11 +6,13 @@ import com.fasterxml.jackson.datatype.joda.ser.InstantSerializer;
 import com.google.common.base.MoreObjects;
 import com.superum.api.v1.account.Account;
 import com.superum.api.v1.account.AccountType;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 import org.joda.time.Instant;
 
 import java.util.Arrays;
 import java.util.Objects;
+
+import static eu.goodlike.misc.Constants.NOT_NULL_NOT_BLANK;
 
 /**
  * <pre>
@@ -52,7 +54,6 @@ import java.util.Objects;
  * }
  * </pre>
  */
-@SuppressWarnings("deprecation")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public final class ValidAccountDTO {
@@ -90,8 +91,8 @@ public final class ValidAccountDTO {
     }
 
     public static void validateUsername(String username) {
-        Validate.string(username).not().Null().not().blank().fits(USERNAME_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidAccountException("Account username must not be null, blank, or exceed " +
+        NOT_NULL_NOT_BLANK.isNoLargerThan(USERNAME_SIZE_LIMIT).ifInvalid(username)
+                .thenThrow(() -> new InvalidAccountException("Account username must not be null, blank, or exceed " +
                         USERNAME_SIZE_LIMIT + " chars: " + username));
     }
 
@@ -101,9 +102,8 @@ public final class ValidAccountDTO {
     public static ValidAccountDTO jsonInstance(@JsonProperty("username") String username,
                                                @JsonProperty("password") char[] password) {
         validateUsername(username);
-
-        Validate.charArray(password).not().Null().not().blank()
-                .ifInvalid(() -> new InvalidAccountException("Account must have a password!"));
+        Validate.charArray().not().isNull().not().isBlank().ifInvalid(password)
+                .thenThrow(() -> new InvalidAccountException("Account must have a password!"));
 
         return new ValidAccountDTO(null, username, null, password, null, null);
     }

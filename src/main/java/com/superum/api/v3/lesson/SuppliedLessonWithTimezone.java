@@ -3,7 +3,7 @@ package com.superum.api.v3.lesson;
 import com.google.common.base.MoreObjects;
 import com.superum.api.v2.lesson.InvalidLessonException;
 import eu.goodlike.neat.Null;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -13,7 +13,6 @@ import java.util.Objects;
  * SuppliedLesson version which uses timezone to represent start time of lesson; should be transformed into
  * SuppliedLessonWithTimestamp when (and if) possible
  */
-@SuppressWarnings("deprecation")
 public class SuppliedLessonWithTimezone {
 
     public Integer getGroupId() {
@@ -86,8 +85,8 @@ public class SuppliedLessonWithTimezone {
 
     private void validateForConversion() {
         Null.check(timezone, startDate).ifAny(this::cannotConvertError);
-        Validate.Int(startHour).not().Null().hourOfDay().ifInvalid(this::startHourError);
-        Validate.Int(startMinute).not().Null().minuteOfHour().ifInvalid(this::startMinuteError);
+        Validate.integer().not().isNull().isHourOfDay().ifInvalid(startHour).thenThrow(this::startHourError);
+        Validate.integer().not().isNull().isMinuteOfHour().ifInvalid(startMinute).thenThrow(this::startMinuteError);
     }
 
     private InvalidLessonException cannotConvertError() {

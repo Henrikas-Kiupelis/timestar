@@ -2,12 +2,15 @@ package com.superum.api.v2.attendance;
 
 import com.google.common.base.MoreObjects;
 import com.superum.helper.field.ManyDefined;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 import org.jooq.lambda.Seq;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
+
+import static com.superum.api.core.CommonValidators.MANDATORY_JSON_ID;
+import static com.superum.api.core.CommonValidators.MANDATORY_JSON_LONG_ID;
 
 /**
  * <pre>
@@ -16,7 +19,6 @@ import java.util.function.BiPredicate;
  * This object should be used to validate DTO data and use it in a meaningful manner;
  * </pre>
  */
-@SuppressWarnings("deprecation")
 public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
 
     @Override
@@ -39,14 +41,13 @@ public class ValidLessonAttendance implements ManyDefined<Long, Integer> {
         this.lessonId = validLessonAttendanceDTO.getLessonId();
         this.studentIds = validLessonAttendanceDTO.getStudentIds();
 
-        Validate.Long(lessonId).not().Null().moreThan(0)
-                .ifInvalid(() -> new InvalidLessonAttendanceException("Lesson id for attendance must be set and positive, not " + lessonId));
+        MANDATORY_JSON_LONG_ID.ifInvalid(lessonId)
+                .thenThrow(() -> new InvalidLessonAttendanceException("Lesson id for attendance must be set and positive, not " + lessonId));
 
-        Validate.collection(studentIds).not().Null().not().empty().forEach(Validate::Int,
-                studentId -> studentId.not().Null().moreThan(0)
-                        .ifInvalid(() -> new InvalidLessonAttendanceException("Student ids for attendance must be set and positive, not " +
-                                studentId.value())))
-                .ifInvalid(() -> new InvalidLessonAttendanceException("Attendance must have at least a single student!"));
+        Validate.collectionOf(Integer.class).not().isNull().not().isEmpty()
+                .forEachIfNot(MANDATORY_JSON_ID)
+                .Throw(id -> new InvalidLessonAttendanceException("Student ids for attendance must be set and positive, not " + id))
+                .ifInvalid(studentIds).thenThrow(() -> new InvalidLessonAttendanceException("Attendance must have at least a single student!"));
     }
 
     // PRIVATE

@@ -2,15 +2,17 @@ package com.superum.api.v3.lesson;
 
 import com.google.common.base.MoreObjects;
 import com.superum.api.v2.lesson.InvalidLessonException;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 
 import java.util.Objects;
+
+import static com.superum.api.core.CommonValidators.MANDATORY_JSON_ID;
+import static com.superum.api.core.CommonValidators.OPTIONAL_JSON_ID;
 
 /**
  * SuppliedLesson version which uses timestamp to represent start time of lesson; all SuppliedLessons should eventually
  * be transformed into this
  */
-@SuppressWarnings("deprecation")
 public class SuppliedLessonWithTimestamp {
 
     public Integer getGroupId() {
@@ -30,17 +32,17 @@ public class SuppliedLessonWithTimestamp {
     }
 
     public void validateForCreation() {
-        Validate.Int(groupId).not().Null().moreThan(0).ifInvalid(this::groupIdError);
-        Validate.Long(startTime).not().Null().atLeast(0).ifInvalid(this::startTimeError);
-        Validate.Int(length).not().Null().moreThan(0).ifInvalid(this::lengthError);
-        Validate.string(comment).Null().or().fits(COMMENT_SIZE_LIMIT).ifInvalid(this::commentError);
+        MANDATORY_JSON_ID.ifInvalid(groupId).thenThrow(this::groupIdError);
+        Validate.longInt().not().isNull().isAtLeast(0).ifInvalid(startTime).thenThrow(this::startTimeError);
+        Validate.integer().not().isNull().isAtLeast(1).ifInvalid(length).thenThrow(this::lengthError);
+        Validate.string().isNull().or().isNoLargerThan(COMMENT_SIZE_LIMIT).ifInvalid(comment).thenThrow(this::commentError);
     }
 
     public void validateForUpdate() {
-        Validate.Int(groupId).Null().or().moreThan(0).ifInvalid(this::groupIdError);
-        Validate.Long(startTime).Null().or().atLeast(0).ifInvalid(this::startTimeError);
-        Validate.Int(length).Null().or().moreThan(0).ifInvalid(this::lengthError);
-        Validate.string(comment).Null().or().fits(COMMENT_SIZE_LIMIT).ifInvalid(this::commentError);
+        OPTIONAL_JSON_ID.ifInvalid(groupId).thenThrow(this::groupIdError);
+        Validate.longInt().isNull().or().isAtLeast(0).ifInvalid(startTime).thenThrow(this::startTimeError);
+        Validate.integer().isNull().or().isAtLeast(1).ifInvalid(length).thenThrow(this::lengthError);
+        Validate.string().isNull().or().isNoLargerThan(COMMENT_SIZE_LIMIT).ifInvalid(comment).thenThrow(this::commentError);
     }
 
     // CONSTRUCTORS

@@ -3,7 +3,7 @@ package com.superum.api.v2.lesson;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.jooq.Condition;
@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.superum.api.core.CommonValidators.*;
 import static timestar_v2.Tables.GROUP_OF_STUDENTS;
 import static timestar_v2.Tables.LESSON;
 
@@ -24,7 +25,6 @@ import static timestar_v2.Tables.LESSON;
  * specific version of DTO, which is used for commands
  * </pre>
  */
-@SuppressWarnings("deprecation")
 public class ValidLesson extends MappedClass<ValidLesson, Long> {
 
     public static long calculateEndTime(long startTime, int length) {
@@ -83,25 +83,21 @@ public class ValidLesson extends MappedClass<ValidLesson, Long> {
     // CONSTRUCTORS
 
     public ValidLesson(ValidLessonDTO validLessonDTO) {
-        Validate.Long(validLessonDTO.getId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidLessonException("Lesson id must be positive, not: "+
-                        validLessonDTO.getId()));
+        OPTIONAL_JSON_LONG_ID.ifInvalid(validLessonDTO.getId())
+                .thenThrow(id -> new InvalidLessonException("Lesson id must be positive, not: " +id));
 
-        Validate.Int(validLessonDTO.getGroupId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidLessonException("Group id for lesson must be positive, not: " +
-                        validLessonDTO.getGroupId()));
+        OPTIONAL_JSON_ID.ifInvalid(validLessonDTO.getGroupId())
+                .thenThrow(id -> new InvalidLessonException("Group id for lesson must be positive, not: " + id));
 
-        Validate.Long(validLessonDTO.getStartTime()).Null().or().equal(0).or().moreThan(0)
-                .ifInvalid(() -> new InvalidLessonException("Lesson start time must be non-negative, not: " +
-                        validLessonDTO.getStartTime()));
+        OPTIONAL_TIMESTAMP.ifInvalid(validLessonDTO.getStartTime())
+                .thenThrow(time -> new InvalidLessonException("Lesson start time must be non-negative, not: " + time));
 
-        Validate.Int(validLessonDTO.getLength()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidLessonException("Lesson length must be positive, not: " +
-                        validLessonDTO.getLength()));
+        Validate.integer().isNull().or().isMoreThan(0).ifInvalid(validLessonDTO.getLength())
+                .thenThrow(length -> new InvalidLessonException("Lesson length must be positive, not: " + length));
 
-        Validate.string(validLessonDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidLessonException("Lesson comment must not exceed " +
-                        COMMENT_SIZE_LIMIT + " chars: " + validLessonDTO.getComment()));
+        Validate.string().isNull().or().isNoLargerThan(COMMENT_SIZE_LIMIT).ifInvalid(validLessonDTO.getComment())
+                .thenThrow(comment -> new InvalidLessonException("Lesson comment must not exceed " +
+                        COMMENT_SIZE_LIMIT + " chars: " + comment));
 
         this.validLessonDTO = validLessonDTO;
 

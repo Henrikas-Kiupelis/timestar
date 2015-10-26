@@ -2,15 +2,15 @@ package com.superum.api.v2.teacher;
 
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.superum.api.core.CommonValidators.*;
 import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 import static timestar_v2.Tables.TEACHER;
-
 
 /**
  * <pre>
@@ -20,56 +20,54 @@ import static timestar_v2.Tables.TEACHER;
  * specific version of DTO, which is used for commands
  * </pre>
  */
-@SuppressWarnings("deprecation")
 public final class ValidTeacher extends MappedClass<ValidTeacher, Integer> {
 
     // CONSTRUCTORS
 
     public ValidTeacher(FullTeacherDTO fullTeacherDTO) {
-        Validate.Int(fullTeacherDTO.getId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher id can't be negative: " + fullTeacherDTO.getId()));
+        OPTIONAL_JSON_ID.ifInvalid(fullTeacherDTO.getId())
+                .thenThrow(id -> new InvalidTeacherException("Teacher id can't be negative: " + id));
 
-        Validate.Int(fullTeacherDTO.getPaymentDay()).Null().or().dayOfMonth()
-                .ifInvalid(() -> new InvalidTeacherException("Such payment day for teacher is impossible: " + fullTeacherDTO.getPaymentDay()));
+        Validate.integer().isNull().or().isDayOfMonth().ifInvalid(fullTeacherDTO.getPaymentDay())
+                .thenThrow(day -> new InvalidTeacherException("Such payment day for teacher is impossible: " + day));
 
-        Validate.bigDecimal(fullTeacherDTO.getHourlyWage()).Null().or().positive()
-                .ifInvalid(() -> new InvalidTeacherException("Hourly wage for teacher must be positive, not " + fullTeacherDTO.getHourlyWage()));
+        Validate.bigDecimal().isNull().or().isPositive().ifInvalid(fullTeacherDTO.getHourlyWage())
+                .thenThrow(wage -> new InvalidTeacherException("Hourly wage for teacher must be positive, not " + wage));
 
-        Validate.bigDecimal(fullTeacherDTO.getAcademicWage()).Null().or().positive()
-                .ifInvalid(() -> new InvalidTeacherException("Academic wage for teacher must be positive, not " + fullTeacherDTO.getAcademicWage()));
+        Validate.bigDecimal().isNull().or().isPositive().ifInvalid(fullTeacherDTO.getAcademicWage())
+                .thenThrow(wage -> new InvalidTeacherException("Academic wage for teacher must be positive, not " + wage));
 
-        Validate.string(fullTeacherDTO.getName()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher name must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + fullTeacherDTO.getName()));
+        OPTIONAL_JSON_STRING.ifInvalid(fullTeacherDTO.getName())
+                .thenThrow(name -> new InvalidTeacherException("Teacher name must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + name));
 
-        Validate.string(fullTeacherDTO.getSurname()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher surname must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + fullTeacherDTO.getSurname()));
+        OPTIONAL_JSON_STRING.ifInvalid(fullTeacherDTO.getSurname())
+                .thenThrow(surname -> new InvalidTeacherException("Teacher surname must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + surname));
 
-        Validate.string(fullTeacherDTO.getPhone()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher phone must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + fullTeacherDTO.getPhone()));
+        OPTIONAL_JSON_STRING.ifInvalid(fullTeacherDTO.getPhone())
+                .thenThrow(phone -> new InvalidTeacherException("Teacher phone must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + phone));
 
-        Validate.string(fullTeacherDTO.getCity()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher city must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + fullTeacherDTO.getCity()));
+        OPTIONAL_JSON_STRING.ifInvalid(fullTeacherDTO.getCity())
+                .thenThrow(city -> new InvalidTeacherException("Teacher city must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + city));
 
-        Validate.string(fullTeacherDTO.getEmail()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE).email()
-                .ifInvalid(() -> new InvalidTeacherException("Teacher email must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " +
-                        fullTeacherDTO.getEmail()));
+        OPTIONAL_JSON_STRING.and().isEmail().ifInvalid(fullTeacherDTO.getEmail())
+                .thenThrow(email -> new InvalidTeacherException("Teacher email must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " + email));
 
-        Validate.string(fullTeacherDTO.getPicture()).Null().or().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher picture must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + fullTeacherDTO.getPicture()));
+        OPTIONAL_JSON_STRING_BLANK_ABLE.ifInvalid(fullTeacherDTO.getPicture())
+                .thenThrow(pic -> new InvalidTeacherException("Teacher picture must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + pic));
 
-        Validate.string(fullTeacherDTO.getDocument()).Null().or().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher document must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + fullTeacherDTO.getDocument()));
+        OPTIONAL_JSON_STRING_BLANK_ABLE.ifInvalid(fullTeacherDTO.getDocument())
+                .thenThrow(doc -> new InvalidTeacherException("Teacher document must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + doc));
 
-        Validate.string(fullTeacherDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher comment must not exceed " +
-                        COMMENT_SIZE_LIMIT + " chars: " + fullTeacherDTO.getComment()));
+        Validate.string().isNull().or().isNoLargerThan(COMMENT_SIZE_LIMIT).ifInvalid(fullTeacherDTO.getComment())
+                .thenThrow(comment -> new InvalidTeacherException("Teacher comment must not exceed " +
+                        COMMENT_SIZE_LIMIT + " chars: " + comment));
 
         this.fullTeacherDTO = fullTeacherDTO;
 

@@ -5,7 +5,7 @@ import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.v2.teacher.ValidTeacherController;
 import com.superum.helper.PartitionAccount;
 import com.superum.helper.TimeResolver;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-
 /**
  * <pre>
  * API v3
@@ -33,7 +32,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
  */
 @Controller
 @RequestMapping(value = "/timestar/api/v3/lesson/table")
-@SuppressWarnings("deprecation")
 public class SplitLessonTableController extends CommonControllerLogic {
 
     @RequestMapping(value = "/size", method = GET, produces = APPLICATION_JSON_UTF8)
@@ -82,8 +80,8 @@ public class SplitLessonTableController extends CommonControllerLogic {
     @ResponseBody
     public List<TableReport> getReportData(PartitionAccount account, @PathVariable String source,
                              @RequestParam(value = "id") String id) {
-        Validate.string(id).not().Null().not().blank().commaSeparatedListOfIntegers()
-                .ifInvalid(() -> new InvalidRequestException("Parameter id must be a comma separated list of " +
+        Validate.string().not().isNull().not().isBlank().isCommaSeparatedListOfIntegers().ifInvalid(id)
+                .thenThrow(() -> new InvalidRequestException("Parameter id must be a comma separated list of " +
                         "positive integers, not: " + id));
 
         LOG.info("User {} is reading reports for {}s with ids: {}", account, source, id);

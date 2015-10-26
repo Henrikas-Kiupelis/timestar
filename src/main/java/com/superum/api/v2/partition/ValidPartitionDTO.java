@@ -3,12 +3,12 @@ package com.superum.api.v2.partition;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.superum.api.v1.partition.Partition;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 
 import java.util.Objects;
 
+import static com.superum.api.core.CommonValidators.MANDATORY_JSON_STRING;
 import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
-
 
 /**
  * <pre>
@@ -35,7 +35,6 @@ import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
  * When returning an instance of ValidPartitionDTO with JSON, no additional fields will be present;
  * </pre>
  */
-@SuppressWarnings("deprecation")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public class ValidPartitionDTO {
@@ -64,13 +63,13 @@ public class ValidPartitionDTO {
     }
 
     public ValidPartitionDTO(Integer id, String name) {
-        Validate.Int(id).not().Null().between(MIN_PARTITION_ID, MAX_PARTITION_ID)
-                .ifInvalid(() -> new InvalidPartitionException("Partition id cannot be null, and must be between " +
+        Validate.integer().not().isNull().isBetween(MIN_PARTITION_ID, MAX_PARTITION_ID).ifInvalid(id)
+                .thenThrow(() -> new InvalidPartitionException("Partition id cannot be null, and must be between " +
                         MIN_PARTITION_ID + " and " + MAX_PARTITION_ID + ", not: " + id));
 
-        Validate.string(name).not().Null().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidPartitionException("Partition name cannot be null, blank and must fit " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars"));
+        MANDATORY_JSON_STRING.ifInvalid(name)
+                .thenThrow(() -> new InvalidPartitionException("Partition name cannot be null, blank and must fit " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + name));
 
         this.id = id;
         this.name = name;

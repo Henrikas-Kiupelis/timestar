@@ -3,14 +3,14 @@ package com.superum.api.v2.customer;
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
 import eu.goodlike.libraries.joda.time.Time;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static com.superum.api.core.CommonValidators.*;
 import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 import static timestar_v2.Tables.CUSTOMER;
-
 
 /**
  * <pre>
@@ -20,33 +20,31 @@ import static timestar_v2.Tables.CUSTOMER;
  * specific version of DTO, which is used for commands
  * </pre>
  */
-@SuppressWarnings("deprecation")
 public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
 
     public ValidCustomer(ValidCustomerDTO validCustomerDTO) {
-        Validate.Int(validCustomerDTO.getId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidCustomerException("Customer id must be positive, not: "+
-                        validCustomerDTO.getId()));
+        OPTIONAL_JSON_ID.ifInvalid(validCustomerDTO.getId())
+                .thenThrow(id -> new InvalidCustomerException("Customer id must be positive, not: " + id));
 
-        Validate.string(validCustomerDTO.getName()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidCustomerException("Customer name must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + validCustomerDTO.getName()));
+        OPTIONAL_JSON_STRING.ifInvalid(validCustomerDTO.getName())
+                .thenThrow(name -> new InvalidCustomerException("Customer name must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + name));
 
-        Validate.string(validCustomerDTO.getPhone()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidCustomerException("Customer phone must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + validCustomerDTO.getPhone()));
+        OPTIONAL_JSON_STRING.ifInvalid(validCustomerDTO.getPhone())
+                .thenThrow(phone -> new InvalidCustomerException("Customer phone must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + phone));
 
-        Validate.string(validCustomerDTO.getWebsite()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidCustomerException("Customer website must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + validCustomerDTO.getWebsite()));
+        OPTIONAL_JSON_STRING.ifInvalid(validCustomerDTO.getWebsite())
+                .thenThrow(website -> new InvalidCustomerException("Customer website must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + website));
 
-        Validate.string(validCustomerDTO.getPicture()).Null().or().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidCustomerException("Customer picture must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + validCustomerDTO.getPicture()));
+        OPTIONAL_JSON_STRING_BLANK_ABLE.ifInvalid(validCustomerDTO.getPicture())
+                .thenThrow(picture -> new InvalidCustomerException("Customer picture must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + picture));
 
-        Validate.string(validCustomerDTO.getComment()).Null().or().fits(COMMENT_SIZE_LIMIT)
-                .ifInvalid(() -> new InvalidCustomerException("Customer comment must not exceed " +
-                        COMMENT_SIZE_LIMIT + " chars: " + validCustomerDTO.getComment()));
+        Validate.string().isNull().or().isNoLargerThan(COMMENT_SIZE_LIMIT).ifInvalid(validCustomerDTO.getComment())
+                .thenThrow(comment -> new InvalidCustomerException("Customer comment must not exceed " +
+                        COMMENT_SIZE_LIMIT + " chars: " + comment));
 
         this.validCustomerDTO = validCustomerDTO;
 

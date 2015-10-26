@@ -2,11 +2,13 @@ package com.superum.api.v2.grouping;
 
 import com.google.common.base.MoreObjects;
 import com.superum.helper.field.ManyDefined;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 import org.jooq.lambda.Seq;
 
 import java.util.Objects;
 import java.util.Set;
+
+import static com.superum.api.core.CommonValidators.MANDATORY_JSON_ID;
 
 /**
  * <pre>
@@ -15,7 +17,6 @@ import java.util.Set;
  * This object should be used to validate DTO data and use it in a meaningful manner;
  * </pre>
  */
-@SuppressWarnings("deprecation")
 public class ValidGrouping implements ManyDefined<Integer, Integer> {
 
     @Override
@@ -34,14 +35,13 @@ public class ValidGrouping implements ManyDefined<Integer, Integer> {
         this.groupId = validGroupingDTO.getGroupId();
         this.studentIds = validGroupingDTO.getStudentIds();
 
-        Validate.Int(groupId).not().Null().moreThan(0)
-                .ifInvalid(() -> new InvalidGroupingException("Group id for grouping must be set and positive, not " + groupId));
+        MANDATORY_JSON_ID.ifInvalid(groupId)
+                .thenThrow(() -> new InvalidGroupingException("Group id for grouping must be set and positive, not " + groupId));
 
-        Validate.collection(studentIds).not().Null().not().empty().forEach(Validate::Int,
-                studentId -> studentId.not().Null().moreThan(0)
-                        .ifInvalid(() -> new InvalidGroupingException("Student ids for grouping must be set and positive, not " +
-                                studentId.value())))
-                .ifInvalid(() -> new InvalidGroupingException("Grouping must have at least a single student!"));
+        Validate.collectionOf(Integer.class).not().isNull().not().isEmpty()
+                .forEachIfNot(MANDATORY_JSON_ID)
+                .Throw(id -> new InvalidGroupingException("Student ids for grouping must be set and positive, not " + id))
+                .ifInvalid(studentIds).thenThrow(() -> new InvalidGroupingException("Grouping must have at least a single student!"));
     }
 
     // PRIVATE

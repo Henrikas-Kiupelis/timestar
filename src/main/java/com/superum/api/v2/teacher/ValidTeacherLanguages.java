@@ -2,11 +2,14 @@ package com.superum.api.v2.teacher;
 
 import com.google.common.base.MoreObjects;
 import com.superum.helper.field.ManyDefined;
-import eu.goodlike.validation.Validate;
+import eu.goodlike.v2.validate.Validate;
 import org.jooq.lambda.Seq;
 
 import java.util.List;
 import java.util.Objects;
+
+import static com.superum.api.core.CommonValidators.OPTIONAL_JSON_ID;
+import static eu.goodlike.v2.validate.Validate.string;
 
 /**
  * <pre>
@@ -16,7 +19,6 @@ import java.util.Objects;
  * specific version of DTO, which is used for commands
  * </pre>
  */
-@SuppressWarnings("deprecation")
 public final class ValidTeacherLanguages implements ManyDefined<Integer, String> {
 
     @Override
@@ -48,14 +50,13 @@ public final class ValidTeacherLanguages implements ManyDefined<Integer, String>
     }
 
     private ValidTeacherLanguages(Integer id, List<String> languages) {
-        Validate.Int(id).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidTeacherException("Teacher id can't be negative: " + id));
+        OPTIONAL_JSON_ID.ifInvalid(id).thenThrow(() -> new InvalidTeacherException("Teacher id can't be negative: " + id));
 
-        Validate.collection(languages).Null().or().not().empty().forEach(Validate::string,
-                language -> language.not().Null().not().blank().fits(LANGUAGE_CODE_SIZE_LIMIT)
-                        .ifInvalid(() -> new InvalidTeacherException("Specific Teacher languages must not be null, blank or exceed "
-                                + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + language.value())))
-                .ifInvalid(() -> new InvalidTeacherException("Teacher must have at least a single language!"));
+        Validate.collectionOf(String.class).isNull().or().not().isEmpty()
+                .forEachIfNot(string().not().isNull().not().isBlank().isNoLargerThan(LANGUAGE_CODE_SIZE_LIMIT))
+                .Throw(lang -> new InvalidTeacherException("Specific Teacher languages must not be null, blank or exceed "
+                        + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + lang))
+                .ifInvalid(languages).thenThrow(() -> new InvalidTeacherException("Teacher must have at least a single language!"));
 
         this.id = id;
         this.languages = languages;

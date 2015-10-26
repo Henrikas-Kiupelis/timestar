@@ -5,13 +5,14 @@ import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.steps.FieldDef;
 import eu.goodlike.libraries.joda.time.Time;
 import eu.goodlike.random.Random;
-import eu.goodlike.validation.Validate;
 import org.jooq.lambda.Seq;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.superum.api.core.CommonValidators.OPTIONAL_JSON_ID;
+import static com.superum.api.core.CommonValidators.OPTIONAL_JSON_STRING;
 import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 import static timestar_v2.Tables.STUDENT;
 
@@ -23,7 +24,6 @@ import static timestar_v2.Tables.STUDENT;
  * specific version of DTO, which is used for commands
  * </pre>
  */
-@SuppressWarnings("deprecation")
 public class ValidStudent extends MappedClass<ValidStudent, Integer> {
 
     @Override
@@ -50,22 +50,19 @@ public class ValidStudent extends MappedClass<ValidStudent, Integer> {
     // CONSTRUCTORS
 
     public ValidStudent(ValidStudentDTO validStudentDTO) {
-        Validate.Int(validStudentDTO.getId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidStudentException("Student id must be positive, not: " +
-                        validStudentDTO.getId()));
+        OPTIONAL_JSON_ID.ifInvalid(validStudentDTO.getId())
+                .thenThrow(id -> new InvalidStudentException("Student id must be positive, not: " + id));
 
-        Validate.Int(validStudentDTO.getCustomerId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidStudentException("Customer id for student must be positive, not: " +
-                        validStudentDTO.getCustomerId()));
+        OPTIONAL_JSON_ID.ifInvalid(validStudentDTO.getCustomerId())
+                .thenThrow(id -> new InvalidStudentException("Customer id for student must be positive, not: " + id));
 
-        Validate.string(validStudentDTO.getEmail()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE).email()
-                .ifInvalid(() -> new InvalidStudentException("Student email must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " +
-                        validStudentDTO.getEmail()));
+        OPTIONAL_JSON_STRING.ifInvalid(validStudentDTO.getEmail())
+                .thenThrow(email -> new InvalidStudentException("Student email must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " + email));
 
-        Validate.string(validStudentDTO.getName()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidStudentException("Student name must not exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + validStudentDTO.getName()));
+        OPTIONAL_JSON_STRING.ifInvalid(validStudentDTO.getName())
+                .thenThrow(name -> new InvalidStudentException("Student name must not exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + name));
 
         this.validStudentDTO = validStudentDTO;
 

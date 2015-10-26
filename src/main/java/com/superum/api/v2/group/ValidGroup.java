@@ -2,12 +2,13 @@ package com.superum.api.v2.group;
 
 import com.superum.helper.field.MappedClass;
 import com.superum.helper.field.steps.FieldDef;
-import eu.goodlike.validation.Validate;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.superum.api.core.CommonValidators.OPTIONAL_JSON_ID;
+import static com.superum.api.core.CommonValidators.OPTIONAL_JSON_STRING;
 import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
 import static timestar_v2.Tables.GROUP_OF_STUDENTS;
 
@@ -19,7 +20,6 @@ import static timestar_v2.Tables.GROUP_OF_STUDENTS;
  * specific version of DTO, which is used for commands
  * </pre>
  */
-@SuppressWarnings("deprecation")
 public class ValidGroup extends MappedClass<ValidGroup, Integer> {
 
     public boolean hasNonExistentCustomerId(Predicate<Integer> customerIdCheck) {
@@ -33,22 +33,22 @@ public class ValidGroup extends MappedClass<ValidGroup, Integer> {
     // CONSTRUCTORS
 
     public ValidGroup(ValidGroupDTO validGroupDTO) {
-        Validate.Int(validGroupDTO.getId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidGroupException("Group id must be positive, not: " + validGroupDTO.getId()));
+        OPTIONAL_JSON_ID.ifInvalid(validGroupDTO.getId())
+                .thenThrow(id -> new InvalidGroupException("Group id must be positive, not: " + id));
 
-        Validate.Int(validGroupDTO.getCustomerId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidGroupException("Group's customer id must be positive, not: " + validGroupDTO.getCustomerId()));
+        OPTIONAL_JSON_ID.ifInvalid(validGroupDTO.getCustomerId())
+                .thenThrow(id -> new InvalidGroupException("Group's customer id must be positive, not: " + id));
 
-        Validate.Int(validGroupDTO.getTeacherId()).Null().or().moreThan(0)
-                .ifInvalid(() -> new InvalidGroupException("Group's teacher id must be positive, not: " + validGroupDTO.getTeacherId()));
+        OPTIONAL_JSON_ID.ifInvalid(validGroupDTO.getTeacherId())
+                .thenThrow(id -> new InvalidGroupException("Group's teacher id must be positive, not: " + id));
 
-        Validate.string(validGroupDTO.getLanguageLevel()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidGroupException("Group's language level must not be blank or exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + validGroupDTO.getLanguageLevel()));
+        OPTIONAL_JSON_STRING.ifInvalid(validGroupDTO.getLanguageLevel())
+                .thenThrow(level -> new InvalidGroupException("Group's language level must not be blank or exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + level));
 
-        Validate.string(validGroupDTO.getName()).Null().or().not().blank().fits(DEFAULT_VARCHAR_FIELD_SIZE)
-                .ifInvalid(() -> new InvalidGroupException("Group's name must not be blank or exceed " +
-                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + validGroupDTO.getName()));
+        OPTIONAL_JSON_STRING.ifInvalid(validGroupDTO.getName())
+                .thenThrow(name -> new InvalidGroupException("Group's name must not be blank or exceed " +
+                        DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + name));
 
         this.validGroupDTO = validGroupDTO;
 
