@@ -1,11 +1,11 @@
 package com.superum.api.v3.lesson;
 
 import com.superum.api.v2.Table;
-import com.superum.api.v2.core.CommonControllerLogic;
 import com.superum.api.v2.exception.InvalidRequestException;
 import com.superum.helper.PartitionAccount;
-import com.superum.helper.TimeResolver;
+import eu.goodlike.misc.CommonControllerLogic;
 import eu.goodlike.neat.Null;
+import eu.goodlike.time.TimeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(value = "/timestar/api/v3/lesson")
-public class LessonController extends CommonControllerLogic {
+public class LessonController implements CommonControllerLogic {
 
     // COMMANDS
 
@@ -39,7 +39,7 @@ public class LessonController extends CommonControllerLogic {
     @ResponseBody
     public void update(PartitionAccount account, @PathVariable long id, @RequestBody SuppliedLesson lesson) {
         Null.check(lesson).ifAny(() -> new InvalidRequestException("Lesson cannot be null"));
-        validateId("Lesson", id);
+        validateId("Lesson", id, InvalidRequestException::new);
         LOG.info("User {} is updating a lesson: {}", account, lesson);
 
         SuppliedLessonWithTimestamp suppliedLesson = lessonTransformer.from(lesson, false);
@@ -50,7 +50,7 @@ public class LessonController extends CommonControllerLogic {
     @RequestMapping(value = "/{id:[\\d]+}", method = DELETE)
     @ResponseBody
     public void delete(PartitionAccount account, @PathVariable long id) {
-        validateId("Lesson", id);
+        validateId("Lesson", id, InvalidRequestException::new);
         LOG.info("User {} is deleting a lesson with id: {}", account, id);
 
         lessonCommands.delete(id, account.partitionId());
@@ -62,7 +62,7 @@ public class LessonController extends CommonControllerLogic {
     @RequestMapping(value = "/{id:[\\d]+}", method = GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FetchedLesson read(PartitionAccount account, @PathVariable long id) {
-        validateId("Lesson", id);
+        validateId("Lesson", id, InvalidRequestException::new);
         LOG.info("User {} is reading lesson with id: {}", account, id);
 
         FetchedLesson lesson = lessonQueries.readById(id);
@@ -81,9 +81,9 @@ public class LessonController extends CommonControllerLogic {
                                         @RequestParam(value="end_date", required=false) String endDate,
                                         @RequestParam(value="start", required=false) Long start,
                                         @RequestParam(value="end", required=false) Long end) {
-        page = validatePage(page);
-        per_page = validatePerPage(per_page);
-        TimeResolver timeResolver = validateTime(timeZone, startDate, endDate, start, end);
+        page = validatePage(page, InvalidRequestException::new);
+        per_page = validatePerPage(per_page, InvalidRequestException::new);
+        TimeResolver timeResolver = validateTime(timeZone, startDate, endDate, start, end, InvalidRequestException::new);
         start = timeResolver.getStartTime();
         end = timeResolver.getEndTime();
         LOG.info("User {} is reading all lessons, from {} to {}, page {}, with {} entries per page",
@@ -105,10 +105,10 @@ public class LessonController extends CommonControllerLogic {
                                              @RequestParam(value="end_date", required=false) String end_date,
                                              @RequestParam(value="start", required=false) Long start,
                                              @RequestParam(value="end", required=false) Long end) {
-        validateId(tableName, id);
-        page = validatePage(page);
-        per_page = validatePerPage(per_page);
-        TimeResolver timeResolver = validateTime(time_zone, start_date, end_date, start, end);
+        validateId(tableName, id, InvalidRequestException::new);
+        page = validatePage(page, InvalidRequestException::new);
+        per_page = validatePerPage(per_page, InvalidRequestException::new);
+        TimeResolver timeResolver = validateTime(time_zone, start_date, end_date, start, end, InvalidRequestException::new);
         start = timeResolver.getStartTime();
         end = timeResolver.getEndTime();
         LOG.info("User {} is reading lessons for {} with id {}, from {} to {}, page {}, with {} entries per page",

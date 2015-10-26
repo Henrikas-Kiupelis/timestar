@@ -37,7 +37,7 @@ public class LessonCommandsImpl implements LessonCommands {
             throw new UnsafeLessonDeleteException("Cannot delete lesson with id " + lessonId +
                     " while it still has entries in other tables");
 
-        if (lessonRepository.delete(lessonId, partitionId) == 0)
+        if (lessonRepository.delete(lessonId) == 0)
             throw new DatabaseException("Couldn't delete lesson with id: " + lessonId);
     }
 

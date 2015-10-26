@@ -33,10 +33,10 @@ public final class Lesson {
      * @throws DataAccessException if an unexpected database error occurred
      */
     public Optional<FetchedLesson> create(int partitionId, Function<Record, FetchedLesson> mapper) {
-        if (lessonRepository.isOverlapping(teacherId, startTime, endTime, partitionId))
+        if (lessonRepository.isOverlapping(teacherId, startTime, endTime))
             throw new OverlappingLessonException("This teacher already has a lesson during this time, cannot create!");
 
-        return lessonRepository.insert(groupId, teacherId, startTime, endTime, length, comment, partitionId, mapper);
+        return lessonRepository.insert(groupId, teacherId, startTime, endTime, length, comment, mapper);
     }
 
     /**
@@ -45,10 +45,10 @@ public final class Lesson {
      * @throws DataAccessException if an unexpected database error occurred
      */
     public int update(long lessonId, int partitionId) {
-        if (lessonRepository.isOverlapping(lessonId, teacherId, startTime, endTime, partitionId))
+        if (lessonRepository.isOverlapping(lessonId, teacherId, startTime, endTime))
             throw new OverlappingLessonException("This teacher already has a lesson during this time, cannot update!");
 
-        return lessonRepository.update(lessonId, groupId, teacherId, startTime, endTime, length, comment, partitionId);
+        return lessonRepository.update(lessonId, groupId, teacherId, startTime, endTime, length, comment);
     }
 
     // CONSTRUCTORS

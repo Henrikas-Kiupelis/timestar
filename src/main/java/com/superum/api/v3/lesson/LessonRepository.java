@@ -22,7 +22,7 @@ public interface LessonRepository {
      * @throws DataAccessException if an unexpected database error occurred
      */
     Optional<FetchedLesson> insert(int groupId, int teacherId, long startTime, long endTime, int length,
-                                   String comment, int partitionId, Function<Record, FetchedLesson> mapper);
+                                   String comment, Function<Record, FetchedLesson> mapper);
 
     /**
      * <pre>
@@ -33,27 +33,26 @@ public interface LessonRepository {
      * @return amount of records updated
      * @throws DataAccessException if an unexpected database error occurred
      */
-    int update(long lessonId, int groupId, int teacherId, long startTime, long endTime, int length,
-               String comment, int partitionId);
+    int update(long lessonId, int groupId, int teacherId, long startTime, long endTime, int length, String comment);
 
     /**
      * Deletes a record in LESSOn table with id of lessonId
      * @return amount of records deleted
      * @throws DataAccessException if an unexpected database error occurred
      */
-    int delete(long lessonId, int partitionId);
+    int delete(long lessonId);
 
     /**
      * @return true if there are lessons for teacher with id of teacherId between startTime and endTime, with the
      * exception of lesson with id of lessonId; false otherwise
      * @throws DataAccessException if an unexpected database error occurred
      */
-    boolean isOverlapping(long lessonId, int teacherId, long startTime, long endTime, int partitionId);
+    boolean isOverlapping(long lessonId, int teacherId, long startTime, long endTime);
 
     /**
      * @return true if there are lessons for teacher with id of teacherId between startTime and endTime; false otherwise
      * @throws DataAccessException if an unexpected database error occurred
      */
-    boolean isOverlapping(int teacherId, long startTime, long endTime, int partitionId);
+    boolean isOverlapping(int teacherId, long startTime, long endTime);
 
 }

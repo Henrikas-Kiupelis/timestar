@@ -1,5 +1,6 @@
 package com.superum.api.v3.lesson;
 
+import com.superum.helper.PartitionAccount;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -17,7 +18,7 @@ public class LessonRepositoryImpl implements LessonRepository {
 
     @Override
     public Optional<FetchedLesson> insert(int groupId, int teacherId, long startTime, long endTime, int length,
-                                          String comment, int partitionId, Function<Record, FetchedLesson> mapper) {
+                                          String comment, Function<Record, FetchedLesson> mapper) {
         return sql.insertInto(LESSON)
                 .set(LESSON.GROUP_ID, groupId)
                 .set(LESSON.TEACHER_ID, teacherId)
@@ -25,15 +26,14 @@ public class LessonRepositoryImpl implements LessonRepository {
                 .set(LESSON.TIME_OF_END, endTime)
                 .set(LESSON.DURATION_IN_MINUTES, length)
                 .set(LESSON.COMMENT, comment)
-                .set(LESSON.PARTITION_ID, partitionId)
+                .set(LESSON.PARTITION_ID, new PartitionAccount().partitionId())
                 .returning()
                 .fetch().stream().findAny()
                 .map(mapper);
     }
 
     @Override
-    public int update(long lessonId, int groupId, int teacherId, long startTime, long endTime, int length,
-                      String comment, int partitionId) {
+    public int update(long lessonId, int groupId, int teacherId, long startTime, long endTime, int length, String comment) {
         return sql.update(LESSON)
                 .set(LESSON.GROUP_ID, groupId)
                 .set(LESSON.TEACHER_ID, teacherId)
@@ -41,26 +41,26 @@ public class LessonRepositoryImpl implements LessonRepository {
                 .set(LESSON.TIME_OF_END, endTime)
                 .set(LESSON.DURATION_IN_MINUTES, length)
                 .set(LESSON.COMMENT, comment)
-                .where(idAndPartition(lessonId, partitionId))
+                .where(idAndPartition(lessonId, new PartitionAccount().partitionId()))
                 .execute();
     }
 
 
     @Override
-    public int delete(long lessonId, int partitionId) {
+    public int delete(long lessonId) {
         return sql.delete(LESSON)
-                .where(idAndPartition(lessonId, partitionId))
+                .where(idAndPartition(lessonId, new PartitionAccount().partitionId()))
                 .execute();
     }
 
     @Override
-    public boolean isOverlapping(long lessonId, int teacherId, long startTime, long endTime, int partitionId) {
-        return isOverlapping(LESSON.ID.ne(lessonId), teacherId, startTime, endTime, partitionId);
+    public boolean isOverlapping(long lessonId, int teacherId, long startTime, long endTime) {
+        return isOverlapping(LESSON.ID.ne(lessonId), teacherId, startTime, endTime, new PartitionAccount().partitionId());
     }
 
     @Override
-    public boolean isOverlapping(int teacherId, long startTime, long endTime, int partitionId) {
-        return isOverlapping(trueCondition(), teacherId, startTime, endTime, partitionId);
+    public boolean isOverlapping(int teacherId, long startTime, long endTime) {
+        return isOverlapping(trueCondition(), teacherId, startTime, endTime, new PartitionAccount().partitionId());
     }
 
     // CONSTRUCTORS

@@ -4,7 +4,7 @@ import com.superum.api.v3.lesson.LessonRepository;
 import com.superum.api.v3.lesson.LessonRepositoryImpl;
 import com.superum.api.v3.lesson.LessonTransformer;
 import com.superum.api.v3.lesson.LessonTransformerImpl;
-import com.superum.config.JOOQSQLConfig;
+import com.superum.config.DefaultSqlConfigV3;
 import com.superum.config.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +39,6 @@ public class HelperConfiguration {
     private PersistenceContext persistenceContext;
 
     @Autowired
-    private JOOQSQLConfig sqlConfig;
+    private DefaultSqlConfigV3 sqlConfig;
 
 }

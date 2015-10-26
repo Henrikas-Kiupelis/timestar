@@ -14,7 +14,7 @@ import static timestar_v2.Tables.*;
 
 @Configuration
 @Lazy
-public class JOOQSQLConfig {
+public class DefaultSqlConfigV3 {
 
     @Autowired
     PersistenceContext persistenceContext;
