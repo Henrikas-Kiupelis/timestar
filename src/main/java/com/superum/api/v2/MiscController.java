@@ -1,6 +1,6 @@
 package com.superum.api.v2;
 
-import com.superum.api.v2.core.CommonControllerLogic;
+import com.superum.api.core.CommonControllerLogic;
 import eu.goodlike.libraries.joda.time.Time;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;

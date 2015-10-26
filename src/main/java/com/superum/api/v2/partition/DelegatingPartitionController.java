@@ -1,8 +1,8 @@
 package com.superum.api.v2.partition;
 
+import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.v1.partition.Partition;
 import com.superum.api.v1.partition.PartitionController;
-import com.superum.api.v2.exception.InvalidRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

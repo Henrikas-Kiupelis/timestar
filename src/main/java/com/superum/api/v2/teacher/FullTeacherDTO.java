@@ -3,7 +3,7 @@ package com.superum.api.v2.teacher;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
-import com.superum.api.v2.core.DTOWithTimestamps;
+import com.superum.api.core.DTOWithTimestamps;
 import eu.goodlike.misc.SpecialUtils;
 import org.joda.time.Instant;
 import org.jooq.Record;

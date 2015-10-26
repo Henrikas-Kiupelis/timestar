@@ -1,8 +1,8 @@
 package com.superum.api.v2.lesson;
 
+import com.superum.api.core.CommonControllerLogic;
+import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.v2.Table;
-import com.superum.api.v2.core.CommonControllerLogic;
-import com.superum.api.v2.exception.InvalidRequestException;
 import com.superum.helper.PartitionAccount;
 import com.superum.helper.TimeResolver;
 import org.slf4j.Logger;

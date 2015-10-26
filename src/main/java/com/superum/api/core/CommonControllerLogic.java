@@ -1,6 +1,6 @@
-package com.superum.api.v2.core;
+package com.superum.api.core;
 
-import com.superum.api.v2.exception.InvalidRequestException;
+import com.superum.api.exception.InvalidRequestException;
 import com.superum.helper.TimeResolver;
 import org.springframework.web.bind.annotation.RestController;
 

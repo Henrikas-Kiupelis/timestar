@@ -1,4 +1,4 @@
-package com.superum.api.v2.exception;
+package com.superum.api.exception;
 
 import com.superum.exception.DatabaseException;
 

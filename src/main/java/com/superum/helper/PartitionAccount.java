@@ -1,7 +1,7 @@
 package com.superum.helper;
 
+import com.superum.api.exception.UnauthorizedRequestException;
 import com.superum.api.v1.account.Account;
-import com.superum.api.v2.exception.UnauthorizedRequestException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.security.Principal;

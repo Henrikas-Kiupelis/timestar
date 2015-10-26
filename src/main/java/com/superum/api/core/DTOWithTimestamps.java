@@ -1,4 +1,4 @@
-package com.superum.api.v2.core;
+package com.superum.api.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

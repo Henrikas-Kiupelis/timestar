@@ -1,7 +1,7 @@
 package com.superum.api.v3.table;
 
-import com.superum.api.v2.core.CommonControllerLogic;
-import com.superum.api.v2.exception.InvalidRequestException;
+import com.superum.api.core.CommonControllerLogic;
+import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.v2.teacher.ValidTeacherController;
 import com.superum.helper.PartitionAccount;
 import com.superum.helper.TimeResolver;

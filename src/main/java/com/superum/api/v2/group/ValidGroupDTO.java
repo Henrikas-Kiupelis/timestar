@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.superum.api.v2.core.DTOWithTimestamps;
+import com.superum.api.core.DTOWithTimestamps;
 import org.joda.time.Instant;
 import org.jooq.Record;
 

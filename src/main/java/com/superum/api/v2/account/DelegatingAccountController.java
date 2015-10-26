@@ -1,8 +1,8 @@
 package com.superum.api.v2.account;
 
+import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.v1.account.Account;
 import com.superum.api.v1.account.AccountController;
-import com.superum.api.v2.exception.InvalidRequestException;
 import com.superum.helper.PartitionAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

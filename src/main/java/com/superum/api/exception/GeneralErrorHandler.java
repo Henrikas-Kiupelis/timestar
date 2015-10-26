@@ -1,4 +1,4 @@
-package com.superum.api.v2.exception;
+package com.superum.api.exception;
 
 import org.joda.time.IllegalFieldValueException;
 import org.slf4j.Logger;

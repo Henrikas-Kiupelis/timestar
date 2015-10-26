@@ -2,7 +2,7 @@ package com.superum.api.v2.lesson;
 
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;
-import com.superum.api.v2.core.DTOWithTimestamps;
+import com.superum.api.core.DTOWithTimestamps;
 import eu.goodlike.libraries.joda.time.Time;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;

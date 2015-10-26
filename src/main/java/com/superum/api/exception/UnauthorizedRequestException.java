@@ -1,4 +1,4 @@
-package com.superum.api.v2.exception;
+package com.superum.api.exception;
 
 /**
  * This exception is thrown when an request is made, but it is not authorized due to exceptional conditions. i.e.

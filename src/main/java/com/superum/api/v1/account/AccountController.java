@@ -1,6 +1,6 @@
 package com.superum.api.v1.account;
 
-import com.superum.api.v2.exception.UnauthorizedRequestException;
+import com.superum.api.exception.UnauthorizedRequestException;
 import com.superum.helper.PartitionAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
