@@ -22,7 +22,7 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
 
         ValidLessonAttendanceDTO attendance = Fakes.lessonAttendance(ADDITIONAL_LESSON_ID, ADDITIONAL_STUDENT_ID);
 
-        mvc.performPut(DEFAULT_PATH, attendance, OK_NO_BODY);
+        mvc.performPost(DEFAULT_PATH, attendance, OK_NO_BODY);
 
         assertInDatabase(attendance);
     }
@@ -33,7 +33,7 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
 
         ValidLessonAttendanceDTO attendance = Fakes.lessonAttendance(ADDITIONAL_LESSON_ID, EXTRA_STUDENT_ID);
 
-        mvc.performPut(DEFAULT_PATH, attendance, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, attendance, BAD, status().isBadRequest());
 
         assertNotInDatabase(attendance);
     }
@@ -42,7 +42,7 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
     public void insertingAttendanceForNonExistentLesson_shouldReturn404() throws Exception {
         ValidLessonAttendanceDTO attendance = Fakes.lessonAttendance(NEW_LESSON_ID, OLD_STUDENT_ID);
 
-        mvc.performPut(DEFAULT_PATH, attendance, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, attendance, BAD, status().isNotFound());
 
         assertNotInDatabase(attendance);
     }
@@ -53,7 +53,7 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
 
         ValidLessonAttendanceDTO attendance = Fakes.lessonAttendance(ADDITIONAL_LESSON_ID, NEW_STUDENT_ID);
 
-        mvc.performPut(DEFAULT_PATH, attendance, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, attendance, BAD, status().isNotFound());
 
         assertNotInDatabase(attendance);
     }
@@ -64,7 +64,7 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
 
         ValidLessonAttendanceDTO attendance = Fakes.lessonAttendance(OLD_LESSON_ID, ADDITIONAL_STUDENT_ID);
 
-        mvc.performPut(DEFAULT_PATH, attendance, BAD, status().isConflict());
+        mvc.performPost(DEFAULT_PATH, attendance, BAD, status().isConflict());
 
         assertInDatabase(Fakes.lessonAttendance(OLD_LESSON_ID));
     }
@@ -75,7 +75,7 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
 
         ValidLessonAttendanceDTO attendance = Fakes.lessonAttendance(OLD_LESSON_ID, ADDITIONAL_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, attendance, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, attendance, OK_NO_BODY);
 
         assertInDatabase(attendance);
     }
@@ -84,7 +84,7 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
     public void updatingAttendanceWithStudentsFromWrongGroup_shouldReturn400() throws Exception {
         ValidLessonAttendanceDTO attendance = Fakes.lessonAttendance(OLD_LESSON_ID, EXTRA_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, attendance, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, attendance, BAD, status().isBadRequest());
 
         assertInDatabase(Fakes.lessonAttendance(OLD_LESSON_ID));
     }
@@ -93,7 +93,7 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
     public void updatingAttendanceForNonExistentLesson_shouldReturn404() throws Exception {
         ValidLessonAttendanceDTO attendance = Fakes.lessonAttendance(NEW_LESSON_ID, OLD_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, attendance, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, attendance, BAD, status().isNotFound());
 
         assertNotInDatabase(attendance);
     }
@@ -102,7 +102,7 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
     public void updatingAttendanceForNonExistentStudent_shouldReturn404() throws Exception {
         ValidLessonAttendanceDTO attendance = Fakes.lessonAttendance(OLD_LESSON_ID, NEW_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, attendance, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, attendance, BAD, status().isNotFound());
 
         assertInDatabase(Fakes.lessonAttendance(OLD_LESSON_ID));
     }
@@ -113,7 +113,7 @@ public class ValidLessonAttendanceControllerIT extends IntegrationTestEnvironmen
 
         ValidLessonAttendanceDTO attendance = Fakes.lessonAttendance(ADDITIONAL_LESSON_ID, ADDITIONAL_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, attendance, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, attendance, BAD, status().isNotFound());
 
         assertNotInDatabase(attendance);
     }

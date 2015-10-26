@@ -24,7 +24,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 @RequestMapping(value = "/timestar/api/v2/lesson/attendance")
 public class ValidLessonAttendanceController extends CommonControllerLogic {
 
-    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void create(PartitionAccount account, @RequestBody ValidLessonAttendanceDTO lessonAttendance) {
         if (lessonAttendance == null)
@@ -36,7 +36,7 @@ public class ValidLessonAttendanceController extends CommonControllerLogic {
         LOG.info("Lesson attendance successfully created");
     }
 
-    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidLessonAttendanceDTO lessonAttendance) {
         if (lessonAttendance == null)

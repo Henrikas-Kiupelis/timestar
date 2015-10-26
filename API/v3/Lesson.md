@@ -11,7 +11,7 @@
 
 #### Create
 ```
-    PUT   /lesson
+    POST  /lesson
     BODY  SuppliedLesson
     RET   FetchedLesson
 ```
@@ -27,7 +27,7 @@ It will fail if:
 
 #### Update
 ```
-    POST  /lesson/{lessonId}
+    PUT   /lesson/{lessonId}
           lessonId        long           1 <= lessonId <= MAX_LONG
     BODY  SuppliedLesson
     RET   void

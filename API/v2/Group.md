@@ -10,7 +10,7 @@
 
 #### Create
 ```
-    PUT   /group
+    POST  /group
     BODY  ValidGroupDTO
     RET   ValidGroupDTO
 ```
@@ -29,7 +29,7 @@ Returned group will have its id field set
 
 #### Update
 ```
-    POST  /group
+    PUT   /group
     BODY  ValidGroupDTO
     RET   void
 ```

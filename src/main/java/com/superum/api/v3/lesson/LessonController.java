@@ -22,7 +22,7 @@ public class LessonController extends CommonControllerLogic {
 
     // COMMANDS
 
-    @RequestMapping(method = PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FetchedLesson create(PartitionAccount account, @RequestBody SuppliedLesson lesson) {
         Null.check(lesson).ifAny(() -> new InvalidRequestException("Lesson cannot be null"));
@@ -35,7 +35,7 @@ public class LessonController extends CommonControllerLogic {
         return createdLesson;
     }
 
-    @RequestMapping(value = "/{id:[\\d]+}", method = POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(value = "/{id:[\\d]+}", method = PUT, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @PathVariable long id, @RequestBody SuppliedLesson lesson) {
         Null.check(lesson).ifAny(() -> new InvalidRequestException("Lesson cannot be null"));

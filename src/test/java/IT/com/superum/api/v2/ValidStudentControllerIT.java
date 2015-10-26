@@ -30,7 +30,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     public void insertingStudentWithoutId_shouldCreateNewStudent() throws Exception {
         ValidStudentDTO student = Fakes.student(NEW_STUDENT_ID, OLD_CUSTOMER_ID).withoutId();
 
-        ValidStudentDTO insertedStudent = mvc.performPut(DEFAULT_PATH, student, OK)
+        ValidStudentDTO insertedStudent = mvc.performPost(DEFAULT_PATH, student, OK)
                 .map(Unchecked.function(this::readStudent))
                 .orElseThrow(() -> new Exception("Successful insertion should return a student!"));
 
@@ -44,7 +44,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     public void insertingStudentWithId_shouldReturn400() throws Exception {
         ValidStudentDTO student = Fakes.student(NEW_STUDENT_ID, OLD_CUSTOMER_ID);
 
-        mvc.performPut(DEFAULT_PATH, student, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, student, BAD, status().isBadRequest());
 
         assertNotInDatabase(student);
     }
@@ -56,7 +56,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
                 .email(Fake.email(NEW_STUDENT_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, namelessStudent, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, namelessStudent, BAD, status().isBadRequest());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_STUDENT_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, noEmailStudent, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, noEmailStudent, BAD, status().isBadRequest());
     }
 
     @Test
@@ -76,7 +76,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_STUDENT_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, student, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, student, BAD, status().isBadRequest());
     }
 
     @Test
@@ -88,21 +88,21 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_STUDENT_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, student, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, student, BAD, status().isBadRequest());
     }
 
     @Test
     public void insertingStudentWithNonExistentCustomerId_shouldReturn404() throws Exception {
         ValidStudentDTO student = Fakes.student(NEW_STUDENT_ID, NEW_CUSTOMER_ID).withoutId();
 
-        mvc.performPut(DEFAULT_PATH, student, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, student, BAD, status().isNotFound());
     }
 
     @Test
     public void updatingStudentWithId_shouldUpdateStudent() throws Exception {
         ValidStudentDTO student = Fakes.student(NEW_STUDENT_ID, OLD_CUSTOMER_ID).withId(OLD_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, student, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, student, OK_NO_BODY);
 
         assertInDatabase(student, this::customEquals);
     }
@@ -114,7 +114,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_STUDENT_ID))
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, partialStudent, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, partialStudent, OK_NO_BODY);
 
         ValidStudentDTO beforeUpdate = Fakes.student(OLD_STUDENT_ID);
         ValidStudentDTO afterUpdate = ValidStudentDTO.stepBuilder()
@@ -131,7 +131,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     public void updatingStudentWithoutId_shouldReturn400() throws Exception {
         ValidStudentDTO student = Fakes.student(NEW_STUDENT_ID, OLD_CUSTOMER_ID).withoutId();
 
-        mvc.performPost(DEFAULT_PATH, student, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, student, BAD, status().isBadRequest());
     }
 
     @Test
@@ -140,7 +140,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
                 .id(OLD_STUDENT_ID)
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, student, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, student, BAD, status().isBadRequest());
 
         assertInDatabase(Fakes.student(OLD_STUDENT_ID));
     }
@@ -155,7 +155,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_STUDENT_ID))
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, student, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, student, BAD, status().isBadRequest());
 
         assertInDatabase(Fakes.student(OLD_STUDENT_ID));
     }
@@ -164,7 +164,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     public void updatingStudentWithNonExistentId_shouldReturn404() throws Exception {
         ValidStudentDTO student = Fakes.student(NEW_STUDENT_ID, OLD_CUSTOMER_ID);
 
-        mvc.performPost(DEFAULT_PATH, student, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, student, BAD, status().isNotFound());
 
         assertNotInDatabase(student);
     }
@@ -173,7 +173,7 @@ public class ValidStudentControllerIT extends IntegrationTestEnvironment {
     public void updatingStudentWithNonExistentCustomerId_shouldReturn404() throws Exception {
         ValidStudentDTO student = Fakes.student(NEW_STUDENT_ID, NEW_CUSTOMER_ID).withId(OLD_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, student, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, student, BAD, status().isNotFound());
 
         assertInDatabase(Fakes.student(OLD_STUDENT_ID));
     }

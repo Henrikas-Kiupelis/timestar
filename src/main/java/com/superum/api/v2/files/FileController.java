@@ -21,7 +21,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 public class FileController {
 
-	@RequestMapping(value="/{folder:pictures|documents}/upload", method= POST)
+	@RequestMapping(value = "/{folder:pictures|documents}/upload", method = POST)
 	@ResponseBody 
 	public String addPicture(@PathVariable String folder, @RequestParam("name") String name, @RequestParam("file") MultipartFile file) {
 		if (file.isEmpty())

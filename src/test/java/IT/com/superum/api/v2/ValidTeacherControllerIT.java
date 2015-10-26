@@ -28,7 +28,7 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
     public void insertingTeacherWithoutId_shouldCreateNewTeacher() throws Exception {
         FullTeacherDTO teacher = Fakes.teacher(NEW_TEACHER_ID).withoutId();
 
-        FullTeacherDTO insertedTeacher = mvc.performPut(DEFAULT_PATH, teacher, OK)
+        FullTeacherDTO insertedTeacher = mvc.performPost(DEFAULT_PATH, teacher, OK)
                 .map(Unchecked.function(this::readTeacher))
                 .orElseThrow(() -> new Exception("Successful insertion should return a teacher!"));
 
@@ -42,7 +42,7 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
     public void insertingTeacherWithId_shouldReturn400() throws Exception {
         FullTeacherDTO teacher = Fakes.teacher(NEW_TEACHER_ID);
 
-        mvc.performPut(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
 
         assertNotInDatabase(teacher);
     }
@@ -60,7 +60,7 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
                 .languages(Fake.language(NEW_TEACHER_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
     }
 
     @Test
@@ -77,14 +77,14 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
                 .languages(Fake.language(NEW_TEACHER_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, teacher, BAD, status().isConflict());
+        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isConflict());
     }
 
     @Test
     public void updatingTeacherWithId_shouldUpdateTeacher() throws Exception {
         FullTeacherDTO teacher = Fakes.teacher(NEW_TEACHER_ID).withId(OLD_TEACHER_ID);
 
-        mvc.performPost(DEFAULT_PATH, teacher, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, teacher, OK_NO_BODY);
 
         assertInDatabase(teacher);
     }
@@ -96,7 +96,7 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_TEACHER_ID))
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, partialTeacher, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, partialTeacher, OK_NO_BODY);
 
         FullTeacherDTO beforeUpdate = Fakes.teacher(OLD_TEACHER_ID);
         FullTeacherDTO afterUpdate = FullTeacherDTO.stepBuilder()
@@ -122,7 +122,7 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
     public void updatingTeacherWithoutId_shouldReturn400() throws Exception {
         FullTeacherDTO teacher = Fakes.teacher(NEW_TEACHER_ID).withoutId();
 
-        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
     }
 
     @Test
@@ -131,7 +131,7 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
                 .id(OLD_TEACHER_ID)
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, teacher, BAD, status().isBadRequest());
 
         assertInDatabase(Fakes.teacher(OLD_TEACHER_ID));
     }
@@ -140,7 +140,7 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
     public void updatingTeacherWithNonExistentId_shouldReturn404() throws Exception {
         FullTeacherDTO teacher = Fakes.teacher(NEW_TEACHER_ID);
 
-        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, teacher, BAD, status().isNotFound());
 
         assertNotInDatabase(teacher);
     }
@@ -160,7 +160,7 @@ public class ValidTeacherControllerIT extends IntegrationTestEnvironment {
                 .id(EXTRA_TEACHER_ID)
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, teacher, BAD, status().isConflict());
+        mvc.performPut(DEFAULT_PATH, teacher, BAD, status().isConflict());
 
         assertInDatabase(Fakes.teacher(EXTRA_TEACHER_ID));
     }

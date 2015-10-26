@@ -28,7 +28,7 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
     public void creatingLessonWithoutId_shouldCreateNewLesson() throws Exception {
         ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID).withoutId();
 
-        ValidLessonDTO insertedLesson = mvc.performPut(DEFAULT_PATH, lesson, OK)
+        ValidLessonDTO insertedLesson = mvc.performPost(DEFAULT_PATH, lesson, OK)
                 .map(Unchecked.function(this::readLesson))
                 .orElseThrow(() -> new Exception("Successful insertion should return a lesson!"));
 
@@ -42,7 +42,7 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
     public void creatingLessonWithId_shouldReturn400() throws Exception {
         ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID);
 
-        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
 
         assertNotInDatabase(lesson);
     }
@@ -54,14 +54,14 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
                 .startTime(Fake.time(NEW_LESSON_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
     }
 
     @Test
     public void creatingLessonWithNonExistentGroupId_shouldReturn404() throws Exception {
         ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, NEW_GROUP_ID, OLD_TEACHER_ID).withoutId();
 
-        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isNotFound());
     }
 
     @Test
@@ -72,14 +72,14 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
                 .length(Fake.duration(NEW_LESSON_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isConflict());
+        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isConflict());
     }
 
     @Test
     public void updatingLessonWithId_shouldUpdateLesson() throws Exception {
         ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID).withId(OLD_LESSON_ID);
 
-        mvc.performPost(DEFAULT_PATH, lesson, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, lesson, OK_NO_BODY);
 
         assertInDatabase(lesson);
     }
@@ -91,7 +91,7 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
                 .length(Fake.duration(NEW_LESSON_ID))
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, partialLesson, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, partialLesson, OK_NO_BODY);
 
         ValidLessonDTO beforeUpdate = Fakes.lesson(OLD_LESSON_ID);
         ValidLessonDTO afterUpdate = ValidLessonDTO.stepBuilder()
@@ -109,7 +109,7 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
     public void updatingLessonWithoutId_shouldReturn400() throws Exception {
         ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID).withoutId();
 
-        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
                 .id(OLD_LESSON_ID)
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
 
         assertInDatabase(Fakes.lesson(OLD_LESSON_ID));
     }
@@ -127,7 +127,7 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
     public void updatingLessonWithNonExistentId_shouldReturn404() throws Exception {
         ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID);
 
-        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isNotFound());
 
         assertNotInDatabase(lesson);
     }
@@ -136,7 +136,7 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
     public void updatingLessonWithNonExistentGroupId_shouldReturn404() throws Exception {
         ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, NEW_GROUP_ID, OLD_TEACHER_ID).withId(OLD_LESSON_ID);
 
-        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isNotFound());
 
         assertInDatabase(Fakes.lesson(OLD_LESSON_ID));
     }
@@ -152,7 +152,7 @@ public class ValidLessonControllerIT extends IntegrationTestEnvironment {
                 .id(OLD_LESSON_ID)
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isConflict());
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isConflict());
 
         assertInDatabase(lessonToBeOverlapped);
         assertInDatabase(Fakes.lesson(OLD_LESSON_ID));

@@ -29,7 +29,7 @@ public class ValidLessonController extends CommonControllerLogic {
 
     // COMMANDS
 
-    @RequestMapping(method = PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidLessonDTO create(PartitionAccount account, @RequestBody ValidLessonDTO lesson) {
         if (lesson == null)
@@ -43,7 +43,7 @@ public class ValidLessonController extends CommonControllerLogic {
         return createdLesson;
     }
 
-    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidLessonDTO lesson) {
         if (lesson == null)

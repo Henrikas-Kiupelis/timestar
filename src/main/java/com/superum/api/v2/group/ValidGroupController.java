@@ -28,7 +28,7 @@ public class ValidGroupController extends CommonControllerLogic {
 
     // COMMANDS
 
-    @RequestMapping(method = PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidGroupDTO create(PartitionAccount account, @RequestBody ValidGroupDTO group) {
         if (group == null)
@@ -42,7 +42,7 @@ public class ValidGroupController extends CommonControllerLogic {
         return createdGroup;
     }
 
-    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidGroupDTO group) {
         if (group == null)

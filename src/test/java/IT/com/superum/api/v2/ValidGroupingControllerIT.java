@@ -22,7 +22,7 @@ public class ValidGroupingControllerIT extends IntegrationTestEnvironment {
 
         ValidGroupingDTO grouping = Fakes.grouping(ADDITIONAL_GROUP_ID, ADDITIONAL_STUDENT_ID);
 
-        mvc.performPut(DEFAULT_PATH, grouping, OK_NO_BODY);
+        mvc.performPost(DEFAULT_PATH, grouping, OK_NO_BODY);
 
         assertInDatabase(grouping);
     }
@@ -31,7 +31,7 @@ public class ValidGroupingControllerIT extends IntegrationTestEnvironment {
     public void insertingGroupingForNonExistentGroup_shouldReturn404() throws Exception {
         ValidGroupingDTO grouping = Fakes.grouping(NEW_GROUP_ID, OLD_STUDENT_ID);
 
-        mvc.performPut(DEFAULT_PATH, grouping, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, grouping, BAD, status().isNotFound());
 
         assertNotInDatabase(grouping);
     }
@@ -40,7 +40,7 @@ public class ValidGroupingControllerIT extends IntegrationTestEnvironment {
     public void insertingGroupingForNonExistentStudent_shouldReturn404() throws Exception {
         ValidGroupingDTO grouping = Fakes.grouping(OLD_GROUP_ID, NEW_STUDENT_ID);
 
-        mvc.performPut(DEFAULT_PATH, grouping, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, grouping, BAD, status().isNotFound());
 
         assertInDatabase(Fakes.grouping(OLD_GROUP_ID));
     }
@@ -51,7 +51,7 @@ public class ValidGroupingControllerIT extends IntegrationTestEnvironment {
 
         ValidGroupingDTO grouping = Fakes.grouping(OLD_GROUP_ID, ADDITIONAL_STUDENT_ID);
 
-        mvc.performPut(DEFAULT_PATH, grouping, BAD, status().isConflict());
+        mvc.performPost(DEFAULT_PATH, grouping, BAD, status().isConflict());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ValidGroupingControllerIT extends IntegrationTestEnvironment {
 
         ValidGroupingDTO grouping = Fakes.grouping(OLD_GROUP_ID, ADDITIONAL_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, grouping, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, grouping, OK_NO_BODY);
 
         assertInDatabase(grouping);
     }
@@ -69,7 +69,7 @@ public class ValidGroupingControllerIT extends IntegrationTestEnvironment {
     public void updatingGroupingForNonExistentGroup_shouldReturn404() throws Exception {
         ValidGroupingDTO grouping = Fakes.grouping(NEW_GROUP_ID, OLD_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, grouping, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, grouping, BAD, status().isNotFound());
 
         assertNotInDatabase(grouping);
     }
@@ -78,7 +78,7 @@ public class ValidGroupingControllerIT extends IntegrationTestEnvironment {
     public void updatingGroupingForNonExistentStudent_shouldReturn404() throws Exception {
         ValidGroupingDTO grouping = Fakes.grouping(OLD_GROUP_ID, NEW_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, grouping, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, grouping, BAD, status().isNotFound());
 
         assertInDatabase(Fakes.grouping(OLD_GROUP_ID));
     }
@@ -89,7 +89,7 @@ public class ValidGroupingControllerIT extends IntegrationTestEnvironment {
 
         ValidGroupingDTO grouping = Fakes.grouping(ADDITIONAL_GROUP_ID, ADDITIONAL_STUDENT_ID);
 
-        mvc.performPost(DEFAULT_PATH, grouping, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, grouping, BAD, status().isNotFound());
 
         assertNotInDatabase(grouping);
     }

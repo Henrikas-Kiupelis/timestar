@@ -10,7 +10,7 @@
 
 #### Create
 ```
-    PUT   /customer
+    POST  /customer
     BODY  ValidCustomerDTO
     RET   ValidCustomerDTO
 ```
@@ -27,7 +27,7 @@ Returned FullCustomer will have its id field set;
 
 #### Update
 ```
-    POST  /customer
+    PUT   /customer
     BODY  ValidCustomerDTO
     RET   void
 ```

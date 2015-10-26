@@ -27,7 +27,7 @@ public class ValidTeacherController extends CommonControllerLogic {
 
     // COMMANDS
 
-    @RequestMapping(method = PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public FullTeacherDTO create(PartitionAccount account, @RequestBody FullTeacherDTO teacher) {
         if (teacher == null)
@@ -41,7 +41,7 @@ public class ValidTeacherController extends CommonControllerLogic {
         return createdTeacher;
     }
 
-    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody FullTeacherDTO teacher) {
         if (teacher == null)

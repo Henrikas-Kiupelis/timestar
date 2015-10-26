@@ -32,7 +32,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
     public void creatingLessonWithoutId_shouldCreateNewLesson() throws Exception {
         SuppliedLesson lesson = Fakes.suppliedLesson(NEW_LESSON_ID, OLD_GROUP_ID);
 
-        FetchedLesson insertedLesson = mvc.performPut(DEFAULT_PATH, lesson, OK)
+        FetchedLesson insertedLesson = mvc.performPost(DEFAULT_PATH, lesson, OK)
                 .map(Unchecked.function(this::readLesson))
                 .orElseThrow(() -> new Exception("Successful insertion should return a lesson!"));
 
@@ -47,14 +47,14 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
                 .withStartTime(Fake.time(NEW_LESSON_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
     }
 
     @Test
     public void creatingLessonWithNonExistentGroupId_shouldReturn404() throws Exception {
         SuppliedLesson lesson = Fakes.suppliedLesson(NEW_LESSON_ID, NEW_GROUP_ID);
 
-        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isNotFound());
     }
 
     @Test
@@ -65,14 +65,14 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
                 .withLength(Fake.duration(NEW_LESSON_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isConflict());
+        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isConflict());
     }
 
     @Test
     public void updatingLessonWithId_shouldUpdateLesson() throws Exception {
         SuppliedLesson lesson = Fakes.suppliedLesson(NEW_LESSON_ID, OLD_GROUP_ID);
 
-        mvc.performPost(DEFAULT_PATH + OLD_LESSON_ID, lesson, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH + OLD_LESSON_ID, lesson, OK_NO_BODY);
 
         assertInDatabase(lesson, OLD_LESSON_ID);
     }
@@ -83,7 +83,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
                 .withLength(Fake.duration(NEW_LESSON_ID))
                 .build();
 
-        mvc.performPost(DEFAULT_PATH + OLD_LESSON_ID, partialLesson, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH + OLD_LESSON_ID, partialLesson, OK_NO_BODY);
 
         FetchedLesson beforeUpdate = Fakes.fetchedLesson(OLD_LESSON_ID);
         FetchedLesson afterUpdate = FetchedLesson.stepBuilder()
@@ -107,7 +107,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
     public void updatingLessonWithNonExistentId_shouldReturn404() throws Exception {
         SuppliedLesson lesson = Fakes.suppliedLesson(NEW_LESSON_ID, OLD_GROUP_ID);
 
-        mvc.performPost(DEFAULT_PATH + NEW_LESSON_ID, lesson, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH + NEW_LESSON_ID, lesson, BAD, status().isNotFound());
 
         assertNotInDatabase(NEW_LESSON_ID);
     }
@@ -116,7 +116,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
     public void updatingLessonWithNonExistentGroupId_shouldReturn404() throws Exception {
         SuppliedLesson lesson = Fakes.suppliedLesson(NEW_LESSON_ID, NEW_GROUP_ID);
 
-        mvc.performPost(DEFAULT_PATH + OLD_LESSON_ID, lesson, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH + OLD_LESSON_ID, lesson, BAD, status().isNotFound());
 
         assertInDatabase(Fakes.fetchedLesson(OLD_LESSON_ID));
     }
@@ -131,7 +131,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
                 .withLength(lessonToBeOverlapped.getLength())
                 .build();
 
-        mvc.performPost(DEFAULT_PATH + OLD_LESSON_ID, lesson, BAD, status().isConflict());
+        mvc.performPut(DEFAULT_PATH + OLD_LESSON_ID, lesson, BAD, status().isConflict());
 
         assertInDatabase(lessonToBeOverlapped);
         assertInDatabase(Fakes.fetchedLesson(OLD_LESSON_ID));

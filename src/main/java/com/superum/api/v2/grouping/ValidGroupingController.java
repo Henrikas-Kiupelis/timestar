@@ -23,7 +23,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RequestMapping(value = "/timestar/api/v2/grouping")
 public class ValidGroupingController extends CommonControllerLogic {
 
-    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void create(PartitionAccount account, @RequestBody ValidGroupingDTO grouping) {
         if (grouping == null)
@@ -35,7 +35,7 @@ public class ValidGroupingController extends CommonControllerLogic {
         LOG.info("Grouping successfully created");
     }
 
-    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidGroupingDTO grouping) {
         if (grouping == null)

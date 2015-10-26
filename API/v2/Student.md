@@ -10,7 +10,7 @@
 
 #### Create
 ```
-    PUT   /student
+    POST  /student
     BODY  ValidStudentDTO
     RET   ValidStudentDTO
 ```
@@ -30,7 +30,7 @@ Returned student will have its id field set
 
 #### Update
 ```
-    POST  /student
+    PUT   /student
     BODY  ValidStudentDTO
     RET   void
 ```

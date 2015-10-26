@@ -27,7 +27,7 @@ public class ValidCustomerController extends CommonControllerLogic {
 
     // COMMANDS
 
-	@RequestMapping(method = PUT, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
+	@RequestMapping(method = POST, produces = APPLICATION_JSON_UTF8, consumes = APPLICATION_JSON_UTF8)
 	@ResponseBody
 	public ValidCustomerDTO create(PartitionAccount account, @RequestBody ValidCustomerDTO customer) {
         if (customer == null)
@@ -41,7 +41,7 @@ public class ValidCustomerController extends CommonControllerLogic {
         return createdCustomer;
 	}
 
-    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8)
     @ResponseBody
     public void update(PartitionAccount account, @RequestBody ValidCustomerDTO customer) {
         if (customer == null)

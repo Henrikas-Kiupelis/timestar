@@ -14,7 +14,7 @@
 
 #### Create
 ```
-    PUT   /lesson
+    POST  /lesson
     BODY  ValidLessonDTO
     RET   ValidLessonDTO
 ```
@@ -33,7 +33,7 @@ Returned lesson will have its id field set
 
 #### Update
 ```
-    POST  /lesson
+    PUT   /lesson
     BODY  ValidLessonDTO
     RET   void
 ```

@@ -10,7 +10,7 @@
 
 #### Create
 ```
-    PUT   /teacher
+    POST  /teacher
     BODY  FullTeacherDTO
     RET   FullTeacherDTO
 ```
@@ -29,7 +29,7 @@ Returned FullTeacher will have its id field set;
 
 #### Update
 ```
-    POST  /teacher
+    PUT   /teacher
     BODY  FullTeacherDTO
     RET   void
 ```

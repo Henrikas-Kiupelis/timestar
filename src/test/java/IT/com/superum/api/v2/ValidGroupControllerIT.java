@@ -28,7 +28,7 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
     public void creatingGroupWithoutId_shouldCreateNewGroup() throws Exception {
         ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID).withoutId();
 
-        ValidGroupDTO insertedGroup = mvc.performPut(DEFAULT_PATH, group, OK)
+        ValidGroupDTO insertedGroup = mvc.performPost(DEFAULT_PATH, group, OK)
                 .map(Unchecked.function(this::readGroup))
                 .orElseThrow(() -> new Exception("Successful insertion should return a group!"));
 
@@ -42,7 +42,7 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
     public void creatingGroupWithId_shouldReturn400() throws Exception {
         ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID);
 
-        mvc.performPut(DEFAULT_PATH, group, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, group, BAD, status().isBadRequest());
 
         assertNotInDatabase(group);
     }
@@ -55,28 +55,28 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
                 .languageLevel(Fake.languageLevel(NEW_GROUP_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, group, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, group, BAD, status().isBadRequest());
     }
 
     @Test
     public void creatingGroupWithNonExistentTeacherId_shouldReturn404() throws Exception {
         ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, NEW_TEACHER_ID, OLD_CUSTOMER_ID).withoutId();
 
-        mvc.performPut(DEFAULT_PATH, group, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, group, BAD, status().isNotFound());
     }
 
     @Test
     public void creatingGroupWithNonExistentCustomerId_shouldReturn404() throws Exception {
         ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, NEW_CUSTOMER_ID).withoutId();
 
-        mvc.performPut(DEFAULT_PATH, group, BAD, status().isNotFound());
+        mvc.performPost(DEFAULT_PATH, group, BAD, status().isNotFound());
     }
 
     @Test
     public void updatingGroupWithId_shouldUpdateGroup() throws Exception {
         ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID).withId(OLD_GROUP_ID);
 
-        mvc.performPost(DEFAULT_PATH, group, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, group, OK_NO_BODY);
 
         assertInDatabase(group);
     }
@@ -88,7 +88,7 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_GROUP_ID))
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, partialGroup, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, partialGroup, OK_NO_BODY);
 
         ValidGroupDTO beforeUpdate = Fakes.group(OLD_GROUP_ID);
         ValidGroupDTO afterUpdate = ValidGroupDTO.stepBuilder()
@@ -107,7 +107,7 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
     public void updatingGroupWithoutId_shouldReturn400() throws Exception {
         ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID).withoutId();
 
-        mvc.performPost(DEFAULT_PATH, group, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, group, BAD, status().isBadRequest());
     }
 
     @Test
@@ -116,7 +116,7 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
                 .id(OLD_GROUP_ID)
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, group, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, group, BAD, status().isBadRequest());
 
         assertInDatabase(Fakes.group(OLD_GROUP_ID));
     }
@@ -125,7 +125,7 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
     public void updatingGroupWithNonExistentId_shouldReturn404() throws Exception {
         ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, OLD_CUSTOMER_ID);
 
-        mvc.performPost(DEFAULT_PATH, group, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, group, BAD, status().isNotFound());
 
         assertNotInDatabase(group);
     }
@@ -134,7 +134,7 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
     public void updatingGroupWithNonExistentTeacherId_shouldReturn404() throws Exception {
         ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, NEW_TEACHER_ID, OLD_CUSTOMER_ID).withId(OLD_GROUP_ID);
 
-        mvc.performPost(DEFAULT_PATH, group, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, group, BAD, status().isNotFound());
 
         assertInDatabase(Fakes.group(OLD_GROUP_ID));
     }
@@ -143,7 +143,7 @@ public class ValidGroupControllerIT extends IntegrationTestEnvironment {
     public void updatingGroupWithNonExistentCustomerId_shouldReturn404() throws Exception {
         ValidGroupDTO group = Fakes.group(NEW_GROUP_ID, OLD_TEACHER_ID, NEW_CUSTOMER_ID).withId(OLD_GROUP_ID);
 
-        mvc.performPost(DEFAULT_PATH, group, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, group, BAD, status().isNotFound());
 
         assertInDatabase(Fakes.group(OLD_GROUP_ID));
     }

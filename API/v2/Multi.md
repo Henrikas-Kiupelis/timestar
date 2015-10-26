@@ -16,7 +16,7 @@
 
 #### Create grouping
 ```
-    PUT   /grouping
+    POST  /grouping
     BODY  ValidGroupingDTO
     RET   void
 ```
@@ -33,7 +33,7 @@ Returns HTTP 200 OK if it succeeds
 
 #### Update grouping
 ```
-    POST  /grouping
+    PUT   /grouping
     BODY  ValidGroupingDTO
     RET   void
 ```
@@ -78,7 +78,7 @@ In order to make queries, use [/group/student/{id}](./Group.md#read-for-table) o
 
 #### Create attendance
 ```
-    PUT   /lesson/attendance
+    POST  /lesson/attendance
     BODY  ValidLessonAttendanceDTO
     RET   void
 ```
@@ -96,7 +96,7 @@ Returns HTTP 200 OK if it succeeds
 
 #### Update attendance
 ```
-    POST  /lesson/attendance
+    PUT   /lesson/attendance
     BODY  ValidLessonAttendanceDTO
     RET   void
 ```

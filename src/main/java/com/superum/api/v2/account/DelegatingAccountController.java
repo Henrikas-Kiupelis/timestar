@@ -24,7 +24,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RequestMapping(value = "/timestar/api/v2/account")
 public class DelegatingAccountController {
 
-    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidAccountDTO createAdmin(PartitionAccount partitionAccount, @RequestBody ValidAccountDTO validAccountDTO) {
         if (validAccountDTO == null)
@@ -34,7 +34,7 @@ public class DelegatingAccountController {
         return ValidAccountDTO.valueOf(account);
     }
 
-    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidAccountDTO update(PartitionAccount partitionAccount, @RequestBody ValidAccountDTO validAccountDTO) {
         if (validAccountDTO == null)

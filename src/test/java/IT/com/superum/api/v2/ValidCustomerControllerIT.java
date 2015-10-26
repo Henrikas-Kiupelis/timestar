@@ -28,7 +28,7 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
     public void insertingCustomerWithoutId_shouldCreateNewCustomer() throws Exception {
         ValidCustomerDTO customer = Fakes.customer(NEW_CUSTOMER_ID).withoutId();
 
-        ValidCustomerDTO insertedCustomer = mvc.performPut(DEFAULT_PATH, customer, OK)
+        ValidCustomerDTO insertedCustomer = mvc.performPost(DEFAULT_PATH, customer, OK)
                 .map(Unchecked.function(this::readCustomer))
                 .orElseThrow(() -> new Exception("Successful insertion should return a customer!"));
 
@@ -42,7 +42,7 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
     public void insertingCustomerWithId_shouldReturn400() throws Exception {
         ValidCustomerDTO customer = Fakes.customer(NEW_CUSTOMER_ID);
 
-        mvc.performPut(DEFAULT_PATH, customer, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, customer, BAD, status().isBadRequest());
 
         assertNotInDatabase(customer);
     }
@@ -55,14 +55,14 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
                 .website(Fake.website(NEW_CUSTOMER_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH, customer, BAD, status().isBadRequest());
+        mvc.performPost(DEFAULT_PATH, customer, BAD, status().isBadRequest());
     }
 
     @Test
     public void updatingCustomerWithId_shouldUpdateCustomer() throws Exception {
         ValidCustomerDTO customer = Fakes.customer(NEW_CUSTOMER_ID).withId(OLD_CUSTOMER_ID);
 
-        mvc.performPost(DEFAULT_PATH, customer, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, customer, OK_NO_BODY);
 
         assertInDatabase(customer);
     }
@@ -74,7 +74,7 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
                 .name(Fake.name(NEW_STUDENT_ID))
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, partialCustomer, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, partialCustomer, OK_NO_BODY);
 
         ValidCustomerDTO beforeUpdate = Fakes.customer(OLD_CUSTOMER_ID);
         ValidCustomerDTO afterUpdate = ValidCustomerDTO.stepBuilder()
@@ -94,7 +94,7 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
     public void updatingCustomerWithoutId_shouldReturn400() throws Exception {
         ValidCustomerDTO customer = Fakes.customer(NEW_CUSTOMER_ID).withoutId();
 
-        mvc.performPost(DEFAULT_PATH, customer, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, customer, BAD, status().isBadRequest());
     }
 
     @Test
@@ -103,7 +103,7 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
                 .id(OLD_CUSTOMER_ID)
                 .build();
 
-        mvc.performPost(DEFAULT_PATH, customer, BAD, status().isBadRequest());
+        mvc.performPut(DEFAULT_PATH, customer, BAD, status().isBadRequest());
 
         assertInDatabase(Fakes.customer(OLD_CUSTOMER_ID));
     }
@@ -112,7 +112,7 @@ public class ValidCustomerControllerIT extends IntegrationTestEnvironment {
     public void updatingCustomerWithNonExistentId_shouldReturn404() throws Exception {
         ValidCustomerDTO customer = Fakes.customer(NEW_CUSTOMER_ID);
 
-        mvc.performPost(DEFAULT_PATH, customer, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, customer, BAD, status().isNotFound());
 
         assertNotInDatabase(customer);
     }

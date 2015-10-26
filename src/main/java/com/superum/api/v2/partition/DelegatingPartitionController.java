@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import static eu.goodlike.misc.Constants.APPLICATION_JSON_UTF8;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * <pre>
@@ -26,7 +26,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 @RequestMapping(value = "/timestar/api/v2/partition")
 public class DelegatingPartitionController {
 
-    @RequestMapping(method = PUT, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_UTF8, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public ValidPartitionDTO create(@RequestBody ValidPartitionDTO validPartitionDTO) {
         if (validPartitionDTO == null)
