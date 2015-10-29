@@ -20,7 +20,7 @@
 
 #### Create admin
 ```
-    PUT   /account
+    POST  /account
     BODY  ValidAccountDTO
     RET   ValidAccountDTO
 ```
@@ -37,7 +37,7 @@ Returned ValidAccount will not contain the password
 
 #### Update password
 ```
-    POST  /account
+    PUT   /account
     BODY  ValidAccountDTO
     RET   ValidAccountDTO
 ```
@@ -79,7 +79,7 @@ Returned ValidAccount contains all the fields, except password
 
 #### Create partition
 ```
-    PUT   /partition
+    POST  /partition
     BODY  ValidPartitionDTO
     RET   ValidPartitionDTO
 ```
