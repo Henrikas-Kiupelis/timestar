@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Handles how Customer specific exceptions are translated into HTTP responses
+ * Handles how lesson specific exceptions are translated into HTTP responses
  */
 @ControllerAdvice
 public class LessonErrorHandler {
