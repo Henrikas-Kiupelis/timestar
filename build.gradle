@@ -45,7 +45,7 @@ apply plugin: 'application'
 
 jar {
     baseName = 'timestar'
-    version = '3.0.0-debug'
+    version = '3.0.0'
 }
 
 tasks.withType(JavaCompile) {
