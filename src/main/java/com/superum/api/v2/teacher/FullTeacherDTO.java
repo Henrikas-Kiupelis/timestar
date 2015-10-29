@@ -31,17 +31,17 @@ import static timestar_v2.Tables.TEACHER;
  *                                                                              BigDecimal of up to 4 numbers after comma
  *      academicWage : the amount of euros paid per academic hour               0 < academicWage;
  *                     this is not necessarily equal to 3/4 * hourlyWage!       BigDecimal of up to 4 numbers after comma
- *      name         : name                                                     any String, max 30 chars
- *      surname      : surname                                                  any String, max 30 chars
- *      phone        : phone number                                             any String, max 30 chars
- *      city         : city (currently unknown which city this means)           any String, max 30 chars
- *      email        : email; this is also used for account/mailing             any String, max 60 chars
+ *      name         : name                                                     any String, max 180 chars
+ *      surname      : surname                                                  any String, max 180 chars
+ *      phone        : phone number                                             any String, max 180 chars
+ *      city         : city (currently unknown which city this means)           any String, max 180 chars
+ *      email        : email; this is also used for account/mailing             any String, max 180 chars
  *      languages    : list of languages the teacher teaches;                   any List of Strings, max 3 chars
  *                     uses codes, such as "ENG" to identity a language
  *
  * These fields are optional:
- *      picture      : link to a picture of this teacher, stored somewhere      any String, max 100 chars
- *      document     : link to a document uploaded by the teacher               any String, max 100 chars
+ *      picture      : link to a picture of this teacher, stored somewhere      any String, max 180 chars
+ *      document     : link to a document uploaded by the teacher               any String, max 180 chars
  *      comment      : comment, made by the app client                          any String, max 500 chars
  *
  * These fields should only be specified if they are known:

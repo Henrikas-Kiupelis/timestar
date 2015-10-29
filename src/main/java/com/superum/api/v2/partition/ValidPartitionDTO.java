@@ -19,7 +19,7 @@ import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
  *      id          : id of this partition                                      -99999999 <= id <= 999999999
  *                    this is used in authentication process, as prefix for
  *                    an username: "partitionId.username"
- *      name        : name of this partition                                    any String, max 10 chars
+ *      name        : name of this partition                                    any String, max 180 chars
  *
  * When building JSON, use format
  *      for single objects:  "FIELD_NAME":"VALUE"

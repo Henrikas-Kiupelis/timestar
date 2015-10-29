@@ -23,11 +23,11 @@ import static timestar_v2.Tables.CUSTOMER;
  * When creating an instance of ValidCustomerDTO with JSON, these fields are required:
  *      FIELD_NAME  : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
  *      startDate   : date when a contract was signed                           date String, "yyyy-MM-dd"
- *      name        : name                                                      any String, max 30 chars
- *      phone       : phone number                                              any String, max 30 chars
- *      website     : website                                                   any String, max 30 chars
+ *      name        : name                                                      any String, max 180 chars
+ *      phone       : phone number                                              any String, max 180 chars
+ *      website     : website                                                   any String, max 180 chars
  * These fields are optional:
- *      picture     : link to a picture of this customer, stored somewhere      any String, max 100 chars
+ *      picture     : link to a picture of this customer, stored somewhere      any String, max 180 chars
  *      comment     : comment, made by the app client                           any String, max 500 chars
  * These fields should only be specified if they are known:
  *      id          : number representation of this customer in the system      1 <= id

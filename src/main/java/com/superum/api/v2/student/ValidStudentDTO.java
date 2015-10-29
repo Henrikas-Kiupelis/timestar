@@ -22,8 +22,8 @@ import static timestar_v2.Tables.STUDENT;
  *
  * When parsing an instance of ValidStudentDTO with JSON, these fields are considered mandatory for create() operation:
  *      FIELD_NAME     : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
- *      email          : email of this student                                     any String, max 60 chars
- *      name           : name of this student                                      any String, max 60 chars
+ *      email          : email of this student                                     any String, max 180 chars
+ *      name           : name of this student                                      any String, max 180 chars
  * You can choose from one set of these fields:
  *      customerId     : id of the customer this student belongs to;               1 <= customerId
  *                       if this is null, the student has no customer

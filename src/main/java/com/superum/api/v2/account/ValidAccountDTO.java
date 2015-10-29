@@ -20,7 +20,7 @@ import static eu.goodlike.misc.Constants.NOT_NULL_NOT_BLANK;
  *
  * When creating an instance of ValidAccountDTO with JSON, these fields are required:
  *      FIELD_NAME  : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
- *      username    : username used by this account                             any String, max 60 chars
+ *      username    : username used by this account                             any String, max 190 chars
  *      password    : password used by this account                             any String/char array
  *
  * When building JSON, use format

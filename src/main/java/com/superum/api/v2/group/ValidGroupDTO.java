@@ -25,8 +25,8 @@ import static timestar_v2.Tables.GROUP_OF_STUDENTS;
  *      FIELD_NAME     : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
  *      teacherId      : id of the teacher responsible for this group              1 <= teacherId
  *      usesHourlyWage : true: hourly wage is used; false: academic wage is used   any boolean
- *      languageLevel  : language and level taught to this group                   any String, max 20 chars
- *      name           : name of this group                                        any String, max 30 chars
+ *      languageLevel  : language and level taught to this group                   any String, max 180 chars
+ *      name           : name of this group                                        any String, max 180 chars
  * These fields should only be specified if they are known:
  *      customerId     : id of the customer this group belongs to;                 1 <= customerId
  *                       if this is null, the group has no customer
