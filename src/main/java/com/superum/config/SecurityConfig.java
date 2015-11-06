@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests()
+				.antMatchers(HttpMethod.OPTIONS).anonymous()
 				.antMatchers(PERMISION_ALL).permitAll()
 				.antMatchers(HttpMethod.GET, "/**").hasRole(Role.TEACHER.name())
 				.antMatchers(PERMISION_TEACHER).hasRole(Role.TEACHER.name())
