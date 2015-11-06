@@ -15,22 +15,14 @@ public class CORSFilter implements Filter {
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
-        Map<String, String> headers = new HashMap<>();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        for (String headerName = headerNames.nextElement(); headerNames.hasMoreElements(); headerName = headerNames.nextElement())
-            headers.put(headerName, request.getHeader(headerName));
-
-        LOG.debug("Request inbound: {}, {}, {}", request.getMethod(), request.getRequestURI(), headers);
         String origin = request.getHeader("origin");
         if (allowedOrigin(origin)) {
-            LOG.debug("CORS added!");
             HttpServletResponse response = (HttpServletResponse) res;
             response.setHeader("Access-Control-Allow-Origin", origin);
             response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS, PATCH");
             response.setHeader("Access-Control-Max-Age", "604800");
             response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-        } else
-            LOG.debug("CORS skipped!");
+        }
         chain.doFilter(req, res);
     }
 
@@ -54,7 +46,12 @@ public class CORSFilter implements Filter {
     }
 
     private void debug(HttpServletRequest request) {
+        Map<String, String> headers = new HashMap<>();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        for (String headerName = headerNames.nextElement(); headerNames.hasMoreElements(); headerName = headerNames.nextElement())
+            headers.put(headerName, request.getHeader(headerName));
 
+        LOG.info("Request inbound: {}, {}, {}", request.getMethod(), request.getRequestURI(), headers);
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(CORSFilter.class);
