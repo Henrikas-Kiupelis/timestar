@@ -3,7 +3,6 @@ package com.superum.api.v2;
 import com.superum.api.core.CommonControllerLogic;
 import eu.goodlike.libraries.joda.time.Time;
 import org.joda.time.DateTimeZone;
-import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +30,7 @@ public class MiscController extends CommonControllerLogic {
     @RequestMapping(value = "/time", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
     @ResponseBody
     public long getNow() {
-        return Instant.now().getMillis();
+        return System.currentTimeMillis();
     }
 
     @RequestMapping(value = "/time/convert", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
