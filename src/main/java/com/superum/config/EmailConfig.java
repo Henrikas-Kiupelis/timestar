@@ -1,6 +1,7 @@
 package com.superum.config;
 
-import com.superum.helper.GMail;
+import eu.goodlike.libraries.spring.gmail.GMail;
+import eu.goodlike.libraries.spring.gmail.GMailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +19,9 @@ public class EmailConfig {
 	
 	@Bean
 	public GMail gmail() {
-		return new GMail(env.getProperty("email.username"), env.getProperty("email.password"));
+        String username = env.getProperty("email.username");
+        String password = env.getProperty("email.password");
+		return new GMailSender(username, GMail.getDefaultSender(username, password));
 	}
 
 }

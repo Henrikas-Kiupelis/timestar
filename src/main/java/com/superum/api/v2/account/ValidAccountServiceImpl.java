@@ -7,18 +7,15 @@ import com.superum.api.v1.account.AccountType;
 import com.superum.api.v1.partition.PartitionService;
 import com.superum.api.v2.teacher.FullTeacherDTO;
 import com.superum.api.v2.teacher.ValidTeacherCommandService;
-import com.superum.helper.GMail;
 import com.superum.helper.PartitionAccount;
-import com.superum.helper.jooq.DefaultCommands;
+import eu.goodlike.libraries.spring.gmail.GMail;
 import eu.goodlike.random.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import timestar_v2.tables.records.TeacherRecord;
 
-import javax.mail.MessagingException;
 import java.util.Arrays;
 
 @Service
@@ -35,14 +32,9 @@ public class ValidAccountServiceImpl implements ValidAccountService {
             message.append(ch);
         LOG.debug("Random password generated");
 
-        try {
-            String fullTitle = EMAIL_TITLE + name;
-            mail.send(fullTeacherDTO.getEmail(), fullTitle, message.toString());
-            LOG.debug("Sent email to teacher '{}': title - '{}'; body - '{}'", fullTeacherDTO, fullTitle, EMAIL_BODY + "[PROTECTED}");
-        } catch (MessagingException e) {
-            defaultTeacherCommands.delete(fullTeacherDTO.getId(), account.partitionId());
-            throw new IllegalStateException("Failed to send mail! Creation aborted.", e);
-        }
+        String fullTitle = EMAIL_TITLE + name;
+        mail.send(fullTeacherDTO.getEmail(), fullTitle, message.toString());
+        LOG.debug("Sent email to teacher '{}': title - '{}'; body - '{}'", fullTeacherDTO, fullTitle, EMAIL_BODY + "[PROTECTED}");
 
         String securePassword = encoder.encode(Chars.join("", randomPassword));
         Arrays.fill(randomPassword, '?');
@@ -62,8 +54,7 @@ public class ValidAccountServiceImpl implements ValidAccountService {
     // CONSTRUCTORS
 
     @Autowired
-    public ValidAccountServiceImpl(DefaultCommands<TeacherRecord, Integer> defaultTeacherCommands, PasswordEncoder encoder, GMail mail, AccountDAO accountDAO, PartitionService partitionService) {
-        this.defaultTeacherCommands = defaultTeacherCommands;
+    public ValidAccountServiceImpl(PasswordEncoder encoder, GMail mail, AccountDAO accountDAO, PartitionService partitionService) {
         this.encoder = encoder;
         this.mail = mail;
         this.accountDAO = accountDAO;
@@ -71,8 +62,6 @@ public class ValidAccountServiceImpl implements ValidAccountService {
     }
 
     // PRIVATE
-
-    private final DefaultCommands<TeacherRecord, Integer> defaultTeacherCommands;
 
     private final PasswordEncoder encoder;
     private final GMail mail;

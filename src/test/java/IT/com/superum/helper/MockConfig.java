@@ -1,14 +1,12 @@
 package IT.com.superum.helper;
 
 import com.superum.api.v1.account.AccountDAO;
-import com.superum.helper.GMail;
+import eu.goodlike.libraries.spring.gmail.GMail;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
-
-import javax.mail.MessagingException;
 
 import static org.mockito.Mockito.*;
 
@@ -18,10 +16,9 @@ public class MockConfig {
 
     @Bean
     @Primary
-    public GMail gmail() throws MessagingException {
+    public GMail gmail() {
         GMail gmail = Mockito.mock(GMail.class);
         doNothing().when(gmail).send(any(), any(), any());
-        doNothing().when(gmail).send(any(), any(), any(), any());
         return gmail;
     }
 
