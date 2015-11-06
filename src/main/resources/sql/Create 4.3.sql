@@ -13,8 +13,8 @@ CREATE TABLE account (
   username VARCHAR(190) NOT NULL UNIQUE,
   enabled BIT NOT NULL DEFAULT 1,
   id INT,
-  created_at BIGINT,
-  updated_at BIGINT,
+  created_at BIGINT NOT NULL,
+  updated_at BIGINT NOT NULL,
   password CHAR(60) NOT NULL,
   account_type VARCHAR(180) NOT NULL,
   PRIMARY KEY(username));
@@ -43,24 +43,6 @@ BEFORE DELETE ON account
 FOR EACH ROW
   DELETE FROM roles
   WHERE roles.username = OLD.username;
-
-CREATE TRIGGER create_timestamps_inserting_account
-BEFORE INSERT ON account
-FOR EACH ROW
-  BEGIN
-    SET NEW.created_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
-    SET NEW.updated_at = NEW.created_at;
-  END; //
-
-CREATE TRIGGER update_timestamp_ensure_create_immutable_account
-BEFORE UPDATE ON account
-FOR EACH ROW
-  BEGIN
-    SET NEW.updated_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
-    IF NEW.created_at != OLD.created_at THEN
-      SET NEW.created_at = OLD.created_at;
-    END IF;
-  END; //
 DELIMITER ;
 
 INSERT INTO partitions (id, name)
@@ -69,11 +51,11 @@ VALUES (0, 'TEST');
 INSERT INTO partitions (id, name)
 VALUES (1, 'DEV');
 
-INSERT INTO account (username, password, account_type)
-VALUES ('0.test', '$2a$10$ReQmCgAd1YqDMHNg5zg7hOj.uzJhAACGRkMSMV04h6iaTzxhfTC.6', 'ADMIN');
+INSERT INTO account (username, password, account_type, created_at, updated_at)
+VALUES ('0.test', '$2a$10$ReQmCgAd1YqDMHNg5zg7hOj.uzJhAACGRkMSMV04h6iaTzxhfTC.6', 'ADMIN', 1, 1);
 
-INSERT INTO account (username, password, account_type)
-VALUES ('1.goodlike', '$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.', 'ADMIN');
+INSERT INTO account (username, password, account_type, created_at, updated_at)
+VALUES ('1.goodlike', '$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.', 'ADMIN', 1, 1);
 
 CREATE TABLE teacher (
   id INT NOT NULL AUTO_INCREMENT,

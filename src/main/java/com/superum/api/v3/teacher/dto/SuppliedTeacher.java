@@ -98,63 +98,6 @@ public final class SuppliedTeacher {
                 .ifInvalid(languages).thenThrow(SuppliedTeacher::languagesError);
     }
 
-    private static InvalidTeacherException hourlyWageError(BigDecimal hourlyWage) {
-        return new InvalidTeacherException("Hourly wage for teacher must be positive, not " + hourlyWage);
-    }
-
-    private static InvalidTeacherException academicWageError(BigDecimal academicWage) {
-        return new InvalidTeacherException("Academic wage for teacher must be positive, not " + academicWage);
-    }
-
-    private static InvalidTeacherException nameError(String name) {
-        return new InvalidTeacherException("Teacher name must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + name);
-    }
-
-    private static InvalidTeacherException surnameError(String surname) {
-        return new InvalidTeacherException("Teacher surname must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + surname);
-    }
-
-    private static InvalidTeacherException phoneError(String phone) {
-        return new InvalidTeacherException("Teacher phone must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + phone);
-    }
-
-    private static InvalidTeacherException cityError(String city) {
-        return new InvalidTeacherException("Teacher city must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + city);
-    }
-
-    private static InvalidTeacherException emailError(String email) {
-        return new InvalidTeacherException("Teacher email must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " + email);
-    }
-
-    private static InvalidTeacherException pictureError(String picture) {
-        return new InvalidTeacherException("Teacher picture must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + picture);
-    }
-
-    private static InvalidTeacherException documentError(String document) {
-        return new InvalidTeacherException("Teacher document must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + document);
-    }
-
-    private static InvalidTeacherException commentError(String comment) {
-        return new InvalidTeacherException("Teacher comment must not exceed " +
-                COMMENT_SIZE_LIMIT + " chars: " + comment);
-    }
-
-    private static InvalidTeacherException languageCodeError(String languageCode) {
-        return new InvalidTeacherException("Specific teacher languages must not be null, blank or exceed "
-                + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + languageCode);
-    }
-
-    private static InvalidTeacherException languagesError(List<String> languages) {
-        return new InvalidTeacherException("Teacher must have at least a single language: " + languages);
-    }
-
     public void validateForUpdating() {
         validateForCreation();
     }
@@ -235,6 +178,63 @@ public final class SuppliedTeacher {
 
     private static InvalidTeacherException paymentDayError(Integer paymentDay) {
         return new InvalidTeacherException("Payment day should be a day of month, not: " + paymentDay);
+    }
+
+    private static InvalidTeacherException hourlyWageError(BigDecimal hourlyWage) {
+        return new InvalidTeacherException("Hourly wage for teacher must be positive, not " + hourlyWage);
+    }
+
+    private static InvalidTeacherException academicWageError(BigDecimal academicWage) {
+        return new InvalidTeacherException("Academic wage for teacher must be positive, not " + academicWage);
+    }
+
+    private static InvalidTeacherException nameError(String name) {
+        return new InvalidTeacherException("Teacher name must not exceed " +
+                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + name);
+    }
+
+    private static InvalidTeacherException surnameError(String surname) {
+        return new InvalidTeacherException("Teacher surname must not exceed " +
+                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + surname);
+    }
+
+    private static InvalidTeacherException phoneError(String phone) {
+        return new InvalidTeacherException("Teacher phone must not exceed " +
+                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + phone);
+    }
+
+    private static InvalidTeacherException cityError(String city) {
+        return new InvalidTeacherException("Teacher city must not exceed " +
+                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + city);
+    }
+
+    private static InvalidTeacherException emailError(String email) {
+        return new InvalidTeacherException("Teacher email must not exceed " +
+                DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " + email);
+    }
+
+    private static InvalidTeacherException pictureError(String picture) {
+        return new InvalidTeacherException("Teacher picture must not exceed " +
+                DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + picture);
+    }
+
+    private static InvalidTeacherException documentError(String document) {
+        return new InvalidTeacherException("Teacher document must not exceed " +
+                DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + document);
+    }
+
+    private static InvalidTeacherException commentError(String comment) {
+        return new InvalidTeacherException("Teacher comment must not exceed " +
+                COMMENT_SIZE_LIMIT + " chars: " + comment);
+    }
+
+    private static InvalidTeacherException languageCodeError(String languageCode) {
+        return new InvalidTeacherException("Specific teacher languages must not be null, blank or exceed "
+                + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + languageCode);
+    }
+
+    private static InvalidTeacherException languagesError(List<String> languages) {
+        return new InvalidTeacherException("Teacher must have at least a single language: " + languages);
     }
 
     // OBJECT OVERRIDES
