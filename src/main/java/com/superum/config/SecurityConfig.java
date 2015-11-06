@@ -41,10 +41,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests()
-				.antMatchers(HttpMethod.OPTIONS).anonymous()
-				.antMatchers(PERMISION_ALL).permitAll()
+				.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+				.antMatchers(PERMISSION_ALL).permitAll()
 				.antMatchers(HttpMethod.GET, "/**").hasRole(Role.TEACHER.name())
-				.antMatchers(PERMISION_TEACHER).hasRole(Role.TEACHER.name())
+				.antMatchers(PERMISSION_TEACHER).hasRole(Role.TEACHER.name())
 				.anyRequest().hasRole(Role.ADMIN.name())
 				.and()
 				.httpBasic()
@@ -80,10 +80,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String USERS_QUERY = "select username,password,enabled from account where username = ?";
     private static final String AUTHORITIES_QUERY = "select username,role from roles where username = ?";
 
-    private static final String[] PERMISION_ALL = {
+    private static final String[] PERMISSION_ALL = {
             "/timestar/api/v2/misc/**"
     };
-    private static final String[] PERMISION_TEACHER = {
+    private static final String[] PERMISSION_TEACHER = {
             "/timestar/api/account/update",
             "/timestar/api/lesson/**"
     };
