@@ -60,18 +60,18 @@ VALUES ('1.goodlike', '$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624
 CREATE TABLE teacher (
   id INT NOT NULL AUTO_INCREMENT,
   partition_id INT NOT NULL,
+  email VARCHAR(180),
 
-  created_at BIGINT,
-  updated_at BIGINT,
+  created_at BIGINT NOT NULL,
+  updated_at BIGINT NOT NULL,
 
-  payment_day INT NOT NULL,
-  hourly_wage DECIMAL(19, 4) NOT NULL,
-  academic_wage DECIMAL(19, 4) NOT NULL,
-  email VARCHAR(180) NOT NULL,
-  name VARCHAR(180) NOT NULL,
-  surname VARCHAR(180) NOT NULL,
-  phone VARCHAR(180) NOT NULL,
-  city VARCHAR(180) NOT NULL,
+  payment_day INT,
+  hourly_wage DECIMAL(19, 4),
+  academic_wage DECIMAL(19, 4),
+  name VARCHAR(180),
+  surname VARCHAR(180),
+  phone VARCHAR(180),
+  city VARCHAR(180),
   picture VARCHAR(180),
   document VARCHAR(180),
   comment VARCHAR(500),
@@ -79,32 +79,10 @@ CREATE TABLE teacher (
   FOREIGN KEY(partition_id) REFERENCES partitions(id),
   UNIQUE KEY(partition_id, email));
 
-DELIMITER //
-CREATE TRIGGER create_timestamps_inserting_teacher
-BEFORE INSERT ON teacher
-FOR EACH ROW
-  BEGIN
-    SET NEW.created_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
-    SET NEW.updated_at = NEW.created_at;
-  END; //
-
-CREATE TRIGGER update_timestamp_ensure_create_immutable_teacher
-BEFORE UPDATE ON teacher
-FOR EACH ROW
-  BEGIN
-    SET NEW.updated_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
-    IF NEW.created_at != OLD.created_at THEN
-      SET NEW.created_at = OLD.created_at;
-    END IF;
-  END; //
-DELIMITER ;
-
 CREATE TABLE teacher_language (
-  partition_id INT NOT NULL,
   teacher_id INT NOT NULL,
   code VARCHAR(3) NOT NULL,
   FOREIGN KEY(teacher_id) REFERENCES teacher(id),
-  FOREIGN KEY(partition_id) REFERENCES partitions(id),
   UNIQUE KEY (teacher_id, code));
 
 CREATE TABLE customer (
