@@ -24,6 +24,14 @@ public class AccountRepositoryImpl implements AccountRepository {
                 .execute();
     }
 
+    @Override
+    public int updateUsername(String originalUsername, String newUsername) {
+        return sql.update(ACCOUNT)
+                .set(ACCOUNT.USERNAME, newUsername)
+                .where(ACCOUNT.USERNAME.eq(originalUsername))
+                .execute();
+    }
+
     // CONSTRUCTORS
 
     @Autowired

@@ -4,4 +4,6 @@ public interface AccountRepository {
 
     int create(Integer id, String username, String password, String accountType, long createdAt, long updatedAt);
 
+    int updateUsername(String originalUsername, String newUsername);
+
 }

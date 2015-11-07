@@ -3,6 +3,7 @@ package com.superum.api.v3.account.impl;
 import com.superum.api.v1.account.AccountType;
 import com.superum.api.v3.account.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -16,16 +17,18 @@ public class AccountGeneratorImpl implements AccountGenerator {
         CompletableFuture<String> password = passwordGenerator.generate();
         AccountType accountType = AccountType.TEACHER;
         Instant now = Instant.now();
-        return password.thenApply(pwd -> new Account(id, username, accountType, pwd, now, now, accountRepository, accountEmailSender));
+        return password.thenApply(pwd -> new Account(id, username, accountType, pwd, now, now, accountRepository, accountEmailSender, passwordEncoder));
     }
 
     // CONSTRUCTORS
 
     @Autowired
-    public AccountGeneratorImpl(PasswordGenerator passwordGenerator, AccountRepository accountRepository, AccountEmailSender accountEmailSender) {
+    public AccountGeneratorImpl(PasswordGenerator passwordGenerator, AccountRepository accountRepository,
+                                AccountEmailSender accountEmailSender, PasswordEncoder passwordEncoder) {
         this.passwordGenerator = passwordGenerator;
         this.accountRepository = accountRepository;
         this.accountEmailSender = accountEmailSender;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // PRIVATE
@@ -33,5 +36,6 @@ public class AccountGeneratorImpl implements AccountGenerator {
     private final PasswordGenerator passwordGenerator;
     private final AccountRepository accountRepository;
     private final AccountEmailSender accountEmailSender;
+    private final PasswordEncoder passwordEncoder;
 
 }

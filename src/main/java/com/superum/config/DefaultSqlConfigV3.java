@@ -1,6 +1,7 @@
 package com.superum.config;
 
 import com.superum.helper.PartitionAccount;
+import eu.goodlike.libraries.jooq.CommandsMany;
 import eu.goodlike.libraries.jooq.Queries;
 import eu.goodlike.libraries.jooq.QueriesForeign;
 import eu.goodlike.libraries.jooq.SQL;
@@ -59,6 +60,13 @@ public class DefaultSqlConfigV3 {
         QueriesForeign<Long> queries = SQL.queriesFor(persistenceContext.dsl(), LESSON_ATTENDANCE.LESSON_ID);
         queries.setUniversalCondition(() -> LESSON_ATTENDANCE.PARTITION_ID.eq(new PartitionAccount().partitionId()));
         return queries;
+    }
+
+    // COMMANDS
+
+    @Bean
+    public CommandsMany<Integer, String> teacherLanguageCommands() {
+        return SQL.commandsFor(persistenceContext.dsl(), TEACHER_LANGUAGE, TEACHER_LANGUAGE.TEACHER_ID, TEACHER_LANGUAGE.CODE);
     }
 
 }

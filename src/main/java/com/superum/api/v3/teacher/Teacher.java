@@ -1,33 +1,57 @@
 package com.superum.api.v3.teacher;
 
 import com.google.common.base.MoreObjects;
-import com.superum.api.v3.account.AccountService;
+import com.superum.api.v2.teacher.InvalidTeacherException;
+import com.superum.api.v3.account.AccountServiceExt;
 import com.superum.api.v3.teacher.dto.FetchedTeacher;
 import eu.goodlike.libraries.jooq.CommandsMany;
+import eu.goodlike.libraries.jooq.Queries;
 import eu.goodlike.misc.Scaleless;
 import eu.goodlike.misc.SpecialUtils;
+import timestar_v2.tables.records.TeacherRecord;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static timestar_v2.Tables.TEACHER;
+
 public class Teacher {
 
     public Optional<FetchedTeacher> create() {
-        return null;
+        Integer id = teacherRepository.create(paymentDay, hourlyWage, academicWage, name, surname, phone,
+                city, email, picture, document, comment, createdAt.toEpochMilli(), updatedAt.toEpochMilli());
+        if (id == null)
+            return Optional.empty();
+
+        accountServiceExt.registerTeacher(id, email);
+        teacherLanguageCommands.create(id, languages);
+        return teacherQueries.read(id, teacherSerializer::toReturnable);
     }
 
-    public int update() {
-        return 0;
+    public int update(int id) {
+        String originalEmail = teacherQueries.readField(TEACHER.EMAIL, id)
+                .orElseThrow(() -> new InvalidTeacherException("Teacher was deleted before it could be updated!"));
+        int teacherRows = teacherRepository.update(id, paymentDay, hourlyWage, academicWage, name, surname, phone,
+                city, email, picture, document, comment, createdAt.toEpochMilli(), updatedAt.toEpochMilli());
+        if (teacherRows == 0)
+            return 0;
+
+        if (!originalEmail.equals(email))
+            accountServiceExt.updateTeacherEmail(originalEmail, email);
+        teacherLanguageCommands.update(id, languages);
+        return teacherRows;
     }
 
     // CONSTRUCTORS
 
-    public Teacher(long createdAt, long updatedAt, Integer paymentDay, BigDecimal hourlyWage, BigDecimal academicWage,
+    public Teacher(Instant createdAt, Instant updatedAt, Integer paymentDay, BigDecimal hourlyWage, BigDecimal academicWage,
                    String name, String surname, String phone, String city, String email, String picture, String document,
                    String comment, List<String> languages, TeacherRepository teacherRepository,
-                   CommandsMany<Integer, String> teacherLanguageCommands, AccountService validAccountService) {
+                   Queries<TeacherRecord, Integer> teacherQueries, CommandsMany<Integer, String> teacherLanguageCommands,
+                   AccountServiceExt accountServiceExt, TeacherSerializer teacherSerializer) {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.paymentDay = paymentDay;
@@ -44,14 +68,16 @@ public class Teacher {
         this.languages = languages;
 
         this.teacherRepository = teacherRepository;
+        this.teacherQueries = teacherQueries;
         this.teacherLanguageCommands = teacherLanguageCommands;
-        this.validAccountService = validAccountService;
+        this.accountServiceExt = accountServiceExt;
+        this.teacherSerializer = teacherSerializer;
     }
 
     // PRIVATE
 
-    private final long createdAt;
-    private final long updatedAt;
+    private final Instant createdAt;
+    private final Instant updatedAt;
     private final Integer paymentDay;
     private final BigDecimal hourlyWage;
     private final BigDecimal academicWage;
@@ -66,8 +92,10 @@ public class Teacher {
     private final List<String> languages;
 
     private final TeacherRepository teacherRepository;
+    private final Queries<TeacherRecord, Integer> teacherQueries;
     private final CommandsMany<Integer, String> teacherLanguageCommands;
-    private final AccountService validAccountService;
+    private final AccountServiceExt accountServiceExt;
+    private final TeacherSerializer teacherSerializer;
 
     // OBJECT OVERRIDES
 

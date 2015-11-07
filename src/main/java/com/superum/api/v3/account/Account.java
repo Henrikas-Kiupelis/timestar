@@ -2,6 +2,7 @@ package com.superum.api.v3.account;
 
 import com.google.common.base.MoreObjects;
 import com.superum.api.v1.account.AccountType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -9,7 +10,8 @@ import java.util.Objects;
 public class Account {
 
     public Account create() {
-        accountRepository.create(id, username, accountType.name(), password, createdAt.toEpochMilli(), updatedAt.toEpochMilli());
+        String hashedPassword = passwordEncoder.encode(password);
+        accountRepository.create(id, username, accountType.name(), hashedPassword, createdAt.toEpochMilli(), updatedAt.toEpochMilli());
         return this;
     }
 
@@ -20,7 +22,7 @@ public class Account {
     // CONSTRUCTORS
 
     public Account(Integer id, String username, AccountType accountType, String password, Instant createdAt,
-                   Instant updatedAt, AccountRepository accountRepository, AccountEmailSender accountEmailSender) {
+                   Instant updatedAt, AccountRepository accountRepository, AccountEmailSender accountEmailSender, PasswordEncoder passwordEncoder) {
         this.id = id;
         this.username = username;
         this.accountType = accountType;
@@ -30,6 +32,7 @@ public class Account {
 
         this.accountRepository = accountRepository;
         this.accountEmailSender = accountEmailSender;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // PRIVATE
@@ -43,6 +46,7 @@ public class Account {
 
     private final AccountRepository accountRepository;
     private final AccountEmailSender accountEmailSender;
+    private final PasswordEncoder passwordEncoder;
 
     // OBJECT OVERRIDES
 

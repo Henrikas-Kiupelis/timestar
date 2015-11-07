@@ -6,15 +6,13 @@ import eu.goodlike.random.Random;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @Service
 public class PasswordGeneratorImpl implements PasswordGenerator {
 
     @Override
     public CompletableFuture<String> generate() {
-        return CompletableFuture.supplyAsync(Random::getSecure, passwordGenThreadPool)
+        return CompletableFuture.supplyAsync(Random::getSecure)
                 .thenApply(rng -> rng.password(true, true, true, PASSWORD_LENGTH))
                 .thenApply(pwd -> Chars.join("", pwd));
     }
@@ -22,7 +20,5 @@ public class PasswordGeneratorImpl implements PasswordGenerator {
     // PRIVATE
 
     private static final int PASSWORD_LENGTH = 7;
-
-    private static final Executor passwordGenThreadPool = Executors.newCachedThreadPool();
 
 }
