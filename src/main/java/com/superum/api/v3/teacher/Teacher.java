@@ -21,14 +21,9 @@ import static timestar_v2.Tables.TEACHER;
 public class Teacher {
 
     public Optional<FetchedTeacher> create() {
-        Integer id = teacherRepository.create(paymentDay, hourlyWage, academicWage, name, surname, phone,
-                city, email, picture, document, comment, createdAt.toEpochMilli(), updatedAt.toEpochMilli());
-        if (id == null)
-            return Optional.empty();
-
-        accountServiceExt.registerTeacher(id, email);
-        teacherLanguageCommands.create(id, languages);
-        return teacherQueries.read(id, teacherSerializer::toReturnable);
+        return teacherRepository.create(paymentDay, hourlyWage, academicWage, name, surname, phone,
+                city, email, picture, document, comment, createdAt.toEpochMilli(), updatedAt.toEpochMilli())
+                .flatMap(this::finishCreation);
     }
 
     public int update(int id) {
@@ -96,6 +91,12 @@ public class Teacher {
     private final CommandsMany<Integer, String> teacherLanguageCommands;
     private final AccountServiceExt accountServiceExt;
     private final TeacherSerializer teacherSerializer;
+
+    private Optional<FetchedTeacher> finishCreation(int id) {
+        accountServiceExt.registerTeacher(id, email);
+        teacherLanguageCommands.create(id, languages);
+        return teacherQueries.read(id, teacherSerializer::toReturnable);
+    }
 
     // OBJECT OVERRIDES
 
