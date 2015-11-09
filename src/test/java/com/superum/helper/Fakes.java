@@ -8,8 +8,8 @@ import com.superum.api.v2.grouping.ValidGroupingDTO;
 import com.superum.api.v2.lesson.ValidLessonDTO;
 import com.superum.api.v2.student.ValidStudentDTO;
 import com.superum.api.v2.teacher.FullTeacherDTO;
-import com.superum.api.v3.lesson.FetchedLesson;
-import com.superum.api.v3.lesson.SuppliedLesson;
+import com.superum.api.v3.lesson.dto.FetchedLesson;
+import com.superum.api.v3.lesson.dto.SuppliedLesson;
 import eu.goodlike.test.Fake;
 import org.joda.time.LocalDate;
 

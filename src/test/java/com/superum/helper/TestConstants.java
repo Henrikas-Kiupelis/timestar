@@ -1,4 +1,4 @@
-package IT.com.superum.helper;
+package com.superum.helper;
 
 /**
  * Contains constants related to testing only

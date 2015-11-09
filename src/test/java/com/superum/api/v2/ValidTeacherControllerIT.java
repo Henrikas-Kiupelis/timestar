@@ -1,10 +1,10 @@
-package IT.com.superum.api.v2;
+package com.superum.api.v2;
 
-import IT.com.superum.helper.DB;
-import IT.com.superum.helper.IntegrationTestEnvironment;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.superum.api.v2.teacher.FullTeacherDTO;
+import com.superum.helper.DB;
 import com.superum.helper.Fakes;
+import com.superum.helper.IntegrationTestEnvironment;
 import eu.goodlike.libraries.spring.mockmvc.MVC;
 import eu.goodlike.test.Fake;
 import org.jooq.lambda.Unchecked;

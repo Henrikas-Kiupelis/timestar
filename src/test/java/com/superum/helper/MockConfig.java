@@ -1,4 +1,4 @@
-package IT.com.superum.helper;
+package com.superum.helper;
 
 import com.superum.api.v1.account.AccountDAO;
 import eu.goodlike.libraries.spring.gmail.GMail;

@@ -1,9 +1,9 @@
-package IT.com.superum.helper;
+package com.superum.helper;
 
 import com.superum.api.v3.lesson.LessonRepository;
-import com.superum.api.v3.lesson.LessonRepositoryImpl;
 import com.superum.api.v3.lesson.LessonTransformer;
-import com.superum.api.v3.lesson.LessonTransformerImpl;
+import com.superum.api.v3.lesson.impl.LessonRepositoryImpl;
+import com.superum.api.v3.lesson.impl.LessonTransformerImpl;
 import com.superum.config.DefaultSqlConfigV3;
 import com.superum.config.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;

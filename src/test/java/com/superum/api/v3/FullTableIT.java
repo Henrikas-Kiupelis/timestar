@@ -1,6 +1,5 @@
-package IT.com.superum.api.v3;
+package com.superum.api.v3;
 
-import IT.com.superum.helper.IntegrationTestEnvironment;
 import com.superum.api.v2.customer.ValidCustomerDTO;
 import com.superum.api.v2.lesson.ValidLessonDTO;
 import com.superum.api.v2.teacher.FullTeacherDTO;
@@ -8,6 +7,7 @@ import com.superum.api.v3.table.FullTable;
 import com.superum.api.v3.table.TableField;
 import com.superum.api.v3.table.TableReport;
 import com.superum.helper.Fakes;
+import com.superum.helper.IntegrationTestEnvironment;
 import com.superum.helper.TimeResolver;
 import eu.goodlike.functional.some.Some;
 import eu.goodlike.libraries.joda.time.Time;

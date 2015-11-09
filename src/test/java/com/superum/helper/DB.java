@@ -1,4 +1,4 @@
-package IT.com.superum.helper;
+package com.superum.helper;
 
 import com.google.common.collect.ObjectArrays;
 import com.superum.api.v2.attendance.ValidLessonAttendanceDTO;
@@ -9,11 +9,10 @@ import com.superum.api.v2.lesson.ValidLesson;
 import com.superum.api.v2.lesson.ValidLessonDTO;
 import com.superum.api.v2.student.ValidStudentDTO;
 import com.superum.api.v2.teacher.FullTeacherDTO;
-import com.superum.api.v3.lesson.FetchedLesson;
 import com.superum.api.v3.lesson.LessonTransformer;
-import com.superum.api.v3.lesson.SuppliedLesson;
-import com.superum.api.v3.lesson.SuppliedLessonWithTimestamp;
-import com.superum.helper.Fakes;
+import com.superum.api.v3.lesson.dto.FetchedLesson;
+import com.superum.api.v3.lesson.dto.SuppliedLesson;
+import com.superum.api.v3.lesson.dto.SuppliedLessonWithTimestamp;
 import eu.goodlike.functional.some.Some;
 import eu.goodlike.libraries.joda.time.Time;
 import org.joda.time.LocalDate;
@@ -31,7 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static IT.com.superum.helper.TestConstants.TEST_PARTITION;
+import static com.superum.helper.TestConstants.TEST_PARTITION;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.jooq.impl.DSL.groupConcat;
 import static timestar_v2.Keys.TEACHER_LANGUAGE_IBFK_1;
@@ -129,11 +128,13 @@ public class DB {
     }
 
     public ValidCustomerDTO insertValidCustomer(ValidCustomerDTO customer) {
+        String dateString = customer.getStartDateString();
+        java.sql.Date date = dateString == null ? null : java.sql.Date.valueOf(dateString);
         sql.insertInto(CUSTOMER)
                 .set(CUSTOMER.PARTITION_ID, TEST_PARTITION)
                 .set(CUSTOMER.ID, customer.getId())
                 .set(CUSTOMER.NAME, customer.getName())
-                .set(CUSTOMER.START_DATE, java.sql.Date.valueOf(customer.getStartDateString()))
+                .set(CUSTOMER.START_DATE, date)
                 .set(CUSTOMER.PHONE, customer.getPhone())
                 .set(CUSTOMER.WEBSITE, customer.getWebsite())
                 .set(CUSTOMER.PICTURE, customer.getPicture())

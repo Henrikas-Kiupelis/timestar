@@ -1,6 +1,8 @@
-package IT.com.superum.helper;
+package com.superum.helper;
 
 import com.superum.TimeStarBackEndApplication;
+import com.superum.config.DefaultSqlConfig;
+import com.superum.config.DefaultSqlConfigV3;
 import com.superum.config.PersistenceContext;
 import com.superum.config.SecurityConfig;
 import eu.goodlike.libraries.spring.mockmvc.MVC;
@@ -28,12 +30,13 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-import static IT.com.superum.helper.TestConstants.TEST_PARTITION;
+import static com.superum.helper.TestConstants.TEST_PARTITION;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {TimeStarBackEndApplication.class, PersistenceContext.class, SecurityConfig.class, HelperConfiguration.class, MockConfig.class})
+@ContextConfiguration(classes = {TimeStarBackEndApplication.class, PersistenceContext.class, SecurityConfig.class,
+        HelperConfiguration.class, MockConfig.class, DefaultSqlConfig.class, DefaultSqlConfigV3.class})
 @Transactional
 @TransactionConfiguration(defaultRollback = true)
 public abstract class IntegrationTestEnvironment {

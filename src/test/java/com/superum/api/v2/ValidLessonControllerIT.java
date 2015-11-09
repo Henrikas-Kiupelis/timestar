@@ -1,11 +1,10 @@
-package IT.com.superum.api.v3;
+package com.superum.api.v2;
 
-import IT.com.superum.helper.DB;
-import IT.com.superum.helper.IntegrationTestEnvironment;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.superum.api.v3.lesson.FetchedLesson;
-import com.superum.api.v3.lesson.SuppliedLesson;
+import com.superum.api.v2.lesson.ValidLessonDTO;
+import com.superum.helper.DB;
 import com.superum.helper.Fakes;
+import com.superum.helper.IntegrationTestEnvironment;
 import eu.goodlike.libraries.spring.mockmvc.MVC;
 import eu.goodlike.test.Fake;
 import org.jooq.lambda.Unchecked;
@@ -15,36 +14,44 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.List;
 
 import static eu.goodlike.libraries.spring.mockmvc.HttpResult.*;
-import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @TransactionConfiguration(defaultRollback = true)
-public class LessonControllerIT extends IntegrationTestEnvironment {
+public class ValidLessonControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void creatingLessonWithoutId_shouldCreateNewLesson() throws Exception {
-        SuppliedLesson lesson = Fakes.suppliedLesson(NEW_LESSON_ID, OLD_GROUP_ID);
+        ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID).withoutId();
 
-        FetchedLesson insertedLesson = mvc.performPost(DEFAULT_PATH, lesson, OK)
+        ValidLessonDTO insertedLesson = mvc.performPost(DEFAULT_PATH, lesson, OK)
                 .map(Unchecked.function(this::readLesson))
                 .orElseThrow(() -> new Exception("Successful insertion should return a lesson!"));
 
-        assertTrue("Inserted lesson should have come from the original", db.originCheck(insertedLesson, lesson, true));
+        assertEquals("Inserted lesson should be equal to the original (except id)",
+                lesson.withId(insertedLesson.getId()), insertedLesson);
+
         assertInDatabase(insertedLesson);
     }
 
     @Test
+    public void creatingLessonWithId_shouldReturn400() throws Exception {
+        ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID);
+
+        mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
+
+        assertNotInDatabase(lesson);
+    }
+
+    @Test
     public void creatingLessonWithoutLength_shouldReturn400() throws Exception {
-        SuppliedLesson lesson = SuppliedLesson.builder()
-                .withGroupId(OLD_GROUP_ID)
-                .withStartTime(Fake.time(NEW_LESSON_ID))
+        ValidLessonDTO lesson = ValidLessonDTO.builder()
+                .groupIdWithTeacher(OLD_GROUP_ID, OLD_TEACHER_ID)
+                .startTime(Fake.time(NEW_LESSON_ID))
                 .build();
 
         mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
@@ -52,17 +59,17 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void creatingLessonWithNonExistentGroupId_shouldReturn404() throws Exception {
-        SuppliedLesson lesson = Fakes.suppliedLesson(NEW_LESSON_ID, NEW_GROUP_ID);
+        ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, NEW_GROUP_ID, OLD_TEACHER_ID).withoutId();
 
         mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isNotFound());
     }
 
     @Test
     public void creatingLessonWhichOverlaps_shouldReturn409() throws Exception {
-        SuppliedLesson lesson = SuppliedLesson.builder()
-                .withGroupId(OLD_GROUP_ID)
-                .withStartTime(Fake.time(OLD_LESSON_ID))
-                .withLength(Fake.duration(NEW_LESSON_ID))
+        ValidLessonDTO lesson = ValidLessonDTO.stepBuilder()
+                .groupIdWithTeacher(OLD_GROUP_ID, OLD_TEACHER_ID)
+                .startTime(Fake.time(OLD_LESSON_ID))
+                .length(Fake.duration(NEW_LESSON_ID))
                 .build();
 
         mvc.performPost(DEFAULT_PATH, lesson, BAD, status().isConflict());
@@ -70,76 +77,90 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void updatingLessonWithId_shouldUpdateLesson() throws Exception {
-        SuppliedLesson lesson = Fakes.suppliedLesson(NEW_LESSON_ID, OLD_GROUP_ID);
+        ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID).withId(OLD_LESSON_ID);
 
-        mvc.performPut(DEFAULT_PATH + OLD_LESSON_ID, lesson, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, lesson, OK_NO_BODY);
 
-        assertInDatabase(lesson, OLD_LESSON_ID);
+        assertInDatabase(lesson);
     }
 
     @Test
-    public void updatingLessonLengthOnly_shouldUpdateLesson() throws Exception {
-        SuppliedLesson partialLesson = SuppliedLesson.builder()
-                .withLength(Fake.duration(NEW_LESSON_ID))
+    public void updatingLessonWithIdAndLengthOnly_shouldUpdateLesson() throws Exception {
+        ValidLessonDTO partialLesson = ValidLessonDTO.builder()
+                .id(OLD_LESSON_ID)
+                .length(Fake.duration(NEW_LESSON_ID))
                 .build();
 
-        mvc.performPut(DEFAULT_PATH + OLD_LESSON_ID, partialLesson, OK_NO_BODY);
+        mvc.performPut(DEFAULT_PATH, partialLesson, OK_NO_BODY);
 
-        FetchedLesson beforeUpdate = Fakes.fetchedLesson(OLD_LESSON_ID);
-        FetchedLesson afterUpdate = FetchedLesson.stepBuilder()
-                .withId(beforeUpdate.getId())
-                .withGroupId(beforeUpdate.getGroupId())
-                .withTeacherId(beforeUpdate.getTeacherId())
-                .withStartTime(beforeUpdate.getStartTime())
-                .withEndTime(Instant.ofEpochMilli(beforeUpdate.getStartTime())
-                        .plus(partialLesson.getLength(), MINUTES)
-                        .toEpochMilli())
-                .withLength(partialLesson.getLength())
-                .withComment(beforeUpdate.getComment())
-                .withCreatedAt(beforeUpdate.getCreatedAt())
-                .withUpdatedAt(beforeUpdate.getUpdatedAt())
+        ValidLessonDTO beforeUpdate = Fakes.lesson(OLD_LESSON_ID);
+        ValidLessonDTO afterUpdate = ValidLessonDTO.stepBuilder()
+                .groupIdWithTeacher(beforeUpdate.getGroupId(), beforeUpdate.getTeacherId())
+                .startTime(beforeUpdate.getStartTime())
+                .length(partialLesson.getLength())
+                .id(partialLesson.getId())
+                .comment(beforeUpdate.getComment())
                 .build();
 
         assertInDatabase(afterUpdate);
     }
 
     @Test
+    public void updatingLessonWithoutId_shouldReturn400() throws Exception {
+        ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID).withoutId();
+
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
+    }
+
+    @Test
+    public void updatingLessonWithOnlyId_shouldReturn400() throws Exception {
+        ValidLessonDTO lesson = ValidLessonDTO.builder()
+                .id(OLD_LESSON_ID)
+                .build();
+
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isBadRequest());
+
+        assertInDatabase(Fakes.lesson(OLD_LESSON_ID));
+    }
+
+    @Test
     public void updatingLessonWithNonExistentId_shouldReturn404() throws Exception {
-        SuppliedLesson lesson = Fakes.suppliedLesson(NEW_LESSON_ID, OLD_GROUP_ID);
+        ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID);
 
-        mvc.performPut(DEFAULT_PATH + NEW_LESSON_ID, lesson, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isNotFound());
 
-        assertNotInDatabase(NEW_LESSON_ID);
+        assertNotInDatabase(lesson);
     }
 
     @Test
     public void updatingLessonWithNonExistentGroupId_shouldReturn404() throws Exception {
-        SuppliedLesson lesson = Fakes.suppliedLesson(NEW_LESSON_ID, NEW_GROUP_ID);
+        ValidLessonDTO lesson = Fakes.lesson(NEW_LESSON_ID, NEW_GROUP_ID, OLD_TEACHER_ID).withId(OLD_LESSON_ID);
 
-        mvc.performPut(DEFAULT_PATH + OLD_LESSON_ID, lesson, BAD, status().isNotFound());
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isNotFound());
 
-        assertInDatabase(Fakes.fetchedLesson(OLD_LESSON_ID));
+        assertInDatabase(Fakes.lesson(OLD_LESSON_ID));
     }
 
     @Test
     public void updatingLessonWhichOverlaps_shouldReturn409() throws Exception {
-        FetchedLesson lessonToBeOverlapped = db.insertSuppliedLesson(Fakes.suppliedLesson(NEW_LESSON_ID, OLD_GROUP_ID), NEW_LESSON_ID);
+        ValidLessonDTO lessonToBeOverlapped = db.insertValidLesson(Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID));
 
-        SuppliedLesson lesson = SuppliedLesson.builder()
-                .withGroupId(OLD_GROUP_ID)
-                .withStartTime(lessonToBeOverlapped.getStartTime())
-                .withLength(lessonToBeOverlapped.getLength())
+        ValidLessonDTO lesson = ValidLessonDTO.stepBuilder()
+                .groupIdWithTeacher(OLD_GROUP_ID, OLD_TEACHER_ID)
+                .startTime(lessonToBeOverlapped.getStartTime())
+                .length(lessonToBeOverlapped.getLength())
+                .id(OLD_LESSON_ID)
                 .build();
 
-        mvc.performPut(DEFAULT_PATH + OLD_LESSON_ID, lesson, BAD, status().isConflict());
+        mvc.performPut(DEFAULT_PATH, lesson, BAD, status().isConflict());
 
         assertInDatabase(lessonToBeOverlapped);
-        assertInDatabase(Fakes.fetchedLesson(OLD_LESSON_ID));
+        assertInDatabase(Fakes.lesson(OLD_LESSON_ID));
     }
 
     @Test
     public void deletingLessonById_shouldDeleteLesson() throws Exception {
-        FetchedLesson lesson = db.insertSuppliedLesson(Fakes.suppliedLesson(NEW_LESSON_ID, OLD_GROUP_ID), NEW_LESSON_ID);
+        ValidLessonDTO lesson = db.insertValidLesson(Fakes.lesson(NEW_LESSON_ID, OLD_GROUP_ID, OLD_TEACHER_ID));
 
         mvc.performDelete(DEFAULT_PATH + lesson.getId(), OK_NO_BODY);
 
@@ -162,7 +183,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingLessonById_shouldReturnLesson() throws Exception {
-        FetchedLesson lesson = mvc.performGet(DEFAULT_PATH + OLD_LESSON_ID, OK)
+        ValidLessonDTO lesson = mvc.performGet(DEFAULT_PATH + OLD_LESSON_ID, OK)
                 .map(Unchecked.function(this::readLesson))
                 .orElseThrow(() -> new Exception("Successful read should return a lesson!"));
 
@@ -176,7 +197,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingAllLessons_shouldReturnLessons() throws Exception {
-        List<FetchedLesson> lessons = mvc.performGet(DEFAULT_PATH + DEFAULT_PARAMS, OK)
+        List<ValidLessonDTO> lessons = mvc.performGet(DEFAULT_PATH + DEFAULT_PARAMS, OK)
                 .map(Unchecked.function(this::readLessons))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -186,7 +207,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingLessonsForTeacher_shouldReturnLessons() throws Exception {
-        List<FetchedLesson> lessons = mvc.performGet(DEFAULT_PATH + "teacher/" + OLD_TEACHER_ID + DEFAULT_PARAMS, OK)
+        List<ValidLessonDTO> lessons = mvc.performGet(DEFAULT_PATH + "teacher/" + OLD_TEACHER_ID + DEFAULT_PARAMS, OK)
                 .map(Unchecked.function(this::readLessons))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -201,7 +222,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingLessonsForCustomer_shouldReturnLessons() throws Exception {
-        List<FetchedLesson> lessons = mvc.performGet(DEFAULT_PATH + "customer/" + OLD_CUSTOMER_ID + DEFAULT_PARAMS, OK)
+        List<ValidLessonDTO> lessons = mvc.performGet(DEFAULT_PATH + "customer/" + OLD_CUSTOMER_ID + DEFAULT_PARAMS, OK)
                 .map(Unchecked.function(this::readLessons))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -216,7 +237,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingLessonsForGroup_shouldReturnLessons() throws Exception {
-        List<FetchedLesson> lessons = mvc.performGet(DEFAULT_PATH + "group/" + OLD_GROUP_ID + DEFAULT_PARAMS, OK)
+        List<ValidLessonDTO> lessons = mvc.performGet(DEFAULT_PATH + "group/" + OLD_GROUP_ID + DEFAULT_PARAMS, OK)
                 .map(Unchecked.function(this::readLessons))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -231,7 +252,7 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
 
     @Test
     public void readingLessonsForStudent_shouldReturnLessons() throws Exception {
-        List<FetchedLesson> lessons = mvc.performGet(DEFAULT_PATH + "student/" + OLD_STUDENT_ID + DEFAULT_PARAMS, OK)
+        List<ValidLessonDTO> lessons = mvc.performGet(DEFAULT_PATH + "student/" + OLD_STUDENT_ID + DEFAULT_PARAMS, OK)
                 .map(Unchecked.function(this::readLessons))
                 .orElseThrow(() -> new AssertionError("Should return empty list instead of null"));
 
@@ -246,37 +267,33 @@ public class LessonControllerIT extends IntegrationTestEnvironment {
 
     // PRIVATE
 
-    private FetchedLesson readLesson(MvcResult result) throws IOException {
-        return MVC.from(result).to(FetchedLesson.class);
+    private ValidLessonDTO readLesson(MvcResult result) throws IOException {
+        return MVC.from(result).to(ValidLessonDTO.class);
     }
 
-    private List<FetchedLesson> readLessons(MvcResult result) throws IOException {
+    private List<ValidLessonDTO> readLessons(MvcResult result) throws IOException {
         return MVC.from(result).to(LIST_OF_LESSONS);
     }
 
-    private void assertNotInDatabase(FetchedLesson lesson) {
-        assertNotInDatabase(DB::readFetchedLesson, lesson.getId());
+    private void assertNotInDatabase(ValidLessonDTO lesson) {
+        assertNotInDatabase(DB::readValidLesson, lesson.getId());
     }
 
     private void assertNotInDatabase(long lessonId) {
-        assertNotInDatabase(DB::readFetchedLesson, lessonId);
+        assertNotInDatabase(DB::readValidLesson, lessonId);
     }
 
-    private void assertInDatabase(FetchedLesson lesson) {
-        assertInDatabase(DB::readFetchedLesson, FetchedLesson::getId, lesson);
+    private void assertInDatabase(ValidLessonDTO lesson) {
+        assertInDatabase(DB::readValidLesson, ValidLessonDTO::getId, lesson);
     }
 
     private void assertInDatabase(long lessonId) {
-        assertInDatabase(DB::readFetchedLesson, lessonId);
+        assertInDatabase(DB::readValidLesson, lessonId);
     }
 
-    private void assertInDatabase(SuppliedLesson lesson, long lessonId) {
-        assertInDatabase(DB::readSuppliedLesson, any -> lessonId, lesson);
-    }
-
-    private static final String DEFAULT_PATH = "/timestar/api/v3/lesson/";
+    private static final String DEFAULT_PATH = "/timestar/api/v2/lesson/";
     private static final String DEFAULT_PARAMS = "?start=" + 0 + "&end=" + Long.MAX_VALUE;
 
-    private static final TypeReference<List<FetchedLesson>> LIST_OF_LESSONS = new TypeReference<List<FetchedLesson>>() {};
+    private static final TypeReference<List<ValidLessonDTO>> LIST_OF_LESSONS = new TypeReference<List<ValidLessonDTO>>() {};
 
 }

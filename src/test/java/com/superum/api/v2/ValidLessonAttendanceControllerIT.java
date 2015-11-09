@@ -1,9 +1,9 @@
-package IT.com.superum.api.v2;
+package com.superum.api.v2;
 
-import IT.com.superum.helper.DB;
-import IT.com.superum.helper.IntegrationTestEnvironment;
 import com.superum.api.v2.attendance.ValidLessonAttendanceDTO;
+import com.superum.helper.DB;
 import com.superum.helper.Fakes;
+import com.superum.helper.IntegrationTestEnvironment;
 import org.junit.Test;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
