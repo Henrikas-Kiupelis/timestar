@@ -1,7 +1,13 @@
-package com.superum.api.v3.lesson;
+package com.superum.api.v3.lesson.impl;
 
 import com.superum.api.v2.lesson.LessonNotFoundException;
 import com.superum.api.v2.lesson.UnsafeLessonDeleteException;
+import com.superum.api.v3.lesson.Lesson;
+import com.superum.api.v3.lesson.LessonCommands;
+import com.superum.api.v3.lesson.LessonRepository;
+import com.superum.api.v3.lesson.LessonTransformer;
+import com.superum.api.v3.lesson.dto.FetchedLesson;
+import com.superum.api.v3.lesson.dto.SuppliedLessonWithTimestamp;
 import com.superum.exception.DatabaseException;
 import eu.goodlike.libraries.jooq.Queries;
 import eu.goodlike.libraries.jooq.QueriesForeign;

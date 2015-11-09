@@ -5,6 +5,7 @@ import com.superum.api.v2.group.GroupNotFoundException;
 import com.superum.api.v2.lesson.LessonNotFoundException;
 import com.superum.api.v2.student.StudentNotFoundException;
 import com.superum.api.v2.teacher.TeacherNotFoundException;
+import com.superum.api.v3.lesson.dto.FetchedLesson;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;

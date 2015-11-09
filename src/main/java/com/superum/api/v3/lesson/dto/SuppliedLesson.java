@@ -1,4 +1,4 @@
-package com.superum.api.v3.lesson;
+package com.superum.api.v3.lesson.dto;
 
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.base.MoreObjects;

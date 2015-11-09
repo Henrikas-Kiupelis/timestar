@@ -1,10 +1,13 @@
-package com.superum.api.v3.lesson;
+package com.superum.api.v3.lesson.impl;
 
 import com.superum.api.v2.customer.CustomerNotFoundException;
 import com.superum.api.v2.group.GroupNotFoundException;
 import com.superum.api.v2.lesson.LessonNotFoundException;
 import com.superum.api.v2.student.StudentNotFoundException;
 import com.superum.api.v2.teacher.TeacherNotFoundException;
+import com.superum.api.v3.lesson.LessonQueries;
+import com.superum.api.v3.lesson.LessonTransformer;
+import com.superum.api.v3.lesson.dto.FetchedLesson;
 import eu.goodlike.libraries.jooq.Queries;
 import org.jooq.Condition;
 import org.jooq.Field;

@@ -1,5 +1,7 @@
-package com.superum.api.v3.lesson;
+package com.superum.api.v3.lesson.impl;
 
+import com.superum.api.v3.lesson.LessonRepository;
+import com.superum.api.v3.lesson.dto.FetchedLesson;
 import com.superum.helper.PartitionAccount;
 import org.jooq.Condition;
 import org.jooq.DSLContext;

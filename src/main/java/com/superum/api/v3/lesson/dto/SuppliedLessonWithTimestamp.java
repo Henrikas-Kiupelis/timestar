@@ -1,4 +1,4 @@
-package com.superum.api.v3.lesson;
+package com.superum.api.v3.lesson.dto;
 
 import com.google.common.base.MoreObjects;
 import com.superum.api.v2.lesson.InvalidLessonException;

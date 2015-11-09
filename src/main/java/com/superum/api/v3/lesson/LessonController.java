@@ -2,6 +2,9 @@ package com.superum.api.v3.lesson;
 
 import com.superum.api.exception.InvalidRequestException;
 import com.superum.api.v2.Table;
+import com.superum.api.v3.lesson.dto.FetchedLesson;
+import com.superum.api.v3.lesson.dto.SuppliedLesson;
+import com.superum.api.v3.lesson.dto.SuppliedLessonWithTimestamp;
 import com.superum.helper.PartitionAccount;
 import eu.goodlike.misc.CommonControllerLogic;
 import eu.goodlike.neat.Null;

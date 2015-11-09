@@ -2,6 +2,7 @@ package com.superum.api.v3.lesson;
 
 import com.google.common.base.MoreObjects;
 import com.superum.api.v2.lesson.OverlappingLessonException;
+import com.superum.api.v3.lesson.dto.FetchedLesson;
 import eu.goodlike.neat.Null;
 import org.jooq.Record;
 import org.springframework.dao.DataAccessException;

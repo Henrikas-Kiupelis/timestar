@@ -1,4 +1,4 @@
-package com.superum.api.v3.lesson;
+package com.superum.api.v3.lesson.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

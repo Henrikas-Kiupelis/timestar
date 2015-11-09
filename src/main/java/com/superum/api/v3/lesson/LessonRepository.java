@@ -1,5 +1,6 @@
 package com.superum.api.v3.lesson;
 
+import com.superum.api.v3.lesson.dto.FetchedLesson;
 import org.jooq.Record;
 import org.springframework.dao.DataAccessException;
 

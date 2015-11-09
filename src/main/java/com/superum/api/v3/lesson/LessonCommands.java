@@ -5,6 +5,8 @@ import com.superum.api.v2.lesson.InvalidLessonException;
 import com.superum.api.v2.lesson.LessonNotFoundException;
 import com.superum.api.v2.lesson.OverlappingLessonException;
 import com.superum.api.v2.lesson.UnsafeLessonDeleteException;
+import com.superum.api.v3.lesson.dto.FetchedLesson;
+import com.superum.api.v3.lesson.dto.SuppliedLessonWithTimestamp;
 import com.superum.exception.DatabaseException;
 import org.springframework.dao.DataAccessException;
 
