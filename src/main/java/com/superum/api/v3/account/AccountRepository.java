@@ -6,4 +6,6 @@ public interface AccountRepository {
 
     int updateUsername(String originalUsername, String newUsername);
 
+    int deleteAccount(int id, String accountType);
+
 }

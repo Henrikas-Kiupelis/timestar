@@ -32,6 +32,13 @@ public class AccountRepositoryImpl implements AccountRepository {
                 .execute();
     }
 
+    @Override
+    public int deleteAccount(int id, String accountType) {
+        return sql.deleteFrom(ACCOUNT)
+                .where(ACCOUNT.ID.eq(id).and(ACCOUNT.ACCOUNT_TYPE.eq(accountType)))
+                .execute();
+    }
+
     // CONSTRUCTORS
 
     @Autowired

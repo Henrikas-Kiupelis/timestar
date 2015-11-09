@@ -1,5 +1,6 @@
 package com.superum.api.v3.account.impl;
 
+import com.superum.api.v1.account.AccountType;
 import com.superum.api.v1.partition.Partition;
 import com.superum.api.v1.partition.PartitionService;
 import com.superum.api.v3.account.Account;
@@ -35,6 +36,11 @@ public class AccountServiceExtImpl implements AccountServiceExt {
         String originalUsername = partitionAccount.usernameFor(originalEmail);
         String newUsername = partitionAccount.usernameFor(newEmail);
         CompletableFuture.runAsync(() -> accountRepository.updateUsername(originalUsername, newUsername));
+    }
+
+    @Override
+    public void deleteAccount(int id, AccountType accountType) {
+        CompletableFuture.runAsync(() -> accountRepository.deleteAccount(id, accountType.name()));
     }
 
     // CONSTRUCTORS
