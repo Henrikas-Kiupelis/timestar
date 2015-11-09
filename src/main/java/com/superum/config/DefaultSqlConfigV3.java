@@ -69,4 +69,16 @@ public class DefaultSqlConfigV3 {
         return SQL.commandsFor(persistenceContext.dsl(), TEACHER_LANGUAGE, TEACHER_LANGUAGE.TEACHER_ID, TEACHER_LANGUAGE.CODE);
     }
 
+    // FOREIGN
+
+    @Bean
+    public QueriesForeign<Integer> teacherForeignQueries() {
+        return SQL.queriesFor(persistenceContext.dsl(), GROUP_OF_STUDENTS.TEACHER_ID, LESSON.TEACHER_ID);
+    }
+
+    @Bean
+    public QueriesForeign<Integer> customerForeignQueries() {
+        return SQL.queriesFor(persistenceContext.dsl(), GROUP_OF_STUDENTS.CUSTOMER_ID, STUDENT.CUSTOMER_ID);
+    }
+
 }
