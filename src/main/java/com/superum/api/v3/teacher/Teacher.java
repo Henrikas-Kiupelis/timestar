@@ -1,7 +1,6 @@
 package com.superum.api.v3.teacher;
 
 import com.google.common.base.MoreObjects;
-import com.superum.api.v2.teacher.InvalidTeacherException;
 import com.superum.api.v3.account.AccountServiceExt;
 import com.superum.api.v3.teacher.dto.FetchedTeacher;
 import eu.goodlike.libraries.jooq.CommandsMany;
@@ -28,14 +27,18 @@ public class Teacher {
 
     public int update(int id) {
         String originalEmail = teacherQueries.readField(TEACHER.EMAIL, id)
-                .orElseThrow(() -> new InvalidTeacherException("Teacher was deleted before it could be updated!"));
+                .orElseThrow(() -> TeacherErrors.teacherIdError(id));
         int teacherRows = teacherRepository.update(id, paymentDay, hourlyWage, academicWage, name, surname, phone,
                 city, email, picture, document, comment, createdAt.toEpochMilli(), updatedAt.toEpochMilli());
         if (teacherRows == 0)
             return 0;
 
-        if (!originalEmail.equals(email))
-            accountServiceExt.updateTeacherEmail(originalEmail, email);
+        if (email != null) {
+            if (originalEmail == null)
+                accountServiceExt.registerTeacher(id, email);
+            else
+                accountServiceExt.updateTeacherEmail(originalEmail, email);
+        }
         teacherLanguageCommands.update(id, languages);
         return teacherRows;
     }
@@ -93,7 +96,9 @@ public class Teacher {
     private final TeacherSerializer teacherSerializer;
 
     private Optional<FetchedTeacher> finishCreation(int id) {
-        accountServiceExt.registerTeacher(id, email);
+        if (email != null)
+            accountServiceExt.registerTeacher(id, email);
+
         teacherLanguageCommands.create(id, languages);
         return teacherQueries.read(id, teacherSerializer::toReturnable);
     }

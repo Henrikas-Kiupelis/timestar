@@ -2,7 +2,7 @@ package com.superum.api.v3.teacher.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.superum.api.v2.teacher.InvalidTeacherException;
+import com.superum.api.v3.teacher.TeacherErrors;
 import eu.goodlike.misc.Scaleless;
 import eu.goodlike.misc.SpecialUtils;
 import eu.goodlike.v2.validate.Validate;
@@ -13,7 +13,7 @@ import java.util.Objects;
 
 import static com.superum.api.core.CommonValidators.OPTIONAL_JSON_STRING;
 import static com.superum.api.core.CommonValidators.OPTIONAL_JSON_STRING_BLANK_ABLE;
-import static eu.goodlike.misc.Constants.DEFAULT_VARCHAR_FIELD_SIZE;
+import static com.superum.api.v3.teacher.TeacherConstants.*;
 import static eu.goodlike.misc.Constants.NOT_NULL_NOT_BLANK;
 
 public final class SuppliedTeacher {
@@ -80,22 +80,22 @@ public final class SuppliedTeacher {
 
     public void validateForCreation() {
         Validate.integer().isNull().or().isDayOfMonth()
-                .ifInvalid(paymentDay).thenThrow(SuppliedTeacher::paymentDayError);
+                .ifInvalid(paymentDay).thenThrow(TeacherErrors::paymentDayError);
         Validate.bigDecimal().isNull().or().isPositive()
-                .ifInvalid(hourlyWage).thenThrow(SuppliedTeacher::hourlyWageError)
-                .ifInvalid(academicWage).thenThrow(SuppliedTeacher::academicWageError);
-        OPTIONAL_JSON_STRING.ifInvalid(name).thenThrow(SuppliedTeacher::nameError)
-                .ifInvalid(surname).thenThrow(SuppliedTeacher::surnameError)
-                .ifInvalid(phone).thenThrow(SuppliedTeacher::phoneError)
-                .ifInvalid(city).thenThrow(SuppliedTeacher::cityError)
-                .and().isEmail().ifInvalid(email).thenThrow(SuppliedTeacher::emailError);
-        OPTIONAL_JSON_STRING_BLANK_ABLE.ifInvalid(picture).thenThrow(SuppliedTeacher::pictureError)
-                .ifInvalid(document).thenThrow(SuppliedTeacher::documentError);
+                .ifInvalid(hourlyWage).thenThrow(TeacherErrors::hourlyWageError)
+                .ifInvalid(academicWage).thenThrow(TeacherErrors::academicWageError);
+        OPTIONAL_JSON_STRING.ifInvalid(name).thenThrow(TeacherErrors::nameError)
+                .ifInvalid(surname).thenThrow(TeacherErrors::surnameError)
+                .ifInvalid(phone).thenThrow(TeacherErrors::phoneError)
+                .ifInvalid(city).thenThrow(TeacherErrors::cityError)
+                .and().isEmail().ifInvalid(email).thenThrow(TeacherErrors::emailError);
+        OPTIONAL_JSON_STRING_BLANK_ABLE.ifInvalid(picture).thenThrow(TeacherErrors::pictureError)
+                .ifInvalid(document).thenThrow(TeacherErrors::documentError);
         Validate.string().isNull().or().isNoLargerThan(COMMENT_SIZE_LIMIT)
-                .ifInvalid(comment).thenThrow(SuppliedTeacher::commentError);
+                .ifInvalid(comment).thenThrow(TeacherErrors::commentError);
         Validate.collectionOf(String.class).isNull().or().not().isEmpty()
-                .forEachIfNot(NOT_NULL_NOT_BLANK.and().isNoLargerThan(LANGUAGE_CODE_SIZE_LIMIT)).Throw(SuppliedTeacher::languageCodeError)
-                .ifInvalid(languages).thenThrow(SuppliedTeacher::languagesError);
+                .forEachIfNot(NOT_NULL_NOT_BLANK.and().isNoLargerThan(LANGUAGE_CODE_SIZE_LIMIT)).Throw(TeacherErrors::languageCodeError)
+                .ifInvalid(languages).thenThrow(TeacherErrors::languagesError);
     }
 
     public void validateForUpdating() {
@@ -159,83 +159,6 @@ public final class SuppliedTeacher {
     private final String document;
     private final String comment;
     private final List<String> languages;
-
-    private static final String PAYMENT_DAY_FIELD = "paymentDay";
-    private static final String HOURLY_WAGE_FIELD = "hourlyWage";
-    private static final String ACADEMIC_WAGE_FIELD = "academicWage";
-    private static final String NAME_FIELD = "name";
-    private static final String SURNAME_FIELD = "surname";
-    private static final String PHONE_FIELD = "phone";
-    private static final String CITY_FIELD = "city";
-    private static final String EMAIL_FIELD = "email";
-    private static final String PICTURE_FIELD = "picture";
-    private static final String DOCUMENT_FIELD = "document";
-    private static final String COMMENT_FIELD = "comment";
-    private static final String LANGUAGES_FIELD = "languages";
-
-    private static final int COMMENT_SIZE_LIMIT = 500;
-    private static final int LANGUAGE_CODE_SIZE_LIMIT = 3;
-
-    private static InvalidTeacherException paymentDayError(Integer paymentDay) {
-        return new InvalidTeacherException("Payment day should be a day of month, not: " + paymentDay);
-    }
-
-    private static InvalidTeacherException hourlyWageError(BigDecimal hourlyWage) {
-        return new InvalidTeacherException("Hourly wage for teacher must be positive, not " + hourlyWage);
-    }
-
-    private static InvalidTeacherException academicWageError(BigDecimal academicWage) {
-        return new InvalidTeacherException("Academic wage for teacher must be positive, not " + academicWage);
-    }
-
-    private static InvalidTeacherException nameError(String name) {
-        return new InvalidTeacherException("Teacher name must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + name);
-    }
-
-    private static InvalidTeacherException surnameError(String surname) {
-        return new InvalidTeacherException("Teacher surname must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + surname);
-    }
-
-    private static InvalidTeacherException phoneError(String phone) {
-        return new InvalidTeacherException("Teacher phone must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + phone);
-    }
-
-    private static InvalidTeacherException cityError(String city) {
-        return new InvalidTeacherException("Teacher city must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars or be blank: " + city);
-    }
-
-    private static InvalidTeacherException emailError(String email) {
-        return new InvalidTeacherException("Teacher email must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars, be blank or be of invalid format: " + email);
-    }
-
-    private static InvalidTeacherException pictureError(String picture) {
-        return new InvalidTeacherException("Teacher picture must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + picture);
-    }
-
-    private static InvalidTeacherException documentError(String document) {
-        return new InvalidTeacherException("Teacher document must not exceed " +
-                DEFAULT_VARCHAR_FIELD_SIZE + " chars: " + document);
-    }
-
-    private static InvalidTeacherException commentError(String comment) {
-        return new InvalidTeacherException("Teacher comment must not exceed " +
-                COMMENT_SIZE_LIMIT + " chars: " + comment);
-    }
-
-    private static InvalidTeacherException languageCodeError(String languageCode) {
-        return new InvalidTeacherException("Specific teacher languages must not be null, blank or exceed "
-                + LANGUAGE_CODE_SIZE_LIMIT + " chars: " + languageCode);
-    }
-
-    private static InvalidTeacherException languagesError(List<String> languages) {
-        return new InvalidTeacherException("Teacher must have at least a single language: " + languages);
-    }
 
     // OBJECT OVERRIDES
 

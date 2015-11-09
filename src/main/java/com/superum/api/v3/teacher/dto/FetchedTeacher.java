@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+import static com.superum.api.v3.teacher.TeacherConstants.*;
+
 public final class FetchedTeacher {
 
     @JsonProperty(value = ID_FIELD)
@@ -153,22 +155,6 @@ public final class FetchedTeacher {
     private final String document;
     private final String comment;
     private final List<String> languages;
-
-    private static final String ID_FIELD = "id";
-    private static final String CREATED_AT_FIELD = "createdAt";
-    private static final String UPDATED_AT_FIELD = "updatedAt";
-    private static final String PAYMENT_DAY_FIELD = "paymentDay";
-    private static final String HOURLY_WAGE_FIELD = "hourlyWage";
-    private static final String ACADEMIC_WAGE_FIELD = "academicWage";
-    private static final String NAME_FIELD = "name";
-    private static final String SURNAME_FIELD = "surname";
-    private static final String PHONE_FIELD = "phone";
-    private static final String CITY_FIELD = "city";
-    private static final String EMAIL_FIELD = "email";
-    private static final String PICTURE_FIELD = "picture";
-    private static final String DOCUMENT_FIELD = "document";
-    private static final String COMMENT_FIELD = "comment";
-    private static final String LANGUAGES_FIELD = "languages";
 
     // OBJECT OVERRIDES
 
