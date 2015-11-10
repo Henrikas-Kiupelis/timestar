@@ -1,5 +1,7 @@
 package com.superum.api.v3.teacher.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import eu.goodlike.misc.Scaleless;
@@ -11,6 +13,52 @@ import java.util.Objects;
 
 import static com.superum.api.v3.teacher.TeacherConstants.*;
 
+/**
+ * <pre>
+ * DTO which primarily focuses on representing outgoing teacher data
+ *
+ * Instances of this class are created directly from a Record from the database
+ *
+ * Expect the following fields in JSON:
+ *      FIELD_NAME  : FIELD_DESCRIPTION
+ *      id          : id of this teacher
+ *      paymentDay  : day at which the teacher is to be paid
+ *      hourlyWage  : the amount of euros paid per hour
+ *      academicWage: the amount of euros paid per academic hour
+ *      name        : name of the teacher
+ *      surname     : surname of the teacher
+ *      phone       : phone of the teacher
+ *      city        : city (of some kind)
+ *      email       : email, also used for account
+ *      picture     : link to a picture of this teacher, stored somewhere
+ *      document    : link to a document uploaded by the teacher
+ *      comment     : comment, made by the app client
+ *      languages   : list of languages the teacher can teach
+ *      createdAt   : timestamp, taken by the database at the time of creation
+ *      updatedAt   : timestamp, taken by the database at the time of creation and updating
+ *
+ * Example of JSON to expect:
+ * {
+ *      "id":1,
+ *      "paymentDay":1,
+ *      "hourlyWage":23.0000,
+ *      "academicWage":20.0000,
+ *      "name":"Henrikas",
+ *      "surname":"Kiūpelis",
+ *      "phone":"+37069900011",
+ *      "city":"Vilnius",
+ *      "email":"henrikas.kiupelis@gmail.com",
+ *      "picture":"http://timestar.lt/uploads/henrikas.jpg",
+ *      "document":"http://timestar.lt/uploads/api.doc",
+ *      "comment":"What a teacher"
+ *      "languages": ["ENG"]
+ *      "createdAt":1438635600000,
+ *      "updatedAt":1438682839418
+ * }
+ * </pre>
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public final class FetchedTeacher {
 
     @JsonProperty(value = ID_FIELD)

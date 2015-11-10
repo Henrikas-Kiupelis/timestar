@@ -1,5 +1,7 @@
 package com.superum.api.v3.teacher.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.superum.api.v3.teacher.TeacherErrors;
@@ -16,6 +18,51 @@ import static com.superum.api.core.CommonValidators.OPTIONAL_JSON_STRING_BLANK_A
 import static com.superum.api.v3.teacher.TeacherConstants.*;
 import static eu.goodlike.misc.Constants.NOT_NULL_NOT_BLANK;
 
+/**
+ * <pre>
+ * DTO which primarily focuses on representing incoming teacher data
+ *
+ * Instances of this class are created directly from JSON in HTTP bodies
+ *
+ * The following JSON fields are parsed:
+ *      FIELD_NAME   : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
+ *      paymentDay   : day, at which the teacher is to be paid                  1 <= paymentDay <= 31
+ *      hourlyWage   : the amount of euros paid per hour                        0 < hourlyWage;
+ *                                                                              BigDecimal of up to 4 numbers after comma
+ *      academicWage : the amount of euros paid per academic hour               0 < academicWage;
+ *                     this is not necessarily equal to 3/4 * hourlyWage!       BigDecimal of up to 4 numbers after comma
+ *      name         : name                                                     any String, max 180 chars
+ *      surname      : surname                                                  any String, max 180 chars
+ *      phone        : phone number                                             any String, max 180 chars
+ *      city         : city (currently unknown which city this means)           any String, max 180 chars
+ *      email        : email; this is also used for account/mailing             any String, max 180 chars
+ *      picture      : link to a picture of this teacher, stored somewhere      any String, max 180 chars
+ *      document     : link to a document uploaded by the teacher               any String, max 180 chars
+ *      comment      : comment, made by the app client                          any String, max 500 chars
+ *      languages    : list of languages the teacher teaches;                   any List of Strings, max 3 chars
+ *                     uses codes, such as "ENG" to identity a language
+ *
+ * All values are assumed optional, if email is not given, no account will be created
+ *
+ * Example of JSON to send:
+ * {
+ *      "paymentDay":1,
+ *      "hourlyWage":23,
+ *      "academicWage":20,
+ *      "name":"Henrikas",
+ *      "surname":"Kiūpelis",
+ *      "phone":"+37069900011",
+ *      "city":"Vilnius",
+ *      "email":"henrikas.kiupelis@gmail.com",
+ *      "picture":"http://timestar.lt/uploads/henrikas.jpg",
+ *      "document":"http://timestar.lt/uploads/api.doc",
+ *      "comment":"What a teacher",
+ *      "languages": ["ENG"]
+ * }
+ * </pre>
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public final class SuppliedTeacher {
 
     @JsonProperty(value = PAYMENT_DAY_FIELD)

@@ -37,13 +37,13 @@ FOR EACH ROW
     INSERT roles (username, role)
     VALUES (NEW.username, 'ROLE_TEACHER');
   END; //
+DELIMITER ;
 
 CREATE TRIGGER automatic_roles_deletion
 BEFORE DELETE ON account
 FOR EACH ROW
   DELETE FROM roles
   WHERE roles.username = OLD.username;
-DELIMITER ;
 
 INSERT INTO partitions (id, name)
 VALUES (0, 'TEST');
