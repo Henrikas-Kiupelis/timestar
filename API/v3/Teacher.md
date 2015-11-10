@@ -1,4 +1,4 @@
-# Teacher API
+# Teacher APIv3
 
 [Back to APIv3](./APIv3.md#api-v3)
 

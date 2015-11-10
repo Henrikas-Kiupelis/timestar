@@ -2,6 +2,10 @@
 
 [Back to APIv2](./APIv2.md#api-v2)
 
+## Info
+
+[APIv3 version](../v3/Teacher.md#teacher-apiv3) - updated version
+
 ## Relevant classes
 
 [FullTeacherDTO](../../src/main/java/com/superum/api/v2/teacher/FullTeacherDTO.java)

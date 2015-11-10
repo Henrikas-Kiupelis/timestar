@@ -8,6 +8,10 @@
 
 [Lesson](./Lesson.md#lesson-apiv3) - for updated lesson handling
 
+[Teacher](./Teacher.md#teacher-apiv3) - for updated teacher handling
+
+[Customer](./Customer.md#customer-apiv3) - for updated customer handling
+
 [LessonTable](./LessonTable.md#lesson-table-apiv3) - for the primary table of the application
 
 ## Description

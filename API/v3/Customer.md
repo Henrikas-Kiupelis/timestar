@@ -1,22 +1,23 @@
-# Customer API
+# Customer APIv3
 
-[Back to APIv2](./APIv2.md#api-v2)
+[Back to APIv3](./APIv3.md#api-v3)
 
 ## Info
 
-[APIv3 version](../v3/Customer.md#customer-apiv3) - updated version
+Basically same as API v2, except uses different classes and allows all fields to be null
 
 ## Relevant classes
 
-[ValidCustomerDTO](../../src/main/java/com/superum/api/v2/customer/ValidCustomerDTO.java)
+[SuppliedCustomer](../../src/main/java/com/superum/api/v3/customer/dto/SuppliedCustomer.java)
+[FetchedCustomer](../../src/main/java/com/superum/api/v3/customer/dto/FetchedCustomer.java)
 
 ### Commands
 
 #### Create
 ```
     POST  /customer
-    BODY  ValidCustomerDTO
-    RET   ValidCustomerDTO
+    BODY  SuppliedCustomer
+    RET   FetchedCustomer
 ```
 
 Creates a new customer
@@ -25,14 +26,14 @@ It will fail if:
   * HTTP 400; the id field was set;
   * HTTP 400; a mandatory field was not set;
 
-Returned FullCustomer will have its id field set;
+Returned customer will have its id field set;
 
 ------
 
 #### Update
 ```
     PUT   /customer
-    BODY  ValidCustomerDTO
+    BODY  SuppliedCustomer
     RET   void
 ```
 
@@ -68,7 +69,7 @@ Returns HTTP 200 OK if it succeeds
 ```
     GET  /customer/{customerId}
          customerId     int            1 <= customerId <= MAX_INT
-    RET  ValidCustomerDTO
+    RET  FetchedCustomer
 ```
 
 Reads and returns an existing customer
@@ -84,7 +85,7 @@ It will fail if:
          teacherId      int            1 <= teacherId <= MAX_INT
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
     OPT  per_page       int            1 <= per_page <= 100; DEF 25
-    RET  List<ValidCustomerDTO>
+    RET  List<FetchedCustomer>
 ```
 
 Reads and returns a list of customers for a certain teacher;
@@ -108,7 +109,7 @@ the page parameter must be incremented, or per_page value raised
     GET  /customer
     OPT  page           int            1 <= page <= MAX_INT; DEF 1
     OPT  per_page       int            1 <= per_page <= 100; DEF 25
-    RET  List<ValidCustomerDTO>
+    RET  List<FetchedCustomer>
 ```
 
 Reads and returns a list of all customers
