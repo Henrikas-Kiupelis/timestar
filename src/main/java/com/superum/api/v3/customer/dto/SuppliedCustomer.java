@@ -21,7 +21,7 @@ import static com.superum.api.v3.customer.CustomerConstants.*;
  * Instances of this class are created directly from JSON in HTTP bodies
  *
  * The following JSON fields are parsed:
- *      FIELD_NAME   : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
+ *      FIELD_NAME  : FIELD_DESCRIPTION                                         FIELD_CONSTRAINTS
  *      startDate   : date when a contract was signed                           date String, "yyyy-MM-dd"
  *      name        : name                                                      any String, max 180 chars
  *      phone       : phone number                                              any String, max 180 chars
