@@ -48,6 +48,9 @@ public class TeacherDeserializerImpl implements TeacherDeserializer {
     public Teacher toUpdatable(SuppliedTeacher suppliedTeacher, int id) {
         suppliedTeacher.validateForUpdating();
 
+        FetchedTeacher fetchedTeacher = teacherQueries.read(id, teacherSerializer::toReturnable)
+                .orElseThrow(() -> TeacherErrors.teacherIdError(id));
+
         String email = suppliedTeacher.getEmail();
         assertUniqueEmail(email, id);
 
@@ -63,8 +66,6 @@ public class TeacherDeserializerImpl implements TeacherDeserializer {
         String comment = suppliedTeacher.getComment();
         List<String> languages = suppliedTeacher.getLanguages();
 
-        FetchedTeacher fetchedTeacher = teacherQueries.read(id, teacherSerializer::toReturnable)
-                .orElseThrow(() -> TeacherErrors.teacherIdError(id));
         if (paymentDay == null) paymentDay = fetchedTeacher.getPaymentDay();
         if (hourlyWage == null) hourlyWage = fetchedTeacher.getHourlyWage();
         if (academicWage == null) academicWage = fetchedTeacher.getAcademicWage();
