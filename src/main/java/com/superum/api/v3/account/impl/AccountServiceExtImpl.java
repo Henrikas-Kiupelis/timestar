@@ -35,7 +35,7 @@ public class AccountServiceExtImpl implements AccountServiceExt {
         PartitionAccount partitionAccount = new PartitionAccount();
         String originalUsername = partitionAccount.usernameFor(originalEmail);
         String newUsername = partitionAccount.usernameFor(newEmail);
-        CompletableFuture.runAsync(() -> accountRepository.updateUsername(originalUsername, newUsername));
+        CompletableFuture.runAsync(() -> accountRepository.updateUsername(originalUsername, newUsername, System.currentTimeMillis()));
     }
 
     @Override

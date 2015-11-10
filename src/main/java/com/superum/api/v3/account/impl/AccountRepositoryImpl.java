@@ -25,9 +25,10 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public int updateUsername(String originalUsername, String newUsername) {
+    public int updateUsername(String originalUsername, String newUsername, long updatedAt) {
         return sql.update(ACCOUNT)
                 .set(ACCOUNT.USERNAME, newUsername)
+                .set(ACCOUNT.UPDATED_AT, updatedAt)
                 .where(ACCOUNT.USERNAME.eq(originalUsername))
                 .execute();
     }
