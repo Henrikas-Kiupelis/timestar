@@ -83,7 +83,7 @@ public class TeacherRepositoryImpl implements TeacherRepository {
     private final DSLContext sql;
 
     private Condition primaryKey(int id) {
-        return TEACHER.ID.eq(id);
+        return TEACHER.ID.eq(id).and(TEACHER.PARTITION_ID.eq(new PartitionAccount().partitionId()));
     }
 
 }
