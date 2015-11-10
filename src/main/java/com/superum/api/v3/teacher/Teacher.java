@@ -45,7 +45,18 @@ public class Teacher {
 
     // CONSTRUCTORS
 
-    public Teacher(Instant createdAt, Instant updatedAt, Integer paymentDay, BigDecimal hourlyWage, BigDecimal academicWage,
+    public static Teacher valueOf(Instant createdAt, Instant updatedAt, Integer paymentDay, BigDecimal hourlyWage,
+                                  BigDecimal academicWage, String name, String surname, String phone, String city,
+                                  String email, String picture, String document, String comment, List<String> languages,
+                                  TeacherRepository teacherRepository, Queries<TeacherRecord, Integer> teacherQueries,
+                                  CommandsMany<Integer, String> teacherLanguageCommands,
+                                  AccountServiceExt accountServiceExt, TeacherSerializer teacherSerializer) {
+        return new Teacher(createdAt, updatedAt, paymentDay, hourlyWage, academicWage, name, surname, phone, city,
+                email, picture, document, comment, languages, teacherRepository, teacherQueries,
+                teacherLanguageCommands, accountServiceExt, teacherSerializer);
+    }
+
+    private Teacher(Instant createdAt, Instant updatedAt, Integer paymentDay, BigDecimal hourlyWage, BigDecimal academicWage,
                    String name, String surname, String phone, String city, String email, String picture, String document,
                    String comment, List<String> languages, TeacherRepository teacherRepository,
                    Queries<TeacherRecord, Integer> teacherQueries, CommandsMany<Integer, String> teacherLanguageCommands,

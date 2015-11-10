@@ -21,8 +21,16 @@ public class Account {
 
     // CONSTRUCTORS
 
-    public Account(Integer id, String username, AccountType accountType, String password, Instant createdAt,
-                   Instant updatedAt, AccountRepository accountRepository, AccountEmailSender accountEmailSender, PasswordEncoder passwordEncoder) {
+    public static Account valueOf(Integer id, String username, AccountType accountType, String password,
+                                  Instant createdAt, Instant updatedAt, AccountRepository accountRepository,
+                                  AccountEmailSender accountEmailSender, PasswordEncoder passwordEncoder) {
+        return new Account(id, username, accountType, password, createdAt, updatedAt, accountRepository,
+                accountEmailSender, passwordEncoder);
+    }
+
+    private Account(Integer id, String username, AccountType accountType, String password, Instant createdAt,
+                   Instant updatedAt, AccountRepository accountRepository, AccountEmailSender accountEmailSender,
+                    PasswordEncoder passwordEncoder) {
         this.id = id;
         this.username = username;
         this.accountType = accountType;

@@ -3,7 +3,6 @@ package com.superum.api.v3.lesson;
 import com.google.common.base.MoreObjects;
 import com.superum.api.v2.lesson.OverlappingLessonException;
 import com.superum.api.v3.lesson.dto.FetchedLesson;
-import eu.goodlike.neat.Null;
 import org.jooq.Record;
 import org.springframework.dao.DataAccessException;
 
@@ -25,7 +24,7 @@ import java.util.function.Function;
  * a logical constraint, not a database one)
  * </pre>
  */
-public final class Lesson {
+public class Lesson {
 
     /**
      * Creates a new lesson in the database
@@ -54,7 +53,12 @@ public final class Lesson {
 
     // CONSTRUCTORS
 
-    public Lesson(int groupId, int teacherId, long startTime, long endTime, int length, String comment,
+    public static Lesson valueOf(int groupId, int teacherId, long startTime, long endTime, int length,
+                                 String comment, LessonRepository lessonRepository) {
+        return new Lesson(groupId, teacherId, startTime, endTime, length, comment, lessonRepository);
+    }
+
+    private Lesson(int groupId, int teacherId, long startTime, long endTime, int length, String comment,
                   LessonRepository lessonRepository) {
         this.groupId = groupId;
         this.teacherId = teacherId;
@@ -63,7 +67,6 @@ public final class Lesson {
         this.length = length;
         this.comment = comment;
 
-        Null.check(lessonRepository).ifAny("Lesson repository was not initialized for lesson!");
         this.lessonRepository = lessonRepository;
     }
 

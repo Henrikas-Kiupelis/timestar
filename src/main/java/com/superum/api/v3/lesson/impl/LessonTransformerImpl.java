@@ -42,7 +42,7 @@ public class LessonTransformerImpl implements LessonTransformer {
 
         long endTime = getEndTime(startTime, length);
 
-        return new Lesson(groupId, teacherId, startTime, endTime, length, lessonToCreate.getComment(), lessonRepository);
+        return Lesson.valueOf(groupId, teacherId, startTime, endTime, length, lessonToCreate.getComment(), lessonRepository);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class LessonTransformerImpl implements LessonTransformer {
 
         long endTime = getEndTime(startTime, length);
 
-        return new Lesson(groupId, teacherId, startTime, endTime, length, comment, lessonRepository);
+        return Lesson.valueOf(groupId, teacherId, startTime, endTime, length, comment, lessonRepository);
     }
 
     @Override

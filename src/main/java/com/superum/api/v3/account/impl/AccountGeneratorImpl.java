@@ -17,7 +17,8 @@ public class AccountGeneratorImpl implements AccountGenerator {
         CompletableFuture<String> password = passwordGenerator.generate();
         AccountType accountType = AccountType.TEACHER;
         Instant now = Instant.now();
-        return password.thenApply(pwd -> new Account(id, username, accountType, pwd, now, now, accountRepository, accountEmailSender, passwordEncoder));
+        return password.thenApply(pwd -> Account.valueOf(id, username, accountType, pwd, now, now,
+                accountRepository, accountEmailSender, passwordEncoder));
     }
 
     // CONSTRUCTORS

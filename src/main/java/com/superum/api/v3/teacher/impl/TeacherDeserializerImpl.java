@@ -24,8 +24,7 @@ public class TeacherDeserializerImpl implements TeacherDeserializer {
         suppliedTeacher.validateForCreation();
 
         String email = suppliedTeacher.getEmail();
-        if (email != null && teacherQueries.exists(TEACHER.EMAIL, email))
-            throw TeacherErrors.duplicateEmailError(email);
+        assertUniqueEmail(email);
 
         Integer paymentDay = suppliedTeacher.getPaymentDay();
         BigDecimal hourlyWage = suppliedTeacher.getHourlyWage();
@@ -40,7 +39,7 @@ public class TeacherDeserializerImpl implements TeacherDeserializer {
         List<String> languages = suppliedTeacher.getLanguages();
 
         Instant now = Instant.now();
-        return new Teacher(now, now, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
+        return Teacher.valueOf(now, now, paymentDay, hourlyWage, academicWage, name, surname, phone, city, email, picture,
                 document, comment, languages, teacherRepository, teacherQueries, teacherLanguageCommands,
                 accountServiceExt, teacherSerializer);
     }
@@ -50,8 +49,7 @@ public class TeacherDeserializerImpl implements TeacherDeserializer {
         suppliedTeacher.validateForUpdating();
 
         String email = suppliedTeacher.getEmail();
-        if (email != null && teacherQueries.exists(TEACHER.EMAIL.eq(email).and(TEACHER.ID.ne(id))))
-            throw TeacherErrors.duplicateEmailError(email);
+        assertUniqueEmail(email, id);
 
         Integer paymentDay = suppliedTeacher.getPaymentDay();
         BigDecimal hourlyWage = suppliedTeacher.getHourlyWage();
@@ -82,7 +80,7 @@ public class TeacherDeserializerImpl implements TeacherDeserializer {
 
         Instant createdAt = Instant.ofEpochMilli(fetchedTeacher.getCreatedAt());
         Instant updatedAt = Instant.now();
-        return new Teacher(createdAt, updatedAt, paymentDay, hourlyWage, academicWage, name, surname, phone, city,
+        return Teacher.valueOf(createdAt, updatedAt, paymentDay, hourlyWage, academicWage, name, surname, phone, city,
                 email, picture, document, comment, languages, teacherRepository, teacherQueries,
                 teacherLanguageCommands, accountServiceExt, teacherSerializer);
     }
@@ -107,5 +105,14 @@ public class TeacherDeserializerImpl implements TeacherDeserializer {
     private final CommandsMany<Integer, String> teacherLanguageCommands;
     private final AccountServiceExt accountServiceExt;
     private final TeacherSerializer teacherSerializer;
+
+    private void assertUniqueEmail(String email) {
+        assertUniqueEmail(email, 0);
+    }
+
+    private void assertUniqueEmail(String email, int id) {
+        if (email != null && teacherQueries.exists(TEACHER.EMAIL.eq(email).and(TEACHER.ID.ne(id))))
+            throw TeacherErrors.duplicateEmailError(email);
+    }
 
 }
