@@ -1,5 +1,6 @@
 package com.superum.api.v3.teacher.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -151,6 +152,7 @@ public final class SuppliedTeacher {
 
     // CONSTRUCTORS
 
+    @JsonCreator
     public static SuppliedTeacher jsonInstance(@JsonProperty(value = PAYMENT_DAY_FIELD) Integer paymentDay,
                                               @JsonProperty(value = HOURLY_WAGE_FIELD) BigDecimal hourlyWage,
                                               @JsonProperty(value = ACADEMIC_WAGE_FIELD) BigDecimal academicWage,

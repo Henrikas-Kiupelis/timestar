@@ -1,5 +1,6 @@
 package com.superum.api.v3.teacher.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -138,6 +139,7 @@ public final class FetchedTeacher {
 
     // CONSTRUCTORS
 
+    @JsonCreator
     public static FetchedTeacher jsonInstance(@JsonProperty(value = ID_FIELD) int id,
                                               @JsonProperty(value = CREATED_AT_FIELD) long createdAt,
                                               @JsonProperty(value = UPDATED_AT_FIELD) long updatedAt,
