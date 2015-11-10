@@ -45,7 +45,7 @@ public class TeacherRepositoryImpl implements TeacherRepository {
     @Override
     public int update(int id, Integer paymentDay, BigDecimal hourlyWage, BigDecimal academicWage, String name,
                       String surname, String phone, String city, String email, String picture, String document,
-                      String comment, long createdAt, long updatedAt) {
+                      String comment, long updatedAt) {
         return sql.update(TEACHER)
                 .set(TEACHER.PAYMENT_DAY, paymentDay)
                 .set(TEACHER.HOURLY_WAGE, hourlyWage)
@@ -58,7 +58,6 @@ public class TeacherRepositoryImpl implements TeacherRepository {
                 .set(TEACHER.PICTURE, picture)
                 .set(TEACHER.DOCUMENT, document)
                 .set(TEACHER.COMMENT, comment)
-                .set(TEACHER.CREATED_AT, createdAt)
                 .set(TEACHER.UPDATED_AT, updatedAt)
                 .where(primaryKey(id))
                 .execute();

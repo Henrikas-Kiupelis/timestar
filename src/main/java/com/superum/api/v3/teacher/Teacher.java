@@ -29,7 +29,7 @@ public class Teacher {
         String originalEmail = teacherQueries.readField(TEACHER.EMAIL, id)
                 .orElseThrow(() -> TeacherErrors.teacherIdError(id));
         int teacherRows = teacherRepository.update(id, paymentDay, hourlyWage, academicWage, name, surname, phone,
-                city, email, picture, document, comment, createdAt.toEpochMilli(), updatedAt.toEpochMilli());
+                city, email, picture, document, comment, updatedAt.toEpochMilli());
         if (teacherRows == 0)
             return 0;
 
