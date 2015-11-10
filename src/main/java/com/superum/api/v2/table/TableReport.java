@@ -1,4 +1,4 @@
-package com.superum.api.v3.table;
+package com.superum.api.v2.table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

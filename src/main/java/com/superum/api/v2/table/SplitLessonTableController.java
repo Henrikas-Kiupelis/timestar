@@ -1,4 +1,4 @@
-package com.superum.api.v3.table;
+package com.superum.api.v2.table;
 
 import com.superum.api.core.CommonControllerLogic;
 import com.superum.api.exception.InvalidRequestException;
@@ -31,7 +31,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
  * </pre>
  */
 @Controller
-@RequestMapping(value = "/timestar/api/v3/lesson/table")
+@RequestMapping(value = "/timestar/api/v2/lesson/table")
 public class SplitLessonTableController extends CommonControllerLogic {
 
     @RequestMapping(value = "/size", method = GET, produces = APPLICATION_JSON_UTF8)

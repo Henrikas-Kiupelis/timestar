@@ -12,8 +12,6 @@
 
 [Customer](./Customer.md#customer-apiv3) - for updated customer handling
 
-[LessonTable](./LessonTable.md#lesson-table-apiv3) - for the primary table of the application
-
 ## Description
 
 This API is an extension of APIv2; it is intended to extend v2 by optimizing some of the methods, from both performance
