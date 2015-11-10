@@ -1,9 +1,11 @@
 package com.superum.api.v2.customer;
 
 import com.superum.helper.field.MappedClass;
+import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.steps.FieldDef;
 import eu.goodlike.libraries.joda.time.Time;
 import eu.goodlike.v2.validate.Validate;
+import org.jooq.lambda.Seq;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +23,13 @@ import static timestar_v2.Tables.CUSTOMER;
  * </pre>
  */
 public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
+
+    @Override
+    public Seq<MappedField<?>> updateFields() {
+        return super.updateFields().filter(field -> field.notNameEquals("createdAt"));
+    }
+
+    // CONSTRUCTORS
 
     public ValidCustomer(ValidCustomerDTO validCustomerDTO) {
         OPTIONAL_JSON_ID.ifInvalid(validCustomerDTO.getId())
@@ -102,7 +111,15 @@ public class ValidCustomer extends MappedClass<ValidCustomer, Integer> {
 
             FieldDef.steps(ValidCustomer.class, String.class)
                     .fieldName(COMMENT_FIELD).tableField(CUSTOMER.COMMENT)
-                    .getter(customer -> customer.validCustomerDTO.getComment())
+                    .getter(customer -> customer.validCustomerDTO.getComment()),
+
+            FieldDef.steps(ValidCustomer.class, Long.class)
+                    .fieldName("createdAt").tableField(CUSTOMER.CREATED_AT)
+                    .getter(teacher -> System.currentTimeMillis()),
+
+            FieldDef.steps(ValidCustomer.class, Long.class)
+                    .fieldName("updatedAt").tableField(CUSTOMER.UPDATED_AT)
+                    .getter(teacher -> System.currentTimeMillis())
 
     );
 

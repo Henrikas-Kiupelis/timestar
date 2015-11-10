@@ -35,7 +35,7 @@ public class ValidCustomerCommandServiceImpl implements ValidCustomerCommandServ
         if (!validCustomer.hasId())
             throw new InvalidCustomerException("Provided customer doesn't have its id set; please set it or use PUT instead!");
 
-        if (!validCustomer.updateFields().findAny().isPresent())
+        if (!validCustomer.updateFields().filter(field -> field.notNameEquals("updatedAt")).findAny().isPresent())
             throw new InvalidCustomerException("Provided customer only has its id set; to update this customer, set additional fields!");
 
         if (!defaultCustomerQueries.exists(validCustomer.getId(), partitionId))

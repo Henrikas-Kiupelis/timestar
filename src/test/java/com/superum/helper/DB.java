@@ -141,6 +141,8 @@ public class DB {
                 .set(CUSTOMER.WEBSITE, customer.getWebsite())
                 .set(CUSTOMER.PICTURE, customer.getPicture())
                 .set(CUSTOMER.COMMENT, customer.getComment())
+                .set(CUSTOMER.CREATED_AT, customer.getCreatedAt().getMillis())
+                .set(CUSTOMER.UPDATED_AT, customer.getUpdatedAt().getMillis())
                 .execute();
 
         return readValidCustomer(customer.getId())
