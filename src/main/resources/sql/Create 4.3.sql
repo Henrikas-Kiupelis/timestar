@@ -89,37 +89,17 @@ CREATE TABLE customer (
   id INT NOT NULL AUTO_INCREMENT,
   partition_id INT NOT NULL,
 
-  created_at BIGINT,
-  updated_at BIGINT,
+  created_at BIGINT NOT NULL,
+  updated_at BIGINT NOT NULL,
 
-  start_date DATE NOT NULL,
-  name VARCHAR(180) NOT NULL,
-  phone VARCHAR(180) NOT NULL,
-  website VARCHAR(180) NOT NULL,
+  start_date DATE,
+  name VARCHAR(180),
+  phone VARCHAR(180),
+  website VARCHAR(180),
   picture VARCHAR(180),
   comment VARCHAR(500),
   PRIMARY KEY(id),
   FOREIGN KEY(partition_id) REFERENCES partitions(id));
-
-DELIMITER //
-CREATE TRIGGER create_timestamps_inserting_customer
-BEFORE INSERT ON customer
-FOR EACH ROW
-  BEGIN
-    SET NEW.created_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
-    SET NEW.updated_at = NEW.created_at;
-  END; //
-
-CREATE TRIGGER update_timestamp_ensure_create_immutable_customer
-BEFORE UPDATE ON customer
-FOR EACH ROW
-  BEGIN
-    SET NEW.updated_at = ROUND(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
-    IF NEW.created_at != OLD.created_at THEN
-      SET NEW.created_at = OLD.created_at;
-    END IF;
-  END; //
-DELIMITER ;
 
 CREATE TABLE group_of_students (
   id INT NOT NULL AUTO_INCREMENT,
