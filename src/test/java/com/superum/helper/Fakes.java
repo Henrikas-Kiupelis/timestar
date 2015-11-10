@@ -79,6 +79,8 @@ public class Fakes {
                 .id(id)
                 .picture(Fake.picture(id))
                 .comment(Fake.comment(id))
+                .createdAt(Fake.time(id))
+                .updatedAt(Fake.time(id))
                 .build();
     }
 
@@ -97,6 +99,8 @@ public class Fakes {
                 .picture(Fake.picture(id))
                 .document(Fake.document(id))
                 .comment(Fake.comment(id))
+                .createdAt(Fake.time(id))
+                .updatedAt(Fake.time(id))
                 .build();
     }
 
@@ -112,6 +116,8 @@ public class Fakes {
                 .name(Fake.name(id))
                 .id(id)
                 .customerId(customerId)
+                .createdAt(Fake.time(id))
+                .updatedAt(Fake.time(id))
                 .build();
     }
 
@@ -126,6 +132,8 @@ public class Fakes {
                 .name(Fake.name(id))
                 .id(id)
                 .code(Fake.code(id))
+                .createdAt(Fake.time(id))
+                .updatedAt(Fake.time(id))
                 .build();
     }
 
@@ -137,6 +145,8 @@ public class Fakes {
                 .name(Fake.name(id))
                 .id(id)
                 .code(Fake.code(id))
+                .createdAt(Fake.time(id))
+                .updatedAt(Fake.time(id))
                 .build();
     }
 
@@ -151,6 +161,8 @@ public class Fakes {
                 .length(Fake.duration(id))
                 .id(id)
                 .comment(Fake.comment(id))
+                .createdAt(Fake.time(id))
+                .updatedAt(Fake.time(id))
                 .build();
     }
 

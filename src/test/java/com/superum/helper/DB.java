@@ -116,11 +116,13 @@ public class DB {
                 .set(TEACHER.PICTURE, teacher.getPicture())
                 .set(TEACHER.DOCUMENT, teacher.getDocument())
                 .set(TEACHER.COMMENT, teacher.getComment())
+                .set(TEACHER.CREATED_AT, teacher.getCreatedAt().getMillis())
+                .set(TEACHER.UPDATED_AT, teacher.getUpdatedAt().getMillis())
                 .execute();
 
         Seq.seq(teacher.getLanguages())
-                .foldLeft(sql.insertInto(TEACHER_LANGUAGE, TEACHER_LANGUAGE.PARTITION_ID, TEACHER_LANGUAGE.TEACHER_ID, TEACHER_LANGUAGE.CODE),
-                        (step, language) -> step.values(TEST_PARTITION, teacher.getId(), language))
+                .foldLeft(sql.insertInto(TEACHER_LANGUAGE, TEACHER_LANGUAGE.TEACHER_ID, TEACHER_LANGUAGE.CODE),
+                        (step, language) -> step.values(teacher.getId(), language))
                 .execute();
 
         return readFullTeacher(teacher.getId())
@@ -218,6 +220,8 @@ public class DB {
                 .set(ACCOUNT.ID, teacher.getId())
                 .set(ACCOUNT.PASSWORD, FILLER_PASSWORD)
                 .set(ACCOUNT.ACCOUNT_TYPE, TEACHER_TYPE)
+                .set(ACCOUNT.CREATED_AT, teacher.getCreatedAt().getMillis())
+                .set(ACCOUNT.UPDATED_AT, teacher.getUpdatedAt().getMillis())
                 .execute();
     }
 

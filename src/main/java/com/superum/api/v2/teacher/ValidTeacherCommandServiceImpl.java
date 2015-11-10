@@ -60,7 +60,8 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
         if (!validTeacher.hasId())
             throw new InvalidTeacherException("Provided teacher doesn't have its id set; please set it or use PUT instead!");
 
-        if (!validTeacher.updateFields().findAny().isPresent() && !validTeacherLanguages.hasLanguages())
+        if (!validTeacher.updateFields().filter(field -> field.notNameEquals("updatedAt")).findAny().isPresent()
+                && !validTeacherLanguages.hasLanguages())
             throw new InvalidTeacherException("Provided teacher only has its id set; to update this teacher, set additional fields!");
 
         if (!defaultTeacherQueries.exists(validTeacher.getId(), partitionId))
