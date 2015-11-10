@@ -2,6 +2,7 @@ package com.superum.api.v2.table;
 
 import com.superum.api.v2.teacher.FullTeacherDTO;
 import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -68,13 +69,23 @@ public class TableDataFetcher {
         Condition partitionCondition = LESSON.PARTITION_ID.eq(partitionId);
         Condition timeCondition = LESSON.TIME_OF_START.between(start, end);
         Condition teacherCondition = teachers.stream()
+                .filter(teacher -> teacher.getAcademicWage() != null || teacher.getHourlyWage() != null)
                 .map(FullTeacherDTO::getId)
                 .map(GROUP_OF_STUDENTS.TEACHER_ID::eq)
                 .reduce(Condition::or)
                 .orElseThrow(() -> new AssertionError("If there were no teachers, this method would not " +
                         "be called, because the caller method would exit early."));
 
-        return partitionCondition.and(timeCondition).and(teacherCondition);
+        return partitionCondition.and(timeCondition).and(teacherCondition)
+                .and(hourlyWageNotNull().or(academicWageNotNull()));
+    }
+
+    private Condition hourlyWageNotNull() {
+        return DSL.condition(GROUP_OF_STUDENTS.USE_HOURLY_WAGE).and(TEACHER.HOURLY_WAGE.isNotNull());
+    }
+
+    private Condition academicWageNotNull() {
+        return DSL.not(DSL.condition(GROUP_OF_STUDENTS.USE_HOURLY_WAGE)).and(TEACHER.ACADEMIC_WAGE.isNotNull());
     }
 
     /**

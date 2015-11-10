@@ -59,7 +59,9 @@ public class TableReportFetcher {
         }
         // since we have the deadline even in the scenario where the amount to pay is 0, we add it to this list
         for (int id : Sets.difference(Seq.seq(ids).toSet(), Seq.seq(reports).map(TableReport::getId).toSet())) {
-            LocalDate endDate = Time.convert(timeResolvers.get(id).getEndTime()).toJodaLocalDate()
+            LocalDate endDate = timeResolvers == null
+                    ? null
+                    : Time.convert(timeResolvers.get(id).getEndTime()).toJodaLocalDate()
                     // endTime is inclusive, which means it points to the next day at 00:00:00
                     .minusDays(1);
             reports.add(new TableReport(id, endDate, ZERO));
@@ -77,7 +79,13 @@ public class TableReportFetcher {
                         .and(CUSTOMER.PARTITION_ID.eq(partitionId)))
                 .fetch().stream()
                 .collect(Collectors.toMap(r -> r.getValue(CUSTOMER.ID),
-                        r -> TimeResolver.from(Time.convert(r.getValue(CUSTOMER.START_DATE)).toJodaLocalDate())));
+                        this::customerResolver));
+    }
+
+    private TimeResolver customerResolver(Record record) {
+        return record == null
+                ? null
+                : TimeResolver.from(Time.convert(record.getValue(CUSTOMER.START_DATE)).toJodaLocalDate());
     }
 
     /**
@@ -90,7 +98,13 @@ public class TableReportFetcher {
                         .and(TEACHER.PARTITION_ID.eq(partitionId)))
                 .fetch().stream()
                 .collect(Collectors.toMap(r -> r.getValue(TEACHER.ID),
-                        r -> TimeResolver.from(r.getValue(TEACHER.PAYMENT_DAY))));
+                        this::teacherResolver));
+    }
+
+    private TimeResolver teacherResolver(Record record) {
+        return record == null
+                ? null
+                : TimeResolver.from(record.getValue(TEACHER.PAYMENT_DAY));
     }
 
     // CONSTRUCTORS
@@ -124,6 +138,7 @@ public class TableReportFetcher {
      */
     private Condition forReport(Field<Integer> idField, Map<Integer, TimeResolver> timeResolvers) {
         return Seq.seq(timeResolvers)
+                .filter(t2 -> t2.v2 != null)
                 .map(t2 -> idField.eq(t2.v1).and(t2.v2.isBetween(LESSON.TIME_OF_START)))
                 .reduce(Condition::or)
                 .orElseThrow(() -> new AssertionError("Empty list of ids should fail at the controller level"));

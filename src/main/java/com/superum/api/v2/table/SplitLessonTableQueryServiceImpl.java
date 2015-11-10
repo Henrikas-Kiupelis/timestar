@@ -62,7 +62,7 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
                 Seq.zip(teacherIds.stream(),
                         teachers.stream()
                                 .map(FullTeacherDTO::getPaymentDay)
-                                .map(TimeResolver::from))
+                                .map(paymentDay -> paymentDay == null ? null : TimeResolver.from(paymentDay)))
                         .toMap(Tuple2::v1, Tuple2::v2);
         List<TableReport> teacherReports = tableReportFetcher.reportsFor(GROUP_OF_STUDENTS.TEACHER_ID,
                 teacherIds, partitionId, timeResolversForTeachers);
@@ -75,7 +75,7 @@ public class SplitLessonTableQueryServiceImpl implements SplitLessonTableQuerySe
                         customers.stream()
                                 .filter(c -> c != null)
                                 .map(ValidCustomerDTO::getStartDate)
-                                .map(TimeResolver::from))
+                                .map(contractDate -> contractDate == null ? null : TimeResolver.from(contractDate)))
                         .toMap(Tuple2::v1, Tuple2::v2);
         List<TableReport> customerReports = tableReportFetcher.reportsFor(GROUP_OF_STUDENTS.CUSTOMER_ID,
                 customerIds, partitionId, timeResolversForCustomers);

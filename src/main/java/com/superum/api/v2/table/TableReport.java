@@ -45,7 +45,7 @@ public class TableReport {
 
     @JsonProperty(PAYMENT_DATE_FIELD)
     public String getPaymentDateString() {
-        return paymentDate.toString();
+        return paymentDate == null ? null : paymentDate.toString();
     }
     @JsonIgnore
     public LocalDate getPaymentDate() {
