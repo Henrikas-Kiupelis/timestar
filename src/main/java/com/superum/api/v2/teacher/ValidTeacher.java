@@ -1,8 +1,10 @@
 package com.superum.api.v2.teacher;
 
 import com.superum.helper.field.MappedClass;
+import com.superum.helper.field.core.MappedField;
 import com.superum.helper.field.steps.FieldDef;
 import eu.goodlike.v2.validate.Validate;
+import org.jooq.lambda.Seq;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -21,6 +23,11 @@ import static timestar_v2.Tables.TEACHER;
  * </pre>
  */
 public final class ValidTeacher extends MappedClass<ValidTeacher, Integer> {
+
+    @Override
+    public Seq<MappedField<?>> updateFields() {
+        return super.updateFields().filter(field -> field.notNameEquals("createdAt"));
+    }
 
     // CONSTRUCTORS
 
@@ -153,7 +160,15 @@ public final class ValidTeacher extends MappedClass<ValidTeacher, Integer> {
 
             FieldDef.steps(ValidTeacher.class, String.class)
                     .fieldName(COMMENT_FIELD).tableField(TEACHER.COMMENT)
-                    .getter(teacher -> teacher.fullTeacherDTO.getComment())
+                    .getter(teacher -> teacher.fullTeacherDTO.getComment()),
+
+            FieldDef.steps(ValidTeacher.class, Long.class)
+                    .fieldName("createdAt").tableField(TEACHER.CREATED_AT)
+                    .getter(teacher -> System.currentTimeMillis()),
+
+            FieldDef.steps(ValidTeacher.class, Long.class)
+                    .fieldName("updatedAt").tableField(TEACHER.UPDATED_AT)
+                    .getter(teacher -> System.currentTimeMillis())
 
     );
 

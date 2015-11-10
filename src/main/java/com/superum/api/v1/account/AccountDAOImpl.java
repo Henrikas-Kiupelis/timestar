@@ -17,11 +17,14 @@ public class AccountDAOImpl implements AccountDAO {
 	@Override
 	public Account create(Account account) {
 		try {
+            long now = System.currentTimeMillis();
             int createResult = sql.insertInto(ACCOUNT)
                     .set(ACCOUNT.ID, account.getId())
                     .set(ACCOUNT.USERNAME, account.getUsername())
                     .set(ACCOUNT.ACCOUNT_TYPE, account.getAccountType())
                     .set(ACCOUNT.PASSWORD, account.getPassword())
+                    .set(ACCOUNT.CREATED_AT, now)
+                    .set(ACCOUNT.UPDATED_AT, now)
                     .execute();
             if (createResult == 0)
                 throw new DatabaseException("Couldn't insert account: " + account);
@@ -52,12 +55,14 @@ public class AccountDAOImpl implements AccountDAO {
 	@Override
 	public Account update(Account account) {
         try {
+            long now = System.currentTimeMillis();
             String username = account.getUsername();
 
             Account old = read(username);
 
             sql.update(ACCOUNT)
                     .set(ACCOUNT.PASSWORD, account.getPassword())
+                    .set(ACCOUNT.UPDATED_AT, now)
                     .where(ACCOUNT.USERNAME.eq(username))
                     .execute();
 

@@ -105,12 +105,6 @@ public class DefaultSqlConfig {
     // MANY
 
     @Bean
-    public CommandsForMany<Integer, String> teacherLanguagesCommands() {
-        return new CommandsForManyImpl<>(persistenceContext.dsl(), TEACHER_LANGUAGE,
-                TEACHER_LANGUAGE.TEACHER_ID, TEACHER_LANGUAGE.CODE, TEACHER_LANGUAGE.PARTITION_ID);
-    }
-
-    @Bean
     public CommandsForMany<Long, Integer> lessonAttendanceCommands() {
         return new CommandsForManyImpl<>(persistenceContext.dsl(), LESSON_ATTENDANCE,
                 LESSON_ATTENDANCE.LESSON_ID, LESSON_ATTENDANCE.STUDENT_ID, LESSON_ATTENDANCE.PARTITION_ID);

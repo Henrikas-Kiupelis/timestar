@@ -3,10 +3,10 @@ package com.superum.api.v2.teacher;
 import com.superum.api.v2.account.ValidAccountService;
 import com.superum.exception.DatabaseException;
 import com.superum.helper.PartitionAccount;
-import com.superum.helper.jooq.CommandsForMany;
 import com.superum.helper.jooq.DefaultCommands;
 import com.superum.helper.jooq.DefaultQueries;
 import com.superum.helper.jooq.ForeignQueries;
+import eu.goodlike.libraries.jooq.CommandsMany;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,8 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
 
         validTeacherLanguages = validTeacherLanguages.withId(teacherId);
 
-        if (teacherLanguagesCommands.create(validTeacherLanguages, account.partitionId()) == 0)
+        if (teacherLanguageCommands.create(validTeacherLanguages.primaryValue(),
+                validTeacherLanguages.secondaryValues().toList()) == 0)
             throw new DatabaseException("Couldn't create teacher languages: " + validTeacherLanguages);
 
         FullTeacherDTO insertedTeacher = validTeacherQueryService.readById(teacherId, account.partitionId());
@@ -73,7 +74,8 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
         if (validTeacher.updateFields().findAny().isPresent() && defaultTeacherCommands.update(validTeacher, partitionId) == 0)
             throw new DatabaseException("Couldn't update teacher: " + validTeacher);
 
-        if (validTeacherLanguages.hasLanguages() && teacherLanguagesCommands.update(validTeacherLanguages, partitionId) == 0)
+        if (validTeacherLanguages.hasLanguages() && teacherLanguageCommands.update(validTeacherLanguages.primaryValue(),
+                validTeacherLanguages.secondaryValues().toList()) == 0)
             throw new DatabaseException("Couldn't update teacher languages: " + validTeacherLanguages);
     }
 
@@ -88,7 +90,7 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
 
         FullTeacherDTO deletedTeacher = validTeacherQueryService.readById(teacherId, account.partitionId());
 
-        teacherLanguagesCommands.deletePrimary(teacherId, account.partitionId());
+        teacherLanguageCommands.deleteLeft(teacherId);
 
         if (defaultTeacherCommands.delete(teacherId, account.partitionId()) == 0)
             throw new DatabaseException("Couldn't delete teacher with id: " + teacherId);
@@ -100,13 +102,13 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
 
     @Autowired
     public ValidTeacherCommandServiceImpl(DefaultCommands<TeacherRecord, Integer> defaultTeacherCommands,
-                                          CommandsForMany<Integer, String> teacherLanguagesCommands,
+                                          CommandsMany<Integer, String> teacherLanguageCommands,
                                           DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries,
                                           ForeignQueries<Integer> foreignTeacherQueries,
                                           ValidAccountService validAccountService,
                                           ValidTeacherQueryService validTeacherQueryService) {
         this.defaultTeacherCommands = defaultTeacherCommands;
-        this.teacherLanguagesCommands = teacherLanguagesCommands;
+        this.teacherLanguageCommands = teacherLanguageCommands;
         this.defaultTeacherQueries = defaultTeacherQueries;
         this.foreignTeacherQueries = foreignTeacherQueries;
         this.validTeacherQueryService = validTeacherQueryService;
@@ -116,7 +118,7 @@ public class ValidTeacherCommandServiceImpl implements ValidTeacherCommandServic
     // PRIVATE
 
     private final DefaultCommands<TeacherRecord, Integer> defaultTeacherCommands;
-    private final CommandsForMany<Integer, String> teacherLanguagesCommands;
+    private final CommandsMany<Integer, String> teacherLanguageCommands;
     private final DefaultQueries<TeacherRecord, Integer> defaultTeacherQueries;
     private final ForeignQueries<Integer> foreignTeacherQueries;
     private final ValidTeacherQueryService validTeacherQueryService;
