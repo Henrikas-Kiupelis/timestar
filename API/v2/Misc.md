@@ -107,7 +107,7 @@ N/A
     RET  Set<String>
 ```
 
-Returns the set of valid timezones, used by JodaTime
+Returns the set of valid timezones, used by Java 8
 
 It shouldn't fail under normal circumstances
 
