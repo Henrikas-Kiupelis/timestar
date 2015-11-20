@@ -51,4 +51,13 @@ public class MiscController extends CommonControllerLogic {
         return Time.forZone(dateTimeZone).from(localDate, hour, minute, second, millisecond).toEpochMillis();
     }
 
+    @RequestMapping(value = "/datetime/convert", method = RequestMethod.GET, produces = APPLICATION_JSON_UTF8)
+    @ResponseBody
+    public String convert(@RequestParam(value = "time_zone", required = false) String time_zone,
+                        @RequestParam(value = "millis", required = false) Long millis) {
+        if (millis == null) millis = System.currentTimeMillis();
+        DateTimeZone dateTimeZone = time_zone == null ? Time.defaultTimeZone() : DateTimeZone.forID(time_zone);
+        return Time.forZone(dateTimeZone).from(millis).toJodaDateTime().toString();
+    }
+
 }
